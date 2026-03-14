@@ -35,6 +35,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -46,8 +47,8 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardP
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -146,7 +147,7 @@ fun EditPasswordScreen(innerPadding : PaddingValues) {
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                            Starter.startWebView(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },

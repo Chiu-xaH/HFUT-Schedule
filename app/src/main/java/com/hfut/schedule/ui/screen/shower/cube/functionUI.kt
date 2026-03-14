@@ -31,7 +31,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 
 
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -39,7 +39,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 

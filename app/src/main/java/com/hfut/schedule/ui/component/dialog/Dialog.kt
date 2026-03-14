@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.special.dialogBlur
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeDialog
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.rememberHazeState

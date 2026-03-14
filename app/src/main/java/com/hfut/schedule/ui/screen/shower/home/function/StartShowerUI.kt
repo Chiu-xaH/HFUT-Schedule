@@ -66,10 +66,10 @@ import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.util.language.text
+import com.xah.common.component.text.BottomTip
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.align.RowHorizontal
+import com.xah.common.util.language.text
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

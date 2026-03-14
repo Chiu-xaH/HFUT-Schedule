@@ -1,0 +1,144 @@
+package com.hfut.schedule.logic.network.repo
+
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.network.api.LoginSchoolNetService
+import com.hfut.schedule.network.impl.LoginHefeiSchoolNetServiceCreator
+import com.hfut.schedule.network.impl.LoginXcSchoolNetServiceCreator
+import com.hfut.schedule.network.impl.LoginXcSchoolNetServiceCreator2
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+object LoginSchoolNetRepository {
+    private val loginWebHefei = LoginHefeiSchoolNetServiceCreator.create(LoginSchoolNetService::class.java)
+    private val loginWeb = LoginXcSchoolNetServiceCreator.create(LoginSchoolNetService::class.java)
+    private val loginWeb2 = LoginXcSchoolNetServiceCreator2.create(LoginSchoolNetService::class.java)
+
+    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : StateHolder<Boolean>) =
+        withContext(Dispatchers.IO) {
+            getPersonInfo().studentId?.let { uid ->
+                getCardPsk()?.let { pwd ->
+                    when (campus) {
+                        CampusRegion.HEFEI -> {
+                            val location = "123"
+                            launchRequestState(
+                                holder = loginSchoolNetResponse,
+                                request = {
+                                    loginWebHefei.loginWeb(uid, pwd, location)
+                                },
+                                transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                            )
+                        }
+
+                        CampusRegion.XUANCHENG -> {
+                            val location = "宣州Login"
+                            launch {
+                                launchRequestState(
+                                    holder = loginSchoolNetResponse,
+                                    request = {
+                                        loginWeb.loginWeb(uid, pwd, location)
+                                    },
+                                    transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                                )
+                            }
+                            launch {
+                                launchRequestState(
+                                    holder = loginSchoolNetResponse,
+                                    request = {
+                                        loginWeb2.loginWeb(uid, pwd, location)
+                                    },
+                                    transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : StateHolder<Boolean>) =
+        withContext(Dispatchers.IO) {
+            getPersonInfo().studentId?.let { uid ->
+                getCardPsk()?.let { pwd ->
+                    when (campus) {
+                        CampusRegion.HEFEI -> {
+                            val location = "123"
+                            launchRequestState(
+                                holder = loginSchoolNetResponse,
+                                request = {
+                                    loginWebHefei.loginWeb(uid, pwd, location)
+                                },
+                                transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                            )
+                        }
+
+                        CampusRegion.XUANCHENG -> {
+                            launch {
+                                launchRequestState(
+                                    holder = loginSchoolNetResponse,
+                                    request = { loginWeb.logoutWeb() },
+                                    transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                                )
+                            }
+                            launch {
+                                launchRequestState(
+                                    holder = loginSchoolNetResponse,
+                                    request = { loginWeb2.logoutWeb() },
+                                    transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    // 目前仅适配了宣区
+    @JvmStatic
+    private fun parseLoginSchoolNet(result : String) : Boolean = try {
+        if(result.contains("成功") && !result.contains("已使用")) {
+            true
+        } else if(result.contains("已使用")) {
+            false
+        } else {
+            throw Exception(result)
+        }
+    } catch (e : Exception) { throw e }
+
+    suspend fun getWebInfo(infoWebValue : StateHolder<WebInfo>) = launchRequestState(
+        holder = infoWebValue,
+        request = { loginWeb.getInfo() },
+        transformSuccess = { _, json -> parseWebInfo(json) }
+    )
+
+    suspend fun getWebInfo2(infoWebValue : StateHolder<WebInfo>) = launchRequestState(
+        holder = infoWebValue,
+        request = { loginWeb2.getInfo() },
+        transformSuccess = { _, json -> parseWebInfo(json) }
+    )
+    @JvmStatic
+    private fun parseWebInfo(html : String) : WebInfo = try {
+        //本段照搬前端
+        val flow = html.substringAfter("flow").substringBefore(" ").substringAfter("'").toDouble()
+        val fee = html.substringAfter("fee").substringBefore(" ").substringAfter("'").toDouble()
+        var flow0 = flow % 1024
+        val flow1 = flow - flow0
+        flow0 *= 1000
+        flow0 -= flow0 % 1024
+        var fee1 = fee - fee % 100
+        var flow3 = "."
+        if (flow0 / 1024 < 10) flow3 = ".00"
+        else { if (flow0 / 1024 < 100) flow3 = ".0"; }
+        val resultFee = (fee1 / 10000).toString()
+        val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
+        val result = WebInfo(resultFee, resultFlow)
+        SharedPrefs.saveString("memoryWeb", result.flow)
+        result
+    } catch (e : Exception) { throw e }
+
+}

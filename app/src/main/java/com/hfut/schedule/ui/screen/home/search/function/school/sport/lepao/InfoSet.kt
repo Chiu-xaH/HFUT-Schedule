@@ -36,7 +36,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

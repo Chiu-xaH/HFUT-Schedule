@@ -15,14 +15,15 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
-import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
+import com.hfut.schedule.logic.network.repo.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ suspend fun getJxglstuCookie() : String? {
     var cookie : String?
     if(GlobalUIStateHolder.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
-        cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        cookie = Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
         cookie =  prefs.getString("redirect", "")
     }
@@ -51,7 +52,7 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     var cookie : String?
     if(isWebVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
-        cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        cookie = Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
         cookie =  prefs.getString("redirect", "")
     }
@@ -82,7 +83,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
                 // 切换到WEBVPN模式尝试
                 GlobalUIStateHolder.webVpn = true
                 JxglstuRepository.updateServices()
-                cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+                cookie = Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
                 vm.getStudentId(cookie)
                 studentId = (vm.studentId.state.value as? UiState.Success)?.data
                 if(studentId == null) {
@@ -190,7 +191,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, context: Context) = withContext(
             if(webVpnCookie.isEmpty()) {
                 return@withContext
             } else {
-                MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+                Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
             }
         }
 

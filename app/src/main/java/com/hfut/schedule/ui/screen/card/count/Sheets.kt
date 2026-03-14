@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.huixin.BillMonth
-import com.xah.uicommon.util.safeDiv
+import com.xah.common.util.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin

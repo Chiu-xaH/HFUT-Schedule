@@ -60,9 +60,9 @@ import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

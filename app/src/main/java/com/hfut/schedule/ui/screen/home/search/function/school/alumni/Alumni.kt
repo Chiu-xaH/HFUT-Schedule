@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,7 @@ fun Alumni() {
         leadingContent = { Icon(painter = painterResource(id = R.drawable.local_library), contentDescription = "") },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(context,MyApplication.ALUMNI_URL,"校友平台", icon = R.drawable.local_library)
+                Starter.startWebView(context,Constant.ALUMNI_URL,"校友平台", icon = R.drawable.local_library)
             }
         }
     )

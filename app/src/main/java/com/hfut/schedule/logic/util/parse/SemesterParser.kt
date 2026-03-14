@@ -1,11 +1,11 @@
 package com.hfut.schedule.logic.util.parse
 
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.network.util.MyApiParse.getMy
+import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
 
 object SemesterParser {

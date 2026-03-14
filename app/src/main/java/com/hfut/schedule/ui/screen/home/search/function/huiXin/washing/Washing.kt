@@ -36,6 +36,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -47,8 +48,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.container.container.SharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -141,7 +142,7 @@ fun WashingUI() {
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
                                scope.launch {
-                                   Starter.startWebView(context,url = MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
+                                   Starter.startWebView(context,url = Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
                                }
                             },
                             trailingContent = {

@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.style.align.CenterScreen
+import com.xah.common.style.align.CenterScreen
 
 
 @Composable

@@ -8,7 +8,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @Composable

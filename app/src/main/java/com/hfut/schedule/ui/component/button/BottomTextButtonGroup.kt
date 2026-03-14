@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 
 data class CardBottomButton(
     val text : String,

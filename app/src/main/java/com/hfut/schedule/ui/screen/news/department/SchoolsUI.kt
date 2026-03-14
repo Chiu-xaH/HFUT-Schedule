@@ -11,10 +11,10 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.sys.Starter
 
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 @Composable

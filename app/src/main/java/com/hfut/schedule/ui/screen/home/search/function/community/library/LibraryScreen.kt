@@ -68,6 +68,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -105,10 +106,10 @@ import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -264,7 +265,7 @@ fun LibraryScreen(
         }
     }
 }
-private const val seatUrl = MyApplication.LIBRARY_SEAT + "home/web/f_second"
+private const val seatUrl = Constant.LIBRARY_SEAT + "home/web/f_second"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -592,7 +593,7 @@ fun LibraryMineUI(
                                 scope.launch {
                                     Starter.startWebView(
                                         context,
-                                        url = MyApplication.NEW_LIBRARY_URL,
+                                        url = Constant.NEW_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.globe_book,
                                     )
@@ -616,7 +617,7 @@ fun LibraryMineUI(
                                 scope.launch {
                                     Starter.startWebView(
                                         context,
-                                        url = MyApplication.OLD_LIBRARY_URL,
+                                        url = Constant.OLD_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.net,
                                     )
@@ -664,7 +665,7 @@ fun LibraryMineUI(
                                 scope.launch {
                                     Starter.startWebView(
                                         context,
-                                        url = MyApplication.MEETING_ROOM_URL,
+                                        url = Constant.MEETING_ROOM_URL,
                                         title = "研讨间预约",
                                         icon = R.drawable.meeting_room
                                     )

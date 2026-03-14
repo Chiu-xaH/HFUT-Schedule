@@ -46,8 +46,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.CustomSwitch
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.padding.InnerPaddingHeight
 
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -9,7 +9,7 @@ import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 class ScanTileService : TileService() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)

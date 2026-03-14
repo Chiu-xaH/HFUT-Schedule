@@ -68,7 +68,7 @@ import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavControllerSafely
-import com.xah.uicommon.util.safeDiv
+import com.xah.common.util.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.atan2

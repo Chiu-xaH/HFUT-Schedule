@@ -40,8 +40,8 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloa
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavControllerSafely
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithScale
+import com.xah.common.style.ClickScale
+import com.xah.common.style.clickableWithScale
 
 private const val timeTextFactor = 0.85
 private const val placeTextFactor = 0.9

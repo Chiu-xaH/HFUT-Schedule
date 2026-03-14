@@ -33,8 +33,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.align.CenterScreen
+import com.xah.common.style.padding.InnerPaddingHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

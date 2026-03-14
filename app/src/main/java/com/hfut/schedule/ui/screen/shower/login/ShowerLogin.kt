@@ -47,19 +47,19 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
@@ -256,7 +256,7 @@ suspend fun loginGuaGuaClick(
     // 存储信息
     saveString("PHONENUM", phoneNumber)
     saveString("GuaGuaPsk", psk)
-    val inputPSK = Crypto.md5Hash(psk).uppercase(Locale.getDefault())
+    val inputPSK = CryptoUtil.md5Hash(psk).uppercase(Locale.getDefault())
 
     // 启动登录
     vm.loginResult.clear()

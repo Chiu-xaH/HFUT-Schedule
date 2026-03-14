@@ -5,7 +5,7 @@ import android.os.Environment
 import android.util.Log
 
 import com.hfut.schedule.application.MyApplication
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import java.io.File
 
 object TesseractUtils {

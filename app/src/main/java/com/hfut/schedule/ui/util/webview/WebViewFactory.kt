@@ -68,6 +68,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -75,9 +76,9 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -558,7 +559,7 @@ fun WebView.setInitial(
     cookies : String?,
     url: String
 ) {
-    if(url.startsWith(MyApplication.UNI_APP_URL) && cookies != null) {
+    if(url.startsWith(Constant.UNI_APP_URL) && cookies != null) {
         val additionalHttpHeaders = HashMap<String, String>()
         additionalHttpHeaders["Authorization"] = cookies
         loadUrl(url,additionalHttpHeaders)
@@ -613,9 +614,9 @@ fun sharedInterceptRequest(
         val c = req.requestHeaders["Cookie"]
         if(
             // 适配区
-            currentUrl.startsWith(MyApplication.JXGLSTU_URL) ||
-            currentUrl.startsWith(MyApplication.JXGLSTU_WEBVPN_URL) ||
-            currentUrl.startsWith(MyApplication.PE_URL)
+            currentUrl.startsWith(Constant.JXGLSTU_URL) ||
+            currentUrl.startsWith(Constant.JXGLSTU_WEBVPN_URL) ||
+            currentUrl.startsWith(Constant.PE_URL)
         ) {
             cookieManager.setCookie(req.url.toString(), cookies)
             cookieManager.flush()

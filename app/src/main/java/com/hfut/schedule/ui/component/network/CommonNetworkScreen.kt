@@ -2,12 +2,9 @@ package com.hfut.schedule.ui.component.network
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,9 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.util.development.getExceptionDetail
-import com.hfut.schedule.logic.util.development.getKeyStackTrace
+import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.logic.util.dev.getExceptionDetail
+import com.hfut.schedule.logic.util.dev.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -31,13 +28,12 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.status.ErrorIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.util.language.text
+import com.xah.common.component.status.LoadingUI
+import com.xah.common.style.align.CenterScreen
+import com.xah.common.util.language.text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

@@ -12,8 +12,8 @@ import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.UiText
+import com.xah.common.util.language.res
 
 object HomeDestination : NavDestination() {
     override val key: String = "home"

@@ -26,9 +26,9 @@ import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.navigation.anim.EffectLevel
-import com.xah.uicommon.util.language.BaseChoice
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.BaseChoice
+import com.xah.common.util.language.UiText
+import com.xah.common.util.language.res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -47,7 +47,7 @@ object DataStoreManager : IDataStore {
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
-    private val dataStore = MyApplication.Companion.context.dataStore
+    private val dataStore = MyApplication.context.dataStore
 
     val SEARCH_DEFAULT_STR = GlobalUIStateHolder.funcDefault.map { it.id }.joinToString(",")
 
@@ -244,7 +244,7 @@ object DataStoreManager : IDataStore {
     val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,MyApplication.CALENDAR_SQUARE_ALPHA)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemesterParser.getSemester() }
-    val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)
+    val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
     val useDoubleExtension = getFlow(USE_DOUBLE_EXTENSION,false)

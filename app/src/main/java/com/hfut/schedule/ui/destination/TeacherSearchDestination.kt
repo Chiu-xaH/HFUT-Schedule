@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Tea
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 object TeacherSearchDestination : NavDestination() {
     override val key = "teacher_search"

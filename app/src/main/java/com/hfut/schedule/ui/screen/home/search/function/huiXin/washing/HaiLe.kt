@@ -33,17 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
@@ -58,9 +57,9 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.align.ColumnVertical
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -127,7 +126,7 @@ fun HaiLeWashingScreen(
                                 scope.launch {
                                     vm.haiLeDeviceDetailResp.clear()
                                     vm.getHaiLeDeviceDetail(
-                                        HaiLeDeviceDetailRequestBody(
+                                        HaiLeDeviceDetailRequest(
                                             positionId = itemId.toString(),
                                             page = 1,
                                             categoryCode = type?.typeCode
@@ -237,7 +236,7 @@ fun HaiLeDetailScreen(vm : NetWorkViewModel,itemId : Long,onType : (HaiLeType) -
     val refreshNetwork = suspend {
         vm.haiLeDeviceDetailResp.clear()
         vm.getHaiLeDeviceDetail(
-            HaiLeDeviceDetailRequestBody(
+            HaiLeDeviceDetailRequest(
                 positionId = itemId.toString(),
                 page = page,
                 categoryCode = t[pagerState.currentPage].typeCode

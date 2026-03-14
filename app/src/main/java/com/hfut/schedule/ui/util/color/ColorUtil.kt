@@ -20,7 +20,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.materialkolor.ktx.themeColors
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlin.math.abs
 
 fun parseColor(input: String): Long? {

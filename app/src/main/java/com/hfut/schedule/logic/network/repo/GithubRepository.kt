@@ -11,23 +11,23 @@ import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
-import com.hfut.schedule.logic.network.api.GiteeService
-import com.hfut.schedule.logic.network.api.GithubRawService
-import com.hfut.schedule.logic.network.api.GithubService
-import com.hfut.schedule.logic.network.api.MyService
-import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestState
+import com.hfut.schedule.network.api.GiteeService
+import com.hfut.schedule.network.api.GithubRawService
+import com.hfut.schedule.network.api.GithubService
+import com.hfut.schedule.network.api.MyService
+import com.hfut.schedule.network.impl.GiteeServiceCreator
+import com.hfut.schedule.network.impl.GithubRawServiceCreator
+import com.hfut.schedule.network.impl.GithubServiceCreator
+import com.hfut.schedule.network.impl.MyServiceCreator
+import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.awaitResponse
 
 object GithubRepository {
     private val github = GithubServiceCreator.create(GithubService::class.java)
@@ -109,7 +109,7 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
     fun downloadHoliday()  {
-        val call = githubRaw.getYearHoliday()
+        val call = githubRaw.getYearHoliday(DateTimeManager.Date_yyyy)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

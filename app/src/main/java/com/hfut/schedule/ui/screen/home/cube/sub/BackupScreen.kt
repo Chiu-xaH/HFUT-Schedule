@@ -41,7 +41,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.util.picker.copyUriToCacheFile
 
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 import java.io.File
 

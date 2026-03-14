@@ -53,10 +53,11 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -92,9 +93,9 @@ import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -149,7 +150,7 @@ fun NewsScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            autoWebVpnForNews(context,MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
+                            autoWebVpnForNews(context,Constant.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
                         }
                     }
                 )
@@ -159,7 +160,7 @@ fun NewsScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
+                            Starter.startWebView(context,Constant.ACADEMIC_URL, title = "总教务处", cookie = cookies)
                         }
                     }
                 )
@@ -329,7 +330,7 @@ fun TotalNewsScreen(
                                 val links = if(isValidWebUrl(listItem.link)) {
                                     listItem.link
                                 } else {
-                                    MyApplication.NEWS_URL + listItem.link
+                                    Constant.NEWS_URL + listItem.link
                                 }
 
                                 autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
@@ -387,6 +388,6 @@ fun transferToPostData(text : String, page : Int = 1)  : String {
 
     // 转换为字符串
     val updatedJsonString = jsonArray.toString()
-    return Crypto.encodeToBase64(updatedJsonString)
+    return CryptoUtil.encodeToBase64(updatedJsonString)
 }
 

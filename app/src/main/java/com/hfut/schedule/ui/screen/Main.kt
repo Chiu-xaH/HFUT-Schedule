@@ -75,8 +75,8 @@ import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
 import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.rememberNavDependencies
-import com.xah.uicommon.util.LogUtil
-import com.xah.uicommon.util.safeDiv
+import com.xah.shared.LogUtil
+import com.xah.common.util.safeDiv
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -7,7 +7,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayC
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 object StuTodayCampusDestination : NavDestination() {
     override val key = "stu"

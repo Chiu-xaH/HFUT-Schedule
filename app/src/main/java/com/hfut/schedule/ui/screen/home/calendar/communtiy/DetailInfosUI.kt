@@ -33,7 +33,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -49,8 +49,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getT
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.style.align.CenterScreen
+import com.xah.common.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

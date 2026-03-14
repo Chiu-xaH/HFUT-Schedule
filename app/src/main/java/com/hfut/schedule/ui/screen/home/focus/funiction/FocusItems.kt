@@ -47,8 +47,8 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
-import com.hfut.schedule.logic.network.util.MyApiParse.getTimeStamp
+import com.hfut.schedule.logic.network.repo.UniAppRepository
+import com.hfut.schedule.logic.util.network.MyApiParse.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -86,10 +86,10 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.text.BottomTip
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.align.ColumnVertical
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

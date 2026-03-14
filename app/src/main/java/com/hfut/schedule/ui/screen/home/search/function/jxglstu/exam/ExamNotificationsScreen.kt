@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -55,8 +56,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -146,7 +147,7 @@ fun ExamNotificationsScreen(
                                                     val link = if (isValidWebUrl(item.link)) {
                                                         item.link
                                                     } else {
-                                                        MyApplication.XC_ACADEMIC_URL + item.link
+                                                        Constant.XC_ACADEMIC_URL + item.link
                                                     }
                                                     autoWebVpnForNews(
                                                         context,

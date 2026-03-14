@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -74,10 +75,10 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -133,8 +134,8 @@ fun WorkScreen(
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             val url = when(campus) {
-                                CampusRegion.HEFEI -> MyApplication.WORK_URL
-                                CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
+                                CampusRegion.HEFEI -> Constant.WORK_URL
+                                CampusRegion.XUANCHENG -> Constant.WORK_XC_URL
                             }
                             LiquidButton(
                                 backdrop = backDrop,
@@ -254,8 +255,8 @@ private fun WorkSearchUI(
                                 else -> WorkSearchType.ALL
                             }
                                 val url = when(campus) {
-                                    CampusRegion.HEFEI -> MyApplication.WORK_URL
-                                    CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
+                                    CampusRegion.HEFEI -> Constant.WORK_URL
+                                    CampusRegion.XUANCHENG -> Constant.WORK_XC_URL
                                 } + "detail/" + enumType.url +  id
                             CardListItem(
                                     color = cardNormalColor(),

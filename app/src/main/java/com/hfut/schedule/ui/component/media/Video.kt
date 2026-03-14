@@ -40,7 +40,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.mirror.util.rememberShaderState
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

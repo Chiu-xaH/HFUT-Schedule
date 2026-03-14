@@ -63,10 +63,10 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithScale
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.ClickScale
+import com.xah.common.style.clickableWithScale
+import com.xah.common.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

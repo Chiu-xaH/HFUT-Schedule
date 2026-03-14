@@ -20,8 +20,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.navigation.model.dest.Destination
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.util.language.UiText
+import com.xah.common.style.align.ColumnVertical
+import com.xah.common.util.language.UiText
 
 abstract class NavDestination : Destination() {
     abstract val title : UiText

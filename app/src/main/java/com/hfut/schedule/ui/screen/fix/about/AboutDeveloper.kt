@@ -47,9 +47,10 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -62,30 +63,30 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.screen.welcome.arguments
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.common.style.align.RowHorizontal
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
 private val openSourceProjects = listOf(
-    OpenSource("Okhttp","网络请求","${MyApplication.GITHUB_URL}square/okhttp"),
-    OpenSource("Retrofit","网络请求","${MyApplication.GITHUB_URL}square/retrofit"),
-    OpenSource("Gson", "JSON解析","${MyApplication.GITHUB_URL}google/gson"),
-    OpenSource("Jsoup", "XML/HTML解析","${MyApplication.GITHUB_URL}jhy/jsoup"),
-    OpenSource("Zxing", "二维码","${MyApplication.GITHUB_URL}zxing/zxing"),
-    OpenSource("Haze" ,"渐进式模糊","${MyApplication.GITHUB_URL}chrisbanes/haze"),
-    OpenSource("Accompanist" ,"扩展工具包","${MyApplication.GITHUB_URL}google/accompanist"),
-    OpenSource("Glide", "图片","${MyApplication.GITHUB_URL}bumptech/glide"),
-    OpenSource("EdDSA Java" ,"供和风天气Api加密","${MyApplication.GITHUB_URL}str4d/ed25519-java"),
-    OpenSource("Konfetti" ,"礼花动画","${MyApplication.GITHUB_URL}DanielMartinus/Konfetti"),
-    OpenSource("Tesseract4Android" ,"Tesseract4(供图片验证码识别)","${MyApplication.GITHUB_URL}adaptech-cz/Tesseract4Android"),
-    OpenSource("DiffUpdater" , "增量更新","${MyApplication.GITHUB_URL}Chiu-xaH/DiffUpdater"),
-    OpenSource("MaterialKolor" , "取色","${MyApplication.GITHUB_URL}jordond/MaterialKolor"),
-    OpenSource("LeakCanary" , "内存泄漏检查工具","${MyApplication.GITHUB_URL}square/leakcanary"),
-    OpenSource("Reorderable" , "列表拖拽","${MyApplication.GITHUB_URL}Calvin-LL/Reorderable"),
-    OpenSource("SharedNav" , "全局转场动效","${MyApplication.GITHUB_URL}Chiu-xaH/SharedNav"),
-    OpenSource("AndroidLiquidGlass" , "液态玻璃","${MyApplication.GITHUB_URL}Kyant0/AndroidLiquidGlass"),
-    OpenSource("Mirror-Android" , "镜面效果","${MyApplication.GITHUB_URL}Chiu-xaH/Mirror-Android"),
+    OpenSource("Okhttp","网络请求","${Constant.GITHUB_URL}square/okhttp"),
+    OpenSource("Retrofit","网络请求","${Constant.GITHUB_URL}square/retrofit"),
+    OpenSource("Gson", "JSON解析","${Constant.GITHUB_URL}google/gson"),
+    OpenSource("Jsoup", "XML/HTML解析","${Constant.GITHUB_URL}jhy/jsoup"),
+    OpenSource("Zxing", "二维码","${Constant.GITHUB_URL}zxing/zxing"),
+    OpenSource("Haze" ,"渐进式模糊","${Constant.GITHUB_URL}chrisbanes/haze"),
+    OpenSource("Accompanist" ,"扩展工具包","${Constant.GITHUB_URL}google/accompanist"),
+    OpenSource("Glide", "图片","${Constant.GITHUB_URL}bumptech/glide"),
+    OpenSource("EdDSA Java" ,"供和风天气Api加密","${Constant.GITHUB_URL}str4d/ed25519-java"),
+    OpenSource("Konfetti" ,"礼花动画","${Constant.GITHUB_URL}DanielMartinus/Konfetti"),
+    OpenSource("Tesseract4Android" ,"Tesseract4(供图片验证码识别)","${Constant.GITHUB_URL}adaptech-cz/Tesseract4Android"),
+    OpenSource("DiffUpdater" , "增量更新","${Constant.GITHUB_URL}Chiu-xaH/DiffUpdater"),
+    OpenSource("MaterialKolor" , "取色","${Constant.GITHUB_URL}jordond/MaterialKolor"),
+    OpenSource("LeakCanary" , "内存泄漏检查工具","${Constant.GITHUB_URL}square/leakcanary"),
+    OpenSource("Reorderable" , "列表拖拽","${Constant.GITHUB_URL}Calvin-LL/Reorderable"),
+    OpenSource("SharedNav" , "全局转场动效","${Constant.GITHUB_URL}Chiu-xaH/SharedNav"),
+    OpenSource("AndroidLiquidGlass" , "液态玻璃","${Constant.GITHUB_URL}Kyant0/AndroidLiquidGlass"),
+    OpenSource("Mirror-Android" , "镜面效果","${Constant.GITHUB_URL}Chiu-xaH/Mirror-Android"),
 )
 
 private data class OpenSource(val name : String,val description: String,val url : String?)
@@ -130,7 +131,7 @@ fun About(vm : NetWorkViewModel) {
                             enabled = todayVisitCount is UiState.Success,
                             onClick = {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                                    Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
                                 }
                             }
                         ) {
@@ -147,7 +148,7 @@ fun About(vm : NetWorkViewModel) {
                         Button(
                             onClick = {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}")
+                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
                                 }
                             },
                             modifier = Modifier
@@ -161,7 +162,7 @@ fun About(vm : NetWorkViewModel) {
                         FilledTonalButton(
                             onClick = {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                                    Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
                                 }
                             },
                             enabled = userCount is UiState.Success,
@@ -185,12 +186,12 @@ fun About(vm : NetWorkViewModel) {
                         TransplantListItem(
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
+                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}")
                                 }
                             },
                             headlineContent = {
                                 //一名热爱Android的开发者,宣城校区23级本科生
-                                Text(MyApplication.GITHUB_DEVELOPER_NAME)
+                                Text(Constant.GITHUB_DEVELOPER_NAME)
                             },
                             overlineContent = { Text("开发者") },
                             trailingContent = {
@@ -218,7 +219,7 @@ fun About(vm : NetWorkViewModel) {
                         ) {
                             OverlappingAvatars(
                                 MyApplication.contributors.map {
-                                    MyApplication.GITHUB_USER_IMAGE_URL + it.value
+                                    Constant.GITHUB_USER_IMAGE_URL + it.value
                                 },
                             )
                         }

@@ -71,9 +71,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -83,6 +82,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -105,13 +105,13 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.status.LoadingUI
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.align.RowHorizontal
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
@@ -134,7 +134,7 @@ private fun loginClick(
     scope: CoroutineScope
 ) {
     val cookie = prefs.getString(if(!GlobalUIStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
-    val outputAES = cookie?.let { it1 -> Crypto.encryptAES(inputAES, it1) }
+    val outputAES = cookie?.let { it1 -> CryptoUtil.encryptAES(inputAES, it1) }
     val loginFlavoring = "LOGIN_FLAVORING=$cookie"
 
 
@@ -219,12 +219,12 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
         CircularProgressIndicator()
     } else  {
         val url = (
-                if(!GlobalUIStateHolder.webVpn) MyApplication.CAS_LOGIN_URL
-                else MyApplication.WEBVPN_URL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
+                if(!GlobalUIStateHolder.webVpn) Constant.CAS_LOGIN_URL
+                else Constant.WEBVPN_URL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
                 ) + "cas/vercode"
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
-        val cookies = if(GlobalUIStateHolder.webVpn) MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie else {
+        val cookies = if(GlobalUIStateHolder.webVpn) Constant.WEBVPN_COOKIE_HEADER + webVpnCookie else {
             (jSessionId as? UiState.Success)?.data?.jSession
         }
 
@@ -469,7 +469,7 @@ fun LoginScreen(
                                         )
                                     },
                                     modifier = Modifier.clickable {
-                                        Starter.startWebUrl(context,MyApplication.CAS_LOGIN_URL)
+                                        Starter.startWebUrl(context,Constant.CAS_LOGIN_URL)
                                     },
                                 )
                             }
@@ -547,7 +547,7 @@ fun LoginScreen(
                                 leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
+                                        Starter.startWebView(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
                                     }
                                 },
                             )

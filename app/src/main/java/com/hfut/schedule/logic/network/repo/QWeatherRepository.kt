@@ -6,13 +6,12 @@ import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
 import com.hfut.schedule.logic.model.QWeatherWarnBean
 import com.hfut.schedule.logic.model.QWeatherWarnResponse
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.network.api.QWeatherService
-import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestState
+import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.api.QWeatherService
+import com.hfut.schedule.network.impl.QWeatherServiceCreator
+import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
-import retrofit2.awaitResponse
 
 object QWeatherRepository {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)

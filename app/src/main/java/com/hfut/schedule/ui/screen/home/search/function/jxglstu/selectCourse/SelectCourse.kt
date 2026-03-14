@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.destination.SelectCoursesDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.navigation.utils.LocalNavController
 
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable

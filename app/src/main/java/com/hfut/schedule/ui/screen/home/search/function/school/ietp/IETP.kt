@@ -14,9 +14,10 @@ import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 import kotlinx.coroutines.launch
 
 
@@ -36,7 +37,7 @@ fun IETP() {
             scope.launch {
                 Starter.startWebView(
                     context,
-                    url = MyApplication.IETP_URL,
+                    url = Constant.IETP_URL,
                     title = title,
                     icon = icon,
                 )

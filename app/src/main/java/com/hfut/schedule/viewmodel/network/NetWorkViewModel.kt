@@ -18,7 +18,6 @@ import com.hfut.schedule.logic.model.AdmissionTokenResponse
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
-import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
@@ -85,20 +84,22 @@ import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
 import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.SupabaseRepository
-import com.hfut.schedule.logic.network.repo.hfut.CasLoginRepository
-import com.hfut.schedule.logic.network.repo.hfut.CommunityRepository
-import com.hfut.schedule.logic.network.repo.hfut.GuaGuaRepository
-import com.hfut.schedule.logic.network.repo.hfut.HuiXinRepository
-import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
-import com.hfut.schedule.logic.network.repo.hfut.LibraryRepository
-import com.hfut.schedule.logic.network.repo.hfut.LoginSchoolNetRepository
-import com.hfut.schedule.logic.network.repo.hfut.NewsRepository
-import com.hfut.schedule.logic.network.repo.hfut.OneRepository
-import com.hfut.schedule.logic.network.repo.hfut.Repository
-import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
-import com.hfut.schedule.logic.network.repo.hfut.WxRepository
-import com.hfut.schedule.logic.util.network.getPageSize
+import com.hfut.schedule.logic.network.repo.CasLoginRepository
+import com.hfut.schedule.logic.network.repo.CommunityRepository
+import com.hfut.schedule.logic.network.repo.GuaGuaRepository
+import com.hfut.schedule.logic.network.repo.HuiXinRepository
+import com.hfut.schedule.logic.network.repo.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.LibraryRepository
+import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
+import com.hfut.schedule.logic.network.repo.NewsRepository
+import com.hfut.schedule.logic.network.repo.OneRepository
+import com.hfut.schedule.logic.network.repo.OthersRepository
+import com.hfut.schedule.logic.network.repo.UniAppRepository
+import com.hfut.schedule.logic.network.repo.WxRepository
+
 import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
@@ -107,8 +108,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
-import com.xah.shared.model.BillBean
-import com.xah.shared.model.TotalResult
+import com.xah.forecast.model.network.BillBean
+import com.xah.forecast.model.result.TotalResult
 
 class NetWorkViewModel() : ViewModel() {
     val studentId = StateHolder<Int>()
@@ -138,7 +139,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun wxConfirmLogin(auth : String,uuid : String) = WxRepository.wxConfirmLogin(uuid,auth,wxConfirmLoginResponse)
 
     val haiLeNearPositionResp = StateHolder<List<HaiLeNearPositionBean>>()
-    suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = Repository.getHaiLeNear(bean,haiLeNearPositionResp)
+    suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = OthersRepository.getHaiLeNear(bean,haiLeNearPositionResp)
 
     val giteeApkSizeResp = StateHolder<Double>()
     suspend fun getGiteeApkSize(version : String) = GithubRepository.getUpdateFileSize("$version.apk",giteeApkSizeResp)
@@ -146,7 +147,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getGiteePatchSize(patch: Patch) = GithubRepository.getUpdateFileSize(parsePatch(patch),giteePatchSizeResp)
 
     val haiLeDeviceDetailResp = StateHolder<List<HaiLeDeviceDetailBean>>()
-    suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequestBody) = Repository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)
+    suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequest) = OthersRepository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)
 
     val githubStarsData = StateHolder<Int>()
     suspend fun getStarNum() = GithubRepository.getStarNum(githubStarsData)
@@ -155,7 +156,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getUpdateContents() = GithubRepository.getUpdateContents(githubFolderResp)
 
     val workSearchResult = StateHolder<WorkSearchResponse>()
-    suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: CampusRegion) = Repository.searchWorks(keyword,page,type,campus,workSearchResult)
+    suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: CampusRegion) = OthersRepository.searchWorks(keyword,page,type,campus,workSearchResult)
 
     val supabaseTodayVisitResp = StateHolder<Int>()
     val supabaseUserCountResp = StateHolder<Int>()
@@ -204,13 +205,13 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun supabaseUpdateEvent(jwt: String, id: Int, body : Map<String,Any>) = SupabaseRepository.supabaseUpdateEvent(jwt,id,body,supabaseUpdateResp)
 
     val admissionTokenResp = StateHolder<AdmissionTokenResponse>()
-    suspend fun getAdmissionToken() = Repository.getAdmissionToken(admissionTokenResp)
+    suspend fun getAdmissionToken() = OthersRepository.getAdmissionToken(admissionTokenResp)
 
     val admissionListResp = StateHolder<Pair<AdmissionType,Map<String, List<AdmissionMapBean>>>>()
-    suspend fun getAdmissionList(type: AdmissionType) = Repository.getAdmissionList(type,admissionListResp)
+    suspend fun getAdmissionList(type: AdmissionType) = OthersRepository.getAdmissionList(type,admissionListResp)
 
     val admissionDetailResp = StateHolder<AdmissionDetailBean>()
-    suspend fun getAdmissionDetail(type : AdmissionType,bean : AdmissionMapBean,region: String) = Repository.getAdmissionDetail(type,bean,region,admissionDetailResp,admissionTokenResp)
+    suspend fun getAdmissionDetail(type : AdmissionType,bean : AdmissionMapBean,region: String) = OthersRepository.getAdmissionDetail(type,bean,region,admissionDetailResp,admissionTokenResp)
 
     val programList = StateHolder<List<ProgramListBean>>()
     suspend fun getProgramList(campus : CampusRegion) = GithubRepository.getProgramList(campus,programList)
@@ -289,7 +290,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun goToPe(cookie : String) = CasLoginRepository.goToPe(cookie)
 
     val checkStuLoginResp = StateHolder<Boolean>()
-    suspend fun checkStuLogin(cookie : String) = Repository.checkStuLogin(cookie,checkStuLoginResp)
+    suspend fun checkStuLogin(cookie : String) = OthersRepository.checkStuLogin(cookie,checkStuLoginResp)
 
     val libraryStatusResp = StateHolder<LibraryStatus>()
     suspend fun getLibraryStatus(token : String) = LibraryRepository.getStatus(token,libraryStatusResp)
@@ -298,7 +299,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun checkLibraryLogin(token : String) = LibraryRepository.checkLibraryLogin(token,checkLibraryLoginResp)
 
     val libraryBorrowedResp = StateHolder<List<LibraryBorrowedBean>>()
-    suspend fun getBorrowed(token : String,page : Int,status : BorrowedStatus? = null,pageSize : Int = getPageSize()) = LibraryRepository.getBorrowed(token,page,status,pageSize,libraryBorrowedResp)
+    suspend fun getBorrowed(token : String,page : Int,status : BorrowedStatus? = null,pageSize : Int = Constant.DEFAULT_PAGE_SIZE) = LibraryRepository.getBorrowed(token,page,status,pageSize,libraryBorrowedResp)
 
     val librarySearchResp = StateHolder<List<LibrarySearchBean>>()
     suspend fun searchLibrary(keyword : String,page : Int) = LibraryRepository.search(page,keyword,librarySearchResp)
@@ -307,10 +308,10 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun loginCommunity(ticket : String) = CommunityRepository.loginCommunity(ticket,loginCommunityData)
 
     val zhiJianCourseResp = StateHolder<List<ZhiJianCourseItemDto>>()
-    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String) = Repository.getZhiJianCourses(studentId,mondayDate,token,zhiJianCourseResp)
+    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String) = OthersRepository.getZhiJianCourses(studentId,mondayDate,token,zhiJianCourseResp)
 
     val zhiJianCheckLoginResp = StateHolder<Boolean>()
-    suspend fun zhiJianCheckLogin(token : String) = Repository.zhiJianCheckLogin(token,zhiJianCheckLoginResp)
+    suspend fun zhiJianCheckLogin(token : String) = OthersRepository.zhiJianCheckLogin(token,zhiJianCheckLoginResp)
 
     val jxglstuGradeData = StateHolder<List<GradeJxglstuDTO>>()
     suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = JxglstuRepository.getGradeFromJxglstu(cookie,semester,studentId,jxglstuGradeData)
@@ -341,7 +342,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getProgramPerformance(cookie: String) = JxglstuRepository.getProgramPerformance(cookie,studentId, programPerformanceData)
 
     val teacherSearchData = StateHolder<TeacherResponse>()
-    suspend fun searchTeacher(name: String = "", direction: String = "") = Repository.searchTeacher(name = name,direction = direction,teacherSearchData)
+    suspend fun searchTeacher(name: String = "", direction: String = "") = OthersRepository.searchTeacher(name = name,direction = direction,teacherSearchData)
 
     val courseSearchResponse = StateHolder<List<lessons>>()
     suspend fun searchCourse(cookie: String, className : String?, courseName : String?, semester : Int, courseId : String?) = JxglstuRepository.searchCourse(cookie,className,courseName,semester,courseId,studentId,courseSearchResponse)
@@ -369,7 +370,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getCardBill(
         auth : String,
         page : Int,
-        size : Int = getPageSize()
+        size : Int = Constant.DEFAULT_PAGE_SIZE
     ) = HuiXinRepository.getCardBill(auth,page,size,huiXinBillResult)
 
     val huiXinCardInfoResponse = MutableLiveData<String?>()
@@ -379,7 +380,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun checkHuiXinLogin(auth : String)= HuiXinRepository.checkHuiXinLogin(auth,huiXinCheckLoginResp)
 
     val checkPeLoginResp = StateHolder<Boolean>()
-    suspend fun checkPeLogin(cookie : String) = Repository.checkPeLogin(cookie,checkPeLoginResp)
+    suspend fun checkPeLogin(cookie : String) = OthersRepository.checkPeLogin(cookie,checkPeLoginResp)
 
     val huiXinLoginResp = StateHolder<String>()
     suspend fun huiXinSingleLogin(studentId : String,password: String) = HuiXinRepository.huiXinSingleLogin(studentId,password,huiXinLoginResp)
@@ -441,7 +442,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getPay() = OneRepository.getPay(payFeeResponse)
 
     val dormitoryResult = StateHolder<List<XuanquResponse>>()
-    suspend fun searchDormitoryXuanCheng(code : String) = Repository.searchDormitoryXuanCheng(code,dormitoryResult)
+    suspend fun searchDormitoryXuanCheng(code : String) = OthersRepository.searchDormitoryXuanCheng(code,dormitoryResult)
 
     val failRateData = StateHolder<List<FailRateRecord>>()
     suspend fun searchFailRate(token : String, name: String, page : Int) = CommunityRepository.searchFailRate(token,name,page,failRateData)
@@ -487,7 +488,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getMaps(token : String) = CommunityRepository.getMaps(token,mapsResponse)
 
     val officeHallSearchResponse = StateHolder<List<OfficeHallSearchBean>>()
-    suspend fun officeHallSearch(text : String, page : Int) = Repository.officeHallSearch(text,page,officeHallSearchResponse)
+    suspend fun officeHallSearch(text : String, page : Int) = OthersRepository.officeHallSearch(text,page,officeHallSearchResponse)
 
     val stuAppsResponse = StateHolder<List<StuAppBean>>()
     suspend fun getStuApps(token : String) = CommunityRepository.getStuApps(token,stuAppsResponse)
@@ -504,11 +505,6 @@ class NetWorkViewModel() : ViewModel() {
     fun getFriends(token : String) = CommunityRepository.getFriends(token)
 
     fun checkApplying(token : String, id : String, isOk : Boolean) = CommunityRepository.checkApplying(token,id,isOk)
-
-//    val lessonIdsNext = StateHolder<lessonResponse>()
-//    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int) = JxglstuRepository.getLessonIdsNext(cookie,studentId,bizTypeId,lessonIdsNext)
-
-//    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>) = JxglstuRepository.getDatumNext(cookie,lessonIdList,studentId)
 
     val weatherWarningData = StateHolder<List<QWeatherWarnBean>>()
     suspend fun getWeatherWarn(campus: CampusRegion) = QWeatherRepository.getWeatherWarn(campus,weatherWarningData)

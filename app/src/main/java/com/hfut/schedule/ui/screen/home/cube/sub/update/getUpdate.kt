@@ -1,20 +1,16 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.model.Update
-import com.hfut.schedule.logic.util.development.getKeyStackTrace
+import com.hfut.schedule.logic.util.dev.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatchFile
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import org.jsoup.Jsoup
 
 suspend fun getUpdates(vm : NetWorkViewModel) : GiteeReleaseResponse? = withContext(Dispatchers.IO) {
     val update = vm.giteeUpdatesResp.state.first { it !is UiState.Loading }

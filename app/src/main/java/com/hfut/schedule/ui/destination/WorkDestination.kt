@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 object WorkDestination : NavDestination() {
     override val key = "work"

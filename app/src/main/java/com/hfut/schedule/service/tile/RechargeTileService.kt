@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 class RechargeTileService : TileService() {
     override fun onClick() {

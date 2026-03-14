@@ -56,7 +56,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
@@ -77,6 +77,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Hashtable
 import androidx.core.graphics.createBitmap
+import com.hfut.schedule.network.util.Constant
 
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -105,7 +106,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-                        val qrPainter = createQRCodeBitmap(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android",1000,1000)
+                        val qrPainter = createQRCodeBitmap(Constant.GITEE_UPDATE_URL + "releases/tag/Android",1000,1000)
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
                     Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
@@ -286,7 +287,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                         },
                         onLongClick = { ShareTo.shareAPK() },
                         onDoubleClick = {
-                            ClipBoardHelper.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android",
+                            ClipBoardHelper.copy(Constant.GITEE_UPDATE_URL + "releases/tag/Android",
                                 context.getString(
                                     R.string.about_settings_toast_promote
                                 ))

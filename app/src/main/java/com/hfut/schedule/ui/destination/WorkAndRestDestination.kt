@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 data class WorkAndRestDestination(
     val name : String?

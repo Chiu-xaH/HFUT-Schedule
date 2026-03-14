@@ -23,6 +23,8 @@ dependencyResolutionManagement {
 rootProject.name = "肥工课程表"
 include ':app'
 include ':common'
-include ':shared'
+include ':forecast'
 include ':lite'
 include ':baselineProfile'
+include ':network'
+include ':shared'

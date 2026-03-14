@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.scan.ScanScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 object ScanQrCodeDestination : NavDestination() {
     override val key = "scan_qr_code"

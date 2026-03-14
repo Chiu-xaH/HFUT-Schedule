@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebNavigationScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 object WebFolderDestination : NavDestination() {
     override val key = "web_folder"

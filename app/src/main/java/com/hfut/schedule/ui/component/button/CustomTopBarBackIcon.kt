@@ -50,7 +50,7 @@ import com.xah.mirror.util.ShaderState
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
 
 

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.luminance
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.util.webview.WebViewBackHandler
 import com.hfut.schedule.ui.util.webview.WebViewBackIcon
 import com.hfut.schedule.ui.util.webview.WebViewContent
@@ -40,8 +41,8 @@ import com.hfut.schedule.ui.util.webview.sharedInterceptRequest
 import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
 import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -149,7 +150,7 @@ fun WebViewScreenForActivity(
                         view: WebView?,
                         request: WebResourceRequest?
                     ): WebResourceResponse? {
-                        if(currentUrl.startsWith(MyApplication.UNI_APP_URL)) {
+                        if(currentUrl.startsWith(Constant.UNI_APP_URL)) {
                             // 自己构建一个带 header 的请求，然后把 response 返回给 WebView
                             val url = request?.url?.toString() ?: return null
 

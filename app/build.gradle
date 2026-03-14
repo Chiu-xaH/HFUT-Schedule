@@ -29,8 +29,8 @@ android {
         applicationId packageName
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 252
-        versionName "4.20.1.1"
+        versionCode 253
+        versionName "4.20.1.2 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -177,8 +177,6 @@ dependencies {
     implementation(libs.glide)
     // DataStore
     implementation(libs.androidx.datastore.preferences)
-    // 用于和风天气密钥生成的JWT
-    implementation(libs.eddsa)
     // 礼花
     implementation(libs.konfetti)
     // 图片验证码识别
@@ -215,10 +213,14 @@ dependencies {
     implementation(libs.mirror)
     // 导航&转场动画模块
     implementation(libs.sharednav)
-    // 可单独使用的UI模块
+    // 通用UI模块
     implementation implementation(project(':common'))
-    // 消费预测及共用代码模块
-    implementation(project(":shared"))
+    // 共用模块
+    implementation implementation(project(':shared'))
+    // 消费预测
+    implementation implementation(project(':forecast'))
+    // 网络
+    implementation implementation(project(':network'))
     // 基准文件模块
     baselineProfile project(":baselineProfile")
 }

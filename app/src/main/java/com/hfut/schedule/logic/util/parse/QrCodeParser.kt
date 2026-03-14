@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.util.parse
 
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 data class WifiInfo(
     val ssid: String,

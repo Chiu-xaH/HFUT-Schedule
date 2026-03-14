@@ -45,6 +45,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -136,8 +137,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 
 data class SearchAppBean(
@@ -225,9 +226,9 @@ fun SearchScreen(
 //                SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,navController ) },AppNavRoute.NextCourse.receiveRoute()),
                 SearchAppBean(23,"饮水机 ${context.getString(R.string.navigation_label_hot_water)}机 趣智校园", { HotWater() }),
                 SearchAppBean(24,"${context.getString(AppNavRoute.Classroom.label)} 空教室", { Classroom() }, ClassroomDestination().key),
-                SearchAppBean(25,"体育 云运动 乐跑 校园跑 ${context.getString(R.string.navigation_label_physical_fitness_test)} 体育测试 体检", { LePaoYun() }, WebViewDestination.getKey(MyApplication.PE_HOME_URL)),
+                SearchAppBean(25,"体育 云运动 乐跑 校园跑 ${context.getString(R.string.navigation_label_physical_fitness_test)} 体育测试 体检", { LePaoYun() }, WebViewDestination.getKey(Constant.PE_HOME_URL)),
                 SearchAppBean(26,"${context.getString(AppNavRoute.WorkAndRest.label)} 校历", { WorkAndRest() }, WorkAndRestDestination(null).key),
-                SearchAppBean(27,"${context.getString(R.string.navigation_label_chsi)}", { XueXin() }, WebViewDestination.getKey(MyApplication.XUE_XIN_URL)),
+                SearchAppBean(27,"${context.getString(R.string.navigation_label_chsi)}", { XueXin() }, WebViewDestination.getKey(Constant.XUE_XIN_URL)),
                 SearchAppBean(28,"${context.getString(AppNavRoute.Life.label)} 校园 天气 新生 地图", { Life() }, LifeDestination(false).key),
                 SearchAppBean(29,"${context.getString(AppNavRoute.TransferMajor.label)}", { Transfer(ifSaved) }, TransferMajorDestination.key),
                 SearchAppBean(30,"${context.getString(AppNavRoute.CourseSearch.label)} 全校开课 课程", { CoursesSearch(ifSaved) }, CourseSearchDestination.key),
@@ -236,7 +237,7 @@ fun SearchScreen(
 //                SearchAppBean(33,"实习", { Practice(ifSaved) }),
                 SearchAppBean(34,"${context.getString(AppNavRoute.Alumni.label)} 校友 毕业", { Alumni() }, AlumniDestination.key),
                 SearchAppBean(35,"${context.getString(AppNavRoute.StuTodayCampus.label)} 学工系统 学工平台 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus() }, StuTodayCampusDestination.key),
-                SearchAppBean(36,"${context.getString(R.string.navigation_label_ietp)} 大学生创新创业系统", { IETP() }, WebViewDestination.getKey(MyApplication.IETP_URL)),
+                SearchAppBean(36,"${context.getString(R.string.navigation_label_ietp)} 大学生创新创业系统", { IETP() }, WebViewDestination.getKey(Constant.IETP_URL)),
                 SearchAppBean(37,"${context.getString(AppNavRoute.Work.label)} 实习 春招 双选 秋招", { Work() }, WorkDestination.key),
                 SearchAppBean(38,"${context.getString(AppNavRoute.Holiday.label)} 国家法定节假日 假期 节日 调休", { Holiday() }, HolidayDestination.key),
                 SearchAppBean(39,"${context.getString(R.string.navigation_label_supabase)} 信息共建 日程 网课 网址导航", { Supabase() }),

@@ -94,12 +94,12 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavControllerSafely
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithScale
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.ClickScale
+import com.xah.common.style.clickableWithScale
+import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.navigationBarHeightPadding
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 

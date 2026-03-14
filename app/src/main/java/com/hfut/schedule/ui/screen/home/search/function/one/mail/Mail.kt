@@ -30,13 +30,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -44,7 +45,7 @@ import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -157,7 +158,7 @@ fun MailUI(vm: NetWorkViewModel) {
                 Text("若为首次使用，请前往信息门户(点击此项)进入邮箱，进行激活")
             },
             modifier = Modifier.clickable {
-                Starter.startWebUrl(context,MyApplication.ONE_URL)
+                Starter.startWebUrl(context,Constant.ONE_URL)
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.arrow_forward),null)

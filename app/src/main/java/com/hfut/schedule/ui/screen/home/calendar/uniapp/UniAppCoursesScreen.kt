@@ -53,9 +53,9 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.padding.navigationBarHeightPadding
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 

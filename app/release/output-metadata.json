@@ -11,22 +11,9 @@
       "type": "UNIVERSAL",
       "filters": [],
       "attributes": [],
-      "versionCode": 252,
-      "versionName": "4.20.1.1 Preview",
+      "versionCode": 253,
+      "versionName": "4.20.1.2 Preview",
       "outputFile": "app-universal-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "x86_64"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 2524,
-      "versionName": "4.20.1.1 Preview",
-      "outputFile": "4.20.1.1 Preview-x86_64.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -37,9 +24,22 @@
         }
       ],
       "attributes": [],
-      "versionCode": 2522,
-      "versionName": "4.20.1.1 Preview",
-      "outputFile": "4.20.1.1 Preview-arm64-v8a.apk"
+      "versionCode": 2532,
+      "versionName": "4.20.1.2 Preview",
+      "outputFile": "4.20.1.2 Preview-arm64-v8a.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2534,
+      "versionName": "4.20.1.2 Preview",
+      "outputFile": "4.20.1.2 Preview-x86_64.apk"
     }
   ],
   "elementType": "File",
@@ -49,8 +49,8 @@
       "maxApi": 30,
       "baselineProfiles": [
         "baselineProfiles/1/app-universal-release.dm",
-        "baselineProfiles/1/4.20.1.1 Preview-x86_64.dm",
-        "baselineProfiles/1/4.20.1.1 Preview-arm64-v8a.dm"
+        "baselineProfiles/1/4.20.1.2 Preview-arm64-v8a.dm",
+        "baselineProfiles/1/4.20.1.2 Preview-x86_64.dm"
       ]
     },
     {
@@ -58,8 +58,8 @@
       "maxApi": 2147483647,
       "baselineProfiles": [
         "baselineProfiles/0/app-universal-release.dm",
-        "baselineProfiles/0/4.20.1.1 Preview-x86_64.dm",
-        "baselineProfiles/0/4.20.1.1 Preview-arm64-v8a.dm"
+        "baselineProfiles/0/4.20.1.2 Preview-arm64-v8a.dm",
+        "baselineProfiles/0/4.20.1.2 Preview-x86_64.dm"
       ]
     }
   ],

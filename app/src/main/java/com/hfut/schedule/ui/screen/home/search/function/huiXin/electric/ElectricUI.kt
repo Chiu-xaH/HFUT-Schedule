@@ -77,6 +77,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -92,9 +93,9 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.text.BottomTip
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -106,13 +107,13 @@ private const val XUANCHENG_TAB = 1
 
 private fun getUrl(page : Int) : String {
     val auth = prefs.getString("auth","")
-    return  MyApplication.HUI_XIN_URL +
+    return  Constant.HUI_XIN_URL +
             "charge-app/?name=pays&appsourse=ydfwpt&id=${
                 if(page == XUANCHENG_TAB)
                     FeeType.ELECTRIC_XUANCHENG.code
                 else 
                     FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
-            }&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
+            }&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)

@@ -13,7 +13,8 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.network.util.Constant
+import com.xah.common.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 
 
@@ -24,8 +25,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 fun WebItem() {
     data class WebItemData(val url : String,val icon : Int,val title : String,val remark : String? = null)
     val webs = listOf(
-        WebItemData(title = "信息门户", icon = R.drawable.person, url = MyApplication.ONE_URL),
-        WebItemData(title = "WebVpn", icon = R.drawable.vpn_key, url = MyApplication.WEBVPN_URL),
+        WebItemData(title = "信息门户", icon = R.drawable.person, url = Constant.ONE_URL),
+        WebItemData(title = "WebVpn", icon = R.drawable.vpn_key, url = Constant.WEBVPN_URL),
     )
     val context = LocalContext.current
     Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

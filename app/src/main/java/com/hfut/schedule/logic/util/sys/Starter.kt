@@ -10,8 +10,6 @@ import android.provider.DocumentsContract
 import android.provider.Settings
 import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
-import androidx.navigation.NavController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
@@ -24,7 +22,8 @@ import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.enumeration.XwxScreen
-import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.network.util.WebVpnConvertor
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.destination.WebViewDestination
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -185,10 +184,10 @@ object Starter {
     ) {
         if(GlobalUIStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
-            if(url.contains(MyApplication.WEBVPN_URL)) {
+            if(url.contains(Constant.WEBVPN_URL)) {
                 goToWebView(context, url, title, cookieWebVpn,icon)
             } else {
-                goToWebView(context, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon)
+                goToWebView(context, WebVpnConvertor.getWebVpnUrl(url), title, cookieWebVpn,icon)
             }
         } else {
             goToWebView(context,url, title, cookie,icon)
@@ -204,10 +203,10 @@ object Starter {
     ) {
         if(GlobalUIStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
-            if(url.contains(MyApplication.WEBVPN_URL)) {
+            if(url.contains(Constant.WEBVPN_URL)) {
                 goToWebViewNavigation(navController, url, title, cookieWebVpn,icon)
             } else {
-                goToWebViewNavigation(navController, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon)
+                goToWebViewNavigation(navController, WebVpnConvertor.getWebVpnUrl(url), title, cookieWebVpn,icon)
             }
         } else {
             goToWebViewNavigation(navController,url, title, cookie,icon)

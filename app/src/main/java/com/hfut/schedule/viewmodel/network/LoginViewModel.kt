@@ -2,22 +2,22 @@ package com.hfut.schedule.viewmodel.network
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CasLoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
-import com.hfut.schedule.logic.network.api.LoginService
-import com.hfut.schedule.logic.network.api.WebVpnService
-import com.hfut.schedule.logic.network.repo.hfut.CasLoginRepository
-import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.login.LoginWebVpnServiceCreator
-import com.hfut.schedule.logic.network.util.CasInHFUT
-import com.hfut.schedule.logic.network.util.launchRequestState
+import com.hfut.schedule.network.api.LoginService
+import com.hfut.schedule.network.api.WebVpnService
+import com.hfut.schedule.logic.network.repo.CasLoginRepository
+import com.hfut.schedule.logic.network.impl.LoginServiceCreator
+import com.hfut.schedule.network.impl.LoginWebVpnServiceCreator
+import com.hfut.schedule.logic.util.network.CasInHFUT
+import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -129,7 +129,7 @@ class LoginViewModel : ViewModel() {
     val status = StateHolder<Boolean>()
     suspend fun putKey(ticket : String) = launchRequestState(
         holder = status ,
-        request = { loginWebVpn.putKey(MyApplication.WEBVPN_COOKIE_HEADER + ticket) },
+        request = { loginWebVpn.putKey(Constant.WEBVPN_COOKIE_HEADER + ticket) },
         transformSuccess = { _,_ -> true }
     )
 
@@ -140,7 +140,7 @@ class LoginViewModel : ViewModel() {
     )
     private suspend fun parseWebVpnCookie(headers: Headers) : String {
         try {
-            val ticket = headers.toString().substringAfter(MyApplication.WEBVPN_COOKIE_HEADER)
+            val ticket = headers.toString().substringAfter(Constant.WEBVPN_COOKIE_HEADER)
                 .substringBefore(";")
             // 保存cookie
             DataStoreManager.saveWebVpnCookie(ticket)

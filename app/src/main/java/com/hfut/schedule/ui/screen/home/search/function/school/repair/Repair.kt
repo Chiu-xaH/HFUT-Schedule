@@ -19,12 +19,13 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 @Composable
@@ -52,7 +53,7 @@ fun Repair(hazeState : HazeState) {
                         Text("宣城校区")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(context,MyApplication.REPAIR_XC_URL)
+                        Starter.startWebUrl(context,Constant.REPAIR_XC_URL)
                     }
                 )
                 CardListItem(
@@ -60,7 +61,7 @@ fun Repair(hazeState : HazeState) {
                         Text("合肥校区")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(context,MyApplication.REPAIR_URL)
+                        Starter.startWebUrl(context,Constant.REPAIR_URL)
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))

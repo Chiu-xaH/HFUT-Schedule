@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.util.safeDiv
+import com.xah.common.util.safeDiv
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

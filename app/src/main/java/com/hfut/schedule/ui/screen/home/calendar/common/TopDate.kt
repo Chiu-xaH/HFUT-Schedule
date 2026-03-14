@@ -44,7 +44,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import java.time.LocalDate
 
 @Composable

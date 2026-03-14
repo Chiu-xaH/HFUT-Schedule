@@ -27,7 +27,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.network.util.MyApiParse.getCustomEvent
+import com.hfut.schedule.logic.util.network.MyApiParse.getCustomEvent
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -38,8 +38,8 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.align.ColumnVertical
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

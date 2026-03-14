@@ -3,8 +3,8 @@ package com.hfut.schedule.ui.destination
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.UiText
+import com.xah.common.util.language.res
 
 object SettingsNetworkDestination : NavDestination() {
     override val key: String = "settings_network"

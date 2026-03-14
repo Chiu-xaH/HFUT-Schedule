@@ -1,13 +1,13 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.encodeUrl
+import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -20,7 +20,7 @@ class RedirectTicketInterceptor() : Interceptor {
             val location = response.header("Location").toString()
             val ticket = location.substringAfter("ticket=")
             when {
-                location.contains(MyApplication.STU_URL) -> {
+                location.contains(Constant.STU_URL) -> {
                     // 学工系统的登录
                     // 向前重定向一次
                     val newRequest = request
@@ -31,11 +31,11 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginStu(nextResponse.headers,nextResponse.body?.string())
                     nextResponse.close()
                 }
-                location.contains(MyApplication.COMMUNITY_URL) -> {
+                location.contains(Constant.COMMUNITY_URL) -> {
                     // 智慧社区的登录
-                    CasGoToInterceptorState.toCommunityTicket.value = ticket
+                    GoToInterceptorState.toCommunityTicket.value = ticket
                 }
-                location.contains(MyApplication.ZHI_JIAN_URL) -> {
+                location.contains(Constant.ZHI_JIAN_URL) -> {
                     // 指间工大登录
                     // 向前重定向一次
                     val newRequest = request
@@ -53,15 +53,11 @@ class RedirectTicketInterceptor() : Interceptor {
                             .header("Cookie", cookie)
                             .url(
                                 homeLocation ?: (
-                                        MyApplication.ZHI_JIAN_URL +
+                                        Constant.ZHI_JIAN_URL +
                                                 "wui/cas-entrance.jsp;jsessionid=${
                                                     it.substringAfter("=")
                                                 }?path=${
-                                                    encodeUrl(
-                                                        encodeUrl(
-                                                            MyApplication.ZHI_JIAN_URL + "wui/index.html#/main"
-                                                        )
-                                                    )
+                                                    encodeUrl(encodeUrl(Constant.ZHI_JIAN_URL + "wui/index.html#/main"))
                                                 }&ssoType=CAS"
                                         )
                             )
@@ -76,7 +72,7 @@ class RedirectTicketInterceptor() : Interceptor {
                         checkResponse.close()
                     }
                 }
-                location.contains(MyApplication.JXGLSTU_URL) -> {
+                location.contains(Constant.JXGLSTU_URL) -> {
                     // 教务系统的登录
                     // 向前重定向一次
                     val newRequest = request
@@ -87,7 +83,7 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginJxglstu(nextResponse.headers)
                     nextResponse.close()
                 }
-                location.contains(MyApplication.NEW_LIBRARY_URL) -> {
+                location.contains(Constant.NEW_LIBRARY_URL) -> {
                     // 图书馆登录
                     // 向前重定向一次
                     val newRequest = request
@@ -98,7 +94,7 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginLibrary(nextResponse.headers)
                     nextResponse.close()
                 }
-                location.contains(MyApplication.PE_URL) -> {
+                location.contains(Constant.PE_URL) -> {
                     // 体测平台
                     val token = "PHPSESSID=$ticket"
                     saveString("PE", token)

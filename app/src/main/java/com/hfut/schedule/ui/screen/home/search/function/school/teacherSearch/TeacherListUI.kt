@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -25,9 +26,9 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.xah.uicommon.style.align.CenterScreen
+import com.xah.common.style.align.CenterScreen
 
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +65,7 @@ fun TeacherListUI(
                             Text(text = it.name, fontWeight = FontWeight.Bold)
                         },
                         trailingContent = {
-                            UrlImage(url = MyApplication.TEACHER_URL + it.picUrl, width = 100.dp, height = 120.dp)
+                            UrlImage(url = Constant.TEACHER_URL + it.picUrl, width = 100.dp, height = 120.dp)
                         },
                         overlineContent = {
                             Text(department)

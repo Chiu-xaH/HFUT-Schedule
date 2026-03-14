@@ -46,9 +46,8 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -113,8 +112,6 @@ fun NetworkSettingsScreen(
                     leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.FocusCardScreen.route) }
                 )
-                PaddingHorizontalDivider()
-                ArrangeItem()
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.network_settings_school_card_password_title)) },

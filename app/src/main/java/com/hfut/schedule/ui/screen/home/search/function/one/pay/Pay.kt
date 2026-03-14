@@ -41,6 +41,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -60,10 +61,10 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -109,7 +110,7 @@ fun FeeScreen(
                 },
                 actions = {
                     LiquidButton(
-                        onClick = { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) },
+                        onClick = { Starter.startWebUrl(context,Constant.PAY_FEE_URL) },
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                         backdrop = backDrop
                     ) {
@@ -151,7 +152,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-                    val qrPainter = createQRCodeBitmap(MyApplication.PAY_FEE_URL,1000,1000)
+                    val qrPainter = createQRCodeBitmap(Constant.PAY_FEE_URL,1000,1000)
                     qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                 }
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
@@ -218,7 +219,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                     painter = painterResource(id = R.drawable.net),
                     contentDescription = ""
                 ) },
-                modifier = Modifier.clickable { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) }
+                modifier = Modifier.clickable { Starter.startWebUrl(context,Constant.PAY_FEE_URL) }
             )
             PaddingHorizontalDivider()
             TransplantListItem(
@@ -233,7 +234,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                     },
                     onDoubleClick = {},
                     onLongClick = {
-                        ClipBoardHelper.copy(MyApplication.PAY_FEE_URL)
+                        ClipBoardHelper.copy(Constant.PAY_FEE_URL)
                     }
                 )
             )

@@ -22,7 +22,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

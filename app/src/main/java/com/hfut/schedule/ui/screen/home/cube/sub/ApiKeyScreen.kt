@@ -32,8 +32,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 @Composable

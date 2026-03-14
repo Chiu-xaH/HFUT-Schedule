@@ -40,6 +40,7 @@ import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -62,9 +63,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -78,7 +79,7 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
     val finalUrl = if(url != null && isValidWebUrl(url)) {
         url
     } else {
-        MyApplication.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
+        Constant.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
     if(!needLogin || GlobalUIStateHolder.globalWebVpn == true) {
         Starter.startWebView(context,finalUrl,name,null, AppNavRoute.OfficeHall.icon)

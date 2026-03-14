@@ -59,6 +59,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -74,9 +75,9 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.XwxViewModel
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -269,7 +270,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                             }
                         },
                         leadingContent = {
-                            UrlImage(MyApplication.XWX_PICTURE_URL + item.iconUrl, useCut = false, width = 50.dp, height = 50.dp)
+                            UrlImage(Constant.XWX_PICTURE_URL + item.iconUrl, useCut = false, width = 50.dp, height = 50.dp)
                         },
                         modifier = Modifier.clickable {
                             schoolCode = item.schoolCode

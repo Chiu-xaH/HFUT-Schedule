@@ -2,8 +2,7 @@ package com.hfut.schedule.logic.network.interceptor
 
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.util.LogUtil
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.xah.shared.LogUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -17,7 +16,7 @@ class GotoInterceptor : Interceptor {
         when {
             locationStr.contains("code=") -> {
                 // 登录信息门户
-                CasGoToInterceptorState.toOneCode.value = location[0]
+                GoToInterceptorState.toOneCode.value = location[0]
             }
             locationStr.contains("synjones") -> {
                 // 登录慧新易校
@@ -34,7 +33,3 @@ private fun parseHuiXinAuth(location : String) {
     showToast("一卡通登录成功")
 }
 
-object CasGoToInterceptorState {
-    var toOneCode = MutableStateFlow<String?>(null)
-    var toCommunityTicket = MutableStateFlow<String?>(null)
-}

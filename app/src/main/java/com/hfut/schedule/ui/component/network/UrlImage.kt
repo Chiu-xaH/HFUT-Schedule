@@ -24,7 +24,7 @@ import com.hfut.schedule.logic.util.other.rememberImageState
 import com.hfut.schedule.logic.util.ocr.preprocessCaptcha
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
 
 

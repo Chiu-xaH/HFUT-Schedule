@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.NotificationBoxScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 object NotificationBoxDestination : NavDestination() {
     override val key = "notification_box"

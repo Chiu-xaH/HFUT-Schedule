@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.ScanQrCodeDestination
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 
 import com.xah.navigation.utils.LocalNavController

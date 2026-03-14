@@ -11,7 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hfut.schedule.ui.util.navigation.canPopBack
 import com.xah.navigation.utils.LocalNavControllerSafely
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.nav2Composable(

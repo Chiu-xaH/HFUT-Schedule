@@ -28,12 +28,11 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
-import com.hfut.schedule.logic.network.util.CasInHFUT
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
-import com.hfut.schedule.logic.network.util.isNotBadRequest
+import com.hfut.schedule.logic.network.interceptor.GoToInterceptorState
+import com.hfut.schedule.logic.util.network.CasInHFUT
+import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
+import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -41,17 +40,14 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.destination.AddEventDestination
 import com.hfut.schedule.ui.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.destination.ExamDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
@@ -62,8 +58,6 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 
@@ -71,11 +65,11 @@ import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.status.LoadingUI
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.align.CenterScreen
+import com.xah.common.style.padding.navigationBarHeightPadding
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -83,7 +77,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 // 去重
 fun <T>distinctUnit(list : List<SnapshotStateList<T>>) {
@@ -111,7 +104,7 @@ suspend fun loginHuiXin(vm: NetWorkViewModel) {
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
     if (isNotBadRequest(result)) {
-        CasGoToInterceptorState.toCommunityTicket
+        GoToInterceptorState.toCommunityTicket
             .filterNotNull()
             .collect { value ->
                 vm.loginCommunity(value)
@@ -123,7 +116,7 @@ private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
     vm.goToOne(cookies)
     vm.goToOne(cookies)
     // byd为啥发两次才给302
-    CasGoToInterceptorState.toOneCode
+    GoToInterceptorState.toOneCode
         .filterNotNull()
         .collect { value ->
             vm.loginOne(value)

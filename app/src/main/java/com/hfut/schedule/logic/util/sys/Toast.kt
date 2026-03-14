@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.xah.uicommon.util.ToastUtil
+import com.xah.common.util.ToastUtil
 
 fun showDevelopingToast(context : Context = MyApplication.context) = showToast(R.string.toast_developing,context)
 

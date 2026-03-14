@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.common.component.text.ScrollText
+import com.xah.common.style.align.ColumnVertical
 
 
 

@@ -63,6 +63,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -72,9 +73,9 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.status.LoadingUI
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -85,7 +86,7 @@ import java.math.BigDecimal
 
 private fun getUrl(page : Int,) : String {
     val auth = prefs.getString("auth","")
-    return MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
+    return Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
 fun getInGuaGua(vm: NetWorkViewModel,context : Context,onResult : (Boolean) -> Unit) {
 

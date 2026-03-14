@@ -28,7 +28,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-03-13") },
+                overlineContent = { Text(text = "2026-03-15") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,9 +56,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 潜在的部分低Android版本在转场动画进行时崩溃的Bug")
-//            UpdateItems("新增 适配若干二级界面为新的转场动画")//
-//            UpdateItems("优化 部分页面的显示")//
+            UpdateItems("新增 适配若干二级界面为新的转场动画")
+            UpdateItems("优化 部分页面的显示")
 
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
         //            UpdateItems("修复 打断动画与从App返回到桌面之间的手势冲突")

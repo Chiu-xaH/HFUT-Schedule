@@ -5,7 +5,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeDetailScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.uicommon.util.language.res
+import com.xah.common.util.language.res
 
 data class GradeDetailDestination(
     val bean : GradeJxglstuResponse,

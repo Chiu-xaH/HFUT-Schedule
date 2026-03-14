@@ -35,9 +35,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.xah.uicommon.component.status.LoadingScreen
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.util.language.text
+import com.xah.common.component.status.LoadingScreen
+import com.xah.common.style.align.CenterScreen
+import com.xah.common.util.language.text
 
 
 @Composable

@@ -20,8 +20,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.util.language.res
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.util.language.res
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 

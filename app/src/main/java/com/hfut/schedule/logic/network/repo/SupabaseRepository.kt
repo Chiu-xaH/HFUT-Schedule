@@ -12,23 +12,21 @@ import com.hfut.schedule.logic.model.SupabaseLoginResponse
 import com.hfut.schedule.logic.model.SupabaseRefreshLoginBean
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.network.api.SupabaseService
-import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.network.util.launchRequestState
-import com.hfut.schedule.logic.network.util.makeRequest
-import com.hfut.schedule.logic.network.util.supabaseEventDtoToEntity
-import com.hfut.schedule.logic.network.util.supabaseEventEntityToDto
-import com.hfut.schedule.logic.network.util.supabaseEventForkDtoToEntity
+import com.hfut.schedule.network.impl.SupabaseServiceCreator
+import com.hfut.schedule.logic.util.network.launchRequestNone
+import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.logic.util.network.makeRequest
+import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
+import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
+import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.postedUse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.awaitResponse
 
 object SupabaseRepository {
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)

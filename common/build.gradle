@@ -5,10 +5,8 @@ plugins {
 }
 
 android {
-    def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
-
-    namespace 'com.xah.uicommon'
-    compileSdk maxAndroidVersion
+    namespace 'com.xah.common'
+    compileSdk Integer.parseInt(libs.versions.maxAndroidVersion.get())
 
     defaultConfig {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
@@ -22,10 +20,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '11'
     }

@@ -30,7 +30,7 @@ import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.deepen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.rememberDynamicColorScheme
-import com.xah.uicommon.style.color.TransparentSystemBars
+import com.xah.common.style.color.TransparentSystemBars
 
 private val list = ColorStyle.entries
 

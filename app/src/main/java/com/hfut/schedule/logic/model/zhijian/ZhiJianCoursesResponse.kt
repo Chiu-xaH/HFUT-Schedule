@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.model.zhijian
 import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 data class ZhiJianCoursesResponse(
     val data : ZhiJianCoursesBean

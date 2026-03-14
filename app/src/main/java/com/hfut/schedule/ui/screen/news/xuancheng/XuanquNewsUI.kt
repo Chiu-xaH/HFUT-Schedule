@@ -23,16 +23,17 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.network.util.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.common.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -69,7 +70,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                autoWebVpnForNews(context ,MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
+                                autoWebVpnForNews(context ,Constant.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
                             }
                         },
                     )

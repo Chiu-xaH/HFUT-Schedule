@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -66,9 +67,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.component.status.LoadingUI
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -256,7 +257,7 @@ fun UpdateUI(
                     )
                 }
             },
-            modifier = Modifier.clickable{ Starter.startWebUrl(context,MyApplication.GITEE_UPDATE_URL+ "/releases/tag/Android") },
+            modifier = Modifier.clickable{ Starter.startWebUrl(context,Constant.GITEE_UPDATE_URL+ "/releases/tag/Android") },
         )
 
         AnimatedVisibility(
@@ -287,7 +288,7 @@ fun UpdateUI(
                         onClick = {
                             update?.name?.let { version ->
                                 viewModel.startDownload(
-                                    "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",
+                                    "${Constant.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",
                                     "${MyApplication.APP_NAME}_${version}.apk",
                                     context
                                 )
@@ -527,7 +528,7 @@ fun PatchUpdateUI(
                         onClick = {
                             update?.name?.let { version ->
                                 viewModel.startDownload(
-                                    "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/$patchFileName",
+                                    "${Constant.GITEE_UPDATE_URL}releases/download/Android/$patchFileName",
                                     patchFileName,
                                     context
                                 )

@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,13 +36,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.application.MyApplication.Companion.WEBVPN_URL
-import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
@@ -64,9 +62,9 @@ import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -148,7 +146,7 @@ fun WebVpnScreen(
                                                 Icon(painterResource(R.drawable.info),null)
                                             },
                                             modifier = Modifier.clickable {
-                                                input = MyApplication.LIBRARY_SEAT
+                                                input = Constant.LIBRARY_SEAT
                                             }
                                         )
                                         PaddingHorizontalDivider()
@@ -165,23 +163,23 @@ fun WebVpnScreen(
                                         PaddingHorizontalDivider()
                                         TransplantListItem(
                                             headlineContent = {
-                                                Text("(座位预约) " + MyApplication.LIBRARY_SEAT)
+                                                Text("(座位预约) " + Constant.LIBRARY_SEAT)
                                             },
                                             overlineContent = { Text("点击粘贴到输入框")},
                                             leadingContent = { Text("例1")},
                                             modifier = Modifier.clickable {
-                                                input = MyApplication.LIBRARY_SEAT
+                                                input = Constant.LIBRARY_SEAT
                                             }
                                         )
                                         PaddingHorizontalDivider()
                                         TransplantListItem(
                                             leadingContent = { Text("例2")},
                                             headlineContent = {
-                                                Text("(图书馆) " + MyApplication.NEW_LIBRARY_URL)
+                                                Text("(图书馆) " + Constant.NEW_LIBRARY_URL)
                                             },
                                             overlineContent = { Text("点击粘贴到输入框")},
                                             modifier = Modifier.clickable {
-                                                input = MyApplication.NEW_LIBRARY_URL
+                                                input = Constant.NEW_LIBRARY_URL
                                             }
                                         )
                                     }
@@ -202,7 +200,7 @@ fun WebVpnScreen(
                                         ) { input = it }
                                         BottomButton(
                                             onClick = {
-                                                result = WebVpnUtil.getWebVpnUrl(
+                                                result = WebVpnConvertor.getWebVpnUrl(
                                                     input.let { if(it.endsWith("/")) it else "$it/" }
                                                 )
                                             },
@@ -286,18 +284,18 @@ fun WebVpnScreen(
                                                 Icon(painterResource(R.drawable.info),null)
                                             },
                                             modifier = Modifier.clickable {
-                                                input = MyApplication.LIBRARY_SEAT
+                                                input = Constant.LIBRARY_SEAT
                                             }
                                         )
                                         PaddingHorizontalDivider()
                                         TransplantListItem(
                                             headlineContent = {
-                                                Text("(教务系统) " + MyApplication.JXGLSTU_WEBVPN_URL)
+                                                Text("(教务系统) " + Constant.JXGLSTU_WEBVPN_URL)
                                             },
                                             overlineContent = { Text("点击粘贴到输入框")},
                                             leadingContent = { Text("例")},
                                             modifier = Modifier.clickable {
-                                                input = MyApplication.JXGLSTU_WEBVPN_URL
+                                                input = Constant.JXGLSTU_WEBVPN_URL
                                             }
                                         )
                                     }
@@ -305,7 +303,7 @@ fun WebVpnScreen(
                                 item {
                                     CustomCard(color = cardNormalColor()) {
                                         CustomTextField(
-                                            label = { Text("输入以${WEBVPN_URL}开头的合法链接")},
+                                            label = { Text("输入以${Constant.WEBVPN_URL}开头的合法链接")},
                                             input = input,
                                             trailingIcon = {
                                                 IconButton(onClick = { input = "" }) {
@@ -318,11 +316,11 @@ fun WebVpnScreen(
                                         ) { input = it }
                                         BottomButton(
                                             onClick = {
-                                                result = WebVpnUtil.getOrdinaryUrl(
+                                                result = WebVpnConvertor.getOrdinaryUrl(
                                                     input.let { if(it.endsWith("/")) it else "$it/" }
                                                 )
                                             },
-                                            enable = isValidWebUrl(input,true) && input.startsWith(WEBVPN_URL),
+                                            enable = isValidWebUrl(input,true) && input.startsWith(Constant.WEBVPN_URL),
                                             text = "转换为原始链接"
                                         )
                                     }
@@ -370,13 +368,13 @@ fun WebVpnScreen(
 
 suspend fun getWebVpnCookie() : String? {
     val webVpnCookie = DataStoreManager.webVpnCookies.first()
-    return MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    return Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
 }
 
 suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
     if(GlobalUIStateHolder.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
-        MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
         null
     }
@@ -391,6 +389,6 @@ suspend fun autoWebVpnForNews(
     if(cookie == null) {
         Starter.startWebView(context,url,title,null,icon)
     } else {
-        Starter.startWebView(context,WebVpnUtil.getWebVpnUrl(url),title,cookie,icon)
+        Starter.startWebView(context,WebVpnConvertor.getWebVpnUrl(url),title,cookie,icon)
     }
 }

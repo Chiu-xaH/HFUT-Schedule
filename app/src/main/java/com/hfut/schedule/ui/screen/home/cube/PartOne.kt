@@ -48,6 +48,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -68,8 +69,8 @@ import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.component.text.BottomTip
+import com.xah.common.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
 
 /* 本kt文件已完成多语言文案适配 */
@@ -247,7 +248,7 @@ fun GithubDownloadUI() {
         leadingContent = { Icon(painterResource(R.drawable.github),null)},
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(context ,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest")
+                Starter.startWebView(context ,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}/releases/latest")
             }
         }
     )
@@ -291,7 +292,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                             headlineContent = { Text("v$versionName") },
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                    Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
                                 }
                             }
                         )

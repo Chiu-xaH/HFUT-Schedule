@@ -23,7 +23,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusWidgetSettingsUI
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.theme.AppTheme
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
