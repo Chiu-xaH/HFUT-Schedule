@@ -211,13 +211,6 @@ fun CommunityCourseTableUI(
                     isExpand = false
                 } else {
                     onRestoreHeight()
-//                    showToast(
-//                        if(!isFriend) {
-//                            "空白区域双击添加日程,长按切换周"
-//                        } else {
-//                            "空白区域长按切换周"
-//                        }
-//                    )
                 }
             },
             onLongTapBlankRegion = {

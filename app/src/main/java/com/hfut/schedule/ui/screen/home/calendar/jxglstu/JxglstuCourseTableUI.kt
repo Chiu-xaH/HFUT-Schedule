@@ -523,7 +523,6 @@ fun JxglstuCourseTableUI(
                         isExpand = false
                     } else {
                         onRestoreHeight()
-//                        showToast("空白区域双击添加日程,长按切换周")
                     }
                 },
                 onLongTapBlankRegion = {

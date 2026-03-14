@@ -966,7 +966,6 @@ fun ClassroomLessonsScreen(
                                 isExpand = false
                             } else {
                                 smoothToOne(scaleFactor)
-//                                showToast("长按切换周")
                             }
                         },
                         scaleFactor = scaleFactor.floatValue,

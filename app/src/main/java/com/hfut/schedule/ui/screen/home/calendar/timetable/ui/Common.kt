@@ -77,10 +77,10 @@ fun TimeTable(
 
     val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
     val lineHeight = textSize * calendarSquareTextPadding
-    val timeTextLineHeight = lineHeight*timeTextFactor
-    val timeTextSize = textSize*timeTextFactor
-    val placeTextLineHeight = lineHeight*placeTextFactor
-    val placeTextSize = textSize*placeTextFactor
+    val timeTextLineHeight = lineHeight * timeTextFactor
+    val timeTextSize = textSize * timeTextFactor
+    val placeTextLineHeight = lineHeight * placeTextFactor
+    val placeTextSize = textSize * placeTextFactor
 
     val hasBackground = shaderState != null
 
