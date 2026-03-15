@@ -29,7 +29,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsFocusCardDestination : NavDestination() {
     override val key: String = "settings_focus_card"
-    override val title: UiText = text("设置-聚焦首卡片功能")
+    override val title: UiText = text("聚焦首卡片功能")
     override val icon = R.drawable.lightbulb
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

@@ -29,7 +29,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsFocusWidgetDestination : NavDestination() {
     override val key: String = "settings_focus_widget"
-    override val title: UiText = text("设置-聚焦课程小组件")
+    override val title: UiText = text("聚焦课程小组件")
     override val icon = R.drawable.widgets
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

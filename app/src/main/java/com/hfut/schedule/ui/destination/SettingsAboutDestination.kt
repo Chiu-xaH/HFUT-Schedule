@@ -42,7 +42,6 @@ object SettingsAboutDestination : NavDestination() {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
         val hazeState = rememberHazeState(blurEnabled = blur)
-        val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
 
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -64,7 +63,7 @@ object SettingsAboutDestination : NavDestination() {
                     .fillMaxSize()
                     .hazeSource(hazeState)
             ) {
-                AboutSettingsScreen(innerPadding,vm)
+                AboutSettingsScreen(innerPadding)
             }
         }
     }

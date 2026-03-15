@@ -68,6 +68,8 @@ import kotlinx.coroutines.launch
 import java.util.Hashtable
 import androidx.core.graphics.createBitmap
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.destination.SettingsAboutDeveloperDestination
+import com.hfut.schedule.ui.destination.SettingsAvailableDestination
 import com.hfut.schedule.ui.destination.SettingsDeveloperDestination
 import com.hfut.schedule.ui.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.fix.about.About
@@ -80,7 +82,7 @@ import com.xah.navigation.utils.LocalNavController
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AboutSettingsScreen(innerPadding : PaddingValues, vm : NetWorkViewModel) {
+fun AboutSettingsScreen(innerPadding : PaddingValues,) {
 //    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 //    var scale by remember { mutableFloatStateOf(1f) }
     val context = LocalContext.current
@@ -111,41 +113,6 @@ fun AboutSettingsScreen(innerPadding : PaddingValues, vm : NetWorkViewModel) {
                 }
             }
         }
-        var showBottomSheetUpdate by remember { mutableStateOf(false) }
-
-        if(showBottomSheetUpdate) {
-            HazeBottomSheet(
-                onDismissRequest = { showBottomSheetUpdate = false },
-                showBottomSheet = showBottomSheetUpdate,
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar(stringResource(R.string.about_settings_history_update_log_title))
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        UpdateContents(vm)
-                    }
-                }
-            }
-        }
-
-
-        var showBottomSheet_info by remember { mutableStateOf(false) }
-        if (showBottomSheet_info) {
-            HazeBottomSheet(
-                onDismissRequest = { showBottomSheet_info = false },
-                showBottomSheet = showBottomSheet_info,
-            ) {
-                About(vm)
-            }
-        }
 
         var showBottomSheet_icon by remember { mutableStateOf(false) }
         if (showBottomSheet_icon) {
@@ -157,22 +124,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues, vm : NetWorkViewModel) {
             }
         }
 
-        var showBottomSheet_support by remember { mutableStateOf(false) }
-        if (showBottomSheet_support) {
-            HazeBottomSheet(
-                onDismissRequest = { showBottomSheet_support = false },
-                showBottomSheet = showBottomSheet_support,
-            ) {
-                Scaffold(
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar(stringResource(R.string.about_settings_different_supported_title))
-                    },
-                ) { innerPadding ->
-                    Support(innerPadding)
-                }
-            }
-        }
+
         val scope = rememberCoroutineScope()
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
@@ -218,17 +170,27 @@ fun AboutSettingsScreen(innerPadding : PaddingValues, vm : NetWorkViewModel) {
                 }
 
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.about_settings_about_title)) },
-                    supportingContent = { Text(text = stringResource(R.string.about_settings_about_description))},
-                    modifier = Modifier.combinedClickable(
-                        onClick = { showBottomSheet_info = true},
-                        onLongClick = {
-                            //长按操作
-                            showBottomSheet_icon = true
-                        }),
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
-                )
+                SharedContainer(
+                    key = SettingsAboutDeveloperDestination.key,
+                    shape = RoundedCornerShape(0.dp),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.about_settings_about_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.about_settings_about_description))},
+                        modifier = Modifier.combinedClickable(
+                            onClick = {
+                                navTopController.push(SettingsAboutDeveloperDestination)
+                            },
+                            onLongClick = {
+                                //长按彩蛋
+                                showBottomSheet_icon = true
+                            }),
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                    )
+                }
+
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.about_settings_feedback_title)) },
@@ -281,12 +243,24 @@ fun AboutSettingsScreen(innerPadding : PaddingValues, vm : NetWorkViewModel) {
                     )
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.about_settings_different_supported_title)) },
-                    supportingContent = { Text(text = stringResource(R.string.about_settings_different_supported_description))},
-                    modifier = Modifier.clickable { showBottomSheet_support = true },
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
-                )
+                SharedContainer(
+                    key = SettingsAvailableDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = RoundedCornerShape(0.dp).topStart,
+                        topEnd = RoundedCornerShape(0.dp).topEnd,
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.about_settings_different_supported_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.about_settings_different_supported_description))},
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsAvailableDestination)
+                        },
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
+                    )
+                }
             }
         }
         DividerTextExpandedWith(stringResource(R.string.about_settings_fix_half_title)) {

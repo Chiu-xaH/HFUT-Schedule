@@ -23,8 +23,10 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -44,11 +47,13 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -60,10 +65,17 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalBottomDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.network.UrlImage
+import com.hfut.schedule.ui.destination.SettingsAboutDeveloperDestination.title
 import com.hfut.schedule.ui.screen.welcome.arguments
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -118,190 +130,199 @@ fun About(vm : NetWorkViewModel) {
     }
     val scope = rememberCoroutineScope()
     val userCount by vm.supabaseUserCountResp.state.collectAsState()
-    val activity = LocalActivity.current
     val todayVisitCount by vm.supabaseTodayVisitResp.state.collectAsState()
     val scrollState = rememberScrollState()
-    Box() {
-        Scaffold(
-                containerColor = Color.Transparent,
-            topBar = {
-                Column {
-                    HazeBottomSheetTopBar("关于") {
-                        FilledTonalButton(
-                            enabled = todayVisitCount is UiState.Success,
-                            onClick = {
-                                scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
-                                }
-                            }
-                        ) {
-                            Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
-                        }
-                    }
-                    ScrollHorizontalTopDivider(scrollState)
-                }
-            },
-            bottomBar = {
-                Column {
-                    ScrollHorizontalBottomDivider(scrollState)
-                    Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(.5f)
-                        ) {
-                            Text("Github ⭐ $starsNum")
-                        }
 
-                        Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
-                        FilledTonalButton(
-                            onClick = {
-                                scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
-                                }
-                            },
-                            enabled = userCount is UiState.Success,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(.5f)
-                        ) {
-                            Text("总用户 ${(userCount as? UiState.Success)?.data ?: ""}")
-                        }
-                    }
-                }
-            },
-        ) { innerPadding ->
-            Column(modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(scrollState)) {
-                DividerTextExpandedWith("开发者") {
-                    CustomCard(
-                        color = cardNormalColor(),
-                    ) {
-                        TransplantListItem(
-                            modifier = Modifier.clickable {
-                                scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}")
-                                }
-                            },
-                            headlineContent = {
-                                //一名热爱Android的开发者,宣城校区23级本科生
-                                Text(Constant.GITHUB_DEVELOPER_NAME)
-                            },
-                            overlineContent = { Text("开发者") },
-                            trailingContent = {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        Starter.emailMe(context)
-                                    }
-                                ) {
-                                    Icon(painterResource(R.drawable.mail),null)
-                                }
-                            },
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            modifier = Modifier.clickable {
-                            },
-                            overlineContent = { Text("贡献者(按时间顺序)") },
-                            headlineContent = {
-                                Text(MyApplication.contributors.map { it.key }.drop(1).joinToString(", "))
-                            },
-                        )
-                        PaddingHorizontalDivider()
-                        RowHorizontal  (
-                            modifier = Modifier.padding(APP_HORIZONTAL_DP)
-                        ) {
-                            OverlappingAvatars(
-                                MyApplication.contributors.map {
-                                    Constant.GITHUB_USER_IMAGE_URL + it.value
-                                },
-                            )
-                        }
-                    }
-                }
-
-                DividerTextExpandedWith("构建") {
-                    CustomCard (color = cardNormalColor()){
-                        TransplantListItem(
-                            headlineContent = { Text("Kotlin,Java,C") },
-                            overlineContent = { Text("语言") }
-                        )
-                        TransplantListItem(
-                            overlineContent = { Text("工具包") },
-                            headlineContent = { Text("Jetpack Compose") },
-                        )
-                        TransplantListItem(
-                            overlineContent = { Text("UI")},
-                            headlineContent = { Text("Material Design 3") },
-                        )
-                        TransplantListItem(
-                            overlineContent = { Text("跨平台(部分Module)") },
-                            headlineContent = { Text("Kotlin/Compose Multiplatform") },
-                        )
-                    }
-                }
-
-                DividerTextExpandedWith("开源引用") {
-                    CustomCard (color = cardNormalColor()){
-                        for(index in openSourceProjects.indices step 2) {
-                            Row {
-                                TransplantListItem(
-                                    headlineContent = { Text(openSourceProjects[index].name) },
-                                    supportingContent = { Text(openSourceProjects[index].description) },
-                                    modifier = Modifier.weight(.5f).clickable{
-                                        openSourceProjects[index].url?.let { Starter.startWebUrl(context,it) }
-                                    }
-                                )
-                                if(index+1 < openSourceProjects.size)
-                                    TransplantListItem(
-                                        headlineContent = { Text(openSourceProjects[index+1].name) },
-                                        supportingContent = { Text(openSourceProjects[index+1].description) },
-                                        modifier = Modifier.weight(.5f).clickable {
-                                            openSourceProjects[index+1].url?.let { Starter.startWebUrl(context,it) }
-                                        }
-                                    )
-                            }
-                        }
-                    }
-                }
-
-                DividerTextExpandedWith("用户协议") {
-                    CustomCard (color = cardNormalColor()) {
-                        for(index in arguments.indices) {
-                            val item = arguments[index]
-                            TransplantListItem(
-                                headlineContent = { Text(item) },
-                                leadingContent = { Text((index+1).toString()) }
-                            )
-                        }
-                    }
-                    LargeButton(
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                modifier = Modifier.topBarBlur(hazeState),
+                scrollBehavior = scrollBehavior,
+                title = { Text("关于") },
+                colors = topBarTransplantColor(),
+                navigationIcon = {
+                    TopBarNavigationIcon()
+                },
+                actions = {
+                    FilledTonalButton(
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        enabled = todayVisitCount is UiState.Success,
                         onClick = {
                             scope.launch {
-                                async { SharedPrefs.saveBoolean("canUse", default = false, save = false) }.await()
-                                launch {
-                                    showToast("已退出APP")
-                                    MyApplication.exitAppSafely()
-//                                    activity?.finish()
-                                }
+                                Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                            }
+                        }
+                    ) {
+                        Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.bottomBarBlur(hazeState)
+            ) {
+                Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP*2),
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.error,
-                        text = "撤销同意",
-                        icon = R.drawable.undo
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f)
+                    ) {
+                        Text("Github ⭐ $starsNum")
+                    }
+
+                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
+                    FilledTonalButton(
+                        onClick = {
+                            scope.launch {
+                                Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                            }
+                        },
+                        enabled = userCount is UiState.Success,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f)
+                    ) {
+                        Text("总用户 ${(userCount as? UiState.Success)?.data ?: ""}")
+                    }
+                }
+            }
+        },
+    ) { innerPadding ->
+        Column(modifier = Modifier.verticalScroll(scrollState).hazeSource(hazeState)) {
+            InnerPaddingHeight(innerPadding,true)
+            DividerTextExpandedWith("开发者") {
+                CustomCard(
+                    color = cardNormalColor(),
+                ) {
+                    TransplantListItem(
+                        modifier = Modifier.clickable {
+                            scope.launch {
+                                Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}")
+                            }
+                        },
+                        headlineContent = {
+                            //一名热爱Android的开发者,宣城校区23级本科生
+                            Text(Constant.GITHUB_DEVELOPER_NAME)
+                        },
+                        overlineContent = { Text("开发者") },
+                        trailingContent = {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    Starter.emailMe(context)
+                                }
+                            ) {
+                                Icon(painterResource(R.drawable.mail),null)
+                            }
+                        },
+                    )
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        modifier = Modifier.clickable {
+                        },
+                        overlineContent = { Text("贡献者(按时间顺序)") },
+                        headlineContent = {
+                            Text(MyApplication.contributors.map { it.key }.drop(1).joinToString(", "))
+                        },
+                    )
+                    PaddingHorizontalDivider()
+                    RowHorizontal  (
+                        modifier = Modifier.padding(APP_HORIZONTAL_DP)
+                    ) {
+                        OverlappingAvatars(
+                            MyApplication.contributors.map {
+                                Constant.GITHUB_USER_IMAGE_URL + it.value
+                            },
+                        )
+                    }
+                }
+            }
+
+            DividerTextExpandedWith("构建") {
+                CustomCard (color = cardNormalColor()){
+                    TransplantListItem(
+                        headlineContent = { Text("Kotlin,Java,C") },
+                        overlineContent = { Text("语言") }
+                    )
+                    TransplantListItem(
+                        overlineContent = { Text("工具包") },
+                        headlineContent = { Text("Jetpack Compose") },
+                    )
+                    TransplantListItem(
+                        overlineContent = { Text("UI")},
+                        headlineContent = { Text("Material Design 3") },
+                    )
+                    TransplantListItem(
+                        overlineContent = { Text("跨平台(部分Module)") },
+                        headlineContent = { Text("Kotlin/Compose Multiplatform") },
                     )
                 }
             }
+
+            DividerTextExpandedWith("开源引用") {
+                CustomCard (color = cardNormalColor()){
+                    for(index in openSourceProjects.indices step 2) {
+                        Row {
+                            TransplantListItem(
+                                headlineContent = { Text(openSourceProjects[index].name) },
+                                supportingContent = { Text(openSourceProjects[index].description) },
+                                modifier = Modifier.weight(.5f).clickable{
+                                    openSourceProjects[index].url?.let { Starter.startWebUrl(context,it) }
+                                }
+                            )
+                            if(index+1 < openSourceProjects.size)
+                                TransplantListItem(
+                                    headlineContent = { Text(openSourceProjects[index+1].name) },
+                                    supportingContent = { Text(openSourceProjects[index+1].description) },
+                                    modifier = Modifier.weight(.5f).clickable {
+                                        openSourceProjects[index+1].url?.let { Starter.startWebUrl(context,it) }
+                                    }
+                                )
+                        }
+                    }
+                }
+            }
+
+            DividerTextExpandedWith("用户协议") {
+                CustomCard (color = cardNormalColor()) {
+                    for(index in arguments.indices) {
+                        val item = arguments[index]
+                        TransplantListItem(
+                            headlineContent = { Text(item) },
+                            leadingContent = { Text((index+1).toString()) }
+                        )
+                    }
+                }
+                LargeButton(
+                    onClick = {
+                        scope.launch {
+                            async { SharedPrefs.saveBoolean("canUse", default = false, save = false) }.await()
+                            launch {
+                                showToast("已退出APP")
+                                MyApplication.exitAppSafely()
+//                                    activity?.finish()
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP*2),
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.error,
+                    text = "撤销同意",
+                    icon = R.drawable.undo
+                )
+            }
+
+            InnerPaddingHeight(innerPadding,false)
         }
-//        Party(show = !loading)
     }
 }
 

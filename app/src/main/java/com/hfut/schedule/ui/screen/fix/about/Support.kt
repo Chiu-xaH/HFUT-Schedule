@@ -30,6 +30,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 private data class SupportItemBean(val title : String,val android : String,val url : String?,val list: List<Boolean?>,val remark : String? = null)
@@ -63,7 +64,8 @@ fun Support(innerPadding : PaddingValues) {
             false,true,true,true,true,true,true,true
         ))
     )
-    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+    LazyColumn(modifier = Modifier) {
+        item { InnerPaddingHeight(innerPadding,true) }
         item {
             CardListItem(
                 headlineContent = { Text("${MyApplication.APP_NAME}致力于为每个用户提供平等的服务，但由于不同手机厂商对Android系统的定制，以及Android版本的不同，导致最终效果往往不同，但以下的特性均不影响APP的功能") },
@@ -77,6 +79,8 @@ fun Support(innerPadding : PaddingValues) {
             val item = items[index]
             SupportItem(item)
         }
+        item { InnerPaddingHeight(innerPadding,false) }
+
     }
 }
 

@@ -30,7 +30,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsJxglstuPasswordDestination : NavDestination() {
     override val key: String = "settings_jxglstu_password"
-    override val title: UiText = text("设置-教务系统密码")
+    override val title: UiText = text("教务系统密码")
     override val icon = R.drawable.lock
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

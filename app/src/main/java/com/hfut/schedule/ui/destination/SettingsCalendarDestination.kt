@@ -32,7 +32,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsCalendarDestination : NavDestination() {
     override val key: String = "settings_calendar"
-    override val title: UiText = text("设置-默认日历账户")
+    override val title: UiText = text("默认日历账户")
     override val icon = R.drawable.calendar_add_on
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

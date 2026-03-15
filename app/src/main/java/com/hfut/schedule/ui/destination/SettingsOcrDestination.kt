@@ -30,7 +30,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsOcrDestination : NavDestination() {
     override val key: String = "settings_ocr"
-    override val title: UiText = text("设置-图片验证码自动填充")
+    override val title: UiText = text("图片验证码自动填充")
     override val icon = R.drawable.center_focus_strong
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

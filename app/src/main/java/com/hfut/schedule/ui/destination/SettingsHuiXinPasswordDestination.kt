@@ -29,7 +29,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsHuiXinPasswordDestination : NavDestination() {
     override val key: String = "settings_hui_xin_password"
-    override val title: UiText = text("设置-一卡通密码")
+    override val title: UiText = text("一卡通密码")
     override val icon = R.drawable.lock
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

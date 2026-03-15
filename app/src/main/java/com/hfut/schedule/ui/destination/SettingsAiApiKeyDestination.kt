@@ -29,7 +29,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsAiApiKeyDestination : NavDestination() {
     override val key: String = "settings_ai_api_key"
-    override val title: UiText = text("设置-大模型")
+    override val title: UiText = text("设置: 大模型")
     override val icon = R.drawable.wand_stars
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

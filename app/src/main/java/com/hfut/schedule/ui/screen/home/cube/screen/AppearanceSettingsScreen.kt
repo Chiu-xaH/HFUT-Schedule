@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -122,6 +123,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.container.SharedContainer
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -648,16 +650,26 @@ fun SharedAppearanceSettingsScreen(
                     ExtensionSample()
                     PaddingHorizontalDivider()
                 }
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
-                    },
-                    modifier = Modifier.clickable {
-                        navController.push(CornerSettingsDestination)
-                    },
-                    leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
-                )
+                SharedContainer(
+                    key = CornerSettingsDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topEnd = RoundedCornerShape(0.dp).topEnd,
+                        topStart = RoundedCornerShape(0.dp).topStart,
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
+                        },
+                        modifier = Modifier.clickable {
+                            navController.push(CornerSettingsDestination)
+                        },
+                        leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
+                    )
+                }
 //                PaddingHorizontalDivider()
 //                TransplantListItem(
 //                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_bottom_bar_title)) },
