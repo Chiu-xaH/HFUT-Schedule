@@ -48,10 +48,10 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
-import com.xah.common.component.slider.CustomSlider
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.align.RowHorizontal
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.slider.CustomSlider
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin

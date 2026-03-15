@@ -18,10 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.align.ColumnVertical
-import com.xah.common.util.language.UiText
-import com.xah.common.util.language.text
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.text
 
 @Composable
 fun EmptyIcon(text: String = "空") = StatusIcon(R.drawable.upcoming,text(text))

@@ -28,7 +28,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-03-15") },
+                overlineContent = { Text(text = "2026-03-17") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -59,6 +59,7 @@ fun VersionInfo() {
             UpdateItems("新增 适配若干二级界面为新的转场动画")
             UpdateItems("优化 部分页面的显示")
 
+            // 挂科率下拉刷新 TODO
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
         //            UpdateItems("修复 打断动画与从App返回到桌面之间的手势冲突")
             // TODO 大模型解析日程 [P1]

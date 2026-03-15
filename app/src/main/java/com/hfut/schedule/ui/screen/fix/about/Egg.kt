@@ -38,12 +38,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 
-import com.xah.common.style.align.RowHorizontal
+import com.xah.common.ui.style.align.RowHorizontal
 import kotlin.math.roundToInt
 
 @Composable

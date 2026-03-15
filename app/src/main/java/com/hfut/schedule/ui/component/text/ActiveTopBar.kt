@@ -17,9 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

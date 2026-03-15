@@ -31,9 +31,9 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.status.ErrorIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.xah.common.component.status.LoadingUI
-import com.xah.common.style.align.CenterScreen
-import com.xah.common.util.language.text
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.util.text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

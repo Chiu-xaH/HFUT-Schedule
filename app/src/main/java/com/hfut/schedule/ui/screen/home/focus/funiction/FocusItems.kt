@@ -86,9 +86,9 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.component.text.BottomTip
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.align.ColumnVertical
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async

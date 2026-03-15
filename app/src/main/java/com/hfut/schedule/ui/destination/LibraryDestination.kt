@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.community.library.Librar
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.common.util.language.res
+import com.xah.common.ui.util.res
 
 object LibraryDestination : NavDestination() {
     override val key = "library"

@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Clas
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.common.util.language.text
+import com.xah.common.ui.util.text
 
 data class CourseClassmatesScreen(
     val lessonId : Int,

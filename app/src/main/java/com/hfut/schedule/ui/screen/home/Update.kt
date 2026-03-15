@@ -1,25 +1,23 @@
 package com.hfut.schedule.ui.screen.home
 
-import android.content.Context
 import com.google.gson.Gson
-import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
+import com.hfut.schedule.logic.network.repo.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.network.repo.JxglstuRepository
-import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -58,8 +56,9 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     }
     return cookie
 }
+
 // 应用冷启动主界面时的网络请求
-suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean,context: Context) = withContext(Dispatchers.IO) {
+suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean) = withContext(Dispatchers.IO) {
     try {
         val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
         val communityToken = prefs.getString("TOKEN","")
@@ -100,7 +99,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         }
         // 更新课程表
         if(!ifSaved)
-            launch { updateCourses(vm, context) }
+            launch { updateCourses(vm) }
         // 更新社区
         communityToken?.let {
             launch { vm.getCoursesFromCommunity(it) }
@@ -182,7 +181,7 @@ private suspend fun refreshWxAuth(vm: NetWorkViewModel) : String? = withContext(
 }
 
 //更新教务课表与课程汇总
-suspend fun updateCourses(vm: NetWorkViewModel, context: Context) = withContext(Dispatchers.IO) {
+suspend fun updateCourses(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
     val webVpnCookie = DataStoreManager.webVpnCookies.first { it.isNotEmpty() }
 
     val cookie = if (!GlobalUIStateHolder.webVpn) {

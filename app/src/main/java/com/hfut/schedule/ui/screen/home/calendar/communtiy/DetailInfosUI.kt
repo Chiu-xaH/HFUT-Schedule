@@ -49,8 +49,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getT
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.style.align.CenterScreen
-import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

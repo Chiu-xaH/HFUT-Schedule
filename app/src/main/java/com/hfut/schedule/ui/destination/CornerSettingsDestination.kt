@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.cube.sub.CornerSettingsScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.common.util.language.res
-import com.xah.common.util.language.text
+import com.xah.common.ui.util.res
+import com.xah.common.ui.util.text
 
 data object CornerSettingsDestination : NavDestination() {
 

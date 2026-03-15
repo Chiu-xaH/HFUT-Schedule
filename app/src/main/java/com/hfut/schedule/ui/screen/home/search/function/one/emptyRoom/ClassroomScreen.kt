@@ -50,9 +50,9 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.color.topBarTransplantColor
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

@@ -1,13 +1,8 @@
 package com.hfut.schedule.ui.destination
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,18 +12,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseFailRateDTOList
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateDetailScreen
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.color.topBarTransplantColor
-import com.xah.common.style.padding.InnerPaddingHeight
-import com.xah.common.util.language.res
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -39,7 +31,7 @@ data class FailRateDetailDestination(
 ) : NavDestination() {
     override val key = "fail_rate_detail_${courseName}_${lessonId}"
     override val title = res(R.string.navigation_label_fail_rate)
-    override val icon = R.drawable.group
+    override val icon = R.drawable.radio_button_partial
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -63,27 +55,11 @@ data class FailRateDetailDestination(
             }
         ) { innerPadding ->
             Column(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .fillMaxSize()
                     .hazeSource(hazeState)
             ) {
-                val detailList = bean
-                LazyColumn {
-                    item { InnerPaddingHeight(innerPadding,true) }
-                    items(detailList.size,key = { it }){ item ->
-                        val dataItem = detailList[item]
-                        val rate = (1 - dataItem.successRate) * 100
-                        CardListItem(
-                            headlineContent = {  Text("平均分 ${dataItem.avgScore}") },
-                            supportingContent = { Text("人数: 挂科 ${dataItem.failCount} | 总 ${dataItem.totalCount}") },
-                            overlineContent = { Text(text = "${dataItem.xn}年 第${dataItem.xq}学期")},
-                            leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                            trailingContent = { Text("挂科率 ${String.format("%.2f", rate)} %") },
-                        )
-                    }
-                    item { InnerPaddingHeight(innerPadding,true) }
-                    item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
-                }
+                FailRateDetailScreen(innerPadding,bean)
             }
         }
     }

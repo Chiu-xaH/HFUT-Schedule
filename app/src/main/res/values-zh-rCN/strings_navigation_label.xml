@@ -57,8 +57,8 @@
     <string name="navigation_label_scan_qr_code">扫描二维码</string>
     <string name="navigation_label_exception">错误</string>
     <string name="navigation_label_library_borrowed">借阅图书</string>
-    <string name="navigation_label_settings_appearance">设置-外观与效果</string>
-    <string name="navigation_label_settings_configurations">设置-应用及配置</string>
+    <string name="navigation_label_settings_appearance">设置-外观</string>
+    <string name="navigation_label_settings_configurations">设置-偏好与配置</string>
     <string name="navigation_label_settings_network">设置-网络</string>
     <string name="navigation_label_settings_about">设置-维护与关于</string>
     <string name="navigation_label_school_card">一卡通</string>

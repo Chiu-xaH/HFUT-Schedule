@@ -50,7 +50,7 @@
     <string name="app_settings_storage_half_title">存储</string>
 
     <string name="app_settings_backup_and_restore_title">备份与恢复</string>
-    <string name="app_settings_backup_and_restore_description">将本地数据库和偏好设置导出或导入</string>
+    <string name="app_settings_backup_and_restore_description">备份本地数据或恢复数据包</string>
 
     <string name="app_settings_clear_cache_title">缓存清理</string>
     <string name="app_settings_clear_cache_description">清理一些缓存，这不会影响应用数据</string>

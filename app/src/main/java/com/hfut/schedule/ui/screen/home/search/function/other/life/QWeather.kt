@@ -39,8 +39,8 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.MID
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.common.component.text.BottomTip
-import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campus) {
     CampusRegion.XUANCHENG -> "101221401"

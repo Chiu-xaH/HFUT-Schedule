@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
-import com.xah.common.util.safeDiv
+import com.xah.common.logic.safeDiv
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek

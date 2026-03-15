@@ -26,9 +26,9 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.xah.common.style.align.CenterScreen
+import com.xah.common.ui.style.align.CenterScreen
 
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -35,7 +35,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
 
 private data class PositionedSquareGroup(

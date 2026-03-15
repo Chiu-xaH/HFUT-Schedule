@@ -25,7 +25,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.common.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 @Composable

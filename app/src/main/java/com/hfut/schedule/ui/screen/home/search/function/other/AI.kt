@@ -36,9 +36,9 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.xah.navigation.utils.LocalNavController
 
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.align.CenterScreen
-import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,

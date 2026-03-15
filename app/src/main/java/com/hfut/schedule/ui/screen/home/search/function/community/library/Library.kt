@@ -14,7 +14,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.LibraryDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("SuspiciousIndentation")

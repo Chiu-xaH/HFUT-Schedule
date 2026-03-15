@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.xah.common.component.text.BottomTip
+import com.xah.common.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.common.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
@@ -42,9 +42,9 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.button.LiquidButton
 
 import com.hfut.schedule.ui.screen.home.getHolidays
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.ui.style.color.topBarTransplantColor
 
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.destination.HolidayDestination
@@ -57,7 +57,7 @@ import com.xah.container.container.SharedContainer
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 

@@ -1,8 +1,8 @@
 package com.hfut.schedule.ui.util.color
 
 import com.hfut.schedule.R
-import com.xah.common.util.language.UiText
-import com.xah.common.util.language.res
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.res
 import com.materialkolor.PaletteStyle
 
 enum class ColorStyle(val code : Int,val description: UiText,val style : PaletteStyle) {

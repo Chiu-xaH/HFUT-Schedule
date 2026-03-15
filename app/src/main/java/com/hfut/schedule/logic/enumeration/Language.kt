@@ -1,9 +1,9 @@
 package com.hfut.schedule.logic.enumeration
 
 import com.hfut.schedule.R
-import com.xah.common.util.language.BaseChoice
-import com.xah.common.util.language.UiText
-import com.xah.common.util.language.res
+import com.xah.common.ui.model.BaseChoice
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.res
 
 enum class Language(
     override val label: UiText,

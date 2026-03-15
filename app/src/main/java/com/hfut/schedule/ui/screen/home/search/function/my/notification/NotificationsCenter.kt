@@ -19,7 +19,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.NotificationsDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 
 
 @SuppressLint("SuspiciousIndentation")

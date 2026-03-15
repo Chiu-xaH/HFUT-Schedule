@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWash
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.common.util.language.res
+import com.xah.common.ui.util.res
 
 object HaiLeWashingDestination : NavDestination() {
     override val key = "washing"

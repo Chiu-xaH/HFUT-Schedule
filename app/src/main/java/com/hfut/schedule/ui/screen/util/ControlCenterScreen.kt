@@ -73,8 +73,8 @@ import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.LocalNavControllerSafely
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.color.topBarTransplantColor
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first

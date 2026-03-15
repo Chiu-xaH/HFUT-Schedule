@@ -37,8 +37,8 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.align.ColumnVertical
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.align.ColumnVertical
 
 /* 本kt文件已完成多语言文案适配 */
 @Composable

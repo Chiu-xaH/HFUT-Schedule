@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.ANIMATION_SPEED
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.color.shimmerEffect
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.shimmerEffect
 
 val CARD_NORMAL_DP : Dp = 2.5.dp
 

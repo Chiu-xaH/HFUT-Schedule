@@ -116,12 +116,12 @@ import com.xah.mirror.style.mask
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.component.slider.CustomSlider
-import com.xah.common.component.status.CustomSingleChoiceRow
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.align.ColumnVertical
-import com.xah.common.style.align.RowHorizontal
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.slider.CustomSlider
+import com.xah.common.ui.component.status.CustomSingleChoiceRow
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -135,17 +135,9 @@ import java.io.FileOutputStream
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun AppearanceSettingsScreen(innerPaddings : PaddingValues,) {
-//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
     val navController = LocalNavController.current
     SharedAppearanceSettingsScreen(
-        Modifier
-            .verticalScroll(rememberScrollState()),
-//            .scale(scale),
+        Modifier.verticalScroll(rememberScrollState()),
         innerPaddings,
         false,
         navController

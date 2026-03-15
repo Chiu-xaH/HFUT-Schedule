@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.community.appointment.AppointmentScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.common.util.language.res
+import com.xah.common.ui.util.res
 
 object CommunityAppointmentDestination : NavDestination() {
     override val key = "community_appointment"

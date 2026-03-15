@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.community.courseFailRateDTOList
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -31,10 +34,11 @@ import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.destination.FailRateDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.style.align.CenterScreen
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +60,7 @@ fun FailRateUI(
     }
     if(list.isEmpty()) {
         CenterScreen {
-            EmptyIcon("未搜到数据" + (filterCode?.let { "课程($it)" } ?: ""))
+            EmptyIcon("未搜到课程" + (filterCode?.let { "($it)" } ?: ""))
         }
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -86,5 +90,31 @@ fun FailRateUI(
                 item { InnerPaddingHeight(innerPadding,false) }
             }
         }
+    }
+}
+
+
+
+
+@Composable
+fun FailRateDetailScreen(
+    innerPadding : PaddingValues,
+    detailList : List<courseFailRateDTOList>
+) {
+    LazyColumn {
+        item { InnerPaddingHeight(innerPadding,true) }
+        items(detailList.size,key = { it }){ item ->
+            val dataItem = detailList[item]
+            val rate = (1 - dataItem.successRate) * 100
+            CardListItem(
+                headlineContent = {  Text("平均分 ${dataItem.avgScore}") },
+                supportingContent = { Text("人数: 挂科 ${dataItem.failCount} | 总 ${dataItem.totalCount}") },
+                overlineContent = { Text(text = "${dataItem.xn}年 第${dataItem.xq}学期")},
+                leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+                trailingContent = { Text("挂科率 ${String.format("%.2f", rate)} %") },
+            )
+        }
+        item { InnerPaddingHeight(innerPadding,true) }
+        item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
     }
 }

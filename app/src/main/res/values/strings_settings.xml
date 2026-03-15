@@ -14,7 +14,7 @@
     <string name="settings_important_notice_half_title">Important notice</string>
     <string name="settings_version_info_description_preview">It\'s insider preview version</string>
     <string name="settings_version_info_description">It\'s latest version %1$s</string>
-    <string name="settings_about_update_by_github_description">There is no speed limit when downloading the latest version through the Github distribution.Please note to select the APK download with the suffix \'arm64-v8a \'(i.e., for ordinary Android mobile devices)</string>
+    <string name="settings_about_update_by_github_description">Download the latest version through the Github distribution</string>
     <string name="appearance_settings_title">Appearance</string>
     <string name="appearance_settings_description">Color,Animation,Blur</string>
     <string name="app_settings_title">Configurations</string>

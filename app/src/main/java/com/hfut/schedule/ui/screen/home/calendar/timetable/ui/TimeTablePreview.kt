@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
-import com.xah.common.style.align.ColumnVertical
+import com.xah.common.ui.style.align.ColumnVertical
 import kotlin.math.roundToInt
 
 private val padding = 4.dp

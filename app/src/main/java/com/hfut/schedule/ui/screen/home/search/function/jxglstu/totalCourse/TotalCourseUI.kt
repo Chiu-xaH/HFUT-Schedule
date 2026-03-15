@@ -101,14 +101,14 @@ import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 import com.xah.navigation.utils.LocalNavController
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.align.CenterScreen
-import com.xah.common.style.align.ColumnVertical
-import com.xah.common.style.color.topBarTransplantColor
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.shared.LogUtil
-import com.xah.common.util.language.UiText
+import com.xah.common.ui.model.text.UiText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -705,7 +705,10 @@ fun DetailItems(
                 val dest = FailRateApiDestination(lessons.course.nameZh,lessons.code.substringBefore("--"))
                 SharedContainer(
                     key = dest.key,
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = RoundedCornerShape(0.dp).topStart,
+                        topEnd = RoundedCornerShape(0.dp).topEnd
+                    ),
                     containerColor = cardNormalColor()
                 ) {
                     TransplantListItem(

@@ -42,8 +42,8 @@ import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.padding.NavigationBarSpacer
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.NavigationBarSpacer
 import dev.chrisbanes.haze.HazeState
 
 // 按索引顺序添加badge

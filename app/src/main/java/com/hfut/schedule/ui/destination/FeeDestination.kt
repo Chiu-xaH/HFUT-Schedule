@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.common.util.language.res
+import com.xah.common.ui.util.res
 
 object FeeDestination : NavDestination() {
     override val key = "fee"

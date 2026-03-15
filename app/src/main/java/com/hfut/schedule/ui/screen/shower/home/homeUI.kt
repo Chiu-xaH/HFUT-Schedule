@@ -14,7 +14,7 @@ import com.hfut.schedule.ui.screen.shower.home.function.GuaGuaPersonInfoUI
 import com.hfut.schedule.ui.screen.shower.home.function.StartShowerUI
 import com.hfut.schedule.ui.screen.shower.home.function.UseCodeUI
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 

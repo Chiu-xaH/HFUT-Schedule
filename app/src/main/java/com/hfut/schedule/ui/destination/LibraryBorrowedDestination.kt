@@ -6,8 +6,8 @@ import com.hfut.schedule.ui.screen.home.search.function.community.library.screen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.common.util.language.UiText
-import com.xah.common.util.language.res
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.res
 
 object LibraryBorrowedDestination : NavDestination() {
     override val key: String = "library_borrowed"

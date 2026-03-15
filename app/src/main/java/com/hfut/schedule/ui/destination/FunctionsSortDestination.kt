@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.xah.common.util.language.res
+import com.xah.common.ui.util.res
 
 object FunctionsSortDestination : NavDestination() {
     override val key = "functions_sort"

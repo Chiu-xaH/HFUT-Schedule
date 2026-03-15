@@ -18,8 +18,8 @@ import com.hfut.schedule.logic.util.network.state.UiState
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.xah.common.component.text.ScrollText
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 
 @Composable

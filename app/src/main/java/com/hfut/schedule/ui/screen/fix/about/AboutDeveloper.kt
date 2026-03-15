@@ -50,7 +50,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.common.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -63,7 +63,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.screen.welcome.arguments
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.common.style.align.RowHorizontal
+import com.xah.common.ui.style.align.RowHorizontal
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 

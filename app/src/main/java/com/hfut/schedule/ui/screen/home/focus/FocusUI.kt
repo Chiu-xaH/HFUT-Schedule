@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFrom
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -89,7 +89,6 @@ fun TodayScreen(
     state: PagerState,
     hazeState: HazeState,
 ) {
-    val context = LocalContext.current
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
@@ -107,7 +106,7 @@ fun TodayScreen(
             refreshing = true
             async {
                 launch { DateTimeManager.updateTime { timeNow = it } }
-                launch { initNetworkRefresh(vm, vmUI, ifSaved, context) }
+                launch { initNetworkRefresh(vm, vmUI, ifSaved) }
                 launch { netCourseList = getNetCourse() }
                 launch { scheduleList = getSchedule() }
             }.await()
@@ -197,7 +196,7 @@ fun TodayScreen(
                 return@launch
             }
             async {
-                initNetworkRefresh(vm,vmUI,ifSaved,context)
+                initNetworkRefresh(vm,vmUI,ifSaved)
             }.await()
             refreshing = false
         }

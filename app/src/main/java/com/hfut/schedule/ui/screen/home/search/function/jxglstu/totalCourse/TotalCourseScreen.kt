@@ -9,7 +9,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.lessons
 
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.common.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 
 @Composable
 fun TermFirstlyInfo(list: List<lessons>) {

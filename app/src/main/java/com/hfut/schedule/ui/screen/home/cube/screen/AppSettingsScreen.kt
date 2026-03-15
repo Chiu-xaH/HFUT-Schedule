@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -59,16 +60,22 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.destination.SettingsBackupDestination
+import com.hfut.schedule.ui.destination.SettingsCalendarDestination
+import com.hfut.schedule.ui.destination.SettingsFocusCardDestination
+import com.hfut.schedule.ui.destination.SettingsFocusWidgetDestination
+import com.hfut.schedule.ui.destination.SettingsOcrDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
-import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.common.component.slider.CustomSlider
-import com.xah.common.component.status.CustomSingleChoiceRow
-import com.xah.common.component.text.BottomTip
-import com.xah.common.style.APP_HORIZONTAL_DP
-import com.xah.common.style.align.RowHorizontal
-import com.xah.common.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.slider.CustomSlider
+import com.xah.common.ui.component.status.CustomSingleChoiceRow
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.container.SharedContainer
+import com.xah.navigation.utils.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -76,10 +83,7 @@ import kotlinx.coroutines.launch
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfigurationSettingsScreen(
-    navController: NavHostController,
-    innerPaddings: PaddingValues,
-) {
+fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 //    var scale by remember { mutableFloatStateOf(1f) }
 //    TransitionBackHandler(navController,enablePredictive) {
@@ -88,6 +92,9 @@ fun ConfigurationSettingsScreen(
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
+
+    val navTopController = LocalNavController.current
+
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
@@ -281,47 +288,135 @@ fun ConfigurationSettingsScreen(
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_account_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_default_calendar_account_description))
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.calendar_add_on),
-                        contentDescription = "Localized description"
-                    ) },
-                    modifier = Modifier.clickable { navController.navigate(Screen.CalendarScreen.route) }
-                )
+                SharedContainer(
+                    key = SettingsCalendarDestination.key,
+                    shape = RoundedCornerShape(0.dp),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_account_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.app_settings_default_calendar_account_description))
+                        },
+                        leadingContent = { Icon(
+                            painterResource(R.drawable.calendar_add_on),
+                            contentDescription = "Localized description"
+                        ) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsCalendarDestination)
+                        }
+                    )
+                }
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsFocusCardDestination.key,
+                    shape = RoundedCornerShape(0.dp),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.network_settings_init_data_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.network_settings_init_data_description)) },
+                        leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsFocusCardDestination)
+                        }
+                    )
+                }
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsOcrDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = RoundedCornerShape(0.dp).topStart,
+                        topEnd = RoundedCornerShape(0.dp).topEnd,
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.app_settings_auto_fill_captcha_title)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.app_settings_auto_fill_captcha_description))
+                        },
+                        leadingContent = { Icon(
+                            painterResource(R.drawable.center_focus_strong),
+                            contentDescription = "Localized description"
+                        ) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsOcrDestination)
+                        }
+                    )
+                }
+            }
+        }
+        DividerTextExpandedWith(stringResource(R.string.app_settings_storage_half_title)) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
+                SharedContainer(
+                    key = SettingsBackupDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        bottomEnd = RoundedCornerShape(0.dp).bottomEnd,
+                        bottomStart = RoundedCornerShape(0.dp).bottomStart,
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(stringResource(R.string.app_settings_backup_and_restore_title)) },
+                        leadingContent = { Icon(painterResource(R.drawable.database),null)},
+                        supportingContent = {
+                            Text(stringResource(R.string.app_settings_backup_and_restore_description))
+                        },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsBackupDestination)
+                        }
+                    )
+                }
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.app_settings_auto_fill_captcha_title)) },
+                    headlineContent = { Text(stringResource(R.string.app_settings_clear_cache_title)) },
+                    leadingContent = { Icon(painterResource(R.drawable.mop),null)},
                     supportingContent = {
-                        Text(text = stringResource(R.string.app_settings_auto_fill_captcha_description))
+                        Text(stringResource(R.string.app_settings_clear_cache_description))
                     },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.center_focus_strong),
-                        contentDescription = "Localized description"
-                    ) },
-                    modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            val result = async { cleanCache(context) }.await()
+                            showToast(
+                                context.getString(R.string.app_settings_toast_clear_cache_done, result)
+                            )
+                        }
+                    }
                 )
             }
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_widget_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = {
-                        Text(stringResource(R.string.app_settings_widget_focus_title))
-                    },
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_widget_focus_description))
-                    },
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.FocusWidgetSettingsScreen.route)
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.widgets),null)
-                    },
-                )
+                SharedContainer(
+                    key = SettingsFocusWidgetDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        bottomStart = RoundedCornerShape(0.dp).bottomStart,
+                        bottomEnd = RoundedCornerShape(0.dp).bottomEnd,
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = {
+                            Text(stringResource(R.string.app_settings_widget_focus_title))
+                        },
+                        supportingContent = {
+                            Text(stringResource(R.string.app_settings_widget_focus_description))
+                        },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsFocusWidgetDestination)
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.widgets),null)
+                        },
+                    )
+                }
+
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
@@ -351,36 +446,6 @@ fun ConfigurationSettingsScreen(
                     leadingContent = {
                         Icon(painterResource(R.drawable.widgets),null)
                     },
-                )
-            }
-        }
-        DividerTextExpandedWith(stringResource(R.string.app_settings_storage_half_title)) {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = { Text(stringResource(R.string.app_settings_backup_and_restore_title)) },
-                    leadingContent = { Icon(painterResource(R.drawable.database),null)},
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_backup_and_restore_description))
-                    },
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.BackupScreen.route)
-                    }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(stringResource(R.string.app_settings_clear_cache_title)) },
-                    leadingContent = { Icon(painterResource(R.drawable.mop),null)},
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_clear_cache_description))
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            val result = async { cleanCache(context) }.await()
-                            showToast(
-                                context.getString(R.string.app_settings_toast_clear_cache_done, result)
-                            )
-                        }
-                    }
                 )
             }
         }

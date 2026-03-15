@@ -6,7 +6,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.holiday.NewsApiScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
-import com.xah.common.util.language.res
+import com.xah.common.ui.util.res
 
 data class NewsApiDestination(
     val keyword : String

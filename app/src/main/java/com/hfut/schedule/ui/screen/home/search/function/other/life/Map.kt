@@ -18,7 +18,7 @@ import com.hfut.schedule.ui.component.network.UrlImageNoCrop
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.logic.enumeration.Campus
-import com.xah.common.style.align.RowHorizontal
+import com.xah.common.ui.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 

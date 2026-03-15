@@ -21,7 +21,7 @@ import com.hfut.schedule.ui.destination.AdmissionDestination
 import com.xah.navigation.utils.LocalNavController
 
 
-import com.xah.common.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
