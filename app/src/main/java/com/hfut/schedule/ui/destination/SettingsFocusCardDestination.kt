@@ -19,6 +19,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.cube.sub.EditHuixXinPasswordScreen
+import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.NavDestination
 import com.xah.common.ui.model.text.UiText
@@ -60,7 +61,7 @@ object SettingsFocusCardDestination : NavDestination() {
                     .fillMaxSize()
                     .hazeSource(hazeState)
             ) {
-                EditHuixXinPasswordScreen(innerPadding)
+                FocusCardSettings(innerPadding)
             }
         }
     }

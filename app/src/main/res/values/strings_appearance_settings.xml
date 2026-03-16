@@ -41,9 +41,9 @@
     <string name="appearance_settings_always_display_bottom_bar_labels_title">Always display bottom bar labels</string>
     <string name="appearance_settings_always_display_bottom_bar_labels_description">Display all bottom bar labels or only select the items</string>
     <string name="appearance_settings_toast_set_calendar_background">The background has been set.</string>
-    <string name="appearance_settings_display_teachers_title">Teachers are displayed in the squares</string>
-    <string name="appearance_settings_merge_conflict_calendar_squares_title">Merge conflict squares</string>
-    <string name="appearance_settings_merge_conflict_calendar_square_description">After opening, merge the conflicting items into one square based on the earliest start time and the latest end time.</string>
+    <string name="app_settings_display_teachers_title">Teachers are displayed in the squares</string>
+    <string name="app_settings_merge_conflict_calendar_squares_title">Merge conflict squares</string>
+    <string name="app_settings_merge_conflict_calendar_square_description">After opening, merge the conflicting items into one square based on the earliest start time and the latest end time.</string>
     <string name="appearance_settings_calendar_background_title">Background</string>
     <string name="appearance_settings_calendar_background_description">Select a picture as the background of the course schedule and also change the color.</string>
     <string name="appearance_settings_calendar_square_alpha_title">The transparency of square %1$s%%</string>

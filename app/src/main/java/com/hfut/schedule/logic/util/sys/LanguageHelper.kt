@@ -11,7 +11,6 @@ object LanguageHelper {
     private fun getCurrentAppLanguageTag(context: Context): String? {
         val config = context.resources.configuration
         val currentLanguage: String? = config.locale.language
-        LogUtil.debug(currentLanguage ?: "null")
         return currentLanguage
     }
 

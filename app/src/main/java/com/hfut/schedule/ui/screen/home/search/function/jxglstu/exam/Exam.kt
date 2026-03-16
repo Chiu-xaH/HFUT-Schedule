@@ -268,7 +268,7 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
                         Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
                     },
                     cardModifier = Modifier.sharedContainer(
-                        dest,
+                        dest.key,
                         MaterialTheme.shapes.medium,
                         MaterialTheme.colorScheme.errorContainer
                     ),

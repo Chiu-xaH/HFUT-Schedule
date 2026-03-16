@@ -12,7 +12,7 @@
     <string name="app_settings_study_interaction_title">交互学习</string>
     <string name="app_settings_study_interaction_description">学习应用内的手势交互操作</string>
 
-    <string name="app_settings_calendar_half_title">课程表配置</string>
+    <string name="app_settings_calendar_half_title">课程表</string>
 
     <string name="app_settings_preferences_half_title">偏好与配置</string>
 

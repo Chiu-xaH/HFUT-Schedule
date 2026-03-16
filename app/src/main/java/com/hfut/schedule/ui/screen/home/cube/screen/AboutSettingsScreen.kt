@@ -71,6 +71,7 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.destination.SettingsAboutDeveloperDestination
 import com.hfut.schedule.ui.destination.SettingsAvailableDestination
 import com.hfut.schedule.ui.destination.SettingsDeveloperDestination
+import com.hfut.schedule.ui.destination.SettingsTipsDestination
 import com.hfut.schedule.ui.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.fix.about.About
 import com.hfut.schedule.ui.screen.fix.about.Egg
@@ -203,22 +204,29 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                     }
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.about_settings_tips_title)) },
-                    supportingContent = { Text(text = stringResource(
-                        R.string.about_settings_tips_description,
-                        stringResource(R.string.app_name)
-                    ))},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.lightbulb),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        showDevelopingToast()
-                    }
-                )
+                SharedContainer(
+                    key = SettingsTipsDestination.key,
+                    shape = RoundedCornerShape(0.dp),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.about_settings_tips_title)) },
+                        supportingContent = { Text(text = stringResource(
+                            R.string.about_settings_tips_description,
+                            stringResource(R.string.app_name)
+                        ))},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.lightbulb),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsTipsDestination)
+                        }
+                    )
+                }
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.about_settings_promote_title)) },

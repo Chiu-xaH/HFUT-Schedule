@@ -837,9 +837,7 @@ fun CalendarUISettings(
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
-    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
-    val enableCalendarShowTeacher by DataStoreManager.enableCalendarShowTeacher.collectAsState(initial = ShowTeacherConfig.ONLY_MULTI.code)
-    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+   val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -864,52 +862,6 @@ fun CalendarUISettings(
 
 
     Column {
-        if(!tiny){
-            TransplantListItem(
-                headlineContent = {
-                    Text(stringResource(R.string.appearance_settings_display_teachers_title))
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.group), null)
-                },
-            )
-            CustomSingleChoiceRow<ShowTeacherConfig>(
-                selected = enableCalendarShowTeacher,
-                modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-            ) {
-                scope.launch {
-                    DataStoreManager.saveCalendarShowTeacher(it)
-                }
-            }
-
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = {
-                    Text(stringResource(R.string.appearance_settings_merge_conflict_calendar_squares_title))
-                },
-                supportingContent = {
-                    if (!tiny)
-                        Text(stringResource(R.string.appearance_settings_merge_conflict_calendar_square_description))
-                },
-                modifier = Modifier.clickable {
-                    scope.launch {
-                        DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                    }
-                },
-                trailingContent = {
-                    Switch(checked = enableMergeSquare, onCheckedChange = {
-                        scope.launch {
-                            DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                        }
-                    })
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.arrow_split), null)
-                },
-            )
-        }
-        if(!tiny)
-            PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
                 Text(stringResource(R.string.appearance_settings_calendar_background_title))

@@ -2,8 +2,8 @@
 <resources>
     <string name="network_settings_school_card_password_title">一卡通密码</string>
     <string name="network_settings_config_half_title">配置</string>
-    <string name="network_settings_init_data_title">聚焦首卡片功能</string>
-    <string name="network_settings_init_data_description">首页聚焦第一张卡片显示的一些数据,冷启动或下拉刷新时会自动更新这些数据</string>
+    <string name="app_settings_focus_card_title">聚焦首卡片功能</string>
+    <string name="app_settings_focus_card_description">首页聚焦第一张卡片显示的一些数据,冷启动或下拉刷新时会自动更新这些数据</string>
     <string name="network_settings_school_card_password_description">若您已经修改过一卡通初始密码,请在此录入新的密码以使用快速充值和校园网登录功能</string>
     <string name="network_settings_jxglstu_password_title">教务系统密码</string>
     <string name="network_settings_jxglstu_password_description">若您已经修改过教务系统初始密码,请在此录入新的密码以使用同班同学、教室、全校培养方案功能</string>
