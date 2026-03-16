@@ -59,8 +59,7 @@ fun VersionInfo() {
             UpdateItems("新增 适配若干二级界面为新的转场动画")
             UpdateItems("修复 上一级界面的容器已经不在可见范围内，仍错误执行容器共享动画的Bug")
             UpdateItems("优化 选项的归类调整")
-            UpdateItems("优化 转场动画返回时在部分场景的掉帧现象","SharedNav库新增等帧机制")
-
+//            UpdateItems("优化 转场动画返回时在部分场景的掉帧现象","SharedNav库新增等帧机制")
 //            UpdateItems("优化 部分页面的显示")
 
             // 挂科率下拉刷新 TODO
