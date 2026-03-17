@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -59,21 +61,12 @@ val LocalAppControlCenter = staticCompositionLocalOf<DrawerState> {
     error("未提供根DrawerState")
 }
 
-@Composable
-fun TopBarNavigationIcon() {
-    FakeBackButton() {
-        Icon(painterResource(R.drawable.arrow_back), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FakeBackButton(
-    content : @Composable () -> Unit,
-) {
+fun TopBarNavigationIcon() {
     val navController = LocalNavController.current
 //    val drawerState = LocalAppControlCenter.current
-    val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
+//    val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val queue = navController.stack.reversed()
     var displayDialog by remember { mutableStateOf(false) }
@@ -169,11 +162,14 @@ private fun FakeBackButton(
         }
     }
 
+    val enabled = navController.canPop()
+
     Box(
         modifier = Modifier
             .padding(horizontal = CARD_NORMAL_DP/2)
             .clip(CircleShape)
             .combinedClickable(
+                enabled = enabled,
                 onClick = {
                     navController.pop()
                 },
@@ -193,7 +189,15 @@ private fun FakeBackButton(
         Box(
             modifier = Modifier.padding(DIVIDER_TEXT_VERTICAL_PADDING)
         ) {
-            content()
+            Icon(
+                painterResource(R.drawable.arrow_back),
+                contentDescription = null,
+                tint = if(enabled) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.primary.copy(.5f)
+                }
+            )
         }
     }
 }
@@ -208,6 +212,7 @@ fun LiquidTopBarNavigateIcon(
         onClick = { navController.pop() },
         backdrop = backdrop,
         isCircle = true,
+        enabled = navController.canPop(),
         modifier = Modifier.padding(start = APP_HORIZONTAL_DP-2.5.dp, end = 9.dp)
     ) {
         Icon(painterResource(R.drawable.arrow_back), contentDescription = null)

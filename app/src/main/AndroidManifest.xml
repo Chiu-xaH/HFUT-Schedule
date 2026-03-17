@@ -168,7 +168,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".service.tile.ScanTileService"
+            android:name=".service.tile.ScanQrCodeTileService"
             android:exported="true"
             android:icon="@drawable/qr_code_scanner_shortcut"
             android:label="@string/scan"

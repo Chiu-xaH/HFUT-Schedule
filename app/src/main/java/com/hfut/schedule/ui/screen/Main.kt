@@ -105,7 +105,12 @@ private fun firstPage(
     return if(prefs.getBoolean("canUse",false)) {
         if(startRoute != null) {
             try {
-                val clazz = Class.forName("com.hfut.schedule.ui.destination.$startRoute")
+                val finalClassName = if(startRoute.split(".").size == 1) {
+                    "com.hfut.schedule.ui.destination.$startRoute"
+                } else {
+                    startRoute
+                }
+                val clazz = Class.forName(finalClassName)
                 clazz.getField("INSTANCE").get(null) as NavDestination
             } catch (e : Exception) {
                 LogUtil.error(e)
