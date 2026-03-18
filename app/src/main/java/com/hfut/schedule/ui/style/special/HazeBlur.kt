@@ -58,7 +58,7 @@ import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.shaderSource
-import com.xah.navigation.utils.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavControllerSafely
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState

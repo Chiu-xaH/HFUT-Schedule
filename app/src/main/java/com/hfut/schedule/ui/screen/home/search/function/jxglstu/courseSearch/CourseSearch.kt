@@ -15,7 +15,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.CourseSearchDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
 

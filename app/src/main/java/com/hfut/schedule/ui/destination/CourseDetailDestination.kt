@@ -18,7 +18,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.navigation.utils.LocalNavDependencies
+import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 

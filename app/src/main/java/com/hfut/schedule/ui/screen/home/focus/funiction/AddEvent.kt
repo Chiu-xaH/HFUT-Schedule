@@ -130,7 +130,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP

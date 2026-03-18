@@ -85,7 +85,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getC
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.container.container.sharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
@@ -393,11 +393,9 @@ fun CustomItem(
     isFuture: Boolean,
     activity: Activity,
     showTomorrow : Boolean,
-//    navController : NavHostController,
     showOutOfDateItems : Boolean = true,
     refresh : () -> Unit
 ) {
-    val navController = LocalNavController.current
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()

@@ -91,7 +91,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.container.container.sharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState

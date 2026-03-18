@@ -19,7 +19,7 @@ import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,

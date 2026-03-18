@@ -26,7 +26,7 @@ import com.hfut.schedule.ui.destination.TrackDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.CenterScreen

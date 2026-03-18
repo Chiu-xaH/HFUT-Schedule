@@ -61,7 +61,7 @@ fun VersionInfo() {
             UpdateItems("优化 选项的归类调整")
 //            UpdateItems("优化 转场动画返回时在部分场景的掉帧现象","SharedNav库新增等帧机制")
 //            UpdateItems("优化 部分页面的显示")
-
+// TODO 聚焦重要事项多个日程key区分
             // 挂科率下拉刷新 TODO
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
         //            UpdateItems("修复 打断动画与从App返回到桌面之间的手势冲突")

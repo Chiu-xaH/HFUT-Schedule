@@ -36,7 +36,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.container.sharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 

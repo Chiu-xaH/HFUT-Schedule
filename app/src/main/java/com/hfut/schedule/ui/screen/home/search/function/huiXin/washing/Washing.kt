@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.container.container.SharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState

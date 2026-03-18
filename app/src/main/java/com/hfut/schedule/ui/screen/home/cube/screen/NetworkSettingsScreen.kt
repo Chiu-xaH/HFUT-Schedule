@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.destination.SettingsJxglstuPasswordDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.container.SharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

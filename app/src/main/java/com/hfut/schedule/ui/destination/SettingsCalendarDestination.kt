@@ -26,7 +26,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.text
-import com.xah.navigation.utils.LocalNavDependencies
+import com.xah.navigation.util.LocalNavDependencies
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 

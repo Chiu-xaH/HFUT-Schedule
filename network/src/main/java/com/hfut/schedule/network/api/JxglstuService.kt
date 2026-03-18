@@ -39,11 +39,12 @@ interface JxglstuService {
     //eams5-student/for-std/course-table/get-data?bizTypeId=23&semesterId=234&dataId=170317
     @GET("for-std/course-table/get-data")
     @Headers(Constant.PC_UA)
-    fun getLessonIds(@Header("Cookie") cookie : String,
-                     @Query("bizTypeId") bizTypeId : String,
-                     @Query("semesterId") semesterId : String,
-                     @Query("dataId") dataId : String
-                     ) : Call<ResponseBody>
+    fun getLessonIds(
+        @Header("Cookie") cookie : String,
+        @Query("bizTypeId") bizTypeId : String,
+        @Query("semesterId") semesterId : String,
+        @Query("dataId") dataId : String
+    ) : Call<ResponseBody>
 
     //获取课程表JSON,需要提交前面获取到的数据才可以，否则返回500错误
     //课程表  JSON

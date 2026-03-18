@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.destination.AlumniDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 
 
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 
 import com.xah.common.ui.component.text.ScrollText
 

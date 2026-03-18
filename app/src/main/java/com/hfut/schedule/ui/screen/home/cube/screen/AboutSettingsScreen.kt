@@ -78,7 +78,7 @@ import com.hfut.schedule.ui.screen.fix.about.Egg
 import com.hfut.schedule.ui.screen.fix.about.Support
 import com.hfut.schedule.ui.screen.fix.fix.BugShare
 import com.xah.container.container.SharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)

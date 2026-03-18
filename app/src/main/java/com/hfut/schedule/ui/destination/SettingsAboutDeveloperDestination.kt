@@ -10,7 +10,7 @@ import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.text
-import com.xah.navigation.utils.LocalNavDependencies
+import com.xah.navigation.util.LocalNavDependencies
 
 object SettingsAboutDeveloperDestination : NavDestination() {
     override val key: String = "settings_backup"

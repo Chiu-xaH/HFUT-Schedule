@@ -105,6 +105,14 @@ fun FromScreen() {
 
 ## 应用外功能
 
+### 快速打开某Destination
+```Kotlin
+val intent = Intent(this, MainActivity::class.java).apply {
+    putExtra("route", destination::class.java.name)
+    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+}
+```
+如果需要快速测试某页面，可使用本方法。
 ### 新增桌面小组件
 待书写...
 

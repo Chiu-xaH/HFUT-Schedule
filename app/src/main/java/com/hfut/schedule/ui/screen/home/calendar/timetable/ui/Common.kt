@@ -39,7 +39,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.ShaderState
-import com.xah.navigation.utils.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 

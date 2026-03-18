@@ -19,7 +19,7 @@ import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiTo
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.navigation.utils.LocalNavDependencies
+import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.hazeSource

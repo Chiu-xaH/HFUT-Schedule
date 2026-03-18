@@ -67,12 +67,12 @@ import com.hfut.schedule.ui.screen.home.cube.screen.SharedAppearanceSettingsScre
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.container.utils.LocalSharedRegistry
+import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
-import com.xah.navigation.utils.LocalNavController
-import com.xah.navigation.utils.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavController
+import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import kotlinx.coroutines.delay

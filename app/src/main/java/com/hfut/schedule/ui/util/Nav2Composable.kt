@@ -10,7 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hfut.schedule.ui.util.navigation.canPopBack
-import com.xah.navigation.utils.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.shared.LogUtil
 
 @OptIn(ExperimentalSharedTransitionApi::class)

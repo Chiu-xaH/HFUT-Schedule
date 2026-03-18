@@ -60,7 +60,7 @@ import com.kyant.backdrop.highlight.Highlight
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
-import com.xah.navigation.utils.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.logic.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.abs

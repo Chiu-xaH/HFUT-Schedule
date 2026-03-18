@@ -76,7 +76,7 @@ import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.container.container.SharedContainer
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical

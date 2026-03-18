@@ -93,7 +93,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.container.container.sharedContainer
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.chart.RadarChart
 import com.xah.common.ui.component.chart.RadarData
 import com.xah.common.ui.component.text.BottomTip

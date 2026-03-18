@@ -26,7 +26,7 @@ import com.hfut.schedule.ui.destination.GradeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
 import com.hfut.schedule.viewmodel.network.XwxViewModel
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import kotlinx.coroutines.launch
 

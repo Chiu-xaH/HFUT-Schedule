@@ -103,7 +103,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText

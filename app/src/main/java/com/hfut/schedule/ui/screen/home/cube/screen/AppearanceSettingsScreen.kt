@@ -116,7 +116,7 @@ import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.controller.NavigationController
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -219,6 +219,7 @@ fun SharedAppearanceSettingsScreen(
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
+//        val enableKeepPreviousPage by DataStoreManager.enableKeepPreviousPage.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -650,6 +651,21 @@ fun SharedAppearanceSettingsScreen(
                     ExtensionSample()
                     PaddingHorizontalDivider()
                 }
+//                TransplantListItem(
+//                    headlineContent = { Text(text = "栈留存(Beta)") },
+//                    supportingContent = {
+//                        Text("以内存换性能，部分栈中页面不再销毁，提高流畅度")
+//                    },
+//                    trailingContent = {
+//                        Switch(checked = enableKeepPreviousPage, onCheckedChange = {
+//                            scope.launch {
+//                                DataStoreManager.saveEnableKeepPreviousPage(!enableKeepPreviousPage)
+//                            }
+//                        })
+//                    },
+//                    leadingContent = { Icon(painterResource(R.drawable.rocket_launch), contentDescription = "Localized description") },
+//                )
+//                PaddingHorizontalDivider()
                 SharedContainer(
                     key = CornerSettingsDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(

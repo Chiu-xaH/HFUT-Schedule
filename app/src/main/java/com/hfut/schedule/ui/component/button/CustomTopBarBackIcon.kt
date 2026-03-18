@@ -51,7 +51,7 @@ import com.kyant.backdrop.Backdrop
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
-import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
 
