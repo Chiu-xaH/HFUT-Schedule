@@ -55,12 +55,6 @@ fun PersonPart() {
                     trailingContent = {
                         Row {
                             ColumnVertical {
-                                if(AppVersion.isInDebugRunning()) {
-                                    Text(stringResource(R.string.settings_person_info_tag_debug))
-                                }
-                                if(AppVersion.isPreview()) {
-                                    Text(stringResource(R.string.settings_person_info_tag_preview))
-                                }
                                 if(startDate != null && endDate != null && startDate != "" && endDate != "") {
                                     Text(text = stringResource(
                                         R.string.settings_person_info_tag_normal,

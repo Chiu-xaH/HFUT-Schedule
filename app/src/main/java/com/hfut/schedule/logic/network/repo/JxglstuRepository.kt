@@ -880,11 +880,12 @@ object JxglstuRepository {
     fun parseDatumCourse(result: String) : List<lessons> = try {
         Gson().fromJson(result, lessonResponse::class.java).lessons
     } catch (e : Exception) {
+        LogUtil.error(e)
         emptyList<lessons>()
     }
 
 
-    suspend fun getExamJXGLSTU(cookie: String, studentId : StateHolder<Int>, examHolder : StateHolder<List<JxglstuExam>>) {
+    suspend fun getExam(cookie: String, studentId : StateHolder<Int>, examHolder : StateHolder<List<JxglstuExam>>) {
         onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
             launchRequestState(
                 holder = examHolder,
@@ -918,50 +919,4 @@ object JxglstuRepository {
         LargeStringDataManager.save(LargeStringDataManager.EXAM,html)
         parseJxglstuExam(html)
     } catch (e:Exception) { throw e }
-
-//    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int,holder : StateHolder<lessonResponse>) =
-//        launchRequestState(
-//            holder = holder,
-//            request = {
-//                (SemesterParser.getSemester().plus(20)).toString().let {
-//                    jxglstu.getLessonIds(cookie, bizTypeId.toString(), it, studentId.toString())
-//
-//                }
-//            },
-//            transformSuccess = { _, json -> parseLessonIdsNext(json) }
-//        )
-//    @JvmStatic
-//    private fun parseLessonIdsNext(json : String) : lessonResponse {
-//        SharedPrefs.saveString("coursesNext", json)
-//        try {
-//            return Gson().fromJson(json, lessonResponse::class.java)
-//        } catch (e : Exception) { throw e }
-//    }
-//
-//    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>,studentId: StateHolder<Int>) {
-//        onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
-//            val lessonIdsArray = JsonArray()
-//            lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-//            val jsonObject = JsonObject().apply {
-//                add("lessonIds", lessonIdsArray)//课程ID
-//                addProperty("studentId", sId)//学生ID
-//                addProperty("weekIndex", "")
-//            }
-//            val call = jxglstu.getDatum(cookie, jsonObject)
-//
-//            call.enqueue(object : Callback<ResponseBody> {
-//                override fun onResponse(
-//                    call: Call<ResponseBody>,
-//                    response: Response<ResponseBody>
-//                ) {
-//                    val body = response.body()?.string()
-//                    SharedPrefs.saveString("jsonNext", body)
-//                }
-//
-//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                    t.printStackTrace()
-//                }
-//            })
-//        }
-//    }
 }

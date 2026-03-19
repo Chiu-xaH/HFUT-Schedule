@@ -451,7 +451,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun checkCommunityLogin(token: String) = CommunityRepository.checkCommunityLogin(token,checkCommunityResponse)
 
     val examResponse = StateHolder<List<JxglstuExam>>()
-    suspend fun getExamJXGLSTU(cookie: String) = JxglstuRepository.getExamJXGLSTU(cookie,studentId,examResponse)
+    suspend fun getExamJXGLSTU(cookie: String) = JxglstuRepository.getExam(cookie,studentId,examResponse)
 
     val gradeFromCommunityResponse = StateHolder<GradeResult>()
     suspend fun getGrade(token: String, year : String, term : String) = CommunityRepository.getGrade(token,year,term,gradeFromCommunityResponse)

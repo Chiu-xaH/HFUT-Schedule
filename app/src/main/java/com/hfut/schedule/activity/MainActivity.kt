@@ -49,8 +49,9 @@ class MainActivity : BaseActivity() {
                 if(
                     switchUpload && // 用户决定
                     postedUse == false && // 全局只传一次
-                    !AppVersion.isPreview() && // Preview内部版本不传
-                    !AppVersion.isInDebugRunning() // 跑在Avd的测试机不传
+                    !AppVersion.isDev && // 内部版本不传
+                    !AppVersion.isRunningOnAvd && // 跑在Avd的测试机不传
+                    !AppVersion.isDebug  // Debug版本不传
                 ) {
                     networkVm.postUser()
                     postedUse = true

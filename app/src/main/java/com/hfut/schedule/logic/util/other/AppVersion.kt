@@ -1,9 +1,9 @@
 package com.hfut.schedule.logic.util.other
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
 import com.xah.shared.LogUtil
 import java.security.MessageDigest
@@ -12,8 +12,13 @@ import java.security.cert.X509Certificate
 
 object AppVersion {
     enum class SplitType(val code : Int,val description: String) {
-        COMMON(0,"通用"),ARM64(2,"ARM 64位"),ARM32(1,"ARM 32位"),X86(3,"X86 32位"),X86_64(4,"X86 64位"),
+        COMMON(0,"通用"),
+        ARM64(2,"ARM 64位"),
+        ARM32(1,"ARM 32位"),
+        X86(3,"X86 32位"),
+        X86_64(4,"X86 64位"),
     }
+
     private val packageName = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0)
     val appPackageName = MyApplication.context.packageName
 
@@ -26,6 +31,7 @@ object AppVersion {
         }
         return versionCode
     }
+
     fun getVersionCode() : Int = getSplitVersionCode().let { if(it >= 1000) it/10 else it }
 
     fun getSplitType() : SplitType = if(getSplitVersionCode() < 1000) {
@@ -52,8 +58,8 @@ object AppVersion {
     }
     // 获取当前系统的API级别
     val sdkInt = Build.VERSION.SDK_INT
-    // 获取当前系统的版本号
-    val release = Build.VERSION.RELEASE
+
+    val isDebug = BuildConfig.DEBUG
 
     val CAN_HAZE_BLUR_BAR = sdkInt >= 31
     val CAN_MOTION_BLUR = sdkInt >= 31
@@ -69,8 +75,9 @@ object AppVersion {
 
     val CAN_SHADER = sdkInt >= 33
 
-    fun isInDebugRunning() : Boolean = deviceName.startsWith("sdk_gphone") == true
-    fun isPreview() : Boolean = getVersionName().contains("Preview")
+    val isRunningOnAvd = deviceName.startsWith("sdk_gphone") == true || deviceName.startsWith("Android SDK built for") == true
+
+    val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
 
     /*
     * 安卓15 35

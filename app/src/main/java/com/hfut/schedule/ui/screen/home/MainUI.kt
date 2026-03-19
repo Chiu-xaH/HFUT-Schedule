@@ -60,6 +60,7 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -112,6 +113,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
 import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.other.AppVersion.deviceName
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
@@ -134,6 +136,7 @@ import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.destination.AddEventDestination
 import com.hfut.schedule.ui.destination.FunctionsSortDestination
 import com.hfut.schedule.ui.destination.NotificationBoxDestination
@@ -477,6 +480,49 @@ fun MainScreen(
                                         )
                                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                     }
+                                }
+                                SETTINGS -> {
+                                   Row {
+                                       if(AppVersion.isDebug) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_debug))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.build),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                       if(AppVersion.isDev) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_preview))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.logo_dev),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                       if(AppVersion.isRunningOnAvd) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_avd))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.adb),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                   }
                                 }
                                 else -> {}
                             }

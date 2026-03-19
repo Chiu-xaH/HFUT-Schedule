@@ -222,7 +222,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
                                 Spacer(Modifier.height(CARD_NORMAL_DP))
                                 PaddingHorizontalDivider(isDashed = true)
                                 PatchUpdateUI(patchItem!!,vm,update)
-                            } else if(!AppVersion.isPreview()) {
+                            } else if(!AppVersion.isDev) {
                                 BottomTip(stringResource(R.string.settings_update_tips_none_patch))
                                 // 清理
                                 if(!hasCleaned) {
@@ -327,7 +327,7 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
     val navHostTopController = LocalNavController.current
     val showBadge = update != null && update.assets.isNotEmpty()
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
-    val isPreview = AppVersion.isPreview()
+    val isPreview = AppVersion.isDev
     val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,

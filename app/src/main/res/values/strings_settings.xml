@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_person_info_default_name">Guest</string>
-    <string name="settings_person_info_tag_debug">Running on AVD</string>
-    <string name="settings_person_info_tag_preview">Insider Preview</string>
+    <string name="settings_person_info_tag_debug">Debug version</string>
+    <string name="settings_person_info_tag_preview">Insider Development Version</string>
+    <string name="settings_person_info_tag_avd">Running on AVD</string>
     <string name="settings_person_info_tag_normal">Have past %1$s%%</string>
     <string name="settings_person_info_student_id_description">Student ID</string>
     <string name="settings_person_info_half_title">Me</string>

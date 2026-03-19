@@ -5,6 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface GithubService {
     // 获取仓库信息
@@ -25,5 +26,13 @@ interface GithubService {
         @Path("owner") owner : String = Constant.GITHUB_DEVELOPER_NAME,
         @Path("repo") repo : String = Constant.GITHUB_REPO_NAME,
         @Path("path") path : String = "docs/update"
+    ) : Call<ResponseBody>
+
+    @GET("repos/{owner}/{repo}/issues?state=open&sort=updated&per_page=30&page=1")
+    fun getIssues(
+        @Query("page") page : Int,
+        @Query("state") state : String = "open",
+        @Query("sort") sort : String = "updated",
+        @Query("per_page") pageSize : String = Constant.DEFAULT_PAGE_SIZE.toString()
     ) : Call<ResponseBody>
 }
