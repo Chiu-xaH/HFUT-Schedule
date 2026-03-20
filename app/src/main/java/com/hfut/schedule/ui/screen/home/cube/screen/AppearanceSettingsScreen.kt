@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -669,8 +670,8 @@ fun SharedAppearanceSettingsScreen(
                 SharedContainer(
                     key = CornerSettingsDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
-                        topEnd = RoundedCornerShape(0.dp).topEnd,
-                        topStart = RoundedCornerShape(0.dp).topStart,
+                        topEnd = CornerSize(0.dp),
+                        topStart = CornerSize(0.dp),
                     ),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {

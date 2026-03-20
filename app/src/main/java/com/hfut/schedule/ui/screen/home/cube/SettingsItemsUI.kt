@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -85,8 +86,8 @@ fun SettingsItemsUI() {
         SharedContainer(
             key = SettingsAppearanceDestination.key,
             shape = MaterialTheme.shapes.medium.copy(
-                bottomStart = RoundedCornerShape(0.dp).bottomStart,
-                bottomEnd = RoundedCornerShape(0.dp).bottomEnd
+                bottomStart = CornerSize(0.dp),
+                bottomEnd = CornerSize(0.dp)
             ),
             containerColor = MaterialTheme.colorScheme.surface
         ) {
@@ -140,8 +141,8 @@ fun SettingsItemsUI() {
         SharedContainer(
             key = SettingsAboutDestination.key,
             shape = MaterialTheme.shapes.medium.copy(
-                topStart = RoundedCornerShape(0.dp).topStart,
-                topEnd = RoundedCornerShape(0.dp).topEnd
+                topStart = CornerSize(0.dp),
+                topEnd = CornerSize(0.dp)
             ),
             containerColor = MaterialTheme.colorScheme.surface
         ) {
@@ -343,8 +344,8 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
             SharedContainer(
                 key = VersionInfoDestination.key,
                 shape = MaterialTheme.shapes.medium.copy(
-                    topStart = RoundedCornerShape(0.dp).topStart,
-                    topEnd = RoundedCornerShape(0.dp).topEnd
+                    topStart = CornerSize(0.dp),
+                    topEnd = CornerSize(0.dp)
                 ),
                 containerColor = MaterialTheme.colorScheme.surface
             ) {

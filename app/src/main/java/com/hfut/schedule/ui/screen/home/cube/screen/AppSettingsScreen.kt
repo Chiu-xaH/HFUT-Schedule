@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -328,8 +329,8 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 SharedContainer(
                     key = SettingsOcrDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
-                        topStart = RoundedCornerShape(0.dp).topStart,
-                        topEnd = RoundedCornerShape(0.dp).topEnd,
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp),
                     ),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
@@ -355,8 +356,8 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 SharedContainer(
                     key = SettingsBackupDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
-                        bottomEnd = RoundedCornerShape(0.dp).bottomEnd,
-                        bottomStart = RoundedCornerShape(0.dp).bottomStart,
+                        bottomEnd = CornerSize(0.dp),
+                        bottomStart = CornerSize(0.dp),
                     ),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
@@ -395,8 +396,8 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 SharedContainer(
                     key = SettingsFocusWidgetDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
-                        bottomStart = RoundedCornerShape(0.dp).bottomStart,
-                        bottomEnd = RoundedCornerShape(0.dp).bottomEnd,
+                        bottomStart = CornerSize(0.dp),
+                        bottomEnd = CornerSize(0.dp),
                     ),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {

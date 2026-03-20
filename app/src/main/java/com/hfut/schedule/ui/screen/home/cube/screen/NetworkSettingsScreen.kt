@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -106,7 +107,10 @@ fun NetworkSettingsScreen(
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 SharedContainer(
                     key = SettingsHuiXinPasswordDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = MaterialTheme.shapes.medium.copy(
+                        bottomStart = CornerSize(0.dp),
+                        bottomEnd = CornerSize(0.dp),
+                    ),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -147,8 +151,8 @@ fun NetworkSettingsScreen(
                 SharedContainer(
                     key = SettingsAiApiKeyDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
-                        topStart = RoundedCornerShape(0.dp).topStart,
-                        topEnd = RoundedCornerShape(0.dp).topEnd
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp)
                     ),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {

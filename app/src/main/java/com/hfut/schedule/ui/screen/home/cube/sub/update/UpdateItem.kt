@@ -28,7 +28,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-03-16") },
+                overlineContent = { Text(text = "2026-03-20") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,9 +56,13 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 适配若干二级界面为新的转场动画")
-            UpdateItems("修复 上一级界面的容器已经不在可见范围内，仍错误执行容器共享动画的Bug")
-            UpdateItems("优化 选项的归类调整")
+            UpdateItems("修复 由于v4.20大改框架时编码失误，导致平均成绩与平均绩点对调的Bug")
+            UpdateItems("修复 控制中心校园网登录磁贴一直显示活跃态的Bug")
+            UpdateItems("修复 正式发行版误打印debug日志的Bug")
+            UpdateItems("优化 部分界面的显示")
+//            UpdateItems("新增 适配若干二级界面为新的转场动画")
+//            UpdateItems("修复 上一级界面的容器已经不在可见范围内，仍错误执行容器共享动画的Bug")
+//            UpdateItems("优化 选项的归类调整")
 //            UpdateItems("优化 转场动画返回时在部分场景的掉帧现象","SharedNav库新增等帧机制")
 //            UpdateItems("优化 部分页面的显示")
 // TODO 聚焦重要事项多个日程key区分

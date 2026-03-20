@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -706,8 +707,8 @@ fun DetailItems(
                 SharedContainer(
                     key = dest.key,
                     shape = MaterialTheme.shapes.medium.copy(
-                        topStart = RoundedCornerShape(0.dp).topStart,
-                        topEnd = RoundedCornerShape(0.dp).topEnd
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp)
                     ),
                     containerColor = cardNormalColor()
                 ) {
