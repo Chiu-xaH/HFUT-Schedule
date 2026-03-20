@@ -137,7 +137,7 @@ fun ExamScreen(
             }
             if(list.isEmpty()) {
                 CenterScreen {
-                    EmptyIcon()
+                    EmptyIcon("暂无考试安排")
                 }
             } else {
                 LazyColumn {

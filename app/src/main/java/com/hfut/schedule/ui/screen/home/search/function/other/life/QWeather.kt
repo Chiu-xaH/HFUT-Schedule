@@ -33,6 +33,7 @@ import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
@@ -68,22 +69,9 @@ fun LifeScreenMini(vm: NetWorkViewModel) {
             }
         )
     }
-//    DividerTextExpandedWith("外部App") {
-//        LazyRow {
-//            items(
-//                Starter.AppPackages.entries.size
-//            ) { index ->
-//                val item = Starter.AppPackages.entries[index]
-//                Card(
-//                    shape = MaterialTheme.shapes.medium,
-//                    colors =  CardDefaults.cardColors(cardNormalColor()),
-//                    modifier = Modifier.padding(end = CARD_NORMAL_DP)
-//                ) {
-//                }
-//            }
-//        }
-//    }
-//    DividerTextExpandedWith("楼层导向") { }
+    DividerTextExpandedWith("楼层导向") {
+        DevelopingIcon()
+    }
 }
 
 @Composable
@@ -128,9 +116,6 @@ private fun WeatherScreen(vm: NetWorkViewModel) {
                 leftTop = {
                     QWeatherIcon(data.icon.toIntOrNull())
                 },
-//            rightTop = {
-//                Text(text = cityName)
-//            }
             ) {
                 Row {
                     TransplantListItem(

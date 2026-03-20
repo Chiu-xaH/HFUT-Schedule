@@ -1036,7 +1036,7 @@ fun GPAWithScore() {
                 with(item2) {
                     TransplantListItem(
                         supportingContent = {
-                            Text("${score.min}-${score.max}")
+                            ScrollText("${score.min}-${score.max}")
                         },
                         headlineContent = { Text(gpa.toString()) },
                         modifier = Modifier.weight(1/3f)

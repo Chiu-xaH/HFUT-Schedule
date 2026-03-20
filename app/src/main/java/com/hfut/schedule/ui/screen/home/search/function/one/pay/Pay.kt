@@ -144,7 +144,6 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheetQRCode = false },
             showBottomSheet = showBottomSheetQRCode,
-//            isFullScreen = false
         ) {
             Column {
                 Row(modifier = Modifier
@@ -212,40 +211,16 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             )
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text(text = "点击右上角打开链接登录后可调用支付") },
-                leadingContent = {Icon(
+                headlineContent = { Text(text = "点击复制链接，在微信或支付宝打开链接后即可支付") },
+                leadingContent = { Icon(
                     painter = painterResource(id = R.drawable.net),
                     contentDescription = ""
-                ) },
-                modifier = Modifier.clickable { Starter.startWebUrl(context,Constant.PAY_FEE_URL) }
-            )
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = { Text(text = "点击展示二维码，长按复制链接，在微信/支付宝等扫码或打开链接后，即可支付") },
-                leadingContent = { Icon(
-                    painter = painterResource(id = R.drawable.barcode),
-                    contentDescription = ""
                 )},
-                modifier= Modifier.combinedClickable(
-                    onClick = {
-                        showBottomSheetQRCode = true
-                    },
-                    onDoubleClick = {},
-                    onLongClick = {
-                        ClipBoardHelper.copy(Constant.PAY_FEE_URL)
-                    }
-                )
+                modifier= Modifier.clickable {
+                    ClipBoardHelper.copy(Constant.PAY_FEE_URL)
+                }
             )
         }
-
-    }
-    DividerTextExpandedWith(text = "防骗警告") {
-        CardListItem(
-            headlineContent = { Text(text = "电子支付只能通过学校缴费平台官方链接(右上角按钮提供)发起,其余线上途径均需谨慎甄别!") },
-            leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.error), contentDescription = "")
-            },
-        )
     }
 }
 

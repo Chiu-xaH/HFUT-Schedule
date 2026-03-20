@@ -79,18 +79,6 @@ object AppVersion {
 
     val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
 
-    /*
-    * 安卓15 35
-    * 安卓14 34
-    * 安卓13 33
-    * 安卓12X 32
-    * 安卓12 31
-    * 安卓11 30
-    * 安卓10 29
-    * 安卓9 28
-    * 安卓8 27
-    * 安卓7 26
-     */
 
     @RequiresApi(Build.VERSION_CODES.P)
     @JvmStatic

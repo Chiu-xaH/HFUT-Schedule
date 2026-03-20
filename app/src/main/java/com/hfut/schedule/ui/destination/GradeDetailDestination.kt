@@ -9,8 +9,8 @@ import com.xah.common.ui.util.res
 
 data class GradeDetailDestination(
     val bean : GradeJxglstuResponse,
-    val allAvgScore : Float,
     val allAvgGpa : Float,
+    val allAvgScore : Float,
     val allTotalCredits : Float
 ) : NavDestination() {
     override val key = "grade_detail_${bean.hashCode()}"
