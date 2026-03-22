@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.fix.about
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -38,14 +39,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -55,22 +55,17 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.divider.ScrollHorizontalBottomDivider
-import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.destination.SettingsAboutDeveloperDestination.title
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.welcome.arguments
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -90,19 +85,20 @@ private val openSourceProjects = listOf(
     OpenSource("Accompanist" ,"扩展工具包","${Constant.GITHUB_URL}google/accompanist"),
     OpenSource("Glide", "图片","${Constant.GITHUB_URL}bumptech/glide"),
     OpenSource("EdDSA Java" ,"供和风天气Api加密","${Constant.GITHUB_URL}str4d/ed25519-java"),
-    OpenSource("Konfetti" ,"礼花动画","${Constant.GITHUB_URL}DanielMartinus/Konfetti"),
+    OpenSource("Konfetti" ,"礼花特效","${Constant.GITHUB_URL}DanielMartinus/Konfetti"),
     OpenSource("Tesseract4Android" ,"Tesseract4(供图片验证码识别)","${Constant.GITHUB_URL}adaptech-cz/Tesseract4Android"),
     OpenSource("DiffUpdater" , "增量更新","${Constant.GITHUB_URL}Chiu-xaH/DiffUpdater"),
-    OpenSource("MaterialKolor" , "取色","${Constant.GITHUB_URL}jordond/MaterialKolor"),
-    OpenSource("LeakCanary" , "内存泄漏检查工具","${Constant.GITHUB_URL}square/leakcanary"),
+    OpenSource("MaterialKolor" , "自定义取色","${Constant.GITHUB_URL}jordond/MaterialKolor"),
+    OpenSource("LeakCanary" , "内存泄漏检查","${Constant.GITHUB_URL}square/leakcanary"),
     OpenSource("Reorderable" , "列表拖拽","${Constant.GITHUB_URL}Calvin-LL/Reorderable"),
-    OpenSource("SharedNav" , "全局转场动效","${Constant.GITHUB_URL}Chiu-xaH/SharedNav"),
+    OpenSource("SharedNav" , "页面管理&容器共享","${Constant.GITHUB_URL}Chiu-xaH/SharedNav"),
     OpenSource("AndroidLiquidGlass" , "液态玻璃","${Constant.GITHUB_URL}Kyant0/AndroidLiquidGlass"),
     OpenSource("Mirror-Android" , "镜面效果","${Constant.GITHUB_URL}Chiu-xaH/Mirror-Android"),
 )
 
 private data class OpenSource(val name : String,val description: String,val url : String?)
 
+// TODO 重新设计
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun About(vm : NetWorkViewModel) {
@@ -121,7 +117,7 @@ fun About(vm : NetWorkViewModel) {
         }
     }
     val context = LocalContext.current
-    var starsNum by remember { mutableStateOf("") }
+    var starsNum by remember { mutableStateOf<String?>(null) }
     val uiState by vm.githubStarsData.state.collectAsState()
     LaunchedEffect(uiState) {
         if(uiState is UiState.Success) {
@@ -147,60 +143,16 @@ fun About(vm : NetWorkViewModel) {
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
-                actions = {
-                    FilledTonalButton(
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-                        enabled = todayVisitCount is UiState.Success,
-                        onClick = {
-                            scope.launch {
-                                Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
-                            }
-                        }
-                    ) {
-                        Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
-                    }
-                }
             )
         },
-        bottomBar = {
-            Column(
-                modifier = Modifier.bottomBarBlur(hazeState)
-            ) {
-                Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        Text("Github ⭐ $starsNum")
-                    }
-
-                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
-                    FilledTonalButton(
-                        onClick = {
-                            scope.launch {
-                                Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
-                            }
-                        },
-                        enabled = userCount is UiState.Success,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        Text("总用户 ${(userCount as? UiState.Success)?.data ?: ""}")
-                    }
-                }
-            }
-        },
     ) { innerPadding ->
-        Column(modifier = Modifier.verticalScroll(scrollState).hazeSource(hazeState)) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .hazeSource(hazeState)
+        ) {
             InnerPaddingHeight(innerPadding,true)
-            DividerTextExpandedWith("开发者") {
+            DividerTextExpandedWith("开发人员") {
                 CustomCard(
                     color = cardNormalColor(),
                 ) {
@@ -247,25 +199,118 @@ fun About(vm : NetWorkViewModel) {
                 }
             }
 
-            DividerTextExpandedWith("构建") {
-                CustomCard (color = cardNormalColor()){
-                    TransplantListItem(
-                        headlineContent = { Text("Kotlin,Java,C") },
-                        overlineContent = { Text("语言") }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("工具包") },
-                        headlineContent = { Text("Jetpack Compose") },
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("UI")},
-                        headlineContent = { Text("Material Design 3") },
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("跨平台(部分Module)") },
-                        headlineContent = { Text("Kotlin/Compose Multiplatform") },
-                    )
+            DividerTextExpandedWith("关于本应用") {
+                CustomCard(
+                    color = cardNormalColor(),
+                ) {
+                    Row(
+                        modifier = Modifier.clickable {
+                            scope.launch {
+                                Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                            }
+                        }
+                    ) {
+                        TransplantListItem(
+                            modifier = Modifier.weight(.5f),
+                            headlineContent = {
+                                Text("${(todayVisitCount as? UiState.Success)?.data ?: "--"}")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.leaderboard),null)
+                            },
+                            overlineContent = {
+                                Text("日流量")
+                            }
+                        )
+                        TransplantListItem(
+                            modifier = Modifier.weight(.5f),
+                            headlineContent = {
+                                Text("${(userCount as? UiState.Success)?.data ?: "--"}")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.group),null)
+                            },
+                            overlineContent = {
+                                Text("用户量")
+                            }
+                        )
+                    }
+                    Row {
+                        TransplantListItem(
+                            modifier = Modifier.weight(.5f).clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                                }
+                            },
+                            headlineContent = {
+                                Text(starsNum ?: "--")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.kid_star),null)
+                            },
+                            overlineContent = {
+                                Text("Star")
+                            },
+                        )
+                        TransplantListItem(
+                            modifier = Modifier.weight(.5f).clickable {
+
+                            },
+                            headlineContent = {
+                                Text("--")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.target),null)
+                            },
+                            overlineContent = {
+                                Text("Issue")
+                            }
+                        )
+                    }
+                    Row {
+                        TransplantListItem(
+                            modifier = Modifier.weight(.5f).clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                                }
+                            },
+                            headlineContent = {
+                                Text("--")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.commit),null)
+                            },
+                            overlineContent = {
+                                Text("Commit")
+                            }
+                        )
+                        TransplantListItem(
+                            modifier = Modifier.weight(.5f).clickable {
+
+                            },
+                            headlineContent = {
+                                Text("--")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.sell),null)
+                            },
+                            overlineContent = {
+                                Text("发行版")
+                            }
+                        )
+                    }
                 }
+                // star数量 issue数量 最新release 本版本新特性 历史更新日志 commit次数
+                LargeButton(
+                    onClick = {
+                        scope.launch {
+                            Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                        }
+                    },
+                    text = "Github",
+                    icon = R.drawable.github,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP*2)
+                )
             }
 
             DividerTextExpandedWith("开源引用") {
@@ -327,7 +372,7 @@ fun About(vm : NetWorkViewModel) {
 }
 
 @Composable
-fun OverlappingAvatars(
+private fun OverlappingAvatars(
     imageUrls: List<String>,
     modifier: Modifier = Modifier,
     avatarSize: Dp = 45.dp,

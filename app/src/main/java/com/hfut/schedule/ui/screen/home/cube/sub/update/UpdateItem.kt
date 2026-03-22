@@ -56,9 +56,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 由于v4.20大改框架时编码失误，导致平均成绩与平均绩点对调的Bug")
-            UpdateItems("修复 控制中心校园网登录磁贴一直显示活跃态的Bug")
-            UpdateItems("修复 正式发行版误打印debug日志的Bug")
+            UpdateItems("新增 课程表方格支持长按放大显示")
+            UpdateItems("新增 单击课程表空白区域返回当前周")
+            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
+            UpdateItems("优化 新建日程的时间选择器的交互")
+            UpdateItems("优化 课程表捏合手势的灵敏度")
             UpdateItems("优化 部分界面的显示")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 上一级界面的容器已经不在可见范围内，仍错误执行容器共享动画的Bug")

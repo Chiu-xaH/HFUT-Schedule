@@ -521,6 +521,18 @@ fun MainScreen(
                                                    tint = MaterialTheme.colorScheme.primary
                                                )
                                            }
+                                       } else if(AppVersion.isRunningOnWsa) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_wsa))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.desktop_windows),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
                                        }
                                    }
                                 }

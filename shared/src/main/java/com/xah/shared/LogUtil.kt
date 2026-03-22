@@ -2,6 +2,10 @@ package com.xah.shared
 
 import android.util.Log
 
+/**
+ * 可直接跟踪到日志打印的位置（堆栈），提升开发效率
+ * debug包打印所有级别日志，release包只打印error级别日志
+ */
 object LogUtil {
     @Volatile
     var enable = true

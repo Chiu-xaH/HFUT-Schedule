@@ -56,7 +56,8 @@ object AppVersion {
         }
         return versionName
     }
-    // 获取当前系统的API级别
+
+    // 获取当前系统的API
     val sdkInt = Build.VERSION.SDK_INT
 
     val isDebug = BuildConfig.DEBUG
@@ -66,19 +67,16 @@ object AppVersion {
 
     // 华为、安卓12 单独对渐变模糊适配
     val HAZE_BLUR_FOR_S = sdkInt == 31 || sdkInt == 32
-
     val CAN_DYNAMIC_COLOR = sdkInt >= 31
+
+    val CAN_PREDICTIVE = sdkInt >= 33
+    val CAN_SHADER = sdkInt >= 33
 
     val deviceName: String = Build.MODEL
 
-    val CAN_PREDICTIVE = sdkInt >= 33
-
-    val CAN_SHADER = sdkInt >= 33
-
     val isRunningOnAvd = deviceName.startsWith("sdk_gphone") == true || deviceName.startsWith("Android SDK built for") == true
-
+    val isRunningOnWsa = deviceName.startsWith("Subsystem for Android")
     val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
-
 
     @RequiresApi(Build.VERSION_CODES.P)
     @JvmStatic
