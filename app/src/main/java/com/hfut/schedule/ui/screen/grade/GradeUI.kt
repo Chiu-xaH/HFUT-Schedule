@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.AverageGradeDestination
+import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore

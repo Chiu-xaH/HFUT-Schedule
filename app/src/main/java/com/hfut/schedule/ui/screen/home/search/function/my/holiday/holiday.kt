@@ -47,13 +47,13 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.destination.HolidayDestination
-import com.hfut.schedule.ui.destination.NewsApiDestination
+import com.hfut.schedule.ui.nav.destination.HolidayDestination
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.util.LocalNavController

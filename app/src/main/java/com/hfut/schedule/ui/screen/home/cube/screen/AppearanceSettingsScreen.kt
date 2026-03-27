@@ -103,7 +103,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
@@ -112,10 +112,8 @@ import com.hfut.schedule.ui.util.color.longToHexColor
 import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.container.container.pixelExtension
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
-import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.slider.CustomSlider
@@ -124,7 +122,9 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.pixelExtension
+import com.xah.navigation.model.anim.EffectLevel
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.FeeDestination
+import com.hfut.schedule.ui.nav.destination.FeeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.screen.createQRCodeBitmap
 import com.hfut.schedule.ui.style.special.HazeBottomSheet

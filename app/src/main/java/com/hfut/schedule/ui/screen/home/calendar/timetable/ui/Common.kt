@@ -1,13 +1,18 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,17 +24,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseApiDetailDestination
-import com.hfut.schedule.ui.destination.ExamDestination
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
+import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
@@ -37,11 +45,14 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_T
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
-import com.xah.container.container.sharedContainer
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.component.base.SharedContent
+import com.xah.container.component.base.sharedContainer
+import com.xah.floating.model.Window
+import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavControllerSafely
-import com.xah.common.ui.style.ClickScale
-import com.xah.common.ui.style.clickableWithScale
 
 private const val timeTextFactor = 0.85
 private const val placeTextFactor = 0.9
@@ -61,6 +72,8 @@ fun TimeTable(
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
     onSquareClick : (List<TimeTableItem>) -> Unit,
 ) {
+    val floatingController = LocalFloatingController.current
+
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
@@ -160,9 +173,17 @@ fun TimeTable(
                     }
                     .let {
                         if (!hasBackground) {
-                            it.clickableWithScale(ClickScale.SMALL.scale) {
-                                onSquareClick(list)
-                            }
+                            it.combinedClickable(
+                                onLongClick = {
+                                    floatingController.push(TimeTableSquareWindow(list))
+                                },
+                                onClick = {
+                                    onSquareClick(list)
+                                }
+                            )
+//                            it.clickableWithScale(ClickScale.SMALL.scale) {
+//                                onSquareClick(list)
+//                            }
                         } else {
                             it.clickable {
                                 onSquareClick(list)
@@ -360,9 +381,17 @@ fun TimeTable(
                     }
                     .let {
                         if (!hasBackground) {
-                            it.clickableWithScale(ClickScale.SMALL.scale) {
-                                onSquareClick(listOf(item))
-                            }
+                            it.combinedClickable(
+                                onLongClick = {
+                                    floatingController.push(TimeTableSquareWindow(listOf(item)))
+                                },
+                                onClick = {
+                                    onSquareClick(listOf(item))
+                                }
+                            )
+//                            it.clickableWithScale(ClickScale.SMALL.scale) {
+//                                onSquareClick(listOf(item))
+//                            }
                         } else {
                             it.clickable {
                                 onSquareClick(listOf(item))

@@ -2,25 +2,18 @@ package com.hfut.schedule.ui.screen.fix.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +55,6 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.welcome.arguments
-import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -198,6 +190,31 @@ fun About(vm : NetWorkViewModel) {
                     }
                 }
             }
+            /* 重要时间线
+            初次来到校园 2023-08-30
+
+            项目立项（新建文件夹） 2023-10-16 14:40 名称：肥工课程表
+
+            可以跑通（首次显示课程表） 敬亭学堂218 大学生心理健康007班 2023-11-02 15:05
+
+            新增自更新机制（标志着可以自己获取更新），且完成度和稳定度已达到标准，并更名为肥工教务通，同时感谢我的室友作为第一个用户 v2.1 2023-11-13
+
+            课程表从4*5布局重写为5*7 v3.1 2024-01-30
+
+            将主界面从登录更换到聚焦（标志着每次启动时不再依靠手动登录） v3.2 2024-02-01
+
+            更名为聚在工大 v4.3.1.4 2024-03-24
+
+            从资源环境与工程学院来到计算机与信息学院，在庐山是最难忘也是最后一段和原班级共处的一段时光 2024-09-14
+
+            设计风格调整（无边界设计，渐进式模糊，仍沿用至今） 2024-11-22 v4.12.2
+
+            突然被计算机与信息学院的同学以及学长发现并推广，用户量激增
+
+            第一代全局转场动效（摒弃了沿用多年的BottomSheet设计） v4.17 2025-08-01
+
+            新课程表重写（时间轴设计，摒弃了v3.1沿用多年的设计） v4.18.4 2025-10-30
+             */
 
             DividerTextExpandedWith("关于本应用") {
                 CustomCard(

@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.destination.OfficeHallDestination
+import com.hfut.schedule.ui.nav.destination.OfficeHallDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 
 import com.xah.navigation.util.LocalNavController

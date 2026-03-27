@@ -74,8 +74,8 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseApiDetailDestination
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -84,11 +84,12 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.container.container.sharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.container.component.base.sharedContainer
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async

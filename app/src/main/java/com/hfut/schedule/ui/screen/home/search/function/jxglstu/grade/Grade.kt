@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.destination.GradeDestination
+import com.hfut.schedule.ui.nav.destination.GradeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
 import com.hfut.schedule.viewmodel.network.XwxViewModel

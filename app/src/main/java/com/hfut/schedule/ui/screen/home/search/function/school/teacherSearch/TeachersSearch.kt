@@ -44,7 +44,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
-import com.hfut.schedule.ui.destination.TeacherSearchDestination
+import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant

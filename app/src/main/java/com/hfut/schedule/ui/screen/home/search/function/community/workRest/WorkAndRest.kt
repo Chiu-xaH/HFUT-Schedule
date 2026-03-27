@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.WorkAndRestDestination
+import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource

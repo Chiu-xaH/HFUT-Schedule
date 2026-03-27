@@ -85,14 +85,14 @@ import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.GradeDetailDestination
+import com.hfut.schedule.ui.nav.destination.GradeDetailDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.container.container.sharedContainer
+import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.chart.RadarChart
 import com.xah.common.ui.component.chart.RadarData

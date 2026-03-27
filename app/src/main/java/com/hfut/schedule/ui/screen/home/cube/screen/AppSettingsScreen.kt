@@ -61,11 +61,11 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.SettingsBackupDestination
-import com.hfut.schedule.ui.destination.SettingsCalendarDestination
-import com.hfut.schedule.ui.destination.SettingsFocusCardDestination
-import com.hfut.schedule.ui.destination.SettingsFocusWidgetDestination
-import com.hfut.schedule.ui.destination.SettingsOcrDestination
+import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
+import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
+import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
+import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
+import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -75,7 +75,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay

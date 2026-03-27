@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.destination.SelectCoursesDestination
+import com.hfut.schedule.ui.nav.destination.SelectCoursesDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.navigation.util.LocalNavController
 

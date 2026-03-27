@@ -137,11 +137,11 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.DevelopingIcon
-import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.FunctionsSortDestination
-import com.hfut.schedule.ui.destination.NotificationBoxDestination
-import com.hfut.schedule.ui.destination.TermCoursesDestination
-import com.hfut.schedule.ui.destination.WorkAndRestDestination
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
+import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
+import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
+import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -179,7 +179,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle

@@ -16,7 +16,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.destination.AdmissionDestination
+import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 
 import com.xah.navigation.util.LocalNavController
 

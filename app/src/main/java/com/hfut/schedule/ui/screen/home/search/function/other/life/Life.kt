@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.destination.LifeDestination
+import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

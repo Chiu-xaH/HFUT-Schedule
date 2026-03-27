@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
-import com.hfut.schedule.ui.destination.HomeDestination
+import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.navigation.model.action.ActionType

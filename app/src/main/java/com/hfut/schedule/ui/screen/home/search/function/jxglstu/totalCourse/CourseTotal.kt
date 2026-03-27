@@ -25,7 +25,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.destination.TermCoursesDestination
+import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop

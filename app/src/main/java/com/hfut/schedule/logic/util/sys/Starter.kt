@@ -24,7 +24,7 @@ import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.ui.destination.WebViewDestination
+import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie

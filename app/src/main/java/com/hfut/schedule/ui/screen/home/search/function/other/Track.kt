@@ -22,7 +22,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
-import com.hfut.schedule.ui.destination.TrackDestination
+import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 

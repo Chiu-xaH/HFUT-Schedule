@@ -81,11 +81,11 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.ClassroomDestination
-import com.hfut.schedule.ui.destination.CourseClassmatesScreen
-import com.hfut.schedule.ui.destination.CourseDetailDestination
-import com.hfut.schedule.ui.destination.FailRateApiDestination
-import com.hfut.schedule.ui.destination.TeacherSearchApiDestination
+import com.hfut.schedule.ui.nav.destination.ClassroomDestination
+import com.hfut.schedule.ui.nav.destination.CourseClassmatesScreen
+import com.hfut.schedule.ui.nav.destination.CourseDetailDestination
+import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
+import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -98,8 +98,8 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.container.SharedContainer
-import com.xah.container.container.sharedContainer
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
@@ -110,6 +110,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.shared.LogUtil
 import com.xah.common.ui.model.text.UiText
+import com.xah.container.component.base.sharedContainer
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first

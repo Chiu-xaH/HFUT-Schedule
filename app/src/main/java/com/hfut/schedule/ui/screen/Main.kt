@@ -28,21 +28,21 @@ import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.destination.AgreementDestination
-import com.hfut.schedule.ui.destination.ExceptionDestination
-import com.hfut.schedule.ui.destination.HomeDestination
-import com.hfut.schedule.ui.destination.UpdateSuccessfullyDestination
+import com.hfut.schedule.ui.nav.destination.AgreementDestination
+import com.hfut.schedule.ui.nav.destination.ExceptionDestination
+import com.hfut.schedule.ui.nav.destination.HomeDestination
+import com.hfut.schedule.ui.nav.destination.UpdateSuccessfullyDestination
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.sharednav.common.ScreenCornerHelper
+import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.container.util.LocalSharedRegistry
-import com.xah.navigation.anim.EffectLevel
-import com.xah.navigation.component.DefaultBackHandler
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
+import com.xah.navigation.model.anim.EffectLevel
+import com.xah.navigation.util.DefaultBackHandler
 import com.xah.navigation.util.rememberNavDependencies
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -186,7 +186,7 @@ private fun getStartDestination(route : String?) : NavDestination {
         if(route != null) {
             try {
                 val finalClassName = if(route.split(".").size == 1) {
-                    "com.hfut.schedule.ui.destination.$route"
+                    "com.hfut.schedule.ui.nav.destination.$route"
                 } else {
                     route
                 }

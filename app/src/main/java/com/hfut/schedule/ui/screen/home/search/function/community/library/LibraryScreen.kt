@@ -91,7 +91,7 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.LibraryBorrowedDestination
+import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet

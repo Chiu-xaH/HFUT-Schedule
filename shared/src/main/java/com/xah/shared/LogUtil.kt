@@ -17,7 +17,7 @@ object LogUtil {
         VERBOSE(0), DEBUG(1), INFO(2), WARN(3), ERROR(4)
     }
 
-    private val minLevel: Level = if (BuildConfig.DEBUG) Level.VERBOSE else Level.ERROR
+    private val minLevel: Level = if (BuildConfig.DEBUG) Level.VERBOSE else Level.WARN
 
     fun verbose(msg : String = "") = baseLog(Level.VERBOSE,msg)
     fun info(msg : String = "") = baseLog(Level.INFO,msg)

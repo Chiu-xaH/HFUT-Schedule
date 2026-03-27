@@ -42,12 +42,12 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.SettingsAiApiKeyDestination
-import com.hfut.schedule.ui.destination.SettingsHuiXinPasswordDestination
-import com.hfut.schedule.ui.destination.SettingsJxglstuPasswordDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAiApiKeyDestination
+import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
+import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

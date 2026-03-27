@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hfut.schedule.ui.util.navigation.canPopBack
+import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.shared.LogUtil
 
@@ -30,9 +31,18 @@ fun NavGraphBuilder.nav2Composable(
 
 @Composable
 private fun Nav2BackHandler() {
-    val navHostTopController = LocalNavControllerSafely.current ?: return
-    BackHandler(navHostTopController.isTransitioning) {
-        navHostTopController.pop()
+    val navHostTopController = LocalNavControllerSafely.current
+    if(navHostTopController != null) {
+        BackHandler(navHostTopController.isTransitioning) {
+            navHostTopController.pop()
+        }
+    }
+
+    val floatingController = LocalFloatingControllerSafely.current
+    if(floatingController != null) {
+        BackHandler(floatingController.isRunning) {
+            floatingController.pop()
+        }
     }
 }
 

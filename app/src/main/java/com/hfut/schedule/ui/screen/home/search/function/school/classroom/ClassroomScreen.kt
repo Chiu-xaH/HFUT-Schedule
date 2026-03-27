@@ -107,7 +107,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.ClassroomCourseTableDestination
+import com.hfut.schedule.ui.nav.destination.ClassroomCourseTableDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
@@ -128,11 +128,12 @@ import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.container.sharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.sharedContainer
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource

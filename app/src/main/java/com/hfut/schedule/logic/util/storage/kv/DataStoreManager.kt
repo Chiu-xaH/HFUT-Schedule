@@ -25,10 +25,10 @@ import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.navigation.anim.EffectLevel
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
+import com.xah.navigation.model.anim.EffectLevel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

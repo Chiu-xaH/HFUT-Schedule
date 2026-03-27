@@ -40,7 +40,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
-import com.hfut.schedule.ui.destination.SurveyDestination
+import com.hfut.schedule.ui.nav.destination.SurveyDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.backDropSource

@@ -67,13 +67,13 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
-import com.hfut.schedule.ui.destination.HomeDestination
-import com.hfut.schedule.ui.destination.VersionInfoDestination
+import com.hfut.schedule.ui.nav.destination.HomeDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController

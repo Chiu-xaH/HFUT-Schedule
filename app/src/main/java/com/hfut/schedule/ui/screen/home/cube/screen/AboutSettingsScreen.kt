@@ -69,16 +69,16 @@ import kotlinx.coroutines.launch
 import java.util.Hashtable
 import androidx.core.graphics.createBitmap
 import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.ui.destination.SettingsAboutDeveloperDestination
-import com.hfut.schedule.ui.destination.SettingsAvailableDestination
-import com.hfut.schedule.ui.destination.SettingsDeveloperDestination
-import com.hfut.schedule.ui.destination.SettingsTipsDestination
-import com.hfut.schedule.ui.destination.VersionInfoDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAvailableDestination
+import com.hfut.schedule.ui.nav.destination.SettingsDeveloperDestination
+import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.fix.about.About
 import com.hfut.schedule.ui.screen.fix.about.Egg
 import com.hfut.schedule.ui.screen.fix.about.Support
 import com.hfut.schedule.ui.screen.fix.fix.BugShare
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */

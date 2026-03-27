@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.HomeDestination
+import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.screen.SharedAppearanceSettingsScreen
 import com.hfut.schedule.ui.util.NavDestination

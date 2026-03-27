@@ -56,27 +56,21 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 课程表方格支持长按放大显示")
-            UpdateItems("新增 单击课程表空白区域返回当前周")
-            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
-            UpdateItems("优化 新建日程的时间选择器的交互")
-            UpdateItems("优化 课程表捏合手势的灵敏度")
+            UpdateItems("新增 全局浮窗体系","跟随SharedNav库更新")
+            UpdateItems("新增 课程表方格支持长按放大显示","遇到较短时间的方格无法显示完整文字，可以长按方格放大显示")
+            UpdateItems("修复 在启用着色器效果时打开动效偶见闪烁一帧白屏的bug")
+            UpdateItems("优化 时间选择器的交互方式为滚轮")
             UpdateItems("优化 部分界面的显示")
+//            UpdateItems("优化 课程表捏合手势的灵敏度")
+//            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
-//            UpdateItems("修复 上一级界面的容器已经不在可见范围内，仍错误执行容器共享动画的Bug")
-//            UpdateItems("优化 选项的归类调整")
-//            UpdateItems("优化 转场动画返回时在部分场景的掉帧现象","SharedNav库新增等帧机制")
-//            UpdateItems("优化 部分页面的显示")
-// TODO 聚焦重要事项多个日程key区分
-            // 挂科率下拉刷新 TODO
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
-        //            UpdateItems("修复 打断动画与从App返回到桌面之间的手势冲突")
             // TODO 大模型解析日程 [P1]
+            // TODO 挂科率下拉刷新 [P0]
             // TODO WebView适配新库 [P2]
             // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
-            // TODO 设置适配新库 [P2]
             // TODO 一卡通适配新库 [P2]
-            // TODO Drawer回弹  [P2]
+            // TODO Drawer重做  [P2]
 //            UpdateItems("移除 启动台、预测式返回手势","需跟随第二代全局转场动效体系重新进行适配后再上线")
 //            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")

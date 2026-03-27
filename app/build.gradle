@@ -214,9 +214,11 @@ dependencies {
     implementation(libs.mirror)
     // 导航&转场动画模块
     implementation(libs.sharednav)
-//    implementation(files("libs/common-release.aar"))
-//    implementation(files("libs/navigation-release.aar"))
-//    implementation(files("libs/shared-container-release.aar"))
+//    def tag = "release"
+//    implementation(files("libs/common-${tag}.aar"))
+//    implementation(files("libs/navigation-${tag}.aar"))
+//    implementation(files("libs/shared-container-${tag}.aar"))
+//    implementation(files("libs/floating-window-${tag}.aar"))
     // 通用UI模块
     implementation implementation(project(':common'))
     // 共用模块

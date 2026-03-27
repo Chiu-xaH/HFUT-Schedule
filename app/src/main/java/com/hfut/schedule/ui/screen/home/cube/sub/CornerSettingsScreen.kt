@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.destination.CornerSettingsDestination
-import com.sharednav.common.ScreenCornerHelper
+import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor

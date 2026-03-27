@@ -21,7 +21,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.DevelopingIcon
-import com.hfut.schedule.ui.destination.SecondClassDestination
+import com.hfut.schedule.ui.nav.destination.SecondClassDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.navigation.util.LocalNavController

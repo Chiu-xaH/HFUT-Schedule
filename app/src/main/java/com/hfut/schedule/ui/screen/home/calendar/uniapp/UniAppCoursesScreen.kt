@@ -33,9 +33,9 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
-import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseApiDetailDestination
-import com.hfut.schedule.ui.destination.ExamDestination
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
+import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap

@@ -53,11 +53,11 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.destination.SettingsAboutDestination
-import com.hfut.schedule.ui.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.destination.SettingsConfigurationDestination
-import com.hfut.schedule.ui.destination.SettingsNetworkDestination
-import com.hfut.schedule.ui.destination.VersionInfoDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAboutDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
+import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
+import com.hfut.schedule.ui.nav.destination.SettingsNetworkDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
@@ -71,7 +71,7 @@ import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.container.container.SharedContainer
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 

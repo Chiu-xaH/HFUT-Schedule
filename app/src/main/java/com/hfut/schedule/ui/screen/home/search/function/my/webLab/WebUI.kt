@@ -56,7 +56,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.destination.WebFolderDestination
+import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
