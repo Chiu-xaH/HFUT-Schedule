@@ -108,10 +108,13 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ClassroomCourseTableDestination
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniApp
@@ -134,6 +137,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.floating.util.LocalFloatingController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -911,7 +915,6 @@ fun ClassroomLessonsScreen(
 
                 var totalDragX by remember { mutableFloatStateOf(0f) }
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-                var isExpand by remember { mutableStateOf(false) }
 
                 val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
                     value = withContext(Dispatchers.Default) {
@@ -932,6 +935,8 @@ fun ClassroomLessonsScreen(
                         }
                     }
                 }
+                val floatingController = LocalFloatingController.current
+                val isExpand = floatingController.isRunning
                 // 课程表布局
                 Box(modifier = Modifier
                     .fillMaxSize()
@@ -963,95 +968,74 @@ fun ClassroomLessonsScreen(
                         ,
                         innerPadding = innerPadding,
                         onTapBlankRegion = {
-                            if(isExpand) {
-                                isExpand = false
-                            } else {
+                            if(!isExpand) {
                                 smoothToOne(scaleFactor)
                             }
                         },
                         scaleFactor = scaleFactor.floatValue,
                         onLongTapBlankRegion = {
-                            isExpand = !isExpand
+                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                                weekSwap.goToWeek(it.toLong())
+                                floatingController.pop()
+                            })
                         },
-                    ) { list ->
-                        bean = list
-                        showBottomSheetDetail = true
-                    }
+                        onSquareClick = null
+                    )
 
-                    ShareTwoContainer2D(
+                    DraggableWeekButton(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(bottom = innerPadding.calculateBottomPadding())
                             .padding(APP_HORIZONTAL_DP),
-                        show = !isExpand,
-                        defaultContent = {
-                            TimeTablePreview(
-                                items = items, // 一周课程,
-                                currentWeek = currentWeek.toInt(),
-                                innerPadding = innerPadding,
-                            ) {
-                                weekSwap.goToWeek(it.toLong())
-                                isExpand = !isExpand
-                            }
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                        expanded = shouldShowAddButton,
+                        onClick = {
+                            weekSwap.backToCurrentWeek()
                         },
-                        secondContent = {
-                            DraggableWeekButton(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                                expanded = shouldShowAddButton,
-                                onClick = {
-                                    weekSwap.backToCurrentWeek()
-                                },
-                                shaderState = null,
-                                currentWeek = currentWeek,
-                                key = null,
-                                onNext = { weekSwap.nextWeek() },
-                                onPrevious = { weekSwap.previousWeek() },
-                                onLongClick = {
-                                    isExpand = !isExpand
-                                }
-                            )
+                        shaderState = null,
+                        currentWeek = currentWeek,
+                        key = null,
+                        onNext = { weekSwap.nextWeek() },
+                        onPrevious = { weekSwap.previousWeek() },
+                        onLongClick = {
+                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                                weekSwap.goToWeek(it.toLong())
+                                floatingController.pop()
+                            })
                         }
                     )
-                    // 中间
                 }
             }
         }
     }
 }
 
-private suspend fun uniAppToTimeTableData(targetPlace : String,list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
+private fun uniAppToTimeTableData(targetPlace : String, list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
-        val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
         for(item in list) {
             val courseName = item.course.nameZh
-            val multiTeacher = item.teacherAssignmentList.size > 1
             for(schedule in item.schedules) {
                 val place = schedule.room?.nameZh ?: continue
                 if(targetPlace != place) {
                     continue
                 }
                 val list = result[schedule.weekIndex-1]
-                val teacher = when(enableCalendarShowTeacher) {
-                    ShowTeacherConfig.ALL.code -> schedule.teacherName
-                    ShowTeacherConfig.ONLY_MULTI.code -> {
-                        if(multiTeacher) {
-                            schedule.teacherName
-                        } else {
-                            null
-                        }
-                    }
-                    else -> null
-                }
                 list.add(
                     TimeTableItem(
-                        teacher = teacher,
+                        teacher = schedule.teacherName,
                         type = TimeTableType.COURSE,
                         name = courseName,
                         dayOfWeek = schedule.weekday,
                         startTime = parseJxglstuIntTime(schedule.startTime),
                         endTime = parseJxglstuIntTime(schedule.endTime),
-                        place = item.className,
+                        place = null,
+                        detail = TimeTableDetail(
+                            date = schedule.date,
+                            teacher = schedule.teacherName,
+                            classes = item.className,
+                            code = item.code
+                        )
                     )
                 )
             }

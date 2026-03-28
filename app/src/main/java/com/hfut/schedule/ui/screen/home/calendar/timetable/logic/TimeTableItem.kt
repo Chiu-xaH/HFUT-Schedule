@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.logic
 
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
+
 /**
  * @param startTime 传入HH-MM
  * @param endTime 传入HH-MM
@@ -13,5 +15,20 @@ data class TimeTableItem(
     val endTime: String,
     val place : String? = null,
     val teacher : String? = null,
-    val id : Int? = null,
+    val detail : TimeTableDetail
+) {
+    fun getSimplyPlace() : String? = place?.simplifyPlace()
+}
+
+data class TimeTableDetail(
+    // 给长按预览用的参数
+    val teacher : String?,
+    // 给长按预览标题用的参数
+    val date : String,
+    // 给空教室用的参数
+    val classes : String? = null,
+    // 给空教室用的参数
+    val code : String? = null,
+    // 给日程用的参数
+    val eventId : Int? = null
 )

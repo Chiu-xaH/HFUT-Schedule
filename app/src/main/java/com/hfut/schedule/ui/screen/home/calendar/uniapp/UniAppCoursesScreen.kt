@@ -36,6 +36,8 @@ import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
@@ -55,6 +57,8 @@ import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.container.component.base.sharedContainer
+import com.xah.floating.util.LocalFloatingController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
@@ -155,9 +159,9 @@ fun UniAppCoursesScreen(
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-    var isExpand by remember { mutableStateOf(false) }
 
-
+    val floatingController = LocalFloatingController.current
+    val isExpand = floatingController.isRunning
     val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
         value = allToTimeTableDataUniApp()
     }
@@ -208,14 +212,15 @@ fun UniAppCoursesScreen(
             scaleFactor = scaleFactor,
             shaderState = backGroundHaze,
             onTapBlankRegion = {
-                if(isExpand) {
-                    isExpand = false
-                } else {
+                if(!isExpand) {
                     onRestoreHeight()
                 }
             },
             onLongTapBlankRegion = {
-                isExpand = !isExpand
+                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                    weekSwap.goToWeek(it.toLong())
+                    floatingController.pop()
+                })
             },
             onDoubleTapBlankRegion = {
                 navController.push(
@@ -241,7 +246,7 @@ fun UniAppCoursesScreen(
                         )
                     }
                     TimeTableType.FOCUS -> {
-                        item.id?.let {
+                        item.detail.eventId?.let {
                             navController.push(
                                 AddEventDestination(
                                     it,
@@ -264,38 +269,26 @@ fun UniAppCoursesScreen(
             }
         }
 
-        ShareTwoContainer2D(
+        DraggableWeekButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
                 .padding(APP_HORIZONTAL_DP),
-            show = !isExpand,
-            defaultContent = {
-                TimeTablePreview(
-                    items = items, // 一周课程,
-                    currentWeek = currentWeek.toInt(),
-                    innerPadding = innerPadding,
-                ) {
-                    weekSwap.goToWeek(it.toLong())
-                    isExpand = !isExpand
-                }
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+            expanded = shouldShowAddButton,
+            onClick = {
+                weekSwap.backToCurrentWeek()
             },
-            secondContent = {
-                DraggableWeekButton(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                    expanded = shouldShowAddButton,
-                    onClick = {
-                        weekSwap.backToCurrentWeek()
-                    },
-                    shaderState = backGroundHaze,
-                    currentWeek = currentWeek,
-                    key = today,
-                    onNext = { weekSwap.nextWeek() },
-                    onPrevious = { weekSwap.previousWeek() },
-                    onLongClick = {
-                        isExpand = !isExpand
-                    }
-                )
+            shaderState = backGroundHaze,
+            currentWeek = currentWeek,
+            key = today,
+            onNext = { weekSwap.nextWeek() },
+            onPrevious = { weekSwap.previousWeek() },
+            onLongClick = {
+                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                    weekSwap.goToWeek(it.toLong())
+                    floatingController.pop()
+                })
             }
         )
         // 中间

@@ -27,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
@@ -35,6 +36,8 @@ import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
@@ -53,6 +56,8 @@ import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.container.component.base.sharedContainer
+import com.xah.floating.util.LocalFloatingController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
@@ -171,10 +176,10 @@ fun CommunityCourseTableUI(
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val scrollState = rememberScrollState()
-    var isExpand by remember { mutableStateOf(false) }
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
     val isFriend = friendUserName != null
-
+    val floatingController = LocalFloatingController.current
+    val isExpand = floatingController.isRunning
     Box(modifier = Modifier
         .fillMaxSize()
         .pointerInput(today) {
@@ -207,14 +212,15 @@ fun CommunityCourseTableUI(
             innerPadding = innerPaddings,
             shaderState = backGroundHaze,
             onTapBlankRegion = {
-                if(isExpand) {
-                    isExpand = false
-                } else {
+                if(!isExpand) {
                     onRestoreHeight()
                 }
             },
             onLongTapBlankRegion = {
-                isExpand = !isExpand
+                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                    weekSwap.goToWeek(it.toLong())
+                    floatingController.pop()
+                })
             },
             onDoubleTapBlankRegion = {
                 if(!isFriend) {
@@ -247,7 +253,7 @@ fun CommunityCourseTableUI(
                         }
                     }
                     TimeTableType.FOCUS -> {
-                        item.id?.let {
+                        item.detail.eventId?.let {
                             navController.push(
                                 AddEventDestination(
                                     it,
@@ -270,38 +276,26 @@ fun CommunityCourseTableUI(
             }
         }
 
-        ShareTwoContainer2D(
+        DraggableWeekButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPaddings.calculateBottomPadding() - navigationBarHeightPadding)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
-            show = !isExpand,
-            defaultContent = {
-                TimeTablePreview(
-                    items = items, // 一周课程,
-                    currentWeek = currentWeek.toInt(),
-                    innerPadding = innerPaddings,
-                ) {
-                    weekSwap.goToWeek(it.toLong())
-                    isExpand = !isExpand
-                }
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+            shaderState = backGroundHaze,
+            expanded = shouldShowAddButton,
+            onClick = {
+                weekSwap.backToCurrentWeek()
             },
-            secondContent = {
-                DraggableWeekButton(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                    shaderState = backGroundHaze,
-                    expanded = shouldShowAddButton,
-                    onClick = {
-                        weekSwap.backToCurrentWeek()
-                    },
-                    currentWeek = currentWeek,
-                    key = today,
-                    onNext = { weekSwap.nextWeek() },
-                    onPrevious = { weekSwap.previousWeek() },
-                    onLongClick = {
-                        isExpand = !isExpand
-                    }
-                )
+            currentWeek = currentWeek,
+            key = today,
+            onNext = { weekSwap.nextWeek() },
+            onPrevious = { weekSwap.previousWeek() },
+            onLongClick = {
+                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                    weekSwap.goToWeek(it.toLong())
+                    floatingController.pop()
+                })
             }
         )
     }

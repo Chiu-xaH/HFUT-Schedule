@@ -28,7 +28,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-03-20") },
+                overlineContent = { Text(text = "2026-03-28") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,22 +56,27 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 全局浮窗体系","跟随SharedNav库更新")
-            UpdateItems("新增 课程表方格支持长按放大显示","遇到较短时间的方格无法显示完整文字，可以长按方格放大显示")
-            UpdateItems("修复 在启用着色器效果时打开动效偶见闪烁一帧白屏的bug")
+            UpdateItems("新增 全局浮窗体系","跟随SharedNav库更新")//
+            UpdateItems("新增 课程表方格支持长按放大显示","遇到较短时间的方格无法显示完整文字，可以长按方格放大显示")//
+            UpdateItems("修复 在启用着色器效果时打开动效偶见闪烁一帧白屏的bug")//
             UpdateItems("优化 时间选择器的交互方式为滚轮")
-            UpdateItems("优化 部分界面的显示")
+            UpdateItems("优化 教师课程表的显示逻辑")//
+            UpdateItems("优化 部分界面的显示以及过渡效果")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
-//            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
+            /*
+            就业二级界面 通知公告二级界面
+            教师检索二级界面
+            一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
+//            UpdateItems("新增 适配若干二级界面为新的转场动画")
+             */
             // TODO 大模型解析日程 [P1]
             // TODO 挂科率下拉刷新 [P0]
             // TODO WebView适配新库 [P2]
             // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
             // TODO 一卡通适配新库 [P2]
             // TODO Drawer重做  [P2]
-//            UpdateItems("移除 启动台、预测式返回手势","需跟随第二代全局转场动效体系重新进行适配后再上线")
 //            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
@@ -79,16 +84,14 @@ fun VersionInfo() {
 //            UpdateItems("新增 图书馆我的书架、收藏","位于 查询中心-图书馆")
 //            UpdateItems("新增 图书馆斛兵知搜支持阅读电子书")
 //            UpdateItems("新增 英文语言部分适配")
-//            UpdateItems("新增 大模型","位于 查询中心-大模型")
+//            UpdateItems("新增 大模型","位于 查询中心-大模型,应用场景：通知公告的提炼、新增聚焦日程")
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")
-            // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
-//
 //            UpdateItems("新增 合肥校区电费的快速充值")
 
             // TODO 远期规划
@@ -111,13 +114,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 本地聚焦卡片快速转化为云端卡片", null, UpdateType.ADD)
 //            UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //            UpdateItems("新增 智慧后勤的登录")
-            /*
-            就业二级界面 通知公告二级界面
-            教师检索二级界面 课程详情查教师三级界面
-            开课查询二级界面 课程汇总二级界面
-            课程详情查挂科率三级界面 挂科率二级界面
-            一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
-             */
         }
     }
 }

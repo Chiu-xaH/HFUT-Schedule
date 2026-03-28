@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,7 @@ import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
@@ -45,6 +47,8 @@ import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
@@ -69,6 +73,8 @@ import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.container.component.base.sharedContainer
+import com.xah.floating.util.LocalFloatingController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
@@ -461,8 +467,8 @@ fun JxglstuCourseTableUI(
     }
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-    var isExpand by remember { mutableStateOf(false) }
-
+    val floatingController = LocalFloatingController.current
+    val isExpand = floatingController.isRunning
 
     if(loadingJxglstu) {
         CenterScreen {
@@ -472,7 +478,6 @@ fun JxglstuCourseTableUI(
         val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
             value = allToTimeTableData()
         }
-
         LaunchedEffect(currentWeek,items) {
             if(currentWeek > items.size) {
                 Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
@@ -519,14 +524,15 @@ fun JxglstuCourseTableUI(
                 innerPadding = innerPadding,
                 shaderState = backGroundHaze,
                 onTapBlankRegion = {
-                    if(isExpand) {
-                        isExpand = false
-                    } else {
+                    if(!isExpand) {
                         onRestoreHeight()
                     }
                 },
                 onLongTapBlankRegion = {
-                    isExpand = !isExpand
+                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt() ) {
+                        weekSwap.goToWeek(it.toLong())
+                        floatingController.pop()
+                    })
                 },
                 onDoubleTapBlankRegion = {
                     navController.push(
@@ -552,7 +558,7 @@ fun JxglstuCourseTableUI(
                             )
                         }
                         TimeTableType.FOCUS -> {
-                            item.id?.let {
+                            item.detail.eventId?.let {
                                 navController.push(
                                     AddEventDestination(
                                         it,
@@ -575,41 +581,28 @@ fun JxglstuCourseTableUI(
                 }
             }
 
-            ShareTwoContainer2D(
+            DraggableWeekButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
                     .padding(APP_HORIZONTAL_DP),
-                show = !isExpand,
-                defaultContent = {
-                    TimeTablePreview(
-                        items = items, // 一周课程,
-                        currentWeek = currentWeek.toInt(),
-                        innerPadding = innerPadding,
-                    ) {
-                        weekSwap.goToWeek(it.toLong())
-                        isExpand = !isExpand
-                    }
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                expanded = shouldShowAddButton,
+                onClick = {
+                    weekSwap.backToCurrentWeek()
                 },
-                secondContent = {
-                    DraggableWeekButton(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                        expanded = shouldShowAddButton,
-                        onClick = {
-                            weekSwap.backToCurrentWeek()
-                        },
-                        shaderState = backGroundHaze,
-                        currentWeek = currentWeek,
-                        key = today,
-                        onNext = { weekSwap.nextWeek() },
-                        onPrevious = { weekSwap.previousWeek() },
-                        onLongClick = {
-                            isExpand = !isExpand
-                        }
-                    )
+                shaderState = backGroundHaze,
+                currentWeek = currentWeek,
+                key = today,
+                onNext = { weekSwap.nextWeek() },
+                onPrevious = { weekSwap.previousWeek() },
+                onLongClick = {
+                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                        weekSwap.goToWeek(it.toLong())
+                        floatingController.pop()
+                    })
                 }
             )
-            // 中间
         }
     }
 }

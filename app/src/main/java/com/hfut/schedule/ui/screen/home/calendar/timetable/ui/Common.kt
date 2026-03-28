@@ -70,7 +70,7 @@ fun TimeTable(
     onTapBlankRegion : ((Offset) -> Unit)? = null,
     onLongTapBlankRegion : ((Offset) -> Unit)? = null,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
-    onSquareClick : (List<TimeTableItem>) -> Unit,
+    onSquareClick : ((List<TimeTableItem>) -> Unit)?,
 ) {
     val floatingController = LocalFloatingController.current
 
@@ -171,25 +171,14 @@ fun TimeTable(
                             it
                         }
                     }
-                    .let {
-                        if (!hasBackground) {
-                            it.combinedClickable(
-                                onLongClick = {
-                                    floatingController.push(TimeTableSquareWindow(list))
-                                },
-                                onClick = {
-                                    onSquareClick(list)
-                                }
-                            )
-//                            it.clickableWithScale(ClickScale.SMALL.scale) {
-//                                onSquareClick(list)
-//                            }
-                        } else {
-                            it.clickable {
-                                onSquareClick(list)
-                            }
+                    .combinedClickable(
+                        onLongClick = {
+                            floatingController.push(TimeTableSquareWindow(list))
+                        },
+                        onClick = {
+                            onSquareClick?.let { it(list) } ?: floatingController.push(TimeTableSquareWindow(list))
                         }
-                    }
+                    )
                     .let {
                         if (!hasBackground && list.size == 1) {
                             val item = list[0]
@@ -199,7 +188,7 @@ fun TimeTable(
                                     it.sharedContainer(CourseApiDetailDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
-                                    item.id?.let { id ->
+                                    item.detail.eventId?.let { id ->
                                         it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
@@ -246,7 +235,7 @@ fun TimeTable(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                        item.place?.let {
+                        item.getSimplyPlace()?.let {
                             Text(
                                 text = it,
                                 fontSize = placeTextSize,
@@ -379,25 +368,14 @@ fun TimeTable(
                             it
                         }
                     }
-                    .let {
-                        if (!hasBackground) {
-                            it.combinedClickable(
-                                onLongClick = {
-                                    floatingController.push(TimeTableSquareWindow(listOf(item)))
-                                },
-                                onClick = {
-                                    onSquareClick(listOf(item))
-                                }
-                            )
-//                            it.clickableWithScale(ClickScale.SMALL.scale) {
-//                                onSquareClick(listOf(item))
-//                            }
-                        } else {
-                            it.clickable {
-                                onSquareClick(listOf(item))
-                            }
+                    .combinedClickable(
+                        onLongClick = {
+                            floatingController.push(TimeTableSquareWindow(listOf(item)))
+                        },
+                        onClick = {
+                            onSquareClick?.let { it(listOf(item)) } ?: floatingController.push(TimeTableSquareWindow(listOf(item)))
                         }
-                    }
+                    )
                     .let {
                         if (!hasBackground) {
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
@@ -406,7 +384,7 @@ fun TimeTable(
                                     it.sharedContainer(CourseApiDetailDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
-                                    item.id?.let { id ->
+                                    item.detail.eventId?.let { id ->
                                         it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
@@ -453,7 +431,7 @@ fun TimeTable(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        item.place?.let {
+                        item.getSimplyPlace()?.let {
                             Text(
                                 text = it,
                                 fontSize = placeTextSize,

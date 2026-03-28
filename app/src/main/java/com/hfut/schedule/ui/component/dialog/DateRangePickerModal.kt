@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.component.dialog
 
+import android.media.DrmInitData
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,12 +31,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
+import com.xah.common.ui.style.align.CenterScreen
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -163,7 +168,7 @@ fun DateRangePickerModal(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePicker(onSelected: (String) -> Unit) {
+fun TimePickerOld(onSelected: (String) -> Unit) {
     val timePickerState = rememberTimePickerState(
         initialHour = 0,
         initialMinute = 0,
@@ -194,8 +199,10 @@ fun TimeRangePicker(
     }
 
     Column() {
-        if(isSchedule)
+        if(isSchedule) {
             TimePicker { startTime = it }
+            PaddingHorizontalDivider(startPadding = false,endPadding = false)
+        }
         TimePicker { endTime = it }
 
         Row(modifier = Modifier.align(Alignment.End)) {
@@ -302,6 +309,70 @@ fun TimeRangePickerDialog(isSchedule: Boolean,onSelected: (Pair<String,String>) 
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun TimePicker(
+    modifier: Modifier = Modifier,
+    initData: String? = null,
+    onSelected: (String) -> Unit
+) {
+    var init = initData?.split(":")?.mapNotNull { it.toIntOrNull() } ?: listOf(0,0)
+    if(init.size != 2) {
+        init = listOf(0,0)
+    }
+    var hour by remember { mutableStateOf(init[0]) }
+    var min by remember { mutableStateOf(init[1]) }
+
+    LaunchedEffect(hour,min) {
+        onSelected(parseTimeItem(hour) + ":" + parseTimeItem(min))
+    }
+
+    val hours = remember { (0..23).toList() }
+    val minutes = remember { (0..59).toList() }
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        // 小时
+        WheelPicker(
+            data = hours,
+            selectIndex = init[0],
+            modifier = Modifier.weight(1f),
+            onSelect = { _, h ->
+                hour = h
+            },
+        ) { hour ->
+            Text(
+                text = "%02d".format(hour),
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+
+        // 冒号
+        Text(
+            text = ":",
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        // 分钟
+        WheelPicker(
+            data = minutes,
+            selectIndex = init[1],
+            modifier = Modifier.weight(1f),
+            onSelect = { _, m ->
+                min = m
+            },
+        ) { minute ->
+            Text(
+                text = "%02d".format(minute),
+                style = MaterialTheme.typography.titleLarge
+            )
         }
     }
 }

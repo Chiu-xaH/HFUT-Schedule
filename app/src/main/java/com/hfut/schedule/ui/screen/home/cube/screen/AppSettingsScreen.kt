@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
@@ -58,6 +59,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -102,7 +104,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         .padding(innerPaddings)
     ) {
         Spacer(modifier = Modifier.height(5.dp))
-
+        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
         val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
         val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 
@@ -222,7 +224,35 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 }
 
                 PaddingHorizontalDivider()
-
+                TransplantListItem(
+                    headlineContent = { Text(text = "无限滚轮") },
+                    supportingContent = {
+                        Text("使滚轮组件可无限滚动，没有起点和终点")
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.toll),
+                        contentDescription = "Localized description"
+                    ) },
+                    trailingContent = { Switch(checked = enableInfiniteWheelPicker, onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveInfiniteWheelPicker(!enableInfiniteWheelPicker)
+                        }
+                    }) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveInfiniteWheelPicker(!enableInfiniteWheelPicker)
+                        }
+                    }
+                )
+                WheelPicker(
+                    data = IntArray(9) { it+1 }.toList(),
+                    modifier = Modifier.padding(horizontal =  APP_HORIZONTAL_DP),
+                    onSelect = { _,_ -> }
+                ) {
+                    val description = "选项${it}"
+                    Text(description)
+                }
+                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_courses_on_focus_title)) },
                     supportingContent = {

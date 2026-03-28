@@ -42,6 +42,27 @@ object SemesterParser {
         }
     }
     @JvmStatic
+    fun parseSemesterSimply(semester : Int) : String {
+        val codes = (semester - 4) / 10
+        val year = 2017
+        val code = 3
+
+        var upOrDown = 0
+        if(codes % 4 == 1) {
+            upOrDown = 2
+        } else if(codes % 4 == 3) {
+            upOrDown = 1
+        }
+
+        val years=( (year + (codes - code) / 4) + 1) % 100
+
+        return if(LanguageHelper.isChineseLanguage()) {
+            "${years}~${years + 1}学年${if(upOrDown == 1) "上" else "下"}学期"
+        } else {
+            "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
+        }
+    }
+    @JvmStatic
     fun parseSemesterForDormitory(semester : Int) : String {
         val codes = (semester - 4) / 10
         val year = 2017

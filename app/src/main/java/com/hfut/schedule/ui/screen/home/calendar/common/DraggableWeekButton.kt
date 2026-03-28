@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -52,6 +54,8 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.xah.container.component.base.sharedContainer
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
@@ -142,15 +146,39 @@ fun DraggableWeekButton(
                 )
             }
     ) {
+        val shape = if(expanded) {
+//            FloatingActionButtonDefaults.extendedFabShape
+            (FloatingActionButtonDefaults.shape as? CornerBasedShape) ?: MaterialTheme.shapes.large
+        } else {
+            MaterialTheme.shapes.small
+        }
+
         ShareTwoContainer2D(
             modifier = Modifier
+                .let {
+                    if(!hasBackground) {
+                        it.sharedContainer(
+                            key = TimeTablePreviewWindow.KEY,
+                            shape = shape,
+                            containerColor = containerColor
+                        )
+                    } else {
+                        it
+                    }
+                }
                 .align(Alignment.Center)
                 .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
-                .clip(if(expanded) FloatingActionButtonDefaults.extendedFabShape else MaterialTheme.shapes.small),
+                .let {
+                    if(!hasBackground) {
+                        it
+                    } else {
+                        it.clip(shape)
+                    }
+                },
             show = !expanded,
             defaultContent = {
                 Surface(
-                    shape = FloatingActionButtonDefaults.extendedFabShape,
+                    shape = RoundedCornerShape(0.dp),
                     color = if(hasBackground) Color.Transparent else containerColor,
                     modifier = Modifier
                         .height(56.dp)
@@ -247,7 +275,7 @@ fun DraggableWeekButton(
             secondContent = {
                 Surface(
                     color = if(hasBackground) Color.Transparent else containerColor,
-                    shape = MaterialTheme.shapes.small,
+                    shape = RoundedCornerShape(0.dp),
                     modifier = Modifier
                         .let {
                             if(hasBackground) {

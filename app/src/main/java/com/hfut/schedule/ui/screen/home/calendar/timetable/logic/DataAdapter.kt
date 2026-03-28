@@ -18,6 +18,7 @@ import com.hfut.schedule.ui.screen.home.calendar.common.autoCalculateAndUpdateTe
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
+import com.hfut.schedule.ui.screen.home.calendar.common.weekToDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCoursesFromCommunity
@@ -120,7 +121,13 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
                         dayOfWeek = schedule.weekday,
                         startTime = parseJxglstuIntTime(schedule.startTime),
                         endTime = parseJxglstuIntTime(schedule.endTime),
-                        place = schedule.room?.nameZh?.simplifyPlace(),
+                        place = schedule.room?.nameZh,
+                        detail = TimeTableDetail(
+                            teacher = schedule.teacherName,
+                            date = schedule.date,
+                            classes = null,
+                            code = item.code
+                        )
                     )
                 )
             }
@@ -180,7 +187,13 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
                     dayOfWeek = item.weekday,
                     startTime = parseJxglstuIntTime(item.startTime),
                     endTime = parseJxglstuIntTime(item.endTime),
-                    place = item.room?.nameZh?.simplifyPlace(),
+                    place = item.room?.nameZh,
+                    detail = TimeTableDetail(
+                        teacher = item.personName,
+                        date = item.date,
+                        classes = null,
+                        code = null
+                    )
                 )
             )
         }
@@ -218,7 +231,7 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
             // 是同一周
             val list = result[weekInfo.first-1]
             val name = item.title
-            val place = item.description?.simplifyPlace()
+            val place = item.description
 
             // 跨天日程将其分裂 但是顶部强制8:00，底部强制22:00 例如一个12-05 12:00 ~ 12-07 14:00 日程，分裂为12-05 12:00~22:00,12-06 08:00~22:00,12-07 08:00~14:00
             if(endDate != startDate) {
@@ -249,7 +262,14 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
                             startTime = currentStartTime,
                             endTime = currentEndTime,
                             place = place,
-                            id = item.id
+                            teacher = null,
+                            detail = TimeTableDetail(
+                                teacher = null,
+                                date = currentDate.toString(),
+                                classes = null,
+                                code = null,
+                                eventId = item.id,
+                            )
                         )
                     )
                     currentDate = currentDate.plusDays(1)
@@ -265,7 +285,14 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
                         startTime = startTime,
                         endTime = endTime,
                         place = place,
-                        id = item.id
+                        teacher = null,
+                        detail = TimeTableDetail(
+                            teacher = null,
+                            date = startDate,
+                            classes = null,
+                            code = null,
+                            eventId = item.id,
+                        )
                     )
                 )
             }
@@ -290,7 +317,7 @@ private suspend fun examToTimeTableData(): List<List<TimeTableItem>> {
             val list = result[weekInfo.first-1]
 
             val name = item.course ?: continue
-            val place = item.place?.simplifyPlace()
+            val place = item.place
             list.add(
                 TimeTableItem(
                     type = TimeTableType.EXAM,
@@ -299,6 +326,13 @@ private suspend fun examToTimeTableData(): List<List<TimeTableItem>> {
                     startTime = startTime,
                     endTime = endTime,
                     place = place,
+                    teacher = null,
+                    detail = TimeTableDetail(
+                        teacher = null,
+                        date = startDate,
+                        classes = null,
+                        code = null
+                    )
                 )
             )
         }
@@ -336,7 +370,13 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
                             dayOfWeek = weekday + 1,
                             startTime = time[0],
                             endTime = time[1],
-                            place = item.place?.simplifyPlace()
+                            place = item.place,
+                            detail = TimeTableDetail(
+                                teacher = item.teacher,
+                                date = weekToDate(week+1,weekday+1) ?: "Error",
+                                classes = null,
+                                code = null
+                            )
                         )
                     )
                 }
