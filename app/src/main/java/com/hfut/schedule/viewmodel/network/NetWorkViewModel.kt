@@ -17,6 +17,7 @@ import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.model.AdmissionTokenResponse
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.model.GithubIssueBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
@@ -154,6 +155,9 @@ class NetWorkViewModel() : ViewModel() {
 
     val githubFolderResp = StateHolder<List<GithubFolderBean>>()
     suspend fun getUpdateContents() = GithubRepository.getUpdateContents(githubFolderResp)
+
+    val githubIssuesResp = StateHolder<List<GithubIssueBean>>()
+    suspend fun getIssues(page : Int) = GithubRepository.getIssues(page,githubIssuesResp)
 
     val workSearchResult = StateHolder<WorkSearchResponse>()
     suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: CampusRegion) = OthersRepository.searchWorks(keyword,page,type,campus,workSearchResult)

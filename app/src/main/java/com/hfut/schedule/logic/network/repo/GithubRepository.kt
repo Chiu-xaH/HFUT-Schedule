@@ -8,6 +8,9 @@ import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.model.GithubIssueBean
+import com.hfut.schedule.logic.model.GithubIssueLabel
+import com.hfut.schedule.logic.model.GithubIssueLabelBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
@@ -150,5 +153,26 @@ object GithubRepository {
         }
         val versionName = data.name.replace("HFUT-Schedule ","")
         GiteeReleaseResponse(versionName,data.body,list)
+    } catch (e : Exception) { throw e }
+
+    suspend fun getIssues(page : Int,holder : StateHolder<List<GithubIssueBean>>) = launchRequestState(
+        request = { github.getIssues(page) },
+        holder = holder,
+        transformSuccess = { _, json -> parseGithubIssues(json) }
+    )
+    @JvmStatic
+    private fun parseGithubIssues(json : String) : List<GithubIssueBean> = try {
+        val listType = object : TypeToken<List<GithubIssueBean>>() {}.type
+        val issues : List<GithubIssueBean> = Gson().fromJson(json,listType)
+        val flowLabelIds = GithubIssueLabel.entries.map { it.id }.toSet()
+        val realIssues = issues.filter { issue ->
+            // 过滤 PR
+            issue.pr == null &&
+            // 过滤 F-DROID
+            !issue.title.contains("F-DROID", ignoreCase = true) &&
+            // 不包含任何GithubIssueLabel标签非事务
+            issue.labels.any { it.id in flowLabelIds }
+        }
+        realIssues
     } catch (e : Exception) { throw e }
 }

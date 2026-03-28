@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.other.TrackScreen
 import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.util.res
+import com.xah.navigation.util.LocalNavDependencies
 
 object TrackDestination : NavDestination() {
     override val key = "track"
@@ -13,6 +15,7 @@ object TrackDestination : NavDestination() {
 
     @Composable
     override fun Content() {
-        TrackScreen()
+        val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
+        TrackScreen(vm)
     }
 }
