@@ -13,7 +13,7 @@ data class CourseApiDetailDestination(
     val id : String,
     val classroom : String?,
 ) : NavDestination() {
-    override val key = "course_api_detail_${courseName}_${id}_$classroom"
+    override val key = "course_api_detail_${id}"
     override val title = res(R.string.navigation_label_course_detail)
     override val icon = R.drawable.category
 

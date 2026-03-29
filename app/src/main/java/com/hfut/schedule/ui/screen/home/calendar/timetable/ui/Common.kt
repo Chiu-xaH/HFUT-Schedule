@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,11 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,16 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -45,11 +37,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_T
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.container.component.base.SharedContent
 import com.xah.container.component.base.sharedContainer
-import com.xah.floating.model.Window
 import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavControllerSafely
@@ -128,15 +116,32 @@ fun TimeTable(
             onTapBlankRegion = onTapBlankRegion
         ) { list ->
             val color: Pair<Color, Color> = if (!hasBackground) {
-                when {
-                    list.size > 1 -> Pair(
-                        MaterialTheme.colorScheme.errorContainer,
-                        MaterialTheme.colorScheme.onErrorContainer.copy(.6f)
-                    )
+                if(list.size == 1) {
+                    when (list[0].type) {
+                        TimeTableType.FOCUS -> Pair(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.onPrimary.copy(.6f)
+                        )
 
-                    else -> Pair(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f)
+                        TimeTableType.COURSE -> Pair(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f)
+                        )
+
+                        TimeTableType.EXAM -> Pair(
+                            MaterialTheme.colorScheme.errorContainer,
+                            MaterialTheme.colorScheme.onErrorContainer.copy(.6f)
+                        )
+                    }
+                } else if(list.size > 1) {
+                    Pair(
+                        MaterialTheme.colorScheme.error,
+                        MaterialTheme.colorScheme.onError.copy(.6f)
+                    )
+                } else {
+                    Pair(
+                        MaterialTheme.colorScheme.surfaceContainer,
+                        MaterialTheme.colorScheme.onSurface.copy(.6f)
                     )
                 }
             } else {
@@ -145,10 +150,12 @@ fun TimeTable(
                     MaterialTheme.colorScheme.onSurface.copy(.6f)
                 )
             }
+
             val containerColor = if (!hasBackground) color.first else Color.Transparent
+
             Surface(
                 color = containerColor,
-                shape = RoundedCornerShape(0.dp),
+                shape = if(list.size == 1) { RoundedCornerShape(0.dp) } else { round },
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {

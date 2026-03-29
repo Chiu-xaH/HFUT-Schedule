@@ -56,13 +56,13 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 提案板","位于 查询中心，同步显示Github Issues，实时显示用户提出的需求的开发进度")
+            UpdateItems("新增 提案板","位于 查询中心，同步显示Github Issues，实时显示用户提出的需求的开发进度")//
             UpdateItems("新增 全局浮窗体系","跟随SharedNav库更新")//
             UpdateItems("新增 课程表方格支持长按放大显示","遇到较短时间的方格无法显示完整文字，可以长按方格放大显示")//
             UpdateItems("修复 在启用着色器效果时打开动效偶见闪烁一帧白屏的bug")//
             UpdateItems("修复 选项中部分进度条按住拖动时抽搐的Bug")
-            UpdateItems("优化 时间选择器的交互方式为滚轮")//
-            UpdateItems("优化 教师课程表的显示逻辑")//
+            UpdateItems("优化 时间选择器的交互方式为滚轮")//滚轮、日期初始值
+            UpdateItems("优化 教师课程表的显示逻辑")//注册解注册问题
             UpdateItems("优化 部分界面的显示以及过渡效果")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")

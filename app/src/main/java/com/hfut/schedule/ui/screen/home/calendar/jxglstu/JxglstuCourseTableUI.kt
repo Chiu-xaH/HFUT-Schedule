@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
+import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
@@ -576,8 +577,7 @@ fun JxglstuCourseTableUI(
                         }
                     }
                 } else if (list.size > 1) {
-                    bean = list
-                    showBottomSheetDetail = true
+                    floatingController.push(TimeTableSquareWindow(list))
                 }
             }
 
