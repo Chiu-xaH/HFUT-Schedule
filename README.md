@@ -1,4 +1,4 @@
-# 聚在工大
+# 聚在工大（HFUT-Schedule）
 ![封面](/src/img/cover.png)
 
 ## 下载
@@ -16,12 +16,12 @@
 
 界面展示（v4.20.1.3,实际以最新版本为准）：
 
-![截图](/src/img/ui.jpg)·
+![截图](/src/img/ui.jpg)
 
 ## 亮点
 界面: 使用着色器、实时模糊等特效，与 Material Design 3 融合，简约高效
 
-动效：自研[第二代全局转场动画体系](https://github.com/Chiu-xaH/SharedNav)，丰富的转场动效，符合直觉
+动效：自研第二代全局转场动画体系，符合直觉的一镜到底动效
 
 更新：250+版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
 
@@ -42,7 +42,7 @@ Android 8.0及以上，接入互联网
 
 - pull request请向dev分支提交，stage分支仅用于已发行版本
 - pull request如涉及Compose相关的大改动，最好在SDK Min(26),31,32,Target(36)都做验证（小改动直接提就行）
-- 如需修改页面导航管理、转场动效以及容器共享等功能，请查看开发文档，原有Navigation2已不再在本App使用，页面管理已解耦至SharedNav库
+- 如需修改页面导航、转场动效以及容器共享等功能，请查看开发文档，原有Navigation2已不再使用，已解耦至[SharedNav](https://github.com/Chiu-xaH/SharedNav)库
 
 ### [更新日志](docs/update)
 
@@ -98,7 +98,7 @@ Android 8.0及以上，接入互联网
 
 [DiffUpdater](https://github.com/Chiu-xaH/DiffUpdater) 增量更新
 
-[SharedNav](https://github.com/Chiu-xaH/SharedNav) 容器共享与导航页面
+[SharedNav](https://github.com/Chiu-xaH/SharedNav) 页面管理、容器共享、浮窗体系
 
 [Mirror-Android](https://github.com/Chiu-xaH/Mirror-Android) 镜面效果（着色器）
 
@@ -116,9 +116,8 @@ Android 8.0及以上，接入互联网
 
 感谢其他高校开发者对本项目的肯定与参考，在此不一一列举了
 
-linsui帮助上架F-Droid
-
-若干用户的帮助：
+若干开发者和用户的帮助：
+- linsui 帮助上架F-Droid
 - James-Zhang2 提供GPA评定数据源
 - tinyvan 提交RR修复Bug
 - Today1337 提交PR优化界面
