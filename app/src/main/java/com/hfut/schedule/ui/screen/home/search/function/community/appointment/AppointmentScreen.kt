@@ -20,7 +20,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.CommunityAppointmentDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.align.CenterScreen
@@ -45,7 +46,7 @@ fun AppointmentScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.CommunityAppointment.label)) },
+                    title = { Text(CommunityAppointmentDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

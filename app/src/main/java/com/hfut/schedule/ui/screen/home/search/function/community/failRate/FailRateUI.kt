@@ -31,8 +31,9 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDetailDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.SharedContainer
@@ -81,7 +82,7 @@ fun FailRateUI(
                         shape = RoundedCornerShape(0.dp),
                         overlineContent = { Text(list[item].courseMetaId)},
                         headlineContent = {  Text(list[item].courseName) },
-                        leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
+                        leadingContent = { Icon(painterResource(FailRateDestination.icon), contentDescription = "Localized description",) },
                         modifier = Modifier.clickable {
                             navController.push(dest)
                         },

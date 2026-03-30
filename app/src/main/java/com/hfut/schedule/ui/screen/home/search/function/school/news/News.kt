@@ -10,7 +10,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.NewsDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
@@ -20,9 +20,9 @@ fun News() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.News.label)) },
+        headlineContent = { ScrollText(text = NewsDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.News.icon), contentDescription = null)
+            Icon(painterResource(NewsDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(NewsDestination)

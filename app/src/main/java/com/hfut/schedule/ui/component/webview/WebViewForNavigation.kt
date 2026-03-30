@@ -31,8 +31,9 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.nav.destination.WebViewDestination
 
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.util.webview.WebViewBackHandler
 import com.hfut.schedule.ui.util.webview.WebViewBackIcon
@@ -82,7 +83,7 @@ fun WebViewScreenForNavigation(
 
     val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
-    val route = remember { AppNavRoute.WebView.shareRoute(url) }
+    val route = remember { WebViewDestination.getKey(url) }
     LaunchedEffect(topColor) {
         onColor(topColor)
     }

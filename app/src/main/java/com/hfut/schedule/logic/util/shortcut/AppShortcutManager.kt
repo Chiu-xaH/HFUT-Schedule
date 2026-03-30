@@ -7,7 +7,7 @@ import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 object AppShortcutManager {
     fun createScanShortcut(context: Context) {

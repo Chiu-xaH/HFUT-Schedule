@@ -47,7 +47,8 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.DormitoryDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
@@ -127,7 +128,7 @@ fun DormitoryScoreScreen(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Dormitory.label)) },
+                    title = { Text(DormitoryDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

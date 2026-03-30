@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -585,11 +585,11 @@ fun ChangeCourseUI(
                 modifier = Modifier.clickable {
                     navController.push(
                         NewsApiDestination(
-                            AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword
+                            NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword
                         )
                     )
                 },
-                leadingContent = { Icon(painterResource(AppNavRoute.NewsApi.icon),null)}
+                leadingContent = { Icon(painterResource(NewsApiDestination.ICON),null)}
             )
             DatePicker(state = state,
                 modifier = Modifier.weight(1f), title = { Text(text = "")},

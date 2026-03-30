@@ -53,8 +53,9 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
 
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavController
@@ -79,7 +80,7 @@ fun LibraryBorrowedScreen(vm: NetWorkViewModel) {
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.LibraryBorrowed.label)) },
+                title = { Text(LibraryBorrowedDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

@@ -46,7 +46,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ClassroomDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavController
@@ -108,7 +109,7 @@ fun ClassroomScreen2(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Classroom.label)) },
+                    title = { Text(ClassroomDestination.TITLE.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

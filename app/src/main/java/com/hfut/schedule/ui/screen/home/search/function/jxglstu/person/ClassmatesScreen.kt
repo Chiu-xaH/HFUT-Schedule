@@ -31,7 +31,8 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
+
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -64,7 +65,7 @@ fun ClassmatesScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(getPersonInfo().className ?: stringResource(AppNavRoute.Classmates.label)) },
+                title = { Text(getPersonInfo().className ?: ClassmatesDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

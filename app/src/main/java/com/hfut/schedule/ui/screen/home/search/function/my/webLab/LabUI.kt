@@ -12,7 +12,8 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.WebFolderDestination
+
 import kotlinx.coroutines.launch
 
 
@@ -28,7 +29,7 @@ fun LabUI() {
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
                     scope.launch {
-                        Starter.startWebView(context ,item.info,item.title, icon=AppNavRoute.WebFolder.icon)
+                        Starter.startWebView(context ,item.info,item.title, icon= WebFolderDestination.icon)
                     }
                 }
             )

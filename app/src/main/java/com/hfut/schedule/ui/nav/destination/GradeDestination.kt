@@ -12,8 +12,13 @@ data class GradeDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
     override val key = "grade_$ifSaved"
-    override val title = res(R.string.navigation_label_grade)
-    override val icon = R.drawable.article
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_grade)
+        val ICON = R.drawable.article
+    }
 
     @Composable
     override fun Content() {

@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.DormitoryDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 import com.xah.navigation.util.LocalNavController
 
@@ -24,9 +24,9 @@ fun DormitoryScoreXuanCheng() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(stringResource(AppNavRoute.Dormitory.label)) },
+        headlineContent = { ScrollText(DormitoryDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Dormitory.icon), contentDescription = null)
+            Icon(painterResource(DormitoryDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(DormitoryDestination)

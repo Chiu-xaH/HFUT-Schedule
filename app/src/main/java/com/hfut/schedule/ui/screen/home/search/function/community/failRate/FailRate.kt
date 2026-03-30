@@ -41,7 +41,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -61,9 +61,9 @@ fun FailRate() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.FailRate.label)) },
+        headlineContent = { ScrollText(text = FailRateDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = null)
+            Icon(painterResource(FailRateDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(FailRateDestination)
@@ -112,7 +112,7 @@ fun FailRateScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.FailRate.label)) },
+                    title = { Text(FailRateDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

@@ -49,7 +49,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -79,9 +79,9 @@ fun Program(
     val dest = AllProgramsDestination(ifSaved)
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Program.label)) },
+        headlineContent = { ScrollText(text = ProgramDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null)
+            Icon(painterResource(ProgramDestination.ICON), contentDescription = null)
         },
         trailingContent = {
             SharedContainer(
@@ -163,8 +163,8 @@ fun ProgramScreen(
                                     else refreshLogin(context)
                                 }
                             },
-                            icon = AppNavRoute.ProgramCompetition.icon,
-                            text = stringResource(AppNavRoute.ProgramCompetition.label),
+                            icon = ProgramCompetitionDestination.ICON,
+                            text = ProgramCompetitionDestination.TITLE.asString(),
                             shape = RoundedCornerShape(0.dp),
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.secondary
@@ -180,7 +180,7 @@ fun ProgramScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Program.label)) },
+                    title = { Text(ProgramDestination.TITLE.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

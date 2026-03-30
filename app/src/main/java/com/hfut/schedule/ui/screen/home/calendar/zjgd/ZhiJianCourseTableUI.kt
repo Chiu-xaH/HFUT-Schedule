@@ -78,7 +78,8 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.FailRateDestination
+
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -900,7 +901,7 @@ private fun CourseDetail(
                     Text("挂科率")
                 },
                 leadingContent = {
-                    Icon(painterResource(AppNavRoute.FailRate.icon),null)
+                    Icon(painterResource(FailRateDestination.icon),null)
                 },
                 modifier = Modifier.clickable {
                     showBottomSheet_FailRate = true

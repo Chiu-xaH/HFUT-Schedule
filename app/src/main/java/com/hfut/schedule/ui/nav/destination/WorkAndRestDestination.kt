@@ -10,8 +10,13 @@ data class WorkAndRestDestination(
     val name : String?
 ) : NavDestination() {
     override val key = "work_and_rest_$name"
-    override val title = res(R.string.navigation_label_work_and_rest)
-    override val icon = R.drawable.schedule
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_work_and_rest)
+        val ICON = R.drawable.schedule
+    }
 
     @Composable
     override fun Content() {

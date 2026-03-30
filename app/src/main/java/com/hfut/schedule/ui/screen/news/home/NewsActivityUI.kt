@@ -70,7 +70,9 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+import com.hfut.schedule.ui.nav.destination.NewsDestination
+
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -170,7 +172,7 @@ fun NewsScreen(
     }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var input by remember { mutableStateOf(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
+    var input by remember { mutableStateOf(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword) }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -181,7 +183,7 @@ fun NewsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.News.label)) },
+                    title = { Text(NewsDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -221,7 +223,7 @@ fun NewsScreen(
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("搜索通知公告：${AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword},${AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword},${AppNavRoute.NewsApi.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword}") },
+                            label = { Text("搜索通知公告：${NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword},${NewsApiDestination.Keyword.TRANSFER_MAJOR.keyword},${NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${NewsApiDestination.Keyword.SELECT_COURSE.keyword}") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(

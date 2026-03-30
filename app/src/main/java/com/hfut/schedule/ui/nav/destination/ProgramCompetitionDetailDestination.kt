@@ -13,8 +13,13 @@ data class ProgramCompetitionDetailDestination(
     val name : String
 ) : NavDestination() {
     override val key = "program_competition_detail_${index}_$name"
-    override val title = res(R.string.navigation_label_program_competition_detail)
-    override val icon = R.drawable.leaderboard
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_program_competition_detail)
+        val ICON = R.drawable.leaderboard
+    }
 
     @Composable
     override fun Content() {

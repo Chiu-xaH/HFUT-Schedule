@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -19,29 +18,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -233,45 +224,3 @@ data class TimeTableSquareWindow(
     }
 }
 
-@Composable
-fun AutoSizeText(
-    text: String,
-    height: Dp,
-    modifier: Modifier = Modifier
-) {
-    val textMeasurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-
-    var fontSize by remember { mutableStateOf(12.sp) }
-
-    LaunchedEffect(text, height) {
-        val targetHeightPx = with(density) { height.toPx() }
-
-        var low = 4f
-        var high = 200f
-
-        while (high - low > 0.5f) {
-            val mid = (low + high) / 2
-            val result = textMeasurer.measure(
-                text = text,
-                style = TextStyle(fontSize = mid.sp)
-            )
-
-            if (result.size.height > targetHeightPx) {
-                high = mid
-            } else {
-                low = mid
-            }
-        }
-
-        fontSize = low.sp
-    }
-
-    Text(
-        text = text,
-        fontSize = fontSize,
-        maxLines = 1,
-        fontWeight = FontWeight.Light,
-        modifier = modifier.height(height)
-    )
-}

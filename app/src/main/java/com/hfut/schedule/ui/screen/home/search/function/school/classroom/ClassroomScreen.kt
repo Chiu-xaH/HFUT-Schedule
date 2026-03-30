@@ -108,9 +108,10 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ClassroomCourseTableDestination
+import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
@@ -212,7 +213,7 @@ fun ClassroomScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Classroom.label)) },
+                    title = { Text(ClassroomDestination.TITLE.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

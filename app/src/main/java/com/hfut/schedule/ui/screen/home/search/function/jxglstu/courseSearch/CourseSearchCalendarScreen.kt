@@ -35,8 +35,9 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
 
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -76,7 +77,7 @@ fun CourseSearchCalendarScreen(
                     scrollBehavior = scrollBehavior,
                     title = {
                         Column {
-                            Text(stringResource(AppNavRoute.CourseSearchTable.label))
+                            Text(CourseSearchTableDestination.TITLE.asString())
                             classes?.let {
                                 Text(
                                     "检索班级: $it",

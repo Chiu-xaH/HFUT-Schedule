@@ -104,6 +104,7 @@ import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
@@ -717,7 +718,7 @@ fun SharedAppearanceSettingsScreen(
                         scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) }
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.label),null)
+                        Icon(painterResource(SettingsAppearanceDestination.icon),null)
                     },
                     trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
                 )

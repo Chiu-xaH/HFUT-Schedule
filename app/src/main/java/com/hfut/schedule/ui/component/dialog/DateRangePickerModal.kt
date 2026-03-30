@@ -331,7 +331,8 @@ fun TimePicker(
     }
 
     val hours = remember { (0..23).toList() }
-    val minutes = remember { (0..59).toList() }
+//    val minutes = remember { (0..59).toList() }
+    val minutes = remember { (0..59 step 5).toList() }
 
     Row(
         modifier = modifier,
@@ -363,7 +364,7 @@ fun TimePicker(
         // 分钟
         WheelPicker(
             data = minutes,
-            selectIndex = init[1],
+            selectIndex = minutes.indexOf(init[1]).coerceAtLeast(0),
             modifier = Modifier.weight(1f),
             onSelect = { _, m ->
                 min = m

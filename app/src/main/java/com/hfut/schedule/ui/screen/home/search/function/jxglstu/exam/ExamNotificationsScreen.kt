@@ -45,7 +45,9 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -96,7 +98,7 @@ fun ExamNotificationsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.ExamNews.label)) },
+                    title = { Text(ExamNewsDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }
@@ -116,7 +118,7 @@ fun ExamNotificationsScreen(
                 val campus = campusList[page]
                 when(campus) {
                     HEFEI -> {
-                        TotalNewsScreen(vm, AppNavRoute.NewsApi.Keyword.EXAM_SCHEDULE_HEFEI.keyword,innerPadding)
+                        TotalNewsScreen(vm, NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword,innerPadding)
                     }
                     XUANCHENG -> {
                         var page by remember { mutableIntStateOf(1) }

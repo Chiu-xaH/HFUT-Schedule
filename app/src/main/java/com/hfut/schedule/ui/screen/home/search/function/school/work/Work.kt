@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.WorkDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -89,9 +89,9 @@ fun Work() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Work.label)) },
+        headlineContent = { ScrollText(text = WorkDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Work.icon),null)
+            Icon(painterResource(WorkDestination.icon),null)
         },
         modifier = Modifier.clickable {
             navController.push(WorkDestination)
@@ -127,7 +127,7 @@ fun WorkScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Work.label)) },
+                    title = { Text(WorkDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -265,7 +265,7 @@ private fun WorkSearchUI(
                                 
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebView(context,url,title, icon = AppNavRoute.Work.icon)
+                                            Starter.startWebView(context,url,title, icon = WorkDestination.icon)
                                         }
                                     },
                                     leadingContent = { Text((index+1).toString()) }

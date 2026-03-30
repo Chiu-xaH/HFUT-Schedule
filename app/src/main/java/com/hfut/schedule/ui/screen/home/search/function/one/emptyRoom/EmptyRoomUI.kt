@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 import com.xah.navigation.util.LocalNavController
 
@@ -24,10 +24,10 @@ import com.xah.common.ui.component.text.ScrollText
 fun Classroom() {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Classroom.label)) },
+        headlineContent = { ScrollText(text = ClassroomDestination.TITLE.asString()) },
         leadingContent = {
             Icon(
-                painterResource(AppNavRoute.Classroom.icon),
+                painterResource(ClassroomDestination.ICON),
                 contentDescription = "Localized description",
             )
         },

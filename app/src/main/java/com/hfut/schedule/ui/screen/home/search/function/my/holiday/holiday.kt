@@ -38,7 +38,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.component.button.LiquidButton
 
 import com.hfut.schedule.ui.screen.home.getHolidays
@@ -67,9 +67,9 @@ fun Holiday() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Holiday.label)) },
+        headlineContent = { ScrollText(text = HolidayDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null)
+            Icon(painterResource(HolidayDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(HolidayDestination)
@@ -93,13 +93,13 @@ fun HolidayScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text("${DateTimeManager.Date_yyyy}年 ${stringResource(AppNavRoute.Holiday.label)}") },
+                title = { Text("${DateTimeManager.Date_yyyy}年 ${HolidayDestination.title.asString()}") },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
                 actions = {
                     val dest = NewsApiDestination(
-                        AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword
+                        NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword
                     )
                     SharedContainer(
                         key = dest.key,

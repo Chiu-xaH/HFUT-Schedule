@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource

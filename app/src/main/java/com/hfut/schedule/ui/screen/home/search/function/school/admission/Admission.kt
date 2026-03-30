@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 
@@ -28,9 +28,9 @@ import com.xah.common.ui.component.text.ScrollText
 fun Admission() {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(stringResource(AppNavRoute.Admission.label)) },
+        headlineContent = { ScrollText(AdmissionDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Admission.icon), contentDescription = null)
+            Icon(painterResource(AdmissionDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(AdmissionDestination)

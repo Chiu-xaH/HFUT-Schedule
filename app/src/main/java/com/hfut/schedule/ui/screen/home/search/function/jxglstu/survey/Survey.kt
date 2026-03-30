@@ -41,7 +41,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.nav.destination.SurveyDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -69,9 +69,9 @@ fun Survey(
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Survey.label))},
+        headlineContent = { ScrollText(text = SurveyDestination.TITLE.asString())},
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null)
+            Icon(painterResource(SurveyDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context) else {
@@ -106,7 +106,7 @@ fun SurveyScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Survey.label)) },
+                    title = { Text(SurveyDestination.TITLE.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

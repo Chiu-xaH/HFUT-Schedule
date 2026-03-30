@@ -40,7 +40,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
+
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -66,7 +67,7 @@ fun FixUI(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = androidx.compose.ui.graphics.Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar(stringResource(AppNavRoute.VersionInfo.label))
+                    HazeBottomSheetTopBar(VersionInfoDestination.title.asString())
                 },
             ) { innerPadding ->
                 Column(
@@ -94,7 +95,7 @@ fun FixUI(
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
         CustomCard(color = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
-                headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
+                headlineContent = { Text(text = VersionInfoDestination.title.asString()) },
                 supportingContent = { Text(text = stringResource(R.string.about_settings_version_info_description))},
                 modifier = Modifier.clickable { showBottomSheet_version = true },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}

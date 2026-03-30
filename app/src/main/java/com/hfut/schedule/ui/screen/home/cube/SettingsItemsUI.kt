@@ -58,7 +58,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsNetworkDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
@@ -351,13 +351,13 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
             ) {
                 TransplantListItem(
                     colors = MaterialTheme.colorScheme.surface,
-                    headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
+                    headlineContent = { Text(text = VersionInfoDestination.title.asString()) },
                     supportingContent = { Text(text = if(isPreview) stringResource(R.string.settings_version_info_description_preview) else stringResource(
                         R.string.settings_version_info_description, currentVersion
                     )) },
                     leadingContent = {
                         Icon(
-                            painterResource(AppNavRoute.VersionInfo.icon),
+                            painterResource(VersionInfoDestination.icon),
                             contentDescription = "Localized description",
                         )
                     },

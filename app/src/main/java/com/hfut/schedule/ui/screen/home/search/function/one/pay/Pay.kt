@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.FeeDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.cube.screen.createQRCodeBitmap
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -73,9 +73,9 @@ fun Pay() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Fee.label)) },
+        headlineContent = { ScrollText(text = FeeDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null)
+            Icon(painterResource(FeeDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(FeeDestination)
@@ -102,7 +102,7 @@ fun FeeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Fee.label)) },
+                title = { Text(FeeDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

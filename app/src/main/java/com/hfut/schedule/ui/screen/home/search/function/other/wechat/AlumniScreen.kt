@@ -16,7 +16,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.AlumniDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.xah.common.ui.style.align.CenterScreen
@@ -40,7 +41,7 @@ fun AlumniScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Alumni.label)) },
+                title = { Text(AlumniDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

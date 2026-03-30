@@ -37,7 +37,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.NotificationsDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -91,7 +92,7 @@ fun NotificationItems() {
             val clickAction = {
                 scope.launch {
                     item.url?.let {
-                        Starter.startWebView(context,it,item.title, icon = AppNavRoute.Notifications.icon)
+                        Starter.startWebView(context,it,item.title, icon = NotificationsDestination.icon)
                     } ?: showToast("暂无点击操作")
                 }
             }
@@ -156,7 +157,7 @@ fun NotificationsScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Notifications.label)) },
+                title = { Text(NotificationsDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

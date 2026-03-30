@@ -25,7 +25,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
+
 import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -81,7 +82,7 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.VersionInfo.label)) },
+                title = { Text(VersionInfoDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

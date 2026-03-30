@@ -6,14 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -39,8 +36,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.nav.window.AutoSizeText
+import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
@@ -51,7 +47,6 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
-import com.xah.container.component.base.SharedContent
 import com.xah.floating.util.LocalFloatingController
 import kotlin.math.roundToInt
 

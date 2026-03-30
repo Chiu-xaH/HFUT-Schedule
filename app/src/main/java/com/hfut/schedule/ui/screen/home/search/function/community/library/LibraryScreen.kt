@@ -92,7 +92,8 @@ import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.LibraryDestination
+
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -176,7 +177,7 @@ fun LibraryScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Library.label)) },
+                    title = { Text(LibraryDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -328,7 +329,7 @@ private fun SearchScreenCommunity(
                             supportingContent = { Text(text = "索书号 $callNo") },
                             leadingContent = {
                                 Icon(
-                                    painterResource(AppNavRoute.Library.icon),
+                                    painterResource(LibraryDestination.icon),
                                     contentDescription = "Localized description",
                                 )
                             }

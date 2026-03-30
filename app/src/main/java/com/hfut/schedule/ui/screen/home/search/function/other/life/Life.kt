@@ -24,7 +24,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.LifeDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavController
@@ -40,9 +40,9 @@ fun Life() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Life.label)) },
+        headlineContent = { ScrollText(text = LifeDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Life.icon), contentDescription = null)
+            Icon(painterResource(LifeDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(LifeDestination(false))
@@ -66,7 +66,7 @@ fun LifeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Life.label)) },
+                title = { Text(LifeDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

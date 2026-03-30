@@ -10,8 +10,13 @@ data class ExamDestination(
     val origin : String?,
 ) : NavDestination() {
     override val key = "exam_$origin"
-    override val title = res(R.string.navigation_label_exam)
-    override val icon = R.drawable.draw
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_exam)
+        val ICON = R.drawable.draw
+    }
 
     @Composable
     override fun Content() {

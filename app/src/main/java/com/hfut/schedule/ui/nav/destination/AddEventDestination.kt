@@ -14,8 +14,13 @@ data class AddEventDestination(
     val origin : String
 ) : NavDestination() {
     override val key: String = "add_event_${origin}_$id"
-    override val title: UiText = res(R.string.navigation_label_add_event)
-    override val icon = R.drawable.add
+    override val title: UiText = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_add_event)
+        val ICON = R.drawable.add
+    }
 
     @Composable
     override fun Content() {

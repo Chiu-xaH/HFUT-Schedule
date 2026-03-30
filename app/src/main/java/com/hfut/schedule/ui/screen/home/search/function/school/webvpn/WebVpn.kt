@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.WebVpnDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 import com.xah.navigation.util.LocalNavController
 
@@ -31,9 +31,9 @@ fun WebVpn() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebVpn.label)) },
+        headlineContent = { ScrollText(text = WebVpnDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null)
+            Icon(painterResource(WebVpnDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(WebVpnDestination)

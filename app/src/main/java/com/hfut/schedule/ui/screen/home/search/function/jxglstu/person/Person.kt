@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
@@ -21,9 +21,9 @@ fun PersonUI() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text =stringResource(AppNavRoute.PersonInfo.label)) },
+        headlineContent = { ScrollText(text =PersonInfoDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.PersonInfo.icon), contentDescription = null)
+            Icon(painterResource(PersonInfoDestination.icon), contentDescription = null)
 
         },
         modifier = Modifier.clickable {

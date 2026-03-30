@@ -41,7 +41,8 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
+
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
@@ -83,7 +84,7 @@ fun AverageGradeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.AverageGrade.label)) },
+                title = { Text(AverageGradeDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

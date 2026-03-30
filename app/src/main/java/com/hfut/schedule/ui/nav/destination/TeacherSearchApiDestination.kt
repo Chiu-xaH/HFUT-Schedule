@@ -29,8 +29,13 @@ data class TeacherSearchApiDestination(
     val teacherName : String
 ) : NavDestination() {
     override val key = "teacher_search_api_$teacherName"
-    override val title = res(R.string.navigation_label_teacher_search)
-    override val icon = R.drawable.group_search
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_teacher_search)
+        val ICON = R.drawable.group_search
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

@@ -62,8 +62,9 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDetailDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -103,7 +104,7 @@ fun ProgramCompetitionScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.ProgramCompetition.label)) },
+                title = { Text(ProgramCompetitionDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 }

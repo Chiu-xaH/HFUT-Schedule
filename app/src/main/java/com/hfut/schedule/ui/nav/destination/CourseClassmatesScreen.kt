@@ -13,8 +13,13 @@ data class CourseClassmatesScreen(
     val courseName : String,
 ) : NavDestination() {
     override val key = "course_classmates_${lessonId}_$courseName"
-    override val title = text("同班同学-$courseName")
-    override val icon = R.drawable.group
+    override val title = text("$TITLE-$courseName")
+    override val icon = ICON
+
+    companion object {
+        val TITLE = "同班同学"
+        val ICON = R.drawable.group
+    }
 
     @Composable
     override fun Content() {

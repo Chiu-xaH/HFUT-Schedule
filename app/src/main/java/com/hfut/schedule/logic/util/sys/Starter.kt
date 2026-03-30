@@ -26,7 +26,7 @@ import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.util.webview.getPureUrl
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.navigation.controller.NavigationController
@@ -237,7 +237,7 @@ object Starter {
         cookies: String? = null,
         icon : Int? = null
     ) {
-        GlobalUIStateHolder.pushToFront(AppNavRoute.WebView.withArgs(url,title,cookies,icon ?: R.drawable.net), AppNavRoute.WebView)
+//        GlobalUIStateHolder.pushToFront()
         val it = Intent(context, WebViewActivity::class.java).apply {
             putExtra("url",url)
             putExtra("title",title)

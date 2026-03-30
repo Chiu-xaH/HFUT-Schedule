@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.CourseSearchDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
@@ -29,9 +29,9 @@ fun CoursesSearch(
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.CourseSearch.label)) },
+        headlineContent = { ScrollText(text = CourseSearchDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null)
+            Icon(painterResource(CourseSearchDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context)

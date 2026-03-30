@@ -12,8 +12,13 @@ data class ClassroomDestination(
     val origin : String = "Search"
 ) : NavDestination() {
     override val key = "classroom_$origin"
-    override val title = res(R.string.navigation_label_classroom)
-    override val icon = R.drawable.meeting_room
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_classroom)
+        val ICON = R.drawable.meeting_room
+    }
 
     @Composable
     override fun Content() {

@@ -56,8 +56,9 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
@@ -82,9 +83,9 @@ import kotlinx.coroutines.launch
 fun WebUI() {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebFolder.label)) },
+        headlineContent = { ScrollText(text = WebFolderDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WebFolder.icon), contentDescription = null)
+            Icon(painterResource(WebFolderDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(WebFolderDestination)
@@ -222,7 +223,7 @@ fun WebNavigationScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.WebFolder.label)) },
+                title = { Text(WebFolderDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -310,7 +311,7 @@ fun NotificationBoxScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.NotificationBox.label)) },
+                title = { Text(NotificationBoxDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

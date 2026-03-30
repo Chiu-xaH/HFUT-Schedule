@@ -142,7 +142,7 @@ import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
@@ -381,7 +381,7 @@ fun MainScreen(
                         },
                     ) {
                         Icon(
-                            painterResource(AppNavRoute.AddEvent.icon),
+                            painterResource(AddEventDestination.ICON),
                             "Add Button",
                         )
                     }
@@ -460,7 +460,7 @@ fun MainScreen(
                                                     }
                                                 }
                                             }) {
-                                                Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                                Icon(painterResource(id = NotificationBoxDestination.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                             }
                                         }
                                     }
@@ -615,7 +615,7 @@ fun MainScreen(
                                     ) {
                                         Icon(
                                             tint = iconColor,
-                                            painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
+                                            painter = painterResource(id = WorkAndRestDestination.ICON),
                                             contentDescription = "",
                                             modifier = Modifier
                                                 .padding(CARD_NORMAL_DP * 3)
@@ -744,7 +744,7 @@ fun MainScreen(
                                             }
                                         ) {
                                             Icon(
-                                                painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
+                                                painter = painterResource(id = WorkAndRestDestination.ICON),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
@@ -764,7 +764,7 @@ fun MainScreen(
                                             navHostTopController.push(dest)
                                         }) {
                                             Icon(
-                                                painter = painterResource(id = AppNavRoute.TermCourses.icon),
+                                                painter = painterResource(id = TermCoursesDestination.ICON),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
@@ -1136,7 +1136,7 @@ fun SearchEditScreen() {
             },
             scrollBehavior = scrollBehavior,
             colors = topBarTransplantColor(),
-            title = { Text(stringResource(AppNavRoute.FunctionsSort.label)) },
+            title = { Text(FunctionsSortDestination.title.asString()) },
             navigationIcon = {
                 TopBarNavigationIcon()
             },

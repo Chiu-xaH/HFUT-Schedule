@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.util.NavDestination
 import com.xah.common.ui.util.res
-
+// TODO
 data class WebViewDestination(
     val url : String,
     val cookies : String?,
@@ -19,6 +19,7 @@ data class WebViewDestination(
             return "web_${url}"
         }
     }
+
     @Composable
     override fun Content() {
 //        val url = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.URL.argName) ?: return@transitionComposable

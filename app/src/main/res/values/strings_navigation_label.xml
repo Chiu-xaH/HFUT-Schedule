@@ -81,6 +81,6 @@
     <string name="navigation_label_school_card_warn">Not sufficient funds</string>
     <string name="navigation_label_scan_qr_code_description">Login CAS</string>
     <string name="navigation_label_track">Track</string>
-    <string name="navigation_label_average_grade">平均成绩</string>
-    <string name="navigation_label_settings_corner">屏幕圆角校准</string>
+    <string name="navigation_label_average_grade">Average grade</string>
+    <string name="navigation_label_settings_corner">Screen corner</string>
 </resources>

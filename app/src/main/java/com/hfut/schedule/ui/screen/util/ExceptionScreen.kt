@@ -19,7 +19,8 @@ import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.logic.util.dev.getKeyStackTrace
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ExceptionDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -41,7 +42,7 @@ fun ExceptionScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Exception.label)) },
+                title = { Text(ExceptionDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 }

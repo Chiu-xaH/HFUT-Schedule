@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -83,9 +83,9 @@ fun ToadyCampus() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.StuTodayCampus.label)) },
+        headlineContent = { ScrollText(text = StuTodayCampusDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null)
+            Icon(painterResource(StuTodayCampusDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(StuTodayCampusDestination)
@@ -114,7 +114,7 @@ fun StuTodayCampusScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.StuTodayCampus.label)) },
+                    title = { Text(StuTodayCampusDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -225,7 +225,7 @@ fun StuAppsScreen(
                                 headlineContent = { ScrollText(name) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                     }
                                 }
                             )
@@ -253,7 +253,7 @@ fun StuAppsScreen(
                                     headlineContent = { ScrollText(name) },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebView(context,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                            Starter.startWebView(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                         }
                                     }
                                 )
@@ -290,7 +290,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                     }
                                                 }
                                             )
@@ -314,7 +314,7 @@ fun StuAppsScreen(
                                                     headlineContent = { ScrollText(name) },
                                                     modifier = Modifier.clickable {
                                                         scope.launch {
-                                                            Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                            Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                         }
                                                     }
                                                 )
@@ -353,7 +353,7 @@ fun StuAppsScreen(
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
                                                 scope.launch {
-                                                    Starter.startWebView(context,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                    Starter.startWebView(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                 }
                                             }
                                         )
@@ -380,7 +380,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebView(context,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                        Starter.startWebView(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                     }
                                                 }
                                             )

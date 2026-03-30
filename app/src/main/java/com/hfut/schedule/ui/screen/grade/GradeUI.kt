@@ -55,7 +55,8 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.GradeDestination
+
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemJxglstuUI
@@ -136,7 +137,7 @@ fun GradeScreen(
         snapshotFlow { scrollBehavior.state.collapsedFraction }
             .collect { collapsedFraction -> isNavigationIconVisible = collapsedFraction < 0.5f }
     }
-    var buttonText by rememberSaveable { mutableStateOf<String>(context.getString(AppNavRoute.AverageGrade.label)) }
+        var buttonText by rememberSaveable { mutableStateOf<String>(AverageGradeDestination.TITLE.asString(context)) }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -147,7 +148,7 @@ fun GradeScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Grade.label)) },
+                    title = { Text(GradeDestination.TITLE.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -263,7 +264,7 @@ fun GradeScreen(
                                 )
                             )
                         },
-                        icon = AppNavRoute.AverageGrade.icon,
+                        icon = AverageGradeDestination.ICON,
                         text = buttonText,
                         shape = MaterialTheme.shapes.large,
                         modifier =

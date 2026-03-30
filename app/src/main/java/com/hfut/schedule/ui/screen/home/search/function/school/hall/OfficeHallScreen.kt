@@ -53,7 +53,8 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.OfficeHallDestination
+
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -82,7 +83,7 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
         Constant.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
     if(!needLogin || GlobalUIStateHolder.globalWebVpn == true) {
-        Starter.startWebView(context,finalUrl,name,null, AppNavRoute.OfficeHall.icon)
+        Starter.startWebView(context,finalUrl,name,null, OfficeHallDestination.icon)
     } else {
         Starter.startWebUrl(context,finalUrl)
     }
@@ -113,7 +114,7 @@ fun OfficeHallScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.OfficeHall.label)) },
+                    title = { Text(OfficeHallDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

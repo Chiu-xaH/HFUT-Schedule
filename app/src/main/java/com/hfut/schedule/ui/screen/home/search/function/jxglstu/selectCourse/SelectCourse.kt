@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.SelectCoursesDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 
 import com.xah.common.ui.component.text.ScrollText
@@ -27,9 +27,9 @@ fun SelectCourse(
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.SelectCourses.label)) },
+        headlineContent = { ScrollText(text = SelectCoursesDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.SelectCourses.icon), contentDescription = null)
+            Icon(painterResource(SelectCoursesDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             if(!ifSaved) navController.push(SelectCoursesDestination)

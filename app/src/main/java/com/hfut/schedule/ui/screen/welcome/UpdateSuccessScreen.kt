@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
@@ -131,7 +131,7 @@ fun UpdateSuccessScreen() {
                                 }
                             ) {
                                 Icon(
-                                    painterResource(AppNavRoute.VersionInfo.icon),
+                                    painterResource(VersionInfoDestination.icon),
                                     null,
                                     tint = MaterialTheme.colorScheme.primary,
                                 )

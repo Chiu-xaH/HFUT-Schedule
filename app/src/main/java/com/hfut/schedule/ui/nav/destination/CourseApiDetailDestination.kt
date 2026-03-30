@@ -14,8 +14,13 @@ data class CourseApiDetailDestination(
     val classroom : String?,
 ) : NavDestination() {
     override val key = "course_api_detail_${id}"
-    override val title = res(R.string.navigation_label_course_detail)
-    override val icon = R.drawable.category
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_course_detail)
+        val ICON = R.drawable.category
+    }
 
     @Composable
     override fun Content() {

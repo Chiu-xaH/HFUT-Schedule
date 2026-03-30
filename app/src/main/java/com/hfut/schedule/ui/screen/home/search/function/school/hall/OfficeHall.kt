@@ -17,7 +17,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.OfficeHallDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 import com.xah.navigation.util.LocalNavController
 
@@ -31,9 +31,9 @@ fun OfficeHall() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.OfficeHall.label)) },
+        headlineContent = { ScrollText(text = OfficeHallDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.OfficeHall.icon), contentDescription = null)
+            Icon(painterResource(OfficeHallDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(OfficeHallDestination)

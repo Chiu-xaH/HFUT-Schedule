@@ -99,8 +99,10 @@ import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.DropCoursesDestination
+import com.hfut.schedule.ui.nav.destination.FailRateDestination
+import com.hfut.schedule.ui.nav.destination.SelectCoursesDestination
 import com.hfut.schedule.ui.nav.destination.SelectCoursesDetailDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
@@ -175,7 +177,7 @@ fun SelectCourseScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.SelectCourses.label)) },
+                title = { Text(SelectCoursesDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -793,8 +795,8 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             modifier = Modifier.weight(.5f)
         )
         TransplantListItem(
-            headlineContent = { Text(text = stringResource(AppNavRoute.FailRate.label)) },
-            leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
+            headlineContent = { Text(text = FailRateDestination.title.asString()) },
+            leadingContent = { Icon(painterResource(FailRateDestination.icon), contentDescription = "Localized description",) },
             modifier = Modifier
                 .clickable {
                     showBottomSheet_FailRate = true

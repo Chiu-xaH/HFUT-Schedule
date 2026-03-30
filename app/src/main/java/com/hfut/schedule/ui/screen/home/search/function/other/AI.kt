@@ -31,7 +31,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.nav.destination.AiDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.xah.navigation.util.LocalNavController
@@ -49,10 +49,10 @@ fun AI(
 ) {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.AI.label)) },
+        headlineContent = { ScrollText(text = AiDestination.title.asString()) },
         leadingContent = {
             Box() {
-                Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null)
+                Icon(painterResource(AiDestination.icon), contentDescription = null)
             }
         },
         modifier = Modifier.clickable {
@@ -124,7 +124,7 @@ fun AIScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.AI.label)) },
+                title = { Text(AiDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

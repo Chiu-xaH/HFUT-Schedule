@@ -12,8 +12,13 @@ data class SurveyDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
     override val key = "survey_$ifSaved"
-    override val title = res(R.string.navigation_label_survey)
-    override val icon = R.drawable.verified
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_survey)
+        val ICON = R.drawable.verified
+    }
 
     @Composable
     override fun Content() {

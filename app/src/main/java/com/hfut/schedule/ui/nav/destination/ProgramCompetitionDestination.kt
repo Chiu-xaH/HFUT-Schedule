@@ -12,8 +12,13 @@ data class ProgramCompetitionDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
     override val key = "program_competition_$ifSaved"
-    override val title = res(R.string.navigation_label_program_competition)
-    override val icon = R.drawable.leaderboard
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_program_competition)
+        val ICON = R.drawable.leaderboard
+    }
 
     @Composable
     override fun Content() {

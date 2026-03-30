@@ -22,7 +22,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.nav.destination.SecondClassDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
@@ -38,9 +38,9 @@ fun SecondClass() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.SecondClass.label)) },
+        headlineContent = { ScrollText(text = SecondClassDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.SecondClass.icon), contentDescription = null)
+            Icon(painterResource(SecondClassDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(SecondClassDestination)
@@ -63,7 +63,7 @@ fun SecondClassScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.SecondClass.label)) },
+                title = { Text(SecondClassDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

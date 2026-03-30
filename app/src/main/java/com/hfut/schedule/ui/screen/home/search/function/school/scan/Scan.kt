@@ -17,7 +17,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
 import com.xah.common.ui.component.text.ScrollText
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 import com.xah.navigation.util.LocalNavController
 
@@ -30,10 +30,10 @@ fun Scan() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.ScanQrCode.label)) },
+        headlineContent = { ScrollText(text = ScanQrCodeDestination.title.asString()) },
         overlineContent = { ScrollText(stringResource(R.string.navigation_label_scan_qr_code_description))},
         leadingContent = {
-            Icon(painterResource(AppNavRoute.ScanQrCode.icon), contentDescription = null)
+            Icon(painterResource(ScanQrCodeDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(ScanQrCodeDestination)

@@ -44,7 +44,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -176,9 +176,9 @@ fun WorkAndRest() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.WorkAndRest.label)) },
+        headlineContent = { ScrollText(text = WorkAndRestDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null)
+            Icon(painterResource(WorkAndRestDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(WorkAndRestDestination(null))
@@ -213,7 +213,7 @@ fun TimeTableScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.WorkAndRest.label)) },
+                title = { Text(WorkAndRestDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

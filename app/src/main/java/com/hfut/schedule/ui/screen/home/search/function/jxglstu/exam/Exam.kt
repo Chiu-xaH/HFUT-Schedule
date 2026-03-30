@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -70,9 +70,9 @@ import kotlinx.coroutines.launch
 fun Exam() {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Exam.label)) },
+        headlineContent = { ScrollText(text = ExamDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null)
+            Icon(painterResource(ExamDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(ExamDestination(null))
@@ -98,7 +98,7 @@ fun ExamScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Exam.label)) },
+                title = { Text(ExamDestination.TITLE.asString()) },
                 actions = {
                     SharedContainer(
                         key = ExamNewsDestination.key,

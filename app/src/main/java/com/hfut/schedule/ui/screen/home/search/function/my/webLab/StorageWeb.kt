@@ -34,8 +34,9 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 import com.xah.common.ui.component.text.ScrollText
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -112,7 +113,7 @@ fun StorageWeb(hazeState : HazeState) {
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
                                         scope.launch {
-                                            Starter.startWebView(context,url,name, icon = AppNavRoute.WebFolder.icon)
+                                            Starter.startWebView(context,url,name, icon = WebFolderDestination.icon)
                                         }
                                     },
                                     onDoubleClick = {},

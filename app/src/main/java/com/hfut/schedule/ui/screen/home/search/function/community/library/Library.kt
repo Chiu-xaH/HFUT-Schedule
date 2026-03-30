@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.LibraryDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
@@ -23,9 +23,9 @@ fun LibraryItem() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Library.label)) },
+        headlineContent = { ScrollText(text = LibraryDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Library.icon), contentDescription = null)
+            Icon(painterResource(LibraryDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(LibraryDestination)

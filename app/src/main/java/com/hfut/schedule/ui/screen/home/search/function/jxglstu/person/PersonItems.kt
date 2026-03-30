@@ -59,7 +59,8 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
+
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -118,7 +119,7 @@ fun PersonScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.PersonInfo.label)) },
+                title = { Text(PersonInfoDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -321,7 +322,7 @@ private fun PersonItems(
                                 navController.push(ClassmatesDestination)
                             }
                         ) {
-                            Text(stringResource(AppNavRoute.Classmates.label))
+                            Text(ClassmatesDestination.title.asString())
                         }
                     },
                 )

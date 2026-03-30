@@ -54,8 +54,9 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.CourseSearchDestination
 import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -142,7 +143,7 @@ fun CourseSearchScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.CourseSearch.label)) },
+                title = { Text(CourseSearchDestination.title.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

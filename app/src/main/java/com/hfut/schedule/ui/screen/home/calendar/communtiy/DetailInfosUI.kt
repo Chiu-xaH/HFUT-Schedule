@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.special.HazeBottomSheet

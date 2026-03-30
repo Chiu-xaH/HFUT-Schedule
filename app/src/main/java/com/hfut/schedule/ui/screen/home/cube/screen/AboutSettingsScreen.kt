@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
 import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -162,7 +162,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                 ) {
                     TransplantListItem(
                         colors = MaterialTheme.colorScheme.surface,
-                        headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
+                        headlineContent = { Text(text = VersionInfoDestination.title.asString()) },
                         supportingContent = { Text(text = stringResource(R.string.about_settings_version_info_description))},
                         modifier = Modifier.clickable {
                             navTopController.push(VersionInfoDestination)

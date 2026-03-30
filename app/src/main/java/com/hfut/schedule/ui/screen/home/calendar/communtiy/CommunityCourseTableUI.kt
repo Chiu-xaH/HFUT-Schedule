@@ -39,7 +39,7 @@ import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
 import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin

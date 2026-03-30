@@ -44,7 +44,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
@@ -130,7 +130,7 @@ fun WashingUI() {
             FilledTonalButton(onClick = {
                 navController.push(HaiLeWashingDestination)
             }) {
-                Text(stringResource(AppNavRoute.HaiLeWashing.label))
+                Text(HaiLeWashingDestination.title.asString())
             }
         }
         CustomTabRow(pagerState,titles)
@@ -155,7 +155,7 @@ fun WashingUI() {
                         )
                     }
                     XUANCHENG_TAB -> {
-                        EmptyIcon("请使用${stringResource(AppNavRoute.HaiLeWashing.label)}")
+                        EmptyIcon("请使用${HaiLeWashingDestination.title.asString()}")
                     }
                 }
                 Spacer(Modifier.height(APP_HORIZONTAL_DP*3))

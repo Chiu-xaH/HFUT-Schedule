@@ -30,8 +30,13 @@ data class FailRateDetailDestination(
     val bean : List<courseFailRateDTOList>
 ) : NavDestination() {
     override val key = "fail_rate_detail_${courseName}_${lessonId}"
-    override val title = res(R.string.navigation_label_fail_rate)
-    override val icon = R.drawable.radio_button_partial
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_fail_rate)
+        val ICON = R.drawable.radio_button_partial
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

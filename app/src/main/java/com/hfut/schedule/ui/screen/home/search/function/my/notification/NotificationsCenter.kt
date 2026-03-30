@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.NotificationsDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
@@ -33,7 +33,7 @@ fun NotificationsCenter() {
     }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Notifications.label)) },
+        headlineContent = { ScrollText(text = NotificationsDestination.title.asString()) },
         modifier = Modifier.clickable {
             navController.push(NotificationsDestination)
         },
@@ -45,7 +45,7 @@ fun NotificationsCenter() {
                     }
                 }
             }) {
-                Icon(painterResource(AppNavRoute.Notifications.icon), contentDescription = null)
+                Icon(painterResource(NotificationsDestination.icon), contentDescription = null)
 
             }
         }

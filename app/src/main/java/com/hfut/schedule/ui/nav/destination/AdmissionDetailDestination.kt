@@ -13,8 +13,13 @@ data class AdmissionDetailDestination(
     val type : String
 ) : NavDestination() {
     override val key = "admission_region_${index}_$type"
-    override val title = res(R.string.navigation_label_admission_detail)
-    override val icon = R.drawable.publics
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_admission_detail)
+        val ICON = R.drawable.publics
+    }
 
     @Composable
     override fun Content() {

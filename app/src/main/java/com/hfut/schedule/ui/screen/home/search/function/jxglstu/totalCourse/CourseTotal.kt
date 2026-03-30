@@ -26,7 +26,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
@@ -46,9 +46,9 @@ fun CourseTotal(
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text =stringResource(AppNavRoute.TermCourses.label)) },
+        headlineContent = { ScrollText(text = TermCoursesDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null)
+            Icon(painterResource(TermCoursesDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(
@@ -80,7 +80,7 @@ fun TotalCourseScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.TermCourses.label)) },
+                title = { Text(TermCoursesDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

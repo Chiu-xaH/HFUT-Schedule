@@ -85,8 +85,9 @@ import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.CourseClassmatesScreen
 import com.hfut.schedule.ui.nav.destination.CourseDetailDestination
 import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
+import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
@@ -715,10 +716,10 @@ fun DetailItems(
                 ) {
                     TransplantListItem(
                         colors = cardNormalColor(),
-                        headlineContent = { Text(text =stringResource(AppNavRoute.FailRate.label) + "查询") },
+                        headlineContent = { Text(text =FailRateDestination.title.asString() + "查询") },
                         leadingContent = {
                             Icon(
-                                painterResource(AppNavRoute.FailRate.icon),
+                                painterResource(FailRateDestination.icon),
                                 contentDescription = "Localized description",
                             )
                         },

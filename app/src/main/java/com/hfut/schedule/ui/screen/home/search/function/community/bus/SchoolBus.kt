@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.BusDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 
@@ -20,9 +20,9 @@ import com.xah.common.ui.component.text.ScrollText
 fun SchoolBus() {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Bus.label)) },
+        headlineContent = { ScrollText(text = BusDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Bus.icon), contentDescription = null)
+            Icon(painterResource(BusDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(BusDestination)

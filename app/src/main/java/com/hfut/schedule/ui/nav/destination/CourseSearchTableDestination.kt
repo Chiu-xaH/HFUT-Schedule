@@ -15,8 +15,13 @@ data class CourseSearchTableDestination(
     val classes : String?
 ) : NavDestination() {
     override val key = "course_search_table_${term}_${name}_${code}_$classes"
-    override val title = res(R.string.navigation_label_course_search_table)
-    override val icon = R.drawable.calendar
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_course_search_table)
+        val ICON = R.drawable.calendar
+    }
 
     @Composable
     override fun Content() {

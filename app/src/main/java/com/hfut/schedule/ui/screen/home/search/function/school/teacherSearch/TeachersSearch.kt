@@ -45,7 +45,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -74,9 +74,9 @@ fun TeacherSearch() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.TeacherSearch.label)) },
+        headlineContent = { ScrollText(text = TeacherSearchDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TeacherSearch.icon), contentDescription = null)
+            Icon(painterResource(TeacherSearchDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(TeacherSearchDestination)
@@ -117,7 +117,7 @@ fun TeacherSearchScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.TeacherSearch.label)) },
+                    title = { Text(TeacherSearchDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

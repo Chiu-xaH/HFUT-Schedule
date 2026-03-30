@@ -16,7 +16,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.xah.common.ui.component.text.ScrollText
 import kotlinx.coroutines.launch
 

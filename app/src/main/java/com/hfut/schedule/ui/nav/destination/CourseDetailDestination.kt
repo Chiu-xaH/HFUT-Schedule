@@ -27,8 +27,13 @@ data class CourseDetailDestination(
     val courseBookData : Map<Long, CourseBookBean> = emptyMap()
 ) : NavDestination() {
     override val key = "course_api_detail_${lesson.hashCode()}"
-    override val title = res(R.string.navigation_label_course_detail)
-    override val icon = R.drawable.category
+    override val title = TITLE
+    override val icon = ICON
+
+    companion object {
+        val TITLE = res(R.string.navigation_label_course_detail)
+        val ICON = R.drawable.category
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

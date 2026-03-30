@@ -72,7 +72,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.TrackDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -92,9 +92,9 @@ fun Track() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Track.label)) },
+        headlineContent = { ScrollText(text = TrackDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Track.icon), contentDescription = null)
+            Icon(painterResource(TrackDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(TrackDestination)
@@ -167,7 +167,7 @@ fun TrackScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Track.label)) },
+                    title = { Text(TrackDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
