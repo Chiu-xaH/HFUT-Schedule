@@ -203,15 +203,15 @@ fun DormitoryScoreScreen(
                                         val item = data[index]
                                         RowHorizontal {
                                             TransplantListItem(
-                                                headlineContent = { Text(item.title) },
-                                                supportingContent = { Text(item.value) },
+                                                overlineContent = { Text(item.title) },
+                                                headlineContent = { Text(item.value) },
                                                 modifier = Modifier.weight(.5f)
                                             )
                                             if(index + 1 < data.size) {
                                                 val item2 = data[index+1]
                                                 TransplantListItem(
-                                                    headlineContent = { Text(item2.title) },
-                                                    supportingContent = { Text(item2.value) },
+                                                    overlineContent = { Text(item2.title) },
+                                                    headlineContent = { Text(item2.value) },
                                                     modifier = Modifier.weight(.5f)
                                                 )
                                             }

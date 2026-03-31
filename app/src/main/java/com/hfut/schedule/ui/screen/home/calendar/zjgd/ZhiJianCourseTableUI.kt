@@ -32,7 +32,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -79,7 +78,6 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
-
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -90,16 +88,15 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.Api
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.style.CalendarStyle
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.mirror.util.ShaderState
-import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.mirror.util.ShaderState
+import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
@@ -210,7 +207,7 @@ fun ZhiJianCourseTableUI(
             },
 //            isFullScreen = false,
         ) {
-            MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
+            MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm)
         }
     }
     var showBottomSheetCourse by remember { mutableStateOf(false) }
@@ -574,12 +571,14 @@ fun ZhiJianCourseTableUI(
                                             modifier = Modifier.fillMaxWidth()
                                         )
                                     }
-                                    Text(
-                                        text = l.place,
-                                        fontSize = style.textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
+                                    l.place?.let {
+                                        Text(
+                                            text = it,
+                                            fontSize = style.textSize,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
                                 }
                             } else if (itemList.size > 1) {
                                 val name = itemList.map {
@@ -699,7 +698,7 @@ fun ZhiJianCourseTableUI(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJianCourseItemDto>, vm: NetWorkViewModel, hazeState: HazeState) {
+fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJianCourseItemDto>, vm: NetWorkViewModel) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
     if (showBottomSheetTotalCourse) {
@@ -812,15 +811,17 @@ private fun CourseDetail(
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar(course.courseName, isPaddingStatusBar = false)
         CustomCard (color = cardNormalColor()){
-            TransplantListItem(
-                headlineContent = {
-                    Text(course.place)
-                },
-                overlineContent = { Text("地点") },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.near_me),null)
-                }
-            )
+            course.place?.let {
+                TransplantListItem(
+                    headlineContent = {
+                        Text(it)
+                    },
+                    overlineContent = { Text("地点") },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.near_me),null)
+                    }
+                )
+            }
             TransplantListItem(
                 headlineContent = {
                     Text(course.teacher)
