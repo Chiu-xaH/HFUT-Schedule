@@ -40,9 +40,9 @@ Android 8.0及以上，接入互联网
 ## 文档库
 ### [开发文档](docs/Developer.md) (正在完善)
 
-- pull request请向dev分支提交，stage分支仅用于已发行版本
-- pull request如涉及Compose相关的大改动，最好在SDK Min(26),31,32,Target(36)都做验证（小改动直接提就行）
-- 如需修改页面导航、转场动效以及容器共享等功能，请查看开发文档，原有Navigation2已不再使用，已解耦至[SharedNav](https://github.com/Chiu-xaH/SharedNav)库
+- pull request 请向 dev 分支提交，stage分支仅用于已发行版本
+- pull request 如涉及较大改动，建议选几个关键节点的 SDK 版本，且在清除应用数据的情况下做验证。
+- 如需修改页面导航、转场动效以及容器共享等功能，请查看开发文档，原有 Navigation2 已不再使用，已解耦至[SharedNav](https://github.com/Chiu-xaH/SharedNav)库
 
 ### [更新日志](docs/update)
 
