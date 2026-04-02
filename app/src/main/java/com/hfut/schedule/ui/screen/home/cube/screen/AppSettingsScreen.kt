@@ -224,6 +224,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 }
 
                 PaddingHorizontalDivider()
+                /* TODO 延缓发布，预留
                 TransplantListItem(
                     headlineContent = { Text(text = "无限滚轮") },
                     supportingContent = {
@@ -253,6 +254,8 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     Text(description)
                 }
                 PaddingHorizontalDivider()
+                 */
+
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_courses_on_focus_title)) },
                     supportingContent = {

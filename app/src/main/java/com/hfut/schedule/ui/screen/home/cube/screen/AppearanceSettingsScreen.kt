@@ -612,8 +612,11 @@ fun SharedAppearanceSettingsScreen(
                 CustomSlider(
                     value = transition.toFloat(),
                     onValueChange = { value ->
-                        val level = transitionLevels.find { it.levelNum == value.toInt() } ?: return@CustomSlider
-                        scope.launch { DataStoreManager.saveTransition(level) }
+                        scope.launch {
+                            val target = transitionLevels.find { it.levelNum == formatDecimal(value.toDouble(),0).toInt() }
+                                ?: return@launch
+                            DataStoreManager.saveTransition(target)
+                        }
                     },
                     steps = transitionLevels.size-2,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
@@ -934,8 +937,6 @@ fun CalendarUISettings(
                 onValueChange = {
                     scope.launch { DataStoreManager.saveCustomSquareAlpha(it) }
                 },
-//                onValueChangeFinished =  {
-//                },
                 modifier = Modifier.let {
                     if(tiny) it
                     else it.padding(bottom = APP_HORIZONTAL_DP)

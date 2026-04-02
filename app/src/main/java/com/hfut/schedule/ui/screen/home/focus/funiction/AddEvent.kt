@@ -89,6 +89,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
+import com.hfut.schedule.logic.enumeration.LocalEvent
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -129,6 +130,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingUI
@@ -600,7 +602,7 @@ fun AddEventUI(
     if(showSelectDateDialog)
         DateRangePickerModal(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
     if(showSelectTimeDialog)
-        TimeRangePickerDialog(isScheduleType,onSelected = { time = it }) { showSelectTimeDialog = false }
+        TimeRangePickerDialog(isScheduleType,onSelected = { time = it }, defaultValue = time) { showSelectTimeDialog = false }
 
 
     LaunchedEffect(updateLoading) {
@@ -680,7 +682,6 @@ fun AddEventUI(
                 .measureDpSize { _, h ->
                     bottomHeight = h
                 }
-//                .navigationBarsPadding()
                 .align(Alignment.BottomCenter)
                 .zIndex(2f)
                 .background(
@@ -764,35 +765,52 @@ fun AddEventUI(
         }
 
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//            DividerTextExpandedWith("配置") {
-                CardListItem(
-                    headlineContent = { Text("类型: " + if(isScheduleType) "日程" else "网课" ) },
-                    supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终;\n添加后，将同时显示在课程表方格中，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine);\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
-                    leadingContent = {
-                        FilledTonalIconButton(
-                            onClick = { isScheduleType = !isScheduleType },
-                            content = typeIcon
-                        )
-                    } ,
-                    modifier = Modifier.clickable {
-                        isScheduleType = !isScheduleType
-                        date = Pair("","")
-                        time = Pair("","")
-                    }
-                )
-                Spacer(Modifier.height(5.dp))
-                CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
-                Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
-                CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
-                Spacer(Modifier.height(5.dp ))
+            CustomSingleChoiceRow(
+                options = LocalEvent.entries,
+                selected = if(isScheduleType) LocalEvent.SCHEDULE else LocalEvent.DEADLINE,
+            ) {
+                isScheduleType = when(it) {
+                    LocalEvent.DEADLINE -> false
+                    LocalEvent.SCHEDULE -> true
+                }
+                date = Pair("","")
+                time = Pair("","")
+            }
+            CardListItem(
+                cardModifier = Modifier.padding(bottom = CARD_NORMAL_DP),
+                headlineContent = {
+                    Text(
+                        if(isScheduleType)
+                            "日程类型旨在用户自行添加额外的课程、实训、实验、班会等，强调线下活动、有始有终;添加后，将同时显示在课程表方格中，在未开始时位于其他事项，进行期间会显示为重要事项"
+                        else
+                            "DDL类型旨在用户自行添加需要在截止日期之前的作业、实验报告等，强调线上活动，相比日程类型只需注意结束时间;添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                },
+                leadingContent = {
+                    FilledTonalIconButton(
+                        onClick = {
+                            isScheduleType = !isScheduleType
+                            date = Pair("","")
+                            time = Pair("","")
+                        },
+                        content = typeIcon
+                    )
+                }
+            )
+            PaddingHorizontalDivider(isDashed = true)
+
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
+            CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
+            Spacer(Modifier.height(CARD_NORMAL_DP*3))
+            CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
             val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
                 value = dateToWeek(date.first)
             }
             val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
                 value = dateToWeek(date.second)
             }
-//            val weekInfoEnd = dateToWeek(date.second)
-
 
             CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
@@ -813,9 +831,9 @@ fun AddEventUI(
                         )
                     )
                 }
-                Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(CARD_NORMAL_DP*2))
                 CustomTextField(input = remark, label = { Text("自定义时间显示") }, singleLine = false) { remark = it }
-                Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*0f))
+                Spacer(Modifier.height(CARD_NORMAL_DP*2))
 
 
                 if(isSupabase) {
@@ -852,7 +870,6 @@ fun AddEventUI(
                                         TextField(
                                             modifier = Modifier
                                                 .weight(1f),
-//                                                .padding(horizontal = APP_HORIZONTAL_DP),
                                             value = input,
                                             onValueChange = { input = it },
                                             singleLine = true,

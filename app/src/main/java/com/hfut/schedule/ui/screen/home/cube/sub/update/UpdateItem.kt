@@ -9,9 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.uniapp.UniAppSchedule
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -60,9 +58,10 @@ fun VersionInfo() {
             UpdateItems("新增 全局浮窗体系","跟随SharedNav库更新")//
             UpdateItems("新增 课程表方格支持长按放大显示","遇到较短时间的方格无法显示完整文字，可以长按方格放大显示")//
             UpdateItems("修复 在启用着色器效果时打开动效偶见闪烁一帧白屏的bug")//
-            UpdateItems("修复 收起动画结束时闪现1帧的bug")
-            UpdateItems("修复 选项中部分进度条按住拖动时抽搐的Bug")
-            UpdateItems("优化 时间选择器的交互方式为滚轮")//滚轮、日期初始值
+            UpdateItems("修复 部分设备在收起动画结束时闪现1帧的bug")//
+            UpdateItems("修复 选项中部分进度条按住拖动时抽搐的Bug")//
+            UpdateItems("修复 合工大教务一键登录时因失败而发送崩溃的Bug")
+            UpdateItems("优化 时间选择器的交互方式为滚轮")//
             UpdateItems("优化 教师课程表的显示逻辑")//注册解注册问题
             UpdateItems("优化 部分界面的显示以及过渡效果")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")

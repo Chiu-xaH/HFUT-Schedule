@@ -214,7 +214,7 @@ dependencies {
     implementation(libs.mirror)
     // 导航&转场动画模块
 //    implementation(libs.sharednav)
-    def tag = "debug"
+    def tag = "release"
     implementation(files("libs/common-${tag}.aar"))
     implementation(files("libs/navigation-${tag}.aar"))
     implementation(files("libs/shared-container-${tag}.aar"))

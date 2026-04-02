@@ -185,6 +185,7 @@ fun TimePickerOld(onSelected: (String) -> Unit) {
 @Composable
 fun TimeRangePicker(
     isSchedule : Boolean,
+    defaultValue : Pair<String,String>? = null,
     onSelected: (Pair<String,String>) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -200,10 +201,10 @@ fun TimeRangePicker(
 
     Column() {
         if(isSchedule) {
-            TimePicker { startTime = it }
+            TimePicker(skipMinutes = isSchedule, initData = defaultValue?.first) { startTime = it }
             PaddingHorizontalDivider(startPadding = false,endPadding = false)
         }
-        TimePicker { endTime = it }
+        TimePicker(skipMinutes = isSchedule, initData = defaultValue?.second) { endTime = it }
 
         Row(modifier = Modifier.align(Alignment.End)) {
             TextButton(onClick = onDismiss, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
@@ -223,68 +224,13 @@ fun TimeRangePicker(
     }
 }
 
-
 @Composable
-fun TimeOnePicker(onSelected: (String) -> Unit,onDismiss: () -> Unit) {
-    var endTime by remember { mutableStateOf<String?>(null) }
-    var enabled by remember { mutableStateOf(false) }
-
-    // 重选范围 清空
-    LaunchedEffect(endTime) {
-        // 判定时间合法性
-        enabled = endTime != null
-    }
-
-    Column() {
-        TimePicker { endTime = it }
-
-        Row(modifier = Modifier.align(Alignment.End)) {
-            TextButton(onClick = onDismiss, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
-                Text("取消")
-            }
-            Spacer(Modifier.width(APP_HORIZONTAL_DP))
-            TextButton(
-                enabled = enabled,
-                onClick = {
-                    if(endTime != null) {
-                        onSelected(endTime!!)
-                    }
-                    onDismiss()
-                }
-            ) { Text("完成") }
-        }
-    }
-}
-@Composable
-fun TimePickerDialog(onSelected: (String) -> Unit,onDismiss: () -> Unit)  {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(APP_HORIZONTAL_DP)
-        ) {
-            Column {
-                Column(
-                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP *2, vertical = APP_HORIZONTAL_DP),
-                    verticalArrangement = Arrangement.spacedBy(APP_HORIZONTAL_DP)
-                ) {
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP /3))
-                    Text(
-                        text = "输入截止时间",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    TimeOnePicker(
-                        onSelected = onSelected,
-                        onDismiss = onDismiss
-                    )
-                }
-            }
-        }
-    }
-}
-@Composable
-fun TimeRangePickerDialog(isSchedule: Boolean,onSelected: (Pair<String,String>) -> Unit,onDismiss: () -> Unit)  {
+fun TimeRangePickerDialog(
+    isSchedule: Boolean,
+    defaultValue : Pair<String,String>? = null,
+    onSelected: (Pair<String,String>) -> Unit,
+    onDismiss: () -> Unit
+)  {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = MaterialTheme.shapes.large,
@@ -304,6 +250,7 @@ fun TimeRangePickerDialog(isSchedule: Boolean,onSelected: (Pair<String,String>) 
                     )
                     TimeRangePicker(
                         onSelected = onSelected,
+                        defaultValue = defaultValue,
                         onDismiss = onDismiss,
                         isSchedule = isSchedule
                     )
@@ -317,6 +264,7 @@ fun TimeRangePickerDialog(isSchedule: Boolean,onSelected: (Pair<String,String>) 
 fun TimePicker(
     modifier: Modifier = Modifier,
     initData: String? = null,
+    skipMinutes : Boolean = true,
     onSelected: (String) -> Unit
 ) {
     var init = initData?.split(":")?.mapNotNull { it.toIntOrNull() } ?: listOf(0,0)
@@ -331,8 +279,12 @@ fun TimePicker(
     }
 
     val hours = remember { (0..23).toList() }
-//    val minutes = remember { (0..59).toList() }
-    val minutes = remember { (0..59 step 5).toList() }
+    val minutes = remember(skipMinutes) {
+        if(skipMinutes)
+            (0..59 step 5).toList()
+        else
+            (0..59).toList()
+    }
 
     Row(
         modifier = modifier,
