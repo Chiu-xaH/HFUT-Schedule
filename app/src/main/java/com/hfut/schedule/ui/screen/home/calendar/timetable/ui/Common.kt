@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import com.xah.container.component.base.sharedContainer
 import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.shared.LogUtil
 
 private const val timeTextFactor = 0.85
 private const val placeTextFactor = 0.9
@@ -189,14 +191,14 @@ fun TimeTable(
                     .let {
                         if (!hasBackground && list.size == 1) {
                             val item = list[0]
-                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
                                     it.sharedContainer(CourseApiDetailDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.detail.eventId?.let { id ->
-                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
+                                        it.sharedContainer(AddEventDestination(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
@@ -385,14 +387,14 @@ fun TimeTable(
                     )
                     .let {
                         if (!hasBackground) {
-                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
                                     it.sharedContainer(CourseApiDetailDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.detail.eventId?.let { id ->
-                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
+                                        it.sharedContainer(AddEventDestination(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {

@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-03-28") },
+                overlineContent = { Text(text = "2026-04-02") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -60,9 +60,10 @@ fun VersionInfo() {
             UpdateItems("修复 在启用着色器效果时打开动效偶见闪烁一帧白屏的bug")//
             UpdateItems("修复 部分设备在收起动画结束时闪现1帧的bug")//
             UpdateItems("修复 选项中部分进度条按住拖动时抽搐的Bug")//
-            UpdateItems("修复 合工大教务一键登录时因失败而发送崩溃的Bug")
+            UpdateItems("修复 课程表方格在其他周数时有些方格无法触发容器共享动画的Bug")//
+            UpdateItems("修复 课程表日程方格在编辑保存后丢失容器共享动画的Bug")//
             UpdateItems("优化 时间选择器的交互方式为滚轮")//
-            UpdateItems("优化 教师课程表的显示逻辑")//注册解注册问题
+            UpdateItems("优化 教师课程表的显示逻辑")//
             UpdateItems("优化 部分界面的显示以及过渡效果")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")

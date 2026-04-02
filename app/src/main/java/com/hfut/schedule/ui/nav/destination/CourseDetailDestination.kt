@@ -26,7 +26,7 @@ data class CourseDetailDestination(
     val lesson : lessons,
     val courseBookData : Map<Long, CourseBookBean> = emptyMap()
 ) : NavDestination() {
-    override val key = "course_api_detail_${lesson.hashCode()}"
+    override val key = "course_api_detail_${lesson.id}"
     override val title = TITLE
     override val icon = ICON
 

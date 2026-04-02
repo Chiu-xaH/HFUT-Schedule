@@ -47,6 +47,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.SharedContent
 import com.xah.floating.model.Window
 import com.xah.floating.util.LocalFloatingController
+import com.xah.shared.LogUtil
 
 
 data class TimeTableSquareWindow(
@@ -58,17 +59,11 @@ data class TimeTableSquareWindow(
     private fun getSharedKey() : String {
         return if(list.size == 1) {
             val item = list[0]
-            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
             when (item.type) {
-                TimeTableType.COURSE -> {
-                    CourseApiDetailDestination(item.name, origin,item.place).key
-                }
-                TimeTableType.FOCUS -> {
-                    AddEventDestination(item.detail.eventId, origin).key
-                }
-                TimeTableType.EXAM -> {
-                    ExamDestination(origin).key
-                }
+                TimeTableType.COURSE -> CourseApiDetailDestination(item.name, origin,item.place).key
+                TimeTableType.FOCUS -> AddEventDestination(item.detail.eventId,CourseDetailOrigin.CALENDAR_JXGLSTU.t).key
+                TimeTableType.EXAM -> ExamDestination(origin).key
             }
         } else {
             "multi_${list.hashCode()}"
@@ -78,6 +73,8 @@ data class TimeTableSquareWindow(
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     override fun Content() {
+        LogUtil.debug("key =$key")
+
         val controller = LocalFloatingController.current
 
         Box(modifier = Modifier.fillMaxSize()) {

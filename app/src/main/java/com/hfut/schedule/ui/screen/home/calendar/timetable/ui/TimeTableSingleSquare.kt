@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -166,13 +167,15 @@ fun TimetableSingleSquare(
                         val yEnd = timeToY(item.end, hourPx, startTime,zipTime,zipTimeFactor)
                         val heightPx = yEnd - yStart
 
-                        Box (
-                            modifier = Modifier
-                                .offset { IntOffset(xOffset.roundToInt(), yStart.roundToInt()) }
-                                .width(with(density) { safeSingleWidthPx.toDp() })
-                                .height(with(density) { heightPx.toDp() }),
-                        ) {
-                            content(item.course)
+                        key(item.course.hashCode()) {
+                            Box (
+                                modifier = Modifier
+                                    .offset { IntOffset(xOffset.roundToInt(), yStart.roundToInt()) }
+                                    .width(with(density) { safeSingleWidthPx.toDp() })
+                                    .height(with(density) { heightPx.toDp() }),
+                            ) {
+                                content(item.course)
+                            }
                         }
                     }
                 }

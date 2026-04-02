@@ -8,7 +8,6 @@ maxAndroidVersion = "36"
 minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
-adaptive = "1.2.0"
 animation = "1.7.0-beta06" # 1.7.0-beta06
 animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
@@ -36,14 +35,14 @@ lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
 material3 = "1.5.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
 mirror = "0.1-alpha08"
-navigationCompose = "2.7.5" # 2.9.1 2.7.5
+#navigationCompose = "2.7.5" # 2.9.1 2.7.5
 navigationComposeVersion = "2.7.0-alpha07" # 2.9.0-beta04
 okhttp = "4.9.0"
 palette = "1.0.0"
 profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
-sharednav = "1.0.0-dev03262230"
+sharednav = "1.0.0-dev03311244"
 tesseract4android = "4.8.0"
 uiautomator = "2.3.0"
 kotlin = "2.1.21"
@@ -67,9 +66,6 @@ androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", versi
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 liquid-glass = { module = "io.github.kyant0:backdrop", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
-androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
-androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
-androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android", version.ref = "animationGraphicsAndroid" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -91,7 +87,6 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 #androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 mirror = { module = "com.github.Chiu-xaH:Mirror-Android", version.ref = "mirror" }

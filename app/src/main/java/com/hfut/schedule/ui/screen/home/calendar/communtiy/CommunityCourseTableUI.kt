@@ -237,17 +237,12 @@ fun CommunityCourseTableUI(
             // 只有一节课
             if (list.size == 1) {
                 val item = list[0]
+                val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                 // 如果是考试
                 when(item.type) {
                     TimeTableType.COURSE -> {
                         if(!isFriend) {
-                            navController.push(
-                                CourseApiDetailDestination(
-                                    item.name,
-                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ,
-                                    item.place
-                                )
-                            )
+                            navController.push(CourseApiDetailDestination(item.name, origin, item.place))
                         } else {
                             bean = list
                             showBottomSheetDetail = true
@@ -255,21 +250,10 @@ fun CommunityCourseTableUI(
                     }
                     TimeTableType.FOCUS -> {
                         item.detail.eventId?.let {
-                            navController.push(
-                                AddEventDestination(
-                                    it,
-                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
-                                )
-                            )
+                            navController.push(AddEventDestination(it, CourseDetailOrigin.CALENDAR_JXGLSTU.t))
                         }
                     }
-                    TimeTableType.EXAM -> {
-                        navController.push(
-                            ExamDestination(
-                                CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
-                            )
-                        )
-                    }
+                    TimeTableType.EXAM -> navController.push(ExamDestination(origin))
                 }
             } else if (list.size > 1) {
                 floatingController.push(TimeTableSquareWindow(list))

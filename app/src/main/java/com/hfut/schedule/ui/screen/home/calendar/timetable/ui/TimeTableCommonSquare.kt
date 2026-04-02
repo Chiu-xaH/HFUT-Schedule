@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -152,13 +153,15 @@ fun TimetableCommonSquare(
                         val yStart = timeToY(group.start, hourPx, startTime, zipTime, zipTimeFactor)
                         val yEnd = timeToY(group.end, hourPx, startTime, zipTime, zipTimeFactor)
                         val heightPx = yEnd - yStart
-                        Box(
-                            modifier = Modifier
-                                .offset { IntOffset(xOffset.roundToInt(), yStart.roundToInt()) }
-                                .width(with(density) { innerAvailablePx.toDp() })
-                                .height(with(density) { heightPx.toDp() })
-                        ) {
-                            content(group.courses)
+                        key(group.courses.hashCode()) {
+                            Box(
+                                modifier = Modifier
+                                    .offset { IntOffset(xOffset.roundToInt(), yStart.roundToInt()) }
+                                    .width(with(density) { innerAvailablePx.toDp() })
+                                    .height(with(density) { heightPx.toDp() })
+                            ) {
+                                content(group.courses)
+                            }
                         }
                     }
                 }
