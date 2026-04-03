@@ -45,6 +45,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.SharedContent
+import com.xah.container.model.ContentStrategy
 import com.xah.floating.model.Window
 import com.xah.floating.util.LocalFloatingController
 import com.xah.shared.LogUtil
@@ -81,7 +82,7 @@ data class TimeTableSquareWindow(
             SharedContent(
                 shape = MaterialTheme.shapes.largeIncreased,
                 key = key,
-                isFullScreen = false,
+                contentStrategy = ContentStrategy.FloatingWindow,
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding()

@@ -15,6 +15,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.container.component.base.SharedContent
+import com.xah.container.model.ContentStrategy
 import com.xah.floating.model.Window
 
 data class TimeTablePreviewWindow(
@@ -37,7 +38,7 @@ data class TimeTablePreviewWindow(
         CenterScreen {
             SharedContent(
                 key = KEY,
-                isFullScreen = false,
+                contentStrategy = ContentStrategy.FloatingWindow,
                 shape = MaterialTheme.shapes.largeIncreased,
                 modifier = Modifier
                     .padding(APP_HORIZONTAL_DP)

@@ -220,6 +220,7 @@ fun SharedAppearanceSettingsScreen(
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
+        val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
 //        val enableKeepPreviousPage by DataStoreManager.enableKeepPreviousPage.collectAsState(initial = false)
 
@@ -624,6 +625,21 @@ fun SharedAppearanceSettingsScreen(
                 )
                 PaddingHorizontalDivider()
                 if(transition != EffectLevel.NONE.levelNum) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "倾斜效果") },
+                        supportingContent = {
+                            Text("过渡时容器带有倾斜效果")
+                        },
+                        trailingContent = {
+                            Switch(checked = enableContainerTilt, onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveContainerTilt(!enableContainerTilt)
+                                }
+                            })
+                        },
+                        leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                    )
+                    PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_splash_title)) },
                         supportingContent = {

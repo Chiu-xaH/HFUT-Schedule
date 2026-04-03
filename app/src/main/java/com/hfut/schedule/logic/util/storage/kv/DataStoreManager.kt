@@ -128,6 +128,7 @@ object DataStoreManager : IDataStore {
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
     private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
+    private val CONTAINER_TILT = booleanPreferencesKey("container_tilt")
     private val NAV_SPLASH_SCREEN = booleanPreferencesKey("nav_splash_screen")
     private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
     private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
@@ -208,6 +209,7 @@ object DataStoreManager : IDataStore {
         }
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
+    suspend fun saveContainerTilt(value: Boolean) = saveValue(CONTAINER_TILT,value)
     suspend fun saveUseDoubleExtension(value: Boolean) = saveValue(USE_DOUBLE_EXTENSION,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
     suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
@@ -254,6 +256,7 @@ object DataStoreManager : IDataStore {
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
     val useDoubleExtension = getFlow(USE_DOUBLE_EXTENSION,false)
+    val enableContainerTilt = getFlow(CONTAINER_TILT,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")

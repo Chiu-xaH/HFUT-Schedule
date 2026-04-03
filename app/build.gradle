@@ -214,12 +214,12 @@ dependencies {
     // 镜面效果
     implementation(libs.mirror)
     // 导航&容器共享&浮窗体系模块
-    implementation(libs.sharednav)
-//    def tag = "release"
-//    implementation(files("libs/common-debug.aar"))
-//    implementation(files("libs/navigation-${tag}.aar"))
-//    implementation(files("libs/shared-container-${tag}.aar"))
-//    implementation(files("libs/floating-window-${tag}.aar"))
+//    implementation(libs.sharednav)
+    def tag = "release"
+    implementation(files("libs/common-${tag}.aar"))
+    implementation(files("libs/navigation-${tag}.aar"))
+    implementation(files("libs/shared-container-${tag}.aar"))
+    implementation(files("libs/floating-window-${tag}.aar"))
     // 通用UI模块
     implementation implementation(project(':common'))
     // 共用模块

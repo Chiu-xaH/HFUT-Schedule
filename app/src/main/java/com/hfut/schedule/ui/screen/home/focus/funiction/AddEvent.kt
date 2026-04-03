@@ -787,6 +787,11 @@ fun AddEventUI(
                         style = MaterialTheme.typography.titleSmall
                     )
                 },
+                modifier = Modifier.clickable {
+                    isScheduleType = !isScheduleType
+                    date = Pair("","")
+                    time = Pair("","")
+                },
                 leadingContent = {
                     FilledTonalIconButton(
                         onClick = {

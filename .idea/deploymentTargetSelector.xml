@@ -35,9 +35,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="DemoScreen">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="StackDemo">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -48,6 +45,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="B">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="D">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

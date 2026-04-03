@@ -59,6 +59,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 容器共享动画时的倾斜效果","位于 选项-外观-动效，跟随SharedNav库更新")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
@@ -66,7 +67,7 @@ fun VersionInfo() {
             就业二级界面 通知公告二级界面
             教师检索二级界面
             一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
-//            UpdateItems("新增 适配若干二级界面为新的转场动画")
+//            UpdateItems(shared-container-release.aar"新增 适配若干二级界面为新的转场动画")
              */
             // TODO 大模型解析日程 [P1]
             // TODO 挂科率下拉刷新 [P0]
