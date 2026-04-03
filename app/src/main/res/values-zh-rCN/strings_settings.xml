@@ -42,4 +42,5 @@
     <string name="settings_update_patch_description">开发者为一个月(动态调整)内的过去版本的ARM64分包提供增量包，可节省至少40%的下载实现版本更新</string>
     <string name="settings_update_patch_button_download_to_version">更新至 %1$s</string>
     <string name="settings_update_patch_button__download_to_latest">下载</string>
+    <string name="settings_person_info_tag_sign">非开发者签名</string>
 </resources>

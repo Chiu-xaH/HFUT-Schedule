@@ -42,4 +42,5 @@
     <string name="settings_update_patch_description">Developer provides incremental packages for past versions of ARM64 within a month (dynamically adjusted), which can save at least 40% of downloads for version updates.</string>
     <string name="settings_update_patch_button_download_to_version">Update to %1$s</string>
     <string name="settings_update_patch_button__download_to_latest">Download</string>
+    <string name="settings_person_info_tag_sign">Non-developer signature</string>
 </resources>

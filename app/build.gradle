@@ -29,9 +29,10 @@ android {
         applicationId packageName
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 255
-        versionName "4.20.2"
+        versionCode 256
+        versionName "4.20.2.1 Dev"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm")}\""
         vectorDrawables {
             useSupportLibrary true
         }

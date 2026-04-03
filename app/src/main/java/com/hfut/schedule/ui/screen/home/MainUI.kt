@@ -483,6 +483,7 @@ fun MainScreen(
                                 }
                                 SETTINGS -> {
                                    Row {
+                                       // AppVersion.getSplitType
                                        if(AppVersion.isDebug) {
                                            IconButton(
                                                onClick = {
@@ -491,6 +492,18 @@ fun MainScreen(
                                            ) {
                                                Icon(
                                                    painterResource(R.drawable.build),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       } else if(!AppVersion.isSignatureValid) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_sign))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.signature),
                                                    null,
                                                    tint = MaterialTheme.colorScheme.primary
                                                )

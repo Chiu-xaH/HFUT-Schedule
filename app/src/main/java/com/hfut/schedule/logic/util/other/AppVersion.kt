@@ -1,14 +1,12 @@
 package com.hfut.schedule.logic.util.other
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
 import com.xah.shared.LogUtil
 import java.security.MessageDigest
-import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
 
 object AppVersion {
     enum class SplitType(val code : Int,val description: String) {
@@ -62,6 +60,8 @@ object AppVersion {
 
     val isDebug = BuildConfig.DEBUG
 
+    val buildTime = BuildConfig.BUILD_TIME
+
     val CAN_HAZE_BLUR_BAR = sdkInt >= 31
     val CAN_MOTION_BLUR = sdkInt >= 31
 
@@ -74,43 +74,39 @@ object AppVersion {
 
     val deviceName: String = Build.MODEL
 
+    private const val SIGN_SHA_256 = "64:D1:58:37:3D:30:91:CA:A8:AD:70:AF:31:5F:EB:65:A6:A3:21:83:79:AD:E8:F6:CA:8D:FF:FF:7F:5C:52:09"
+    private const val SIGN_SHA_1 = "66:5C:5E:35:73:52:A4:10:41:58:14:FC:5A:AA:86:11:07:C7:2C:7A"
+
+    private fun getIsSignatureValid(): Boolean {
+        return try {
+            val pm = MyApplication.context.packageManager
+
+            @Suppress("DEPRECATION")
+            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val info = pm.getPackageInfo(appPackageName, PackageManager.GET_SIGNING_CERTIFICATES)
+                info.signingInfo?.run {
+                    if (hasMultipleSigners()) apkContentsSigners else signingCertificateHistory
+                }
+            } else {
+                pm.getPackageInfo(appPackageName, PackageManager.GET_SIGNATURES).signatures
+            } ?: return false
+
+            val expected = SIGN_SHA_256.replace(":", "").uppercase()
+            val digest = MessageDigest.getInstance("SHA-256")
+
+            signatures.any { sig ->
+                digest.reset()
+                val actual = digest.digest(sig.toByteArray()).joinToString("") { "%02X".format(it) }
+                actual == expected
+            }
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            false
+        }
+    }
+
+    val isSignatureValid by lazy { getIsSignatureValid() }
     val isRunningOnAvd = deviceName.startsWith("sdk_gphone") == true || deviceName.startsWith("Android SDK built for") == true
     val isRunningOnWsa = deviceName.startsWith("Subsystem for Android")
     val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    @JvmStatic
-    fun getAppSignInfo(): List<String> {
-        val pm = MyApplication.context.packageManager
-        val packageInfo = pm.getPackageInfo(
-            appPackageName,
-            PackageManager.GET_SIGNING_CERTIFICATES
-        )
-        val signingInfo = packageInfo.signingInfo
-        val signatures = signingInfo?.let {
-            if (it.hasMultipleSigners()) {
-                it.apkContentsSigners
-            } else {
-                it.signingCertificateHistory
-            }
-        } ?: return emptyList()
-
-        return signatures.map { sig ->
-            val certFactory = CertificateFactory.getInstance("X.509")
-            val cert = certFactory.generateCertificate(sig.toByteArray().inputStream()) as X509Certificate
-
-            buildString {
-                appendLine("SubjectDN: ${cert.subjectDN.name}")   // 证书持有人
-                appendLine("IssuerDN: ${cert.issuerDN.name}")     // 签发者
-                appendLine("Valid From: ${cert.notBefore}")       // 有效期开始
-                appendLine("Valid Until: ${cert.notAfter}")       // 有效期结束
-                appendLine("Serial Number: ${cert.serialNumber}") // 序列号
-
-                // SHA-256 指纹
-                val md = MessageDigest.getInstance("SHA-256")
-                val sha256 = md.digest(sig.toByteArray())
-                appendLine("SHA-256: ${sha256.joinToString(":") { "%02X".format(it) }}")
-            }
-        }
-    }
 }

@@ -1,17 +1,25 @@
 package com.hfut.schedule.ui.component.button
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,8 +27,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,19 +43,32 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
+import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination.title
 import com.hfut.schedule.ui.screen.animationOpen
+import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
@@ -53,6 +77,10 @@ import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 
@@ -65,8 +93,6 @@ val LocalAppControlCenter = staticCompositionLocalOf<DrawerState> {
 @Composable
 fun TopBarNavigationIcon() {
     val navController = LocalNavController.current
-//    val drawerState = LocalAppControlCenter.current
-//    val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val queue = navController.stack.reversed()
     var displayDialog by remember { mutableStateOf(false) }
@@ -176,13 +202,7 @@ fun TopBarNavigationIcon() {
                 // TODO 预留唤出启动台
                 onDoubleClick = null,
                 onLongClick = {
-//                    if(!enableControlCenter) {
-                        displayDialog = true
-//                    } else {
-//                        scope.launch {
-//                            drawerState.animationOpen()
-//                        }
-//                    }
+                    displayDialog = true
                 }
             )
     ) {
@@ -197,6 +217,26 @@ fun TopBarNavigationIcon() {
                 } else {
                     MaterialTheme.colorScheme.primary.copy(.5f)
                 }
+            )
+        }
+    }
+}
+
+@Composable
+private fun C() {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = CARD_NORMAL_DP/2)
+            .clip(CircleShape)
+
+    ) {
+        Box(
+            modifier = Modifier.padding(DIVIDER_TEXT_VERTICAL_PADDING)
+        ) {
+            Icon(
+                painterResource(R.drawable.arrow_back),
+                contentDescription = null,
+                tint =  MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -218,4 +258,137 @@ fun LiquidTopBarNavigateIcon(
         Icon(painterResource(R.drawable.arrow_back), contentDescription = null)
     }
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun A() {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = { Text("测试标题") },
+                colors = topBarTransplantColor(),
+                navigationIcon = {
+                    TopBarNavigationIcon()
+                }
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn {
+            item { InnerPaddingHeight(innerPadding,true) }
+            items(100) {
+                CardListItem(
+                    headlineContent = {
+                        Text(" Item #$it")
+                    }
+                )
+            }
+            item { InnerPaddingHeight(innerPadding,false) }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun B() {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    var dragging by remember { mutableStateOf(false) }
+    var overlayOffset by remember { mutableStateOf(Offset.Zero) }
+
+    Box(Modifier.fillMaxSize()) {
+
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    title = { Text("测试标题") },
+                    colors = topBarTransplantColor(),
+                    navigationIcon = {
+
+                        var iconGlobal by remember { mutableStateOf(Offset.Zero) }
+
+                        Box(
+                            modifier = Modifier
+                                .onGloballyPositioned {
+                                    iconGlobal = it.localToRoot(Offset.Zero)
+                                }
+                                .pointerInput(Unit) {
+                                    detectDragGestures(
+                                        onDragStart = { offset ->
+                                            dragging = true
+                                            overlayOffset = iconGlobal + offset
+                                        },
+                                        onDragEnd = {
+                                            dragging = false
+                                        },
+                                        onDragCancel = {
+                                            dragging = false
+                                        }
+                                    ) { change, dragAmount ->
+                                        change.consume()
+                                        overlayOffset += dragAmount
+                                    }
+                                }
+                        ) {
+
+                            // ✅ 原组件（不改实现，只做隐藏）
+                            Box(
+                                Modifier.drawWithContent {
+                                    if (!dragging) drawContent()
+                                }
+                            ) {
+                                C()
+                            }
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+
+            LazyColumn {
+                item { InnerPaddingHeight(innerPadding, true) }
+                items(100) {
+                    CardListItem(
+                        headlineContent = {
+                            Text(" Item #$it")
+                        }
+                    )
+                }
+                item { InnerPaddingHeight(innerPadding, false) }
+            }
+        }
+
+        // ✅ 全局 overlay（用同一个组件再渲染一份）
+        if (dragging) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .offset {
+                            IntOffset(
+                                overlayOffset.x.toInt(),
+                                overlayOffset.y.toInt()
+                            )
+                        }
+                ) {
+                    C()
+                }
+            }
+        }
+    }
+}
+
+
 
