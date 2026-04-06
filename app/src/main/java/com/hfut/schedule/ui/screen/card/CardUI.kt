@@ -1,8 +1,5 @@
 package com.hfut.schedule.ui.screen.card
 
-//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
-//import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
@@ -34,7 +31,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
@@ -50,11 +46,9 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.mirror.util.rememberShaderState
-import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -143,7 +137,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 //        modifier = Modifier.fillMaxSize(),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState)) {
+            Column(modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer)) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
@@ -188,7 +182,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState,items,navController)
+            HazeBottomBar(hazeState,items,navController, color = MaterialTheme.colorScheme.surfaceContainer)
         }
     ) {innerPadding ->
         NavHost(navController = navController,

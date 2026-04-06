@@ -30,7 +30,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 256
-        versionName "4.20.2.1 Dev"
+        versionName "4.20.2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm")}\""
         vectorDrawables {
@@ -214,12 +214,12 @@ dependencies {
     // 镜面效果
     implementation(libs.mirror)
     // 导航&容器共享&浮窗体系模块
-//    implementation(libs.sharednav)
-    def tag = "release"
-    implementation(files("libs/common-${tag}.aar"))
-    implementation(files("libs/navigation-${tag}.aar"))
-    implementation(files("libs/shared-container-${tag}.aar"))
-    implementation(files("libs/floating-window-${tag}.aar"))
+    implementation(libs.sharednav)
+//    def tag = "release"
+//    implementation(files("libs/common-${tag}.aar"))
+//    implementation(files("libs/navigation-${tag}.aar"))
+//    implementation(files("libs/shared-container-${tag}.aar"))
+//    implementation(files("libs/floating-window-${tag}.aar"))
     // 通用UI模块
     implementation implementation(project(':common'))
     // 共用模块

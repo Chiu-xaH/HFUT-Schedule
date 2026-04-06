@@ -100,8 +100,9 @@ fun HazeBottomBar(
     list : List<NavigationBarItemData>,
     navController : NavController,
     enabled : Boolean = true,
+    color: Color = MaterialTheme.colorScheme.surface
 ) {
-    Column(modifier = Modifier.bottomBarBlur(hazeState)) {
+    Column(modifier = Modifier.bottomBarBlur(hazeState,color)) {
         NavigationBarSpacer()
         NavigationBar(containerColor = Color.Transparent) {
             BottomBarContent(list,navController,enabled)

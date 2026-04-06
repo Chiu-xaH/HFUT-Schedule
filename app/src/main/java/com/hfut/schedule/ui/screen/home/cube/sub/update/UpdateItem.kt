@@ -64,10 +64,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 适配若干二级界面为新的转场动画")
-            UpdateItems("新增 本版本新特性的列表中项目支持点击跳转到新特性的所在位置")
+//            UpdateItems("新增 适配若干二级界面为新的转场动画")
+            UpdateItems("新增 本版本新特性的列表中项目支持点击跳转到新特性的所在位置")//
             UpdateItems("新增 容器共享动画时的倾斜视差效果","位于 选项-外观-动效", destination = SettingsAppearanceDestination)//
             UpdateItems("回归 预测式返回手势","位于 选项-偏好与配置", destination = SettingsConfigurationDestination)//
+            UpdateItems("修复 部分界面在关闭层级模糊的情况下顶栏底栏颜色略有偏差的Bug")//
             // 海乐生活二级界面适配
             // 转专业我的申请界面
             // 教务备用二级界面界面适配

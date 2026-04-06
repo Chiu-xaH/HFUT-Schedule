@@ -855,7 +855,7 @@ fun MainScreen(
             if(useCustomBackground && targetPage == COURSES) {
                 SpecialBottomBar(backGroundSource,items,navController,isEnabled)
             } else {
-                HazeBottomBarDynamic(hazeState,items,navController,isEnabled)
+                HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
             }
         },
     ) { innerPadding ->

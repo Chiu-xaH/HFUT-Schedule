@@ -172,7 +172,7 @@ fun LibraryScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
-                modifier = Modifier.topBarBlur(hazeState),
+                modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer),
             ) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
@@ -226,7 +226,7 @@ fun LibraryScreen(
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState, items,libraryNavController)
+            HazeBottomBar(hazeState, items,libraryNavController,color = MaterialTheme.colorScheme.surfaceContainer)
         }
     ) { innerPadding ->
         NavHost(navController = libraryNavController,
