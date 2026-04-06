@@ -39,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
@@ -59,7 +58,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -88,14 +86,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
     val context = LocalContext.current
-
     val scope = rememberCoroutineScope()
-
     val navTopController = LocalNavController.current
 
     Column(modifier = Modifier
@@ -150,21 +142,18 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.app_settings_predictive_back_gesture_title)) },
                     supportingContent = {
-                        Text("整改升级中，敬请期待")
-
-//                        if(AppVersion.CAN_PREDICTIVE) {
-//                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_supported))
-//                        } else {
-//                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_unsupported))
-//                        }
+                        if(AppVersion.CAN_PREDICTIVE) {
+                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_supported))
+                        } else {
+                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_unsupported))
+                        }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
                     trailingContent = {
-//                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
-                        Switch(enabled = false,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
+                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
                     },
                     modifier = Modifier.clickable {
-//                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
+                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
                     }
                 )
                 PaddingHorizontalDivider()
@@ -184,19 +173,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
 //                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
                     }
                 )
-//                PaddingHorizontalDivider()
-//                TransplantListItem(
-//                    headlineContent = { Text(stringResource(R.string.app_settings_study_interaction_title)) },
-//                    supportingContent = {
-//                        Text(stringResource(R.string.app_settings_study_interaction_description))
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.gesture),null)
-//                    },
-//                    modifier = Modifier.clickable {
-//                        navController.navigate(Screen.GestureStudyScreen.route)
-//                    }
-//                )
             }
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_calendar_half_title)) {

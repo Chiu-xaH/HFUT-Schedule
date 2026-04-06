@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +18,11 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
+import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
+import com.hfut.schedule.ui.util.NavDestination
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.navigation.util.LocalNavControllerSafely
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -59,7 +64,14 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 容器共享动画时的倾斜效果","位于 选项-外观-动效，跟随SharedNav库更新")
+            UpdateItems("新增 适配若干二级界面为新的转场动画")
+            UpdateItems("新增 本版本新特性的列表中项目支持点击跳转到新特性的所在位置")
+            UpdateItems("新增 容器共享动画时的倾斜视差效果","位于 选项-外观-动效", destination = SettingsAppearanceDestination)//
+            UpdateItems("回归 预测式返回手势","位于 选项-偏好与配置", destination = SettingsConfigurationDestination)//
+            // 海乐生活二级界面适配
+            // 转专业我的申请界面
+            // 教务备用二级界面界面适配
+
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
@@ -67,13 +79,11 @@ fun VersionInfo() {
             就业二级界面 通知公告二级界面
             教师检索二级界面
             一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
-//            UpdateItems(shared-container-release.aar"新增 适配若干二级界面为新的转场动画")
+//            UpdateItems("新增 适配若干二级界面为新的转场动画")
              */
-            // TODO 大模型解析日程 [P1]
             // TODO 挂科率下拉刷新 [P0]
             // TODO WebView适配新库 [P2]
             // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
-            // TODO 一卡通适配新库 [P2]
             // TODO Drawer重做  [P2]
 //            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
@@ -86,14 +96,12 @@ fun VersionInfo() {
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")
 //            UpdateItems("新增 新课程表的日视图")
-//            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
 //            UpdateItems("新增 合肥校区电费的快速充值")
 
             // TODO 远期规划
-//            UpdateItems("新增 提案板","用户可查看并关注开发进度，提出需求、Bug")
 //            UpdateItems("新增 课程表的方格支持自动适应背景透明度")
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
@@ -140,6 +148,7 @@ private enum class UpdateType(val res : Int) {
 private fun UpdateItems(
     title : String,
     info : String? = null,
+    destination: NavDestination? = null,
     type : UpdateType = when(title.substringBefore(" ")) {
         "新增" -> UpdateType.ADD
         "重构" -> UpdateType.RENEW
@@ -157,9 +166,23 @@ private fun UpdateItems(
         else -> UpdateType.OTHER
     }
 ) {
+    val navController = LocalNavControllerSafely.current
     TransplantListItem(
         headlineContent = { Text(text = title) },
         supportingContent = { info?.let { Text(text = it) } },
+        trailingContent = {
+            navController?.let { controller ->
+                destination?.let { dest ->
+                    FilledTonalIconButton(
+                        onClick = {
+                            controller.push(dest)
+                        }
+                    ) {
+                        Icon(painterResource(R.drawable.arrow_forward),null)
+                    }
+                }
+            }
+        },
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }

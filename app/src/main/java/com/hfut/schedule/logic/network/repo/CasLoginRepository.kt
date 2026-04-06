@@ -13,7 +13,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.network.api.LoginService
 import com.hfut.schedule.network.impl.LoginGetCookieServiceCreator
 import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import okhttp3.Headers
 import org.jsoup.Jsoup
 
@@ -57,7 +57,7 @@ object CasLoginRepository {
         holder = execution,
         request = {
             getCookie.getCookie(
-                if (GlobalUIStateHolder.excludeJxglstu) CasLoginType.ONE.service
+                if (GlobalStateHolder.excludeJxglstu) CasLoginType.ONE.service
                 else CasLoginType.JXGLSTU.service
             )
         },

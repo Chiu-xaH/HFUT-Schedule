@@ -24,7 +24,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getD
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
@@ -49,7 +49,7 @@ object DataStoreManager : IDataStore {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
     private val dataStore = MyApplication.context.dataStore
 
-    val SEARCH_DEFAULT_STR = GlobalUIStateHolder.funcDefault.map { it.id }.joinToString(",")
+    val SEARCH_DEFAULT_STR = GlobalStateHolder.funcDefault.map { it.id }.joinToString(",")
 
     private const val EMPTY_STRING = ""
 

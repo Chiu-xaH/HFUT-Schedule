@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavController
@@ -272,7 +272,7 @@ fun JxglstuCourseTableUI(
                        return@async
                    }
                    val cookies =  "$casCookies;$tgcCookie"
-                   val useWebVpn = webVpn && !GlobalUIStateHolder.excludeJxglstu
+                   val useWebVpn = webVpn && !GlobalStateHolder.excludeJxglstu
                    // 智慧社区
                    launch community@ {
                        if(useWebVpn) {
@@ -307,7 +307,7 @@ fun JxglstuCourseTableUI(
 //                                   showToast("无需刷新慧新易校")
                                return@huiXin
                            } else {
-                               if(useWebVpn || GlobalUIStateHolder.excludeJxglstu) {
+                               if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
                                    loginHuiXin(vm)
                                } else {
                                    vm.goToHuiXin(cookies)
@@ -421,14 +421,14 @@ fun JxglstuCourseTableUI(
                withTimeoutOrNull(10000) {
                    job.await()
                }
-               if(GlobalUIStateHolder.excludeJxglstu) {
+               if(GlobalStateHolder.excludeJxglstu) {
                    loadingJxglstu = false
                }
                onEnabled(true)
            }
            // 教务系统
            launch(Dispatchers.IO) jxglstu@ {
-               if(GlobalUIStateHolder.excludeJxglstu) {
+               if(GlobalStateHolder.excludeJxglstu) {
                    return@jxglstu
                }
                cookie?: return@jxglstu

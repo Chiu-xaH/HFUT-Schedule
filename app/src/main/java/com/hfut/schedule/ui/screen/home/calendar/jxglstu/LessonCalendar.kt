@@ -238,7 +238,6 @@ fun JxglstuCourseTableSearch(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-//            isFullScreen = false,
         ) {
             MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm,list = list)
         }
@@ -578,18 +577,6 @@ fun JxglstuCourseTableSearch(
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
 
-//    fun nextWeek() {
-//        if (currentWeek < MyApplication.MAX_WEEK) {
-//            onDateChange?.let { today?.let { it1 -> it(it1.plusDays(7)) } }
-//            currentWeek++
-//        }
-//    }
-//    fun previousWeek() {
-//        if (currentWeek > 1) {
-//            onDateChange?.let { today?.let { it1 -> it(it1.minusDays(7)) } }
-//            currentWeek--
-//        }
-//    }
 
     Box(modifier = Modifier
         .fillMaxHeight()

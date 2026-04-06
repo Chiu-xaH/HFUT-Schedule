@@ -16,7 +16,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.xah.shared.LogUtil
 import okhttp3.Headers
 import okhttp3.ResponseBody
@@ -48,7 +48,7 @@ class LoginViewModel : ViewModel() {
                 val session = it.second
                 val cookies : String = session + jId.jSession +";" + keys
                 CasInHFUT.casCookies = cookies
-                if(GlobalUIStateHolder.webVpn) {
+                if(GlobalStateHolder.webVpn) {
                     onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
                         val call = loginWebVpn.loginWebVpn(
                             cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",
@@ -82,7 +82,7 @@ class LoginViewModel : ViewModel() {
                         execution = execution,
                         code = imageCode,
                         url =
-                            if(GlobalUIStateHolder.excludeJxglstu) CasLoginType.ONE.service
+                            if(GlobalStateHolder.excludeJxglstu) CasLoginType.ONE.service
                             else CasLoginType.JXGLSTU.service
                     )
                     call.enqueue(object : Callback<ResponseBody> {

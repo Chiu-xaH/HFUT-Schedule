@@ -35,17 +35,10 @@ import com.xah.common.ui.style.color.TransparentSystemBars
 private val list = ColorStyle.entries
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AppTheme(
     content: @Composable () -> Unit
 ) {
-//    val language by DataStoreManager.language.collectAsState(Language.AUTO.code)
-//
-//    LaunchedEffect(language) {
-//        LanguageHelper.changeAppLanguage(language)
-//    }
-
     val context = LocalContext.current
 
     // 自主取色
@@ -283,12 +276,11 @@ fun DefaultAppTheme(
     TransparentSystemBars(darkTheme)
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 fun setNightMode(
     context: Context,
     mode: ColorMode
 ) {
-    if (AppVersion.sdkInt >= Build.VERSION_CODES.S) {
+    if (AppVersion.CAN_DYNAMIC_COLOR) {
         // Android 12+
         val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
         uiModeManager.setApplicationNightMode(

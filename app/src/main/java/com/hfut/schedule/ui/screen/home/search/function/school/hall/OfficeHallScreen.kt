@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
@@ -82,7 +82,7 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
     } else {
         Constant.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
-    if(!needLogin || GlobalUIStateHolder.globalWebVpn == true) {
+    if(!needLogin || GlobalStateHolder.globalWebVpn == true) {
         Starter.startWebView(context,finalUrl,name,null, OfficeHallDestination.icon)
     } else {
         Starter.startWebUrl(context,finalUrl)

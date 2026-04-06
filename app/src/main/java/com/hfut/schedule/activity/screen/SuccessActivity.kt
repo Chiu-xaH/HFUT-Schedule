@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.MainHost
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -30,7 +30,7 @@ class SuccessActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.apply {
-            if(!GlobalUIStateHolder.webVpn) {
+            if(!GlobalStateHolder.webVpn) {
                 launch(Dispatchers.IO) {
                     val cookie = prefs.getString("redirect", "")
                     networkVm.jxglstuLogin(cookie!!)

@@ -44,20 +44,22 @@ import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.util.NavDestination
 
-// 跨Activity的类似UIViewModel
-object GlobalUIStateHolder {
-    var useEnterAnimation by mutableStateOf(false)
+// 跨Activity的类UiViewModel
+object GlobalStateHolder {
     var postedUse = false
     var excludeJxglstu by mutableStateOf(false)
     var refreshImageCode by mutableIntStateOf(1)
-    var isTransiting by mutableStateOf<Boolean>(false)
+
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
-    var isSupabaseRegistering = mutableStateOf(false)
+
+    var isSupabaseRegistering = false
+
     val routeQueue = mutableStateListOf<NavDestination>()
     fun pushToFront(destination: NavDestination) {
         routeQueue.add(0, destination)
     }
+
     // 用过的ID 不要再用了，比如之前删除的功能ID
     val funcDefault = listOf(
         SearchAppBeanLite(1, R.string.navigation_label_school_card ,R.drawable.credit_card),
@@ -109,6 +111,5 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(47, AiDestination.title.resId,AiDestination.icon),
         SearchAppBeanLite(48, TrackDestination.title.resId,TrackDestination.icon),
     )
-
     val funcMaps = funcDefault.toMutableStateList()
 }

@@ -128,7 +128,7 @@ dependencies {
     androidTestImplementation(libs.androidx.benchmark.macro.junit4)
     androidTestImplementation(libs.androidx.uiautomator)
     // 内存泄漏
-    debugImplementation(libs.leakcanary)
+//    debugImplementation(libs.leakcanary)
     // 测试
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

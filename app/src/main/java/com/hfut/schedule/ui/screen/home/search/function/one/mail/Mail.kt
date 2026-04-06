@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.isSupabaseRegistering
+import com.hfut.schedule.ui.util.state.GlobalStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
@@ -164,7 +164,7 @@ fun MailUI(vm: NetWorkViewModel) {
                 Icon(painterResource(R.drawable.arrow_forward),null)
             }
         )
-        if(isSupabaseRegistering.value) {
+        if(isSupabaseRegistering) {
             CardListItem(
                 headlineContent = {
                     Text("共建平台注册激活请选择在浏览器使用，并检查最新收件箱 来自Supabase Auth的邮件 点击链接并Confirm")

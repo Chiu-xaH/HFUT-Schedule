@@ -48,7 +48,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeM
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +64,7 @@ import retrofit2.Response
 
 object JxglstuRepository {
     private fun createJSONService(): JxglstuService {
-        return JxglstuServiceCreator.create(JxglstuService::class.java, GlobalUIStateHolder.webVpn)
+        return JxglstuServiceCreator.create(JxglstuService::class.java, GlobalStateHolder.webVpn)
     }
 
     private var jxglstu = createJSONService()

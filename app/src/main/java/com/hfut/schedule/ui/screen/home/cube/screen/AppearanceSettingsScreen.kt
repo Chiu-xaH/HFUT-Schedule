@@ -626,9 +626,9 @@ fun SharedAppearanceSettingsScreen(
                 PaddingHorizontalDivider()
                 if(transition != EffectLevel.NONE.levelNum) {
                     TransplantListItem(
-                        headlineContent = { Text(text = "倾斜效果") },
+                        headlineContent = { Text(text = "视差效果") },
                         supportingContent = {
-                            Text("过渡时容器带有倾斜效果")
+                            Text("过渡时容器带有倾斜的视差效果")
                         },
                         trailingContent = {
                             Switch(checked = enableContainerTilt, onCheckedChange = {
@@ -637,7 +637,7 @@ fun SharedAppearanceSettingsScreen(
                                 }
                             })
                         },
-                        leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                        leadingContent = { Icon(painterResource(R.drawable.ic_360), contentDescription = "Localized description") },
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(

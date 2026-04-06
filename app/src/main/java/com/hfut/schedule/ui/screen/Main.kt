@@ -109,6 +109,7 @@ fun MainHost(
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
     val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
     LaunchedEffect(corner) {
         if(corner >= 0f) {
@@ -122,6 +123,10 @@ fun MainHost(
 
     LaunchedEffect(motionBlur) {
         navigationController.enableBlur = motionBlur
+    }
+
+    LaunchedEffect(enablePredictive) {
+        navigationController.enablePredictiveBack = enablePredictive
     }
 
     LaunchedEffect(enableNavSplashScreen) {

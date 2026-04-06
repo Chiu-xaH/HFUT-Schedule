@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -91,6 +91,8 @@ fun WebVpnScreen(
     val pagerState = rememberPagerState { 2 }
     val scope = rememberCoroutineScope()
 
+    val webVpn = GlobalStateHolder.webVpn
+
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -107,14 +109,14 @@ fun WebVpnScreen(
                     actions = {
                         LiquidButton(
                             onClick = {
-                                if(!GlobalUIStateHolder.webVpn) {
+                                if(!webVpn) {
                                     Starter.refreshLogin(context)
                                 }
                             },
                             backdrop = backdrop,
                             modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         ) {
-                            Text("${if(GlobalUIStateHolder.webVpn) "已" else "未"}登录WebVpn")
+                            Text("${if(webVpn) "已" else "未"}登录WebVpn")
                         }
                     }
                 )
@@ -229,7 +231,7 @@ fun WebVpnScreen(
                                                         },
                                                         CardBottomButton("打开") {
                                                             scope.launch {
-                                                                if(GlobalUIStateHolder.webVpn) {
+                                                                if(webVpn) {
                                                                     Starter.startWebView(context,it, cookie = cookies)
                                                                 } else {
                                                                     showToast("先以外地访问模式登录")
@@ -247,24 +249,7 @@ fun WebVpnScreen(
                                     }
                                 }
                                 item {
-                                    CardListItem(
-                                        headlineContent = { Text("全局WebVpn")},
-                                        supportingContent = { Text("打开后,App内所有打开网页的场景都将自动转换为WebVpn链接;\n仅登录WebVpn时可打开,退出App后自动关闭")},
-                                        trailingContent = {
-                                            Switch(checked = GlobalUIStateHolder.globalWebVpn, enabled = GlobalUIStateHolder.webVpn, onCheckedChange = { GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn})
-                                        },
-                                        leadingContent = {
-                                            Icon(painterResource(R.drawable.multiple_stop),null)
-                                        },
-                                        modifier = Modifier.clickable {
-                                            if(GlobalUIStateHolder.webVpn) {
-                                                GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn
-                                            } else {
-                                                showToast("先以外地访问模式登录")
-                                                Starter.refreshLogin(context)
-                                            }
-                                        }
-                                    )
+                                    EnableGlobalWebVpn(webVpn)
                                 }
                                 item { InnerPaddingHeight(innerPadding,false) }
                             }
@@ -373,7 +358,7 @@ suspend fun getWebVpnCookie() : String? {
 }
 
 suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
-    if(GlobalUIStateHolder.webVpn) {
+    if(GlobalStateHolder.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
@@ -392,4 +377,38 @@ suspend fun autoWebVpnForNews(
     } else {
         Starter.startWebView(context,WebVpnConvertor.getWebVpnUrl(url),title,cookie,icon)
     }
+}
+
+
+@Composable
+private fun EnableGlobalWebVpn(
+    webVpn : Boolean
+) {
+    val enable = GlobalStateHolder.globalWebVpn
+    val context = LocalContext.current
+
+    fun switch() {
+        GlobalStateHolder.globalWebVpn = !GlobalStateHolder.globalWebVpn
+    }
+
+    CardListItem(
+        headlineContent = { Text("全局WebVpn")},
+        supportingContent = { Text("打开后,App内所有打开网页的场景都将自动转换为WebVpn链接;仅登录WebVpn时可打开,退出App后自动关闭")},
+        trailingContent = {
+            Switch(checked = enable, enabled = webVpn, onCheckedChange = {
+                switch()
+            })
+        },
+        leadingContent = {
+            Icon(painterResource(R.drawable.multiple_stop),null)
+        },
+        modifier = Modifier.clickable {
+            if(webVpn) {
+                switch()
+            } else {
+                showToast("先以外地访问模式登录")
+                Starter.refreshLogin(context)
+            }
+        }
+    )
 }

@@ -3,7 +3,7 @@
     <string name="app_settings_interaction_half_title">交互</string>
 
     <string name="app_settings_predictive_back_gesture_title">预测式返回手势</string>
-    <string name="app_settings_predictive_back_gesture_description_supported">同Activity之间的部分界面返回手势不松手时有跟手的界面缩小</string>
+    <string name="app_settings_predictive_back_gesture_description_supported">部分界面通过系统返回手势不松手时有跟手的效果</string>
     <string name="app_settings_predictive_back_gesture_description_unsupported">需 Android 13+</string>
 
     <string name="app_settings_control_center_title">启动台</string>

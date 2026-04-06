@@ -28,7 +28,7 @@ import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.util.webview.getPureUrl
 
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.xah.navigation.controller.NavigationController
 
 
@@ -182,7 +182,7 @@ object Starter {
         cookie :String? = null,
         icon : Int? = null
     ) {
-        if(GlobalUIStateHolder.globalWebVpn) {
+        if(GlobalStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
             if(url.contains(Constant.WEBVPN_URL)) {
                 goToWebView(context, url, title, cookieWebVpn,icon)
@@ -201,7 +201,7 @@ object Starter {
         cookie :String? = null,
         icon : Int = R.drawable.net,
     ) {
-        if(GlobalUIStateHolder.globalWebVpn) {
+        if(GlobalStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
             if(url.contains(Constant.WEBVPN_URL)) {
                 goToWebViewNavigation(navController, url, title, cookieWebVpn,icon)

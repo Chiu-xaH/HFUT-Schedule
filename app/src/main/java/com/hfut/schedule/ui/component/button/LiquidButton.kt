@@ -49,7 +49,7 @@ import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
@@ -115,13 +115,15 @@ fun LiquidButton(
             Unit
         }
     }
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning == true
+
     Row(
         modifier
             .drawBackdrop(
                 highlight = {
                     Highlight.Default.copy(width = 0.25.dp)
                 },
-                backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
+                backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
                 shape = { CircleShape },
                 effects =  {
                     vibrancy()
