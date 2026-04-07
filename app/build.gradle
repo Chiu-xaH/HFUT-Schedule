@@ -32,10 +32,15 @@ android {
         versionCode 256
         versionName "4.20.2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm")}\""
         vectorDrawables {
             useSupportLibrary true
         }
+
+        // F-Droid
+        def epoch = System.getenv("SOURCE_DATE_EPOCH")
+        def date = (epoch != null && epoch.isLong()) ? new Date(Long.parseLong(epoch) * 1000) : new Date()
+        def dateStr = date.format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT+8"))
+        buildConfigField "String", "BUILD_TIME", "\"${dateStr}\""
     }
 
     applicationVariants.configureEach { variant ->
