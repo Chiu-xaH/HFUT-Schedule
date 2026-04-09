@@ -56,8 +56,11 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
@@ -232,7 +235,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
     if(entity == null) return
 
     val children = entity.children
-    val planCourses = entity.planCourses.sortedBy { it.readableTerms.let { if(it.isNotEmpty()) it[0] else null } }
+    val planCourses = entity.planCourses.sortedBy { item -> item.readableTerms.let { terms -> if(terms.isNotEmpty()) terms[0] else null } }
 
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
@@ -358,17 +361,30 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 val name = course.nameZh
                 val department = listItem.openDepartment.nameZh.substringBefore("（")
                 val term = listItem.readableTerms.let { if(it.isNotEmpty()) it[0] else null }
-                CardListItem(
-                    headlineContent = { Text(text = name) },
-                    supportingContent = { Text(text = department) },
-                    overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" } )},
-                    leadingContent = { DepartmentIcons(name = department) },
-                    trailingContent = if(!listItem.compulsory){{ Text("选修") }} else null,
+                CustomCard(
+                    color = cardNormalColor(),
                     modifier = Modifier.clickable {
                         courseInfo = listItem
                         showInfo = true
                     },
-                )
+                ) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = name) },
+                        supportingContent = { Text(text = department) },
+                        overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" } )},
+                        leadingContent = { DepartmentIcons(name = department) },
+                        trailingContent = if(!listItem.compulsory){{ Text("选修") }} else null,
+                    )
+                    listItem.remark?.let { remark ->
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(remark) },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.info),null)
+                            }
+                        )
+                    }
+                }
             }
             entity.requireInfo?.let {
                 if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {

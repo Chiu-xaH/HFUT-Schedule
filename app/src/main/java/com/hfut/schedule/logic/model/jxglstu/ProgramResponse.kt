@@ -115,6 +115,11 @@ data class ProgramBean(
     val outerCourseList : List<CourseItem> //term为[]
 )
 
+sealed class ProgramPerformanceDetailItem {
+    data class Outer(val list : List<CourseItem>) : ProgramPerformanceDetailItem()
+    data class Inner(val bean : ProgramModule) : ProgramPerformanceDetailItem()
+}
+
 data class Summary(
     val passedCourseNum : Int,
     val failedCourseNum : Int,
@@ -125,11 +130,14 @@ data class Summary(
 )
 
 data class ProgramModule(
+    val moduleId : Long,
     val nameZh : String,
     val requireInfo : RequireInfo2,
     val completionSummary : Summary,
     val allCourseList : List<CourseItem>,
+    val allModuleList : List<ProgramModule>
 )
+
 data class RequireInfo2(
     val credits : Double,
     val courseNum : Int

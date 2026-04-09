@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
@@ -34,17 +35,16 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
+import com.hfut.schedule.logic.model.jxglstu.ProgramModule
+import com.hfut.schedule.logic.model.jxglstu.ProgramPerformanceDetailItem
 import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -57,14 +57,13 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDetailDestination
-
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -72,18 +71,18 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
-import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.util.LocalNavController
+import com.xah.common.logic.safeDiv
 import com.xah.common.ui.component.status.LoadingScreen
+import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.util.text
 import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -118,8 +117,141 @@ fun ProgramCompetitionScreen(
             ProgramPerformance(vm,ifSaved,innerPadding)
         }
     }
-//    }
 }
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun ProgramPerformanceCustom(
+    innerPadding : PaddingValues,
+    data : ProgramBean
+) {
+    val navController = LocalNavController.current
+    val dataList = data.moduleList
+    val outCourse = data.outerCourseList
+    LazyColumn {
+        item { InnerPaddingHeight(innerPadding,true) }
+        items(dataList.size, key = { dataList[it].moduleId }) { index ->
+            InnerItem(dataList[index])
+        }
+        if(outCourse.isNotEmpty()) {
+            val summary = data.outerCompletionSummary
+            item { DividerText(text = "培养方案外课程") }
+            item {
+                val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Outer(outCourse))
+                CustomCard(
+                    shape = RoundedCornerShape(0.dp),
+                    color = cardNormalColor(),
+                    modifier = Modifier
+                        .clickableWithScale {
+                            navController.push(dest)
+                        }
+                        .sharedContainer(
+                            key = dest.key,
+                            MaterialTheme.shapes.medium,
+                            cardNormalColor()
+                        )
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "${summary.passedCredits} 学分") },
+                            overlineContent = { Text(text = "已通过") },
+                            modifier = Modifier.weight(.5f)
+                        )
+                        TransplantListItem(
+                            headlineContent = { Text(text = "${summary.failedCredits} 学分") },
+                            overlineContent = { Text(text = "挂科") },
+                            modifier = Modifier.weight(.5f)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "${summary.takingCredits} 学分") },
+                            overlineContent = { Text(text = "本学期在修") },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+            }
+            item {
+                BottomTip("含转专业废弃课程、跨专业选修课程")
+            }
+            item {
+                BottomTip("转专业废弃课程如在跨专业选修课名单中，则可当作跨专业选修课；跨专业选修课的学分是否算作专业选修内尚存在争议，请咨询各学院教务处")
+            }
+        }
+        item { InnerPaddingHeight(innerPadding,false) }
+    }
+}
+
+@Composable
+private fun InnerItem(item : ProgramModule) {
+    val navController = LocalNavController.current
+    val requireInfo = item.requireInfo
+    val summary = item.completionSummary
+    val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Inner(item))
+    DividerTextExpandedWith(text = item.nameZh) {
+        CustomCard(
+            shape = RoundedCornerShape(0.dp),
+            color = cardNormalColor(),
+            modifier = Modifier
+                .clickableWithScale {
+                    navController.push(dest)
+                }
+                .sharedContainer(
+                    key = dest.key,
+                    MaterialTheme.shapes.medium,
+                    cardNormalColor()
+                )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "${summary.passedCredits} 学分") },
+                    overlineContent = { Text(text = "已通过") },
+                    modifier = Modifier.weight(.5f)
+                )
+                TransplantListItem(
+                    headlineContent = { Text(text = "${summary.failedCredits} 学分") },
+                    overlineContent = { Text(text = "挂科") },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "${summary.takingCredits} 学分") },
+                    overlineContent = { Text(text = "本学期在修") },
+                    modifier = Modifier.weight(.5f),
+                )
+                TransplantListItem(
+                    headlineContent = { Text(text = "${requireInfo.credits} 学分") },
+                    overlineContent = { Text(text = "要求") },
+                    modifier = Modifier.weight(.5f),
+                )
+            }
+
+            if(requireInfo.credits != 0.0) {
+                val progress = summary.passedCredits safeDiv requireInfo.credits
+                CustomLineProgressIndicator(
+                    progress.toFloat(),
+                    text = "${summary.passedCredits}/${requireInfo.credits}"
+                )
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -127,10 +259,7 @@ private fun ProgramPerformance(
     vm : NetWorkViewModel,
     ifSaved : Boolean,
     innerPadding : PaddingValues,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
-    val context = LocalContext.current
     val uiState by vm.programPerformanceData.state.collectAsState()
     val data by produceState<ProgramBean?>(initialValue = null) {
         if(!ifSaved || uiState is UiState.Success) {
@@ -140,9 +269,6 @@ private fun ProgramPerformance(
         } else {
             val bean = try {
                 val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
-                if(json == null) {
-                    null
-                }
                 Gson().fromJson(json,ProgramBean::class.java)
             } catch (e : Exception) {
                 LogUtil.error(e)
@@ -175,131 +301,8 @@ private fun ProgramPerformance(
     if(loading) {
         LoadingScreen()
     } else {
-        if(data == null) return
-        val dataList = data!!.moduleList
-        val outCourse = data!!.outerCourseList
-        LazyColumn {
-            item { InnerPaddingHeight(innerPadding,true) }
-            dataList.let { it ->
-                items(it.size) { index->
-                    val item = it[index]
-                    val requireInfo = item.requireInfo
-                    val summary = item.completionSummary
-                    val dest = ProgramCompetitionDetailDestination(
-                        index,
-                        item.nameZh,
-                    )
-                    DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                        CustomCard(
-                            shape = RoundedCornerShape(0.dp),
-                            color = cardNormalColor(),
-                            modifier = Modifier
-                                .clickableWithScale() {
-                                    navController.push(dest)
-                                }
-                                .sharedContainer(
-                                    key = dest.key,
-                                    MaterialTheme.shapes.medium,
-                                    cardNormalColor()
-                                )
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                TransplantListItem(
-                                    headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
-                                    overlineContent = { Text(text = "已通过") },
-                                    modifier = Modifier.weight(.5f)
-                                )
-                                TransplantListItem(
-                                    headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
-                                    overlineContent = { Text(text = "未通过") },
-                                    modifier = Modifier.weight(.5f)
-                                )
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                TransplantListItem(
-                                    headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
-                                    overlineContent = { Text(text = "本学期在修") },
-                                    modifier = Modifier.weight(1f),
-                                    trailingContent = {
-                                        Button(
-                                            onClick = {
-                                                navController.push(dest)
-                                            },
-                                        ) {
-                                            Text(text = "查看详情")
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            if(outCourse.isNotEmpty()) {
-                val summary = data!!.outerCompletionSummary
-                item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
-                item {
-                    val dest = ProgramCompetitionDetailDestination(
-                        999,
-                        "培养方案外课程",
-                    )
-                    CustomCard(
-                        shape = RoundedCornerShape(0.dp),
-                        color = cardNormalColor(),
-                        modifier = Modifier
-                            .clickableWithScale() {
-                                navController.push(dest)
-                            }
-                            .sharedContainer(
-                                key = dest.key,
-                                MaterialTheme.shapes.medium,
-                                cardNormalColor()
-                            )
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
-                                overlineContent = { Text(text = "已通过") },
-                                modifier = Modifier.weight(.5f)
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
-                                overlineContent = { Text(text = "未通过") },
-                                modifier = Modifier.weight(.5f)
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
-                                overlineContent = { Text(text = "本学期在修") },
-                                modifier = Modifier.weight(1f),
-                                trailingContent = {
-                                    Button(
-                                        onClick = {
-                                            navController.push(dest)
-                                        },
-                                    ) {
-                                        Text(text = "查看详情")
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-            item { InnerPaddingHeight(innerPadding,false) }
+        data?.let {
+            ProgramPerformanceCustom(innerPadding,it)
         }
     }
 }
@@ -309,9 +312,7 @@ private fun ProgramPerformance(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramCompetitionDetailScreen(
-    vm: NetWorkViewModel,
-    title : String,
-    moduleIndex : Int,
+    bean : ProgramPerformanceDetailItem,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -328,46 +329,58 @@ fun ProgramCompetitionDetailScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(title) },
+                    title = { Text(
+                        when(bean) {
+                            is ProgramPerformanceDetailItem.Inner -> {
+                                bean.bean.nameZh
+                            }
+                            is ProgramPerformanceDetailItem.Outer -> {
+                                "培养方案外课程"
+                            }
+                        }
+                    ) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                if(
+                    bean is ProgramPerformanceDetailItem.Outer ||
+                    (bean is ProgramPerformanceDetailItem.Inner && bean.bean.allModuleList.isEmpty())
                 ) {
-                    TextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = APP_HORIZONTAL_DP)
-                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
-                        ,
-                        value = input,
-                        onValueChange = {
-                            input = it
-                        },
-                        label = { Text("课程代码 或 课程名") },
-                        singleLine = true,
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    // TODO
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "description"
-                                )
-                            }
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledAllTransplant(),
-//                        colors = textFiledTransplant()
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = APP_HORIZONTAL_DP)
+                                .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                            ,
+                            value = input,
+                            onValueChange = {
+                                input = it
+                            },
+                            label = { Text("课程代码 或 课程名") },
+                            singleLine = true,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        // TODO
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            colors = textFiledAllTransplant(),
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
-
         },
     ) { innerPadding ->
         Column(
@@ -376,15 +389,14 @@ fun ProgramCompetitionDetailScreen(
                 .backDropSource(backDrop)
                 .fillMaxSize()
         ) {
-            PerformanceInfo(vm,moduleIndex,hazeState,innerPadding,input)
+            PerformanceInfo(bean,innerPadding,input)
         }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: HazeState,innerPadding: PaddingValues,input : String) {
+private fun PerformanceInfo(bean : ProgramPerformanceDetailItem, innerPadding: PaddingValues, input : String) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    val uiState by vm.programPerformanceData.state.collectAsState()
     var itemForInfo by remember { mutableStateOf(CourseItem("","详情",0.0, listOf(""),"",null,null,null)) }
 
     if (showBottomSheet) {
@@ -398,69 +410,80 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
         }
     }
 
-    CommonNetworkScreen(uiState, onReload = {}) {
-        val bean = (uiState as UiState.Success).data
-        if(moduleIndex != 999) {
-            val dataList = bean.moduleList[moduleIndex]
-            val allCourse = dataList.allCourseList
-            val filteredList = mutableListOf<CourseItem>()
-            allCourse.forEach { i ->
-                if(i.nameZh.contains(input) || i.code.contains(input)) {
-                    filteredList.add(i)
-                }
-            }
-            filteredList.sortBy { it.resultType }
-            LazyColumn {
-                item { InnerPaddingHeight(innerPadding,true) }
-//                item { Spacer(modifier = Modifier.height(CARD_NORMAL_DP)) }
-                if(filteredList.isNotEmpty()) {
-                    items(filteredList.size) { index ->
-                        val item = filteredList[index]
-                        val term = transferTerm(item.terms)
-                        val type = getProgramCompetitionType(item.resultType)
-                        CardListItem(
-                            headlineContent = { Text(text = item.nameZh) },
-                            supportingContent = {
-                                if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
-                                    Text(text =
-                                        "均分 ${item.score} 绩点 ${item.gp} " +
-                                                if(item.rank != null) "等级 ${item.rank}" else ""
-                                    )
-                                }
-                            },
-                            trailingContent = {
-                                Text(text = type?.description ?: item.resultType)
-                            },
-                            overlineContent = {
-                                var text = ""
-                                if (term != null) {
-                                    for(i in term.indices) {
-                                        text = text + term[i] + " "
-                                    }
-                                }
-                                Text(text = "第${text.replace(" ",",").dropLast(1)}学期" + " | 学分 ${item.credits}")
-                            },
-                            leadingContent = {
-                                Icon(
-                                    painterResource(type?.icon ?: R.drawable.question_mark),
-                                    null,
-                                    tint = if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
-                                    else  LocalContentColor. current
-                                )
-                            },
-                            modifier = Modifier.clickable {
-                                itemForInfo = item
-                                showBottomSheet = true
-                            }
-                        )
+    when(bean) {
+        is ProgramPerformanceDetailItem.Inner -> {
+            val dataList = bean.bean
+            val allModules = dataList.allModuleList.sortedByDescending { it.nameZh }
+            if(allModules.isEmpty()) {
+                val allCourse = dataList.allCourseList
+                val filteredList = mutableListOf<CourseItem>()
+                allCourse.forEach { i ->
+                    if(i.nameZh.contains(input) || i.code.contains(input)) {
+                        filteredList.add(i)
                     }
                 }
-
-                item { InnerPaddingHeight(innerPadding,false) }
-
+                filteredList.sortBy { it.resultType }
+                LazyColumn {
+                    item { InnerPaddingHeight(innerPadding,true) }
+                    if(filteredList.isNotEmpty()) {
+                        items(filteredList.size) { index ->
+                            val item = filteredList[index]
+                            val term = transferTerm(item.terms)
+                            val type = getProgramCompetitionType(item.resultType)
+                            CardListItem(
+                                headlineContent = { Text(text = item.nameZh.replace("&nbsp;","")) },
+                                supportingContent = {
+                                    if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
+                                        Text(text =
+                                            "均分 ${item.score} 绩点 ${item.gp} " +
+                                                    if(item.rank != null) "等级 ${item.rank}" else ""
+                                        )
+                                    }
+                                },
+                                trailingContent = {
+                                    Text(text = type?.description ?: item.resultType)
+                                },
+                                overlineContent = {
+                                    val termText = if(term != null) {
+                                        if(term.size >= 8) {
+                                            "每学期"
+                                        } else {
+                                            "第${term.joinToString(",")}学期"
+                                        }
+                                    } else {
+                                        "未知学期"
+                                    }
+                                    Text(text = termText + " | 学分 ${item.credits}")
+                                },
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(type?.icon ?: R.drawable.question_mark),
+                                        null,
+                                        tint = if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                        else  LocalContentColor. current
+                                    )
+                                },
+                                modifier = Modifier.clickable {
+                                    itemForInfo = item
+                                    showBottomSheet = true
+                                }
+                            )
+                        }
+                    }
+                    item { InnerPaddingHeight(innerPadding,false) }
+                }
+            } else {
+                LazyColumn {
+                    item { InnerPaddingHeight(innerPadding,true) }
+                    items(allModules.size, key = { allModules[it].moduleId }) { index ->
+                        InnerItem(allModules[index])
+                    }
+                    item { InnerPaddingHeight(innerPadding,false) }
+                }
             }
-        } else {
-            val outerCourse = bean.outerCourseList
+        }
+        is ProgramPerformanceDetailItem.Outer -> {
+            val outerCourse = bean.list
             val filteredList = mutableListOf<CourseItem>()
             outerCourse.forEach { i ->
                 if(i.nameZh.contains(input) || i.code.contains(input)) {
@@ -470,7 +493,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
             filteredList.sortBy { it.resultType }
             LazyColumn {
                 item { InnerPaddingHeight(innerPadding,true) }
-//                item { Spacer(modifier = Modifier.height(CARD_NORMAL_DP)) }
                 if(filteredList.isNotEmpty()) {
                     items(filteredList.size) { index ->
                         val item = filteredList[index]
@@ -506,9 +528,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                         )
                     }
                 }
-
                 item { InnerPaddingHeight(innerPadding,false) }
-
             }
         }
     }
