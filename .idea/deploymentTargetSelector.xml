@@ -41,9 +41,6 @@
       <SelectionState runConfigName="PickerPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="A">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="B">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

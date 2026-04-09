@@ -125,10 +125,6 @@ fun MainHost(
         navigationController.enableBlur = motionBlur
     }
 
-    LaunchedEffect(enablePredictive) {
-        navigationController.enablePredictiveBack = enablePredictive
-    }
-
     LaunchedEffect(enableNavSplashScreen) {
         navigationController.enableSplashScreen = enableNavSplashScreen
     }
@@ -153,6 +149,11 @@ fun MainHost(
 
             LaunchedEffect(enableContainerTilt) {
                 registry.enableTilt = enableContainerTilt
+            }
+
+            LaunchedEffect(enablePredictive) {
+                navigationController.enablePredictiveBack = enablePredictive
+                registry.enablePredictiveBack = enablePredictive
             }
 
             DefaultBackHandler()

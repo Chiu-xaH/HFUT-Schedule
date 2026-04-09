@@ -73,6 +73,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.safeDiv
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -94,6 +95,7 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
                 }
                 Gson().fromJson(content, ProgramResponse::class.java)
             } catch (e : Exception) {
+                LogUtil.error(e)
                 null
             }
         }

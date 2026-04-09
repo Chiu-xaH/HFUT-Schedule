@@ -18,6 +18,7 @@ object TesseractUtils {
             tesseractOCR.release()
             return result
         } catch (e: Exception) {
+            LogUtil.error(e)
             return ""
         }
     }
@@ -50,10 +51,8 @@ object TesseractUtils {
             try {
                 downloadedFile.copyTo(destFile, overwrite = true) // 复制文件
                 downloadedFile.delete() // 删除下载目录中的文件
-//                Log.d("Tesseract", "模型移动成功: ${destFile.absolutePath}")
             } catch (e: Exception) {
                 LogUtil.error(e)
-//                Log.e("Tesseract", "模型移动失败", e)
             }
         } else {
             LogUtil.debug("Tesseract 下载的模型文件不存在: ${downloadedFile.absolutePath}")

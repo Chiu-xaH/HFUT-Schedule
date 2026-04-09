@@ -82,6 +82,7 @@ import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -144,6 +145,7 @@ private fun ProgramPerformance(
                 }
                 Gson().fromJson(json,ProgramBean::class.java)
             } catch (e : Exception) {
+                LogUtil.error(e)
                 null
             }
             if(bean != null) {

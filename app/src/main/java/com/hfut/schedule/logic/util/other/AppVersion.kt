@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.util.other
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import com.hfut.schedule.BuildConfig
@@ -59,8 +58,6 @@ object AppVersion {
     val sdkInt = Build.VERSION.SDK_INT
 
     val isDebug = BuildConfig.DEBUG
-
-    val buildTime = BuildConfig.BUILD_TIME
 
     val CAN_HAZE_BLUR_BAR = sdkInt >= 31
     val CAN_MOTION_BLUR = sdkInt >= 31

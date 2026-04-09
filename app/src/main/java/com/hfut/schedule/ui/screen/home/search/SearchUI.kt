@@ -140,6 +140,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 
 data class SearchAppBean(
@@ -179,6 +180,7 @@ fun MutableList<SearchAppBean>.reorderByIdsStr(idOrder: String): MutableList<Sea
             .mapNotNull { it.trim().toIntOrNull() }
         reorderByIds(order)
     } catch (e: Exception) {
+        LogUtil.error(e)
         // 出错时恢复默认顺序
         reorderByIds(GlobalStateHolder.funcDefault.map { it.id })
     }
