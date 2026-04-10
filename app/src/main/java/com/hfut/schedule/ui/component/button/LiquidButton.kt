@@ -62,6 +62,8 @@ import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.logic.safeDiv
+import com.xah.container.util.LocalSharedRegistrySafely
+import com.xah.floating.util.LocalFloatingControllerSafely
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -392,7 +394,7 @@ fun LiquidButton(
     shape: Shape,
     content: @Composable () -> Unit
 ) {
-    val isRunning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val isRunning = LocalSharedRegistrySafely.current?.isRunning ?: false
 
 //    if(!isRunning) {
 //        LiquidButton(
@@ -415,7 +417,8 @@ fun LiquidButton(
                     onClick = onClick,
                     modifier = modifier,
                     enabled = enabled,
-                    content = content
+                    content = content,
+                    shape = shape,
                 )
             } else {
                 FilledTonalButton(

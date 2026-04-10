@@ -124,6 +124,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.LocalSharedRegistry
 import com.xah.container.util.pixelExtension
 import com.xah.navigation.model.anim.EffectLevel
 import com.xah.shared.LogUtil
@@ -309,9 +310,10 @@ fun SharedAppearanceSettingsScreen(
         }
 
         if(!isControlCenter) {
+            val registry = LocalSharedRegistry.current
             val video by produceState<String?>(initialValue = null) {
                 scope.launch {
-                    delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                    delay(registry.animationTime*1L)
                     value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
                 }
             }

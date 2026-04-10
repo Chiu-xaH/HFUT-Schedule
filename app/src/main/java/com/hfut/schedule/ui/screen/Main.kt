@@ -34,6 +34,7 @@ import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.UpdateSuccessfullyDestination
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -41,7 +42,10 @@ import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
+import com.xah.navigation.controller.NavigationController
+import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.model.anim.EffectLevel
+import com.xah.navigation.model.dest.Destination
 import com.xah.navigation.util.DefaultBackHandler
 import com.xah.navigation.util.rememberNavDependencies
 import com.xah.shared.LogUtil

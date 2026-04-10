@@ -74,8 +74,6 @@ data class TimeTableSquareWindow(
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     override fun Content() {
-        LogUtil.debug("key =$key")
-
         val controller = LocalFloatingController.current
 
         Box(modifier = Modifier.fillMaxSize()) {

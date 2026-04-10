@@ -164,25 +164,25 @@ fun TopBarNavigationIcon() {
                             }
                         }
                     }
-                    if(navController.stack.lastOrNull()?.destination == navController.startDestination) {
-                        LargeButton(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                            onClick = {
-                                scope.launch {
-                                    navController.push(navController.startDestination, LaunchMode.Single(reuse = true, actionType = ActionType.POP))
-                                    showToast("已回到首页")
-                                    displayDialog = false
-                                }
-                            },
-                            modifier = Modifier
-                                .padding(top = APP_HORIZONTAL_DP)
-                                .fillMaxWidth()
-                            ,
-                            text = "回到首页",
-                            icon = R.drawable.home
-                        )
-                    }
+//                    if(navController.stack.lastOrNull()?.destination != navController.startDestination) {
+//                        LargeButton(
+//                            containerColor = MaterialTheme.colorScheme.errorContainer,
+//                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+//                            onClick = {
+//                                scope.launch {
+//                                    navController.push(navController.startDestination, LaunchMode.Single(reuse = true, actionType = ActionType.POP))
+//                                    showToast("已回到首页")
+//                                    displayDialog = false
+//                                }
+//                            },
+//                            modifier = Modifier
+//                                .padding(top = APP_HORIZONTAL_DP)
+//                                .fillMaxWidth()
+//                            ,
+//                            text = "回到首页",
+//                            icon = R.drawable.home
+//                        )
+//                    }
                 }
             }
         }

@@ -43,19 +43,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibrarySearchPositionBean
@@ -69,12 +66,12 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.button.CardBottomButton
-import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.containerBackDrop
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -83,7 +80,6 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -93,25 +89,21 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
 import com.hfut.schedule.ui.nav.destination.LibraryDestination
-
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.util.LocalNavController
-import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import dev.chrisbanes.haze.HazeState
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -156,7 +148,7 @@ fun LibraryScreen(
     var inputKeyword by remember { mutableStateOf("") }
     val backDrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
-    var pageState = rememberPagerState { 2 }
+    val pageState = rememberPagerState { 2 }
     val titles = remember { listOf("智慧社区","斛兵知搜") }
     val refreshNetworkCommunity : suspend (Int) -> Unit = { page ->
         prefs.getString("TOKEN","")?.let {
@@ -168,11 +160,18 @@ fun LibraryScreen(
         vm.librarySearchResp.clear()
         vm.searchLibrary(inputKeyword,page)
     }
+
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
-                modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer),
+                modifier = Modifier.topBarBlur(
+                    hazeState,
+                    when(targetPage) {
+                        LibraryBarItems.SEARCH -> MaterialTheme.colorScheme.surface
+                        LibraryBarItems.MINE -> MaterialTheme.colorScheme.surfaceContainer
+                    }
+                ),
             ) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
@@ -226,10 +225,19 @@ fun LibraryScreen(
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState, items,libraryNavController,color = MaterialTheme.colorScheme.surfaceContainer)
+            HazeBottomBar(
+                hazeState,
+                items,
+                libraryNavController,
+                color = when(targetPage) {
+                    LibraryBarItems.SEARCH -> MaterialTheme.colorScheme.surface
+                    LibraryBarItems.MINE -> MaterialTheme.colorScheme.surfaceContainer
+                }
+            )
         }
     ) { innerPadding ->
-        NavHost(navController = libraryNavController,
+        NavHost(
+            navController = libraryNavController,
             startDestination = LibraryBarItems.MINE.name,
             enterTransition = {
                 AppAnimationManager.centerAnimation.enter
@@ -245,8 +253,8 @@ fun LibraryScreen(
                 Column (modifier = Modifier.fillMaxSize()) {
                     HorizontalPager(pageState) { pager ->
                         when(pager) {
-                            TAB_PAGE_COMMUNITY -> SearchScreenCommunity(vm,hazeState,innerPadding,refreshNetworkCommunity)
-                            TAB_PAGE_LIBRARY -> SearchScreenLibrary(vm,innerPadding,hazeState,refreshNetworkLibrary)
+                            TAB_PAGE_COMMUNITY -> SearchScreenCommunity(vm,innerPadding,refreshNetworkCommunity)
+                            TAB_PAGE_LIBRARY -> SearchScreenLibrary(vm,innerPadding,refreshNetworkLibrary)
                         }
                     }
                 }
@@ -254,12 +262,12 @@ fun LibraryScreen(
             nav2Composable(LibraryBarItems.MINE.name) {
                 Column (modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainer)) {
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                ) {
                     LibraryMineUI(
                         vm,
                         innerPadding,
                         libraryNavController,
-//                        navController
                     )
                 }
             }
@@ -272,18 +280,17 @@ private const val seatUrl = Constant.LIBRARY_SEAT + "home/web/f_second"
 @Composable
 private fun SearchScreenCommunity(
     vm: NetWorkViewModel,
-    hazeState: HazeState,
     innerPadding : PaddingValues,
     refreshNetwork : suspend (Int) -> Unit
 ) {
     var startUse by rememberSaveable { mutableStateOf(false) }
     var title by remember { mutableStateOf("地点") }
-    var callNum by remember { mutableStateOf<String>("") }
+    var callNum by remember { mutableStateOf("") }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.libraryData.state.collectAsState()
 
     LaunchedEffect(page) {
-        if(startUse == false) {
+        if(!startUse) {
             vm.libraryData.emitPrepare()
             startUse = true
         } else if(uiState !is UiState.Success) {
@@ -296,7 +303,6 @@ private fun SearchScreenCommunity(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
@@ -481,7 +487,7 @@ fun LibraryMineUI(
                         latestReturnedData?.returnTime?.substringBefore(" ")?.let { Text("${DateTimeManager.daysBetween(it)}天后") }
                     }
                 ) {
-                    Row() {
+                    Row {
                         TransplantListItem(
                             overlineContent = { Text("借阅") },
                             headlineContent = { Text("${response.borrowCount}本") },
@@ -685,7 +691,6 @@ fun LibraryMineUI(
 private fun SearchScreenLibrary(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
-    hazeState: HazeState,
     refreshNetwork : suspend (Int) -> Unit
 ) {
     var startUse by remember { mutableStateOf(false) }
@@ -693,7 +698,7 @@ private fun SearchScreenLibrary(
     val uiState by vm.librarySearchResp.state.collectAsState()
 
     LaunchedEffect(page) {
-        if(startUse == false) {
+        if(!startUse) {
             vm.librarySearchResp.emitPrepare()
             startUse = true
         } else if(uiState !is UiState.Success) {

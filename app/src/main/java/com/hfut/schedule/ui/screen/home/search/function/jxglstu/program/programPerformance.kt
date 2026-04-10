@@ -13,12 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
+import com.hfut.schedule.logic.model.jxglstu.PlanCourses
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
 import com.hfut.schedule.logic.model.jxglstu.ProgramModule
@@ -49,6 +49,8 @@ import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -57,13 +59,16 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDetailDestination
+import com.hfut.schedule.ui.nav.window.ProgramRemarkWindow
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -76,11 +81,13 @@ import com.xah.common.ui.component.status.LoadingScreen
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.common.ui.util.text
+import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
@@ -123,7 +130,9 @@ fun ProgramCompetitionScreen(
 @Composable
 private fun ProgramPerformanceCustom(
     innerPadding : PaddingValues,
-    data : ProgramBean
+    data : ProgramBean,
+    programCourseMap : Map<String, PlanCourses>,
+    programTypeMap : Map<Long,String?>
 ) {
     val navController = LocalNavController.current
     val dataList = data.moduleList
@@ -131,13 +140,14 @@ private fun ProgramPerformanceCustom(
     LazyColumn {
         item { InnerPaddingHeight(innerPadding,true) }
         items(dataList.size, key = { dataList[it].moduleId }) { index ->
-            InnerItem(dataList[index])
+            val item = dataList[index]
+            InnerItem(item,programTypeMap[item.moduleId],programCourseMap,programTypeMap)
         }
         if(outCourse.isNotEmpty()) {
             val summary = data.outerCompletionSummary
             item { DividerText(text = "培养方案外课程") }
             item {
-                val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Outer(outCourse))
+                val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Outer(outCourse),programCourseMap,programTypeMap)
                 CustomCard(
                     shape = RoundedCornerShape(0.dp),
                     color = cardNormalColor(),
@@ -157,7 +167,7 @@ private fun ProgramPerformanceCustom(
                     ) {
                         TransplantListItem(
                             headlineContent = { Text(text = "${summary.passedCredits} 学分") },
-                            overlineContent = { Text(text = "已通过") },
+                            overlineContent = { Text(text = "通过") },
                             modifier = Modifier.weight(.5f)
                         )
                         TransplantListItem(
@@ -190,11 +200,18 @@ private fun ProgramPerformanceCustom(
 }
 
 @Composable
-private fun InnerItem(item : ProgramModule) {
+private fun InnerItem(
+    item : ProgramModule,
+    remark : String?,
+    programCourseMap : Map<String, PlanCourses>,
+    programTypeMap : Map<Long, String?>
+) {
     val navController = LocalNavController.current
     val requireInfo = item.requireInfo
     val summary = item.completionSummary
-    val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Inner(item))
+    val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Inner(item),programCourseMap,programTypeMap)
+
+
     DividerTextExpandedWith(text = item.nameZh) {
         CustomCard(
             shape = RoundedCornerShape(0.dp),
@@ -215,13 +232,18 @@ private fun InnerItem(item : ProgramModule) {
             ) {
                 TransplantListItem(
                     headlineContent = { Text(text = "${summary.passedCredits} 学分") },
-                    overlineContent = { Text(text = "已通过") },
-                    modifier = Modifier.weight(.5f)
+                    overlineContent = { Text(text = "通过") },
+                    modifier = Modifier.weight(1/3f)
                 )
                 TransplantListItem(
                     headlineContent = { Text(text = "${summary.failedCredits} 学分") },
                     overlineContent = { Text(text = "挂科") },
-                    modifier = Modifier.weight(.5f)
+                    modifier = Modifier.weight(1/3f)
+                )
+                TransplantListItem(
+                    headlineContent = { Text(text = "${summary.skipCredits} 学分") },
+                    overlineContent = { Text(text = "跳过") },
+                    modifier = Modifier.weight(1/3f)
                 )
             }
             Row(
@@ -248,6 +270,9 @@ private fun InnerItem(item : ProgramModule) {
                 )
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
             }
+        }
+        remark?.let {
+            BottomTip(it)
         }
     }
 }
@@ -280,6 +305,7 @@ private fun ProgramPerformance(
             value = bean
         }
     }
+
     val loading = data == null
 
     val refreshNetwork: suspend () -> Unit = s@{
@@ -298,21 +324,39 @@ private fun ProgramPerformance(
         }
     }
 
+    val programTypeMap by produceState(initialValue = emptyMap()) {
+        value = createProgramRemarkMap()
+    }
+
+    val programCourseMap by produceState(initialValue = emptyMap()) {
+        value = createProgramMap()
+    }
+
     if(loading) {
         LoadingScreen()
     } else {
-        data?.let {
-            ProgramPerformanceCustom(innerPadding,it)
-        }
+//        CompositionLocalProvider(
+//            LocalProgramRemarkMap provides programTypeMap,
+//            LocalProgramMap provides programCourseMap
+//        ) {
+            data?.let {
+                ProgramPerformanceCustom(innerPadding,it,programCourseMap,programTypeMap)
+            }
+//        }
     }
 }
 
-
+//
+//private val LocalProgramRemarkMap = staticCompositionLocalOf { mutableMapOf<Long, String?>() }
+//private val LocalProgramMap = staticCompositionLocalOf { mutableMapOf<String, PlanCourses>() }
+//
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramCompetitionDetailScreen(
     bean : ProgramPerformanceDetailItem,
+    programCourseMap : Map<String, PlanCourses>,
+    programTypeMap : Map<Long,String?>
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -320,6 +364,15 @@ fun ProgramCompetitionDetailScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
 
+    /*
+    item {
+                        programTypeMap[dataList.moduleId]?.let {
+                            BottomTip(it)
+                        }
+                    }
+     */
+
+    val isCourses = bean is ProgramPerformanceDetailItem.Inner && bean.bean.allModuleList.isEmpty()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -342,10 +395,37 @@ fun ProgramCompetitionDetailScreen(
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
+                    actions = {
+                        if(bean is ProgramPerformanceDetailItem.Inner) {
+                            val beanModule = bean.bean
+                            val remark = programTypeMap[beanModule.moduleId]
+                            if(remark != null) {
+                                val controller = LocalFloatingController.current
+                                val window = ProgramRemarkWindow(remark)
+                                SharedContainer(
+                                    key = window.key,
+                                    shape = CircleShape,
+                                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ) {
+                                    LiquidButton (
+                                        shape = RoundedCornerShape(0.dp),
+                                        backdrop = backDrop,
+                                        isCircle = true,
+                                        onClick = {
+                                            controller.push(window)
+                                        },
+                                    ) {
+                                        Icon(painterResource(R.drawable.info),null)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 )
                 if(
                     bean is ProgramPerformanceDetailItem.Outer ||
-                    (bean is ProgramPerformanceDetailItem.Inner && bean.bean.allModuleList.isEmpty())
+                    isCourses
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -389,15 +469,21 @@ fun ProgramCompetitionDetailScreen(
                 .backDropSource(backDrop)
                 .fillMaxSize()
         ) {
-            PerformanceInfo(bean,innerPadding,input)
+            PerformanceInfo(bean,innerPadding,input, programCourseMap,programTypeMap)
         }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PerformanceInfo(bean : ProgramPerformanceDetailItem, innerPadding: PaddingValues, input : String) {
+private fun PerformanceInfo(
+    bean : ProgramPerformanceDetailItem,
+    innerPadding: PaddingValues,
+    input : String,
+    programCourseMap : Map<String, PlanCourses>,
+    programTypeMap : Map<Long, String?>
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var itemForInfo by remember { mutableStateOf(CourseItem("","详情",0.0, listOf(""),"",null,null,null)) }
+    var itemForInfo by remember { mutableStateOf(CourseItem("","详情",0.0, listOf(""),true,"",null,null,null)) }
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -423,6 +509,10 @@ private fun PerformanceInfo(bean : ProgramPerformanceDetailItem, innerPadding: P
                     }
                 }
                 filteredList.sortBy { it.resultType }
+
+                // 如果清一色compulsory（布尔值）一样则返回false，否则返回true
+                val displayCompulsory = filteredList.any { it.compulsory } && filteredList.any { !it.compulsory }
+
                 LazyColumn {
                     item { InnerPaddingHeight(innerPadding,true) }
                     if(filteredList.isNotEmpty()) {
@@ -430,44 +520,72 @@ private fun PerformanceInfo(bean : ProgramPerformanceDetailItem, innerPadding: P
                             val item = filteredList[index]
                             val term = transferTerm(item.terms)
                             val type = getProgramCompetitionType(item.resultType)
-                            CardListItem(
-                                headlineContent = { Text(text = item.nameZh.replace("&nbsp;","")) },
-                                supportingContent = {
-                                    if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
-                                        Text(text =
-                                            "均分 ${item.score} 绩点 ${item.gp} " +
-                                                    if(item.rank != null) "等级 ${item.rank}" else ""
-                                        )
-                                    }
-                                },
-                                trailingContent = {
-                                    Text(text = type?.description ?: item.resultType)
-                                },
-                                overlineContent = {
-                                    val termText = if(term != null) {
-                                        if(term.size >= 8) {
-                                            "每学期"
-                                        } else {
-                                            "第${term.joinToString(",")}学期"
-                                        }
-                                    } else {
-                                        "未知学期"
-                                    }
-                                    Text(text = termText + " | 学分 ${item.credits}")
-                                },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(type?.icon ?: R.drawable.question_mark),
-                                        null,
-                                        tint = if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
-                                        else  LocalContentColor. current
-                                    )
-                                },
+                            val warning = displayCompulsory && item.compulsory
+                            val programDetail = programCourseMap[item.code]
+                            CustomCard(
+                                color = cardNormalColor(),
                                 modifier = Modifier.clickable {
                                     itemForInfo = item
                                     showBottomSheet = true
                                 }
-                            )
+                            ) {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = item.nameZh.replace("&nbsp;","") ) },
+                                    supportingContent = {
+                                        if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
+                                            Text(text =
+                                                "均分 ${item.score ?: "--"} 绩点 ${item.gp ?: "--"} " +
+                                                        if(item.rank != null) "等级 ${item.rank ?: "--"}" else ""
+                                            )
+                                        }
+                                    },
+                                    trailingContent = {
+                                        ColumnVertical() {
+                                            if(warning) {
+                                                Text("必修", color = MaterialTheme.colorScheme.error)
+                                            }
+                                            Text(text = type?.description ?: item.resultType)
+                                        }
+                                    },
+                                    overlineContent = {
+                                        val termText = if(term != null) {
+                                            if(term.size >= 8) {
+                                                "每学期"
+                                            } else {
+                                                "第${term.joinToString(",")}学期"
+                                            }
+                                        } else {
+                                            "未知学期"
+                                        }
+                                        Text(text = termText + " | 学分 ${item.credits}")
+                                    },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(type?.icon ?: R.drawable.question_mark),
+                                            null,
+                                            tint = (
+                                                    if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                                    else  LocalContentColor.current
+                                                    ).copy(
+                                                    if(type == ProgramCompetitionType.UNREPAIRED && !item.compulsory) {
+                                                        .5f
+                                                    } else {
+                                                        1f
+                                                    }
+                                                )
+                                        )
+                                    },
+                                )
+                                programDetail?.remark?.let { remark ->
+                                    PaddingHorizontalDivider()
+                                    TransplantListItem(
+                                        headlineContent = { Text(remark) },
+                                        leadingContent = {
+                                            Icon(painterResource(R.drawable.info),null)
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                     item { InnerPaddingHeight(innerPadding,false) }
@@ -476,7 +594,8 @@ private fun PerformanceInfo(bean : ProgramPerformanceDetailItem, innerPadding: P
                 LazyColumn {
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(allModules.size, key = { allModules[it].moduleId }) { index ->
-                        InnerItem(allModules[index])
+                        val item = allModules[index]
+                        InnerItem(item,programTypeMap[item.moduleId],programCourseMap,programTypeMap)
                     }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
@@ -517,8 +636,10 @@ private fun PerformanceInfo(bean : ProgramPerformanceDetailItem, innerPadding: P
                                 Icon(
                                     painterResource(type?.icon ?: R.drawable.question_mark),
                                     null,
-                                    tint = if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
-                                    else  LocalContentColor. current
+                                    tint = (
+                                            if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                            else  LocalContentColor. current
+                                            )
                                 )
                             },
                             modifier = Modifier.clickable {

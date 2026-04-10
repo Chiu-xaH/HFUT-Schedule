@@ -78,10 +78,65 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.safeDiv
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+suspend fun createProgramRemarkMap() : Map<Long, String?> {
+    val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
+    val bean = with(Dispatchers.Default) {
+        Gson().fromJson(content, ProgramResponse::class.java)
+    }
+    // 将所有的PlanCourses汇总成哈希表
+    val typeRemarkMap = mutableMapOf<Long, String?>()
+    /*
+data class ProgramResponse(
+override val children : List<ProgramResponse>,
+override val planCourses : List<PlanCourses>,
+) : BaseProgramResponse()
+     */
+    fun collect(node: ProgramResponse) {
+        typeRemarkMap[node.id] = node.remark
+        // 递归子节点
+        node.children.forEach { child ->
+            collect(child)
+        }
+    }
+    // 从根开始
+    collect(bean)
 
+
+    return typeRemarkMap
+}
+
+suspend fun createProgramMap() : Map<String, PlanCourses> {
+    val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
+    val bean = with(Dispatchers.Default) {
+        Gson().fromJson(content, ProgramResponse::class.java)
+    }
+    // 将所有的PlanCourses汇总成哈希表
+    val courseMap = mutableMapOf<String, PlanCourses>()
+    /*
+data class ProgramResponse(
+override val children : List<ProgramResponse>,
+override val planCourses : List<PlanCourses>,
+) : BaseProgramResponse()
+     */
+    fun collect(node: ProgramResponse) {
+        node.planCourses.forEach { course ->
+            courseMap[course.course.code] = course
+        }
+        // 递归子节点
+        node.children.forEach { child ->
+            collect(child)
+        }
+    }
+    // 从根开始
+    collect(bean)
+
+
+    return courseMap
+}
 
 @Composable
 fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
@@ -93,10 +148,9 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
         } else {
             value = try {
                 val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
-                if(content == null) {
-                    null
+                with(Dispatchers.Default) {
+                    Gson().fromJson(content, ProgramResponse::class.java)
                 }
-                Gson().fromJson(content, ProgramResponse::class.java)
             } catch (e : Exception) {
                 LogUtil.error(e)
                 null
@@ -281,7 +335,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 )
             }
             entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
+                if(it.requiredCredits == 0.0) {
                     return@let
                 }
                 item {
@@ -289,10 +343,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                         "要求 " +
                                 it.requiredCredits.let { num ->
                                     if(num == 0.0) "" else "" + num + "学分"
-                                }
-                                +
-                                it.requiredCourseNum.let { num ->
-                                    if(num == 0) "" else " " + num + "门"
                                 }
                     )
                 }
@@ -387,7 +437,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 }
             }
             entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
+                if(it.requiredCredits == 0.0) {
                     return@let
                 }
                 item {
@@ -395,10 +445,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                         "要求 " +
                                 it.requiredCredits.let { num ->
                                     if(num == 0.0) "" else "" + num + "学分"
-                                }
-                                +
-                                it.requiredCourseNum.let { num ->
-                                    if(num == 0) "" else " " + num + "门"
                                 }
                     )
                 }

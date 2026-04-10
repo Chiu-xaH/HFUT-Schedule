@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.screen.fix.about.Egg
 import com.hfut.schedule.ui.screen.fix.about.Support
 import com.hfut.schedule.ui.screen.fix.fix.BugShare
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */
@@ -128,9 +129,10 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
 
 
         val scope = rememberCoroutineScope()
+        val registry = LocalSharedRegistry.current
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
-                delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                delay(registry.animationTime*1L)
                 value = checkOrDownloadVideo(context,"example_about.mp4","https://chiu-xah.github.io/videos/example_about.mp4")
             }
         }

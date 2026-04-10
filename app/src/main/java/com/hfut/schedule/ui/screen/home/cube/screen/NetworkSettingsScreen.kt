@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -82,9 +83,10 @@ fun NetworkSettingsScreen(
         var server by remember { mutableStateOf(switch_server) }
         saveBoolean("SWITCHSERVER",false,server)
         val scope = rememberCoroutineScope()
+        val registry = LocalSharedRegistry.current
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
-                delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                delay(registry.animationTime*1L)
                 value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
             }
         }

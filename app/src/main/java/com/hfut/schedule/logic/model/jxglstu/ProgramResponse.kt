@@ -44,6 +44,7 @@ data class ProgramResponse(override val children : List<ProgramResponse>,
                            override val remark : String?,
                            override val reference : Boolean,
                            override val planCourses : List<PlanCourses>,
+                           val id : Long,
                            val sumChildrenNum : Int,
                            val sumChildrenRequiredCredits : Double,
                            val numBySubModule : Map<String,Int>,
@@ -56,14 +57,7 @@ data class ProgramResponse(override val children : List<ProgramResponse>,
                            val sumPlanCourseNum : Int
 ) : BaseProgramResponse()
 
-data class RequireInfo(val requiredSubModuleNum : Int?,
-                       val requiredCourseNum : Int?,
-                       val totalTheoryPeriods : Int?,
-                       val totalTheoryCredits : Double?,
-                       val requiredCredits : Double?,
-                       val totalPracticePeriods : Double?,
-                       val totalPracticeCredits : Double?,
-                       val requiredTotalPeriods : Int?,)
+data class RequireInfo(val requiredCredits : Double?)
 
 data class PlanCourses(val readableTerms : List<Int>,
                        override val compulsory : Boolean,
@@ -126,7 +120,8 @@ data class Summary(
     val takingCourseNum : Int,
     val passedCredits : Double,
     val failedCredits : Double,
-    val takingCredits : Double
+    val takingCredits : Double,
+    val skipCredits : Double
 )
 
 data class ProgramModule(
@@ -148,6 +143,7 @@ data class CourseItem(
     val nameZh : String,
     val credits : Double,
     val terms : List<String>,
+    val compulsory : Boolean,
     val resultType : String, //PASSED/TAKING/UNREPAIRED
     val score : Double?, //均分
     val rank : String?, //合格/及格

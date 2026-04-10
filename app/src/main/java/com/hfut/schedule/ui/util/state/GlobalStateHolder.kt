@@ -55,11 +55,6 @@ object GlobalStateHolder {
 
     var isSupabaseRegistering = false
 
-    val routeQueue = mutableStateListOf<NavDestination>()
-    fun pushToFront(destination: NavDestination) {
-        routeQueue.add(0, destination)
-    }
-
     // 用过的ID 不要再用了，比如之前删除的功能ID
     val funcDefault = listOf(
         SearchAppBeanLite(1, R.string.navigation_label_school_card ,R.drawable.credit_card),

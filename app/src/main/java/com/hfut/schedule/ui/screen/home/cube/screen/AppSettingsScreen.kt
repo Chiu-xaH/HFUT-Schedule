@@ -76,6 +76,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -117,9 +118,10 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         val language by DataStoreManager.language.collectAsState(initial = Language.AUTO.code)
 
 
+        val registry = LocalSharedRegistry.current
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
-                delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                delay(registry.animationTime*1L)
                 value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
             }
         }
