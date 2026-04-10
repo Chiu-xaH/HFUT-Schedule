@@ -29,11 +29,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -49,21 +47,18 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
-
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
-import com.xah.container.component.base.SharedContainer
-import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

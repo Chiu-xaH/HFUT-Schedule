@@ -18,8 +18,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
+import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.util.NavDestination
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.navigation.util.LocalNavControllerSafely
@@ -33,7 +32,7 @@ private fun VersionInfoCard() {
         Row {
             TransplantListItem(
                 // fixme:这里用gradle自动签日期会影响F-Droid构建后校验Smail代码，暂时还是手动标注吧 [issue#50]
-                overlineContent = { ScrollText(text = "2026-04-09") },
+                overlineContent = { ScrollText(text = "2026-04-10") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -67,7 +66,10 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
-            UpdateItems("优化 培养方案完成情况")
+            UpdateItems("新增 浮窗适配预测式手势")
+            UpdateItems("回归 关闭着色器效果下的转场背景缩放特效")
+            UpdateItems("修复 图书馆搜索图片页面顶栏底栏颜色不一的Bug")
+            UpdateItems("优化 培养方案完成情况功能的使用体验", destination = ProgramCompetitionDestination(true))
             // 海乐生活二级界面适配
             // 转专业我的申请界面
             // 教务备用二级界面界面适配

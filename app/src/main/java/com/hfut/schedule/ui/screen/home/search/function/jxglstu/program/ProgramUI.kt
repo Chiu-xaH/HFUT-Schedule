@@ -83,59 +83,55 @@ import kotlinx.coroutines.launch
 
 
 suspend fun createProgramRemarkMap() : Map<Long, String?> {
-    val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
-    val bean = with(Dispatchers.Default) {
-        Gson().fromJson(content, ProgramResponse::class.java)
-    }
-    // 将所有的PlanCourses汇总成哈希表
-    val typeRemarkMap = mutableMapOf<Long, String?>()
-    /*
-data class ProgramResponse(
-override val children : List<ProgramResponse>,
-override val planCourses : List<PlanCourses>,
-) : BaseProgramResponse()
-     */
-    fun collect(node: ProgramResponse) {
-        typeRemarkMap[node.id] = node.remark
-        // 递归子节点
-        node.children.forEach { child ->
-            collect(child)
+    try {
+        val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
+        val bean = with(Dispatchers.Default) {
+            Gson().fromJson(content, ProgramResponse::class.java)
         }
+        // 将所有的PlanCourses汇总成哈希表
+        val typeRemarkMap = mutableMapOf<Long, String?>()
+
+        fun collect(node: ProgramResponse) {
+            typeRemarkMap[node.id] = node.remark
+            // 递归子节点
+            node.children.forEach { child ->
+                collect(child)
+            }
+        }
+        // 从根开始
+        collect(bean)
+        return typeRemarkMap
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return emptyMap()
     }
-    // 从根开始
-    collect(bean)
-
-
-    return typeRemarkMap
 }
 
 suspend fun createProgramMap() : Map<String, PlanCourses> {
-    val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
-    val bean = with(Dispatchers.Default) {
-        Gson().fromJson(content, ProgramResponse::class.java)
-    }
-    // 将所有的PlanCourses汇总成哈希表
-    val courseMap = mutableMapOf<String, PlanCourses>()
-    /*
-data class ProgramResponse(
-override val children : List<ProgramResponse>,
-override val planCourses : List<PlanCourses>,
-) : BaseProgramResponse()
-     */
-    fun collect(node: ProgramResponse) {
-        node.planCourses.forEach { course ->
-            courseMap[course.course.code] = course
+    try {
+        val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
+        val bean = with(Dispatchers.Default) {
+            Gson().fromJson(content, ProgramResponse::class.java)
         }
-        // 递归子节点
-        node.children.forEach { child ->
-            collect(child)
+        // 将所有的PlanCourses汇总成哈希表
+        val courseMap = mutableMapOf<String, PlanCourses>()
+
+        fun collect(node: ProgramResponse) {
+            node.planCourses.forEach { course ->
+                courseMap[course.course.code] = course
+            }
+            // 递归子节点
+            node.children.forEach { child ->
+                collect(child)
+            }
         }
+        // 从根开始
+        collect(bean)
+        return courseMap
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return emptyMap()
     }
-    // 从根开始
-    collect(bean)
-
-
-    return courseMap
 }
 
 @Composable
@@ -214,6 +210,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                 val data : List<ProgramCompletionResponse> = Gson().fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
                 data[0]
             } catch (e : Exception) {
+                LogUtil.error(e)
                 emptyData
             }
         }

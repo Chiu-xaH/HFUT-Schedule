@@ -50,7 +50,6 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -65,7 +64,6 @@ import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDetailDestination
 import com.hfut.schedule.ui.nav.window.ProgramRemarkWindow
@@ -441,7 +439,7 @@ fun ProgramCompetitionDetailScreen(
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("课程代码 或 课程名") },
+                            label = { Text("课程名、代码或备注") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(
@@ -504,7 +502,7 @@ private fun PerformanceInfo(
                 val allCourse = dataList.allCourseList
                 val filteredList = mutableListOf<CourseItem>()
                 allCourse.forEach { i ->
-                    if(i.nameZh.contains(input) || i.code.contains(input)) {
+                    if(i.nameZh.contains(input) || i.code.contains(input) || programCourseMap[i.code]?.remark?.contains(input) == true) {
                         filteredList.add(i)
                     }
                 }
