@@ -81,6 +81,7 @@
     <string name="navigation_label_school_card_warn">Not sufficient funds</string>
     <string name="navigation_label_scan_qr_code_description">Login CAS</string>
     <string name="navigation_label_track">Track</string>
+    <string name="navigation_label_express">Express</string>
     <string name="navigation_label_average_grade">Average grade</string>
     <string name="navigation_label_settings_corner">Screen corner</string>
 </resources>

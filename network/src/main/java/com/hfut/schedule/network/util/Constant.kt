@@ -107,6 +107,9 @@ object Constant {
     // U校园
     const val UNIPUS_URL = "https://u.unipus.cn/"
     const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"
+    // 拼多多取件码
+    const val PDD_PACKAGE_URL = "https://m.pinduoduo.net/mdkd/package"
+    const val PDD_PACKAGE_ID_URL = "https://m.pinduoduo.net/mdkd/identificationCode"
     // WEBVPN COOKIE前缀
     const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
     // PC UA

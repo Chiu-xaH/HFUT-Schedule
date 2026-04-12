@@ -2,13 +2,14 @@ package com.hfut.schedule.logic.util.sys
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
-import androidx.compose.ui.graphics.Color
+import android.util.Log
 import androidx.core.net.toUri
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
@@ -30,6 +31,7 @@ import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.xah.navigation.controller.NavigationController
+import com.xah.shared.LogUtil
 
 
 object Starter {
@@ -37,16 +39,16 @@ object Starter {
         val packageName : String,
         val appName : String,
         val icon : Int,
-        val iconBackgroundColor : Color,
     ) {
-        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园",R.drawable.today_campus_icon, Color(0xFF3452E6)),
-        WECHAT("com.tencent.mm","微信",R.drawable.wechat_icon, Color(0xFF07C561)),
-        CHAO_XING("com.chaoxing.mobile","学习通",R.drawable.chao_xing_icon, Color(0xFFD00521)),
-        MOOC("com.netease.edu.ucmooc","中国大学MOOC",R.drawable.mooc_icon, Color(0xFFFFFFFF)),
-        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂",R.drawable.rain_classroom_icon, Color(0xFF5097F5)),
-        LE_PAO("com.yunzhi.tiyu","云运动",R.drawable.le_pao_icon, Color(0xFF4084FE)),
-        ANHUI_HALL("com.iflytek.oshall.ahzwfw","皖事通",R.drawable.anhui_hall_icon, Color(0xFFE20311)),
-        ALIPAY("com.eg.android.AlipayGphone","支付宝",R.drawable.alipay_icon, Color(0xFF1978FF))
+        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园",R.drawable.today_campus_icon),
+        WECHAT("com.tencent.mm","微信",R.drawable.wechat_icon),
+        CHAO_XING("com.chaoxing.mobile","学习通",R.drawable.chao_xing_icon),
+        MOOC("com.netease.edu.ucmooc","中国大学MOOC",R.drawable.mooc_icon),
+        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂",R.drawable.rain_classroom_icon),
+        LE_PAO("com.yunzhi.tiyu","云运动",R.drawable.le_pao_icon),
+        ANHUI_HALL("com.iflytek.oshall.ahzwfw","皖事通",R.drawable.anhui_hall_icon),
+        ALIPAY("com.eg.android.AlipayGphone","支付宝",R.drawable.alipay_icon),
+        PDD("com.xunmeng.pinduoduo","拼多多",R.drawable.pdd_icon)
     }
     //通过包名启动第三方应用
     @JvmStatic
@@ -63,12 +65,38 @@ object Starter {
 
     @JvmStatic
     fun startWlanSettings(context: Context) {
-        val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-        if (context !is Activity) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            showToast("打开WLAN设置失败")
         }
-        context.startActivity(intent)
     }
+
+    @JvmStatic
+    fun startPddExpress(context: Context) {
+        try {
+            val intent = Intent().apply {
+                component = ComponentName(
+                    AppPackages.PDD.packageName,
+                    "${AppPackages.PDD.packageName}.ui.activity.MainFrameActivity"
+                )
+                data = Constant.PDD_PACKAGE_ID_URL.toUri()
+            }
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("打开${AppPackages.PDD.appName}失败")
+        }
+    }
+
     //传入应用URL打开
     @JvmStatic
     fun startAppUrl(context: Context,url : String,appName : String? = null) {
@@ -79,6 +107,7 @@ object Starter {
             }
             context.startActivity(intent)
         } catch (e : Exception) {
+            LogUtil.error(e)
             val name = if(appName == null) {
                 val scheme = url.substringBefore("://")
                  when(scheme) {
@@ -101,6 +130,7 @@ object Starter {
             }
             context.startActivity(it)
         } catch (e : Exception) {
+            LogUtil.error(e)
             showToast("启动浏览器失败")
         }
     }
@@ -237,7 +267,6 @@ object Starter {
         cookies: String? = null,
         icon : Int? = null
     ) {
-//        GlobalUIStateHolder.pushToFront()
         val it = Intent(context, WebViewActivity::class.java).apply {
             putExtra("url",url)
             putExtra("title",title)
@@ -269,11 +298,16 @@ object Starter {
     }
     @JvmStatic
     fun emailMe(context: Context) {
-        val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
-        if (context !is Activity) {
-            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
+            if (context !is Activity) {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(it)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("启动邮箱应用失败，请向zsh0908@outlook.com发送邮件")
         }
-        context.startActivity(it)
     }
     @JvmStatic
     fun loginSuccess(context: Context) {
@@ -294,14 +328,19 @@ object Starter {
     }
     @JvmStatic
     fun openDownloadFolder(activity: Activity) {
-        val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val uri = Uri.fromFile(downloads) // 或者用 buildTreeDocumentUri() Android 10+
+        try {
+            val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val uri = Uri.fromFile(downloads) // 或者用 buildTreeDocumentUri() Android 10+
 
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
+            }
+
+            activity.startActivityForResult(intent, 100)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("启动下载管理失败")
         }
-
-        activity.startActivityForResult(intent, 100)
     }
 }
 

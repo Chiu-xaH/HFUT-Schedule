@@ -105,6 +105,7 @@ object GlobalStateHolder {
         SearchAppBeanLite(46, CommunityAppointmentDestination.title.resId,CommunityAppointmentDestination.icon),
         SearchAppBeanLite(47, AiDestination.title.resId,AiDestination.icon),
         SearchAppBeanLite(48, TrackDestination.title.resId,TrackDestination.icon),
+        SearchAppBeanLite(49, R.string.navigation_label_express,R.drawable.package_2),
     )
     val funcMaps = funcDefault.toMutableStateList()
 }

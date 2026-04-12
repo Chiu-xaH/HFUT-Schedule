@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -68,7 +69,7 @@ fun TotalCourseScreen(
     vm : NetWorkViewModel,
     ifSaved : Boolean,
 ) {
-    var sortType by remember { mutableStateOf(true) }
+    var sortType by rememberSaveable { mutableStateOf(true) }
 
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)

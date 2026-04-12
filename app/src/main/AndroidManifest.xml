@@ -24,6 +24,7 @@
         <package android:name="com.hfut.schedule" />
         <package android:name="com.eg.android.AlipayGphone" />
         <package android:name="com.hfut.schedule.lite" />
+        <package android:name="com.xunmeng.pinduoduo" />
     </queries>
 
     <application
