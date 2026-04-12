@@ -33,6 +33,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.xah.common.ui.component.text.ScrollText
@@ -79,7 +80,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f)
-                    .clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
+                    .clickable { Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL) },
                 overlineContent = { ScrollText(text = "待圈存 ￥${cardValue?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
             )

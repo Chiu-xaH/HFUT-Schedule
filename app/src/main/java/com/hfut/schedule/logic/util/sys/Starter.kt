@@ -48,7 +48,8 @@ object Starter {
         LE_PAO("com.yunzhi.tiyu","云运动",R.drawable.le_pao_icon),
         ANHUI_HALL("com.iflytek.oshall.ahzwfw","皖事通",R.drawable.anhui_hall_icon),
         ALIPAY("com.eg.android.AlipayGphone","支付宝",R.drawable.alipay_icon),
-        PDD("com.xunmeng.pinduoduo","拼多多",R.drawable.pdd_icon)
+        PDD("com.xunmeng.pinduoduo","拼多多",R.drawable.pdd_icon),
+        TAO_BAO("com.taobao.taobao","淘宝",R.drawable.taobao_icon),
     }
     //通过包名启动第三方应用
     @JvmStatic
@@ -85,17 +86,31 @@ object Starter {
                     AppPackages.PDD.packageName,
                     "${AppPackages.PDD.packageName}.ui.activity.MainFrameActivity"
                 )
-                data = Constant.PDD_PACKAGE_ID_URL.toUri()
+                data = Constant.PDD_PACKAGE_URL.toUri()
             }
-            if (context !is Activity) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         } catch (e : Exception) {
             LogUtil.error(e)
             showToast("打开${AppPackages.PDD.appName}失败")
         }
     }
+
+    @JvmStatic
+    fun startTaoBaoExpress(context: Context) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Constant.TAO_BAO_PACKAGE_ID_URL.toUri()
+                setPackage(AppPackages.TAO_BAO.packageName)
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("打开${AppPackages.TAO_BAO.appName}失败")
+        }
+    }
+
 
     //传入应用URL打开
     @JvmStatic

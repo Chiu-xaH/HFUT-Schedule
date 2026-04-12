@@ -409,7 +409,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                                             if (text != null) {
                                                 //余额不足//未登录//正常
                                                 if (text != "00" && text!!.toDouble() < 10) {
-                                                    Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL)
+                                                    Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL)
                                                 } else if (text == "00") {
                                                     refreshLogin(context)
                                                 } else {
@@ -463,7 +463,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             headlineContent = { Text(text = "充值") },
                             supportingContent = { Text(text = "跳转至支付宝校园卡页面")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) }
+                            modifier = Modifier.clickable { Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(

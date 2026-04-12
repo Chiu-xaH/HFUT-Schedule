@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.common.ui.component.text.ScrollText
 
@@ -20,6 +21,6 @@ fun HotWater() {
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_hot_water)) },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
-        modifier = Modifier.clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_HOT_WATER_URL) }
+        modifier = Modifier.clickable { Starter.startAppUrl(context,Constant.ALIPAY_HOT_WATER_URL) }
     )
 }

@@ -66,13 +66,6 @@ class MyApplication : Application() {
         const val BLUR_RADIUS = 20
         // 宣城校区免费流量额度 GiB
         const val DEFAULT_MAX_FREE_FLOW = 30
-        // 支付宝打开URL
-        private const val ALIPAY_URL = "alipays://platformapi/startapp?appId=20000067&url="
-        private const val ALIPAY_INNER_URL = "https://ur.alipay.com/"
-        // 支付宝 校园卡
-        const val ALIPAY_CARD_URL = ALIPAY_URL + ALIPAY_INNER_URL + "_4kQhV32216tp7bzlDc3E1k"
-        // 支付宝 趣智校园
-        const val ALIPAY_HOT_WATER_URL = ALIPAY_URL + ALIPAY_INNER_URL + "_3B2YzKjbV75xL9a2oapcNz"
         // 最大周
         const val MAX_WEEK = 20
         // 三个校区的经纬度 来自高德地图坐标拾取器

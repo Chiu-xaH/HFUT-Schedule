@@ -112,7 +112,7 @@ Android 8.0及以上，接入互联网
 [Supabase](https://github.com/supabase/supabase) 托管供提供数据库
 
 ### 开源社区
-初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App，还有对一些操作系统的借鉴，在此不一一列举了
+初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App(例如 [师韵-SmartHNU](https://github.com/JiaLiFuNia/SmartHNU))，还有对一些操作系统的借鉴，在此不一一列举了
 
 感谢其他高校开发者对本项目的肯定与参考，在此不一一列举了
 

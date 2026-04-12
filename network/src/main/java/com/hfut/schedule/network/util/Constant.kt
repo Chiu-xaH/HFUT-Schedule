@@ -107,9 +107,20 @@ object Constant {
     // U校园
     const val UNIPUS_URL = "https://u.unipus.cn/"
     const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"
+    // 支付宝打开URL
+    private const val ALIPAY_URL = "alipays://platformapi/startapp?appId=20000067&url="
+    private const val ALIPAY_INNER_URL = "https://ur.alipay.com/"
+    // 支付宝 校园卡
+    const val ALIPAY_CARD_URL = ALIPAY_URL + ALIPAY_INNER_URL + "_4kQhV32216tp7bzlDc3E1k"
+    // 支付宝 趣智校园
+    const val ALIPAY_HOT_WATER_URL = ALIPAY_URL + ALIPAY_INNER_URL + "_3B2YzKjbV75xL9a2oapcNz"
     // 拼多多取件码
-    const val PDD_PACKAGE_URL = "https://m.pinduoduo.net/mdkd/package"
+    const val PDD_PACKAGE_URL = "https://m.pinduoduo.net/mdkd/package?tab=ID_CODE"
     const val PDD_PACKAGE_ID_URL = "https://m.pinduoduo.net/mdkd/identificationCode"
+    // 淘宝取件码
+    const val TAO_BAO_PACKAGE_URL = "https://pages-fast.m.taobao.com/wow/z/uniapp/1100333/last-mile-fe/m-end-school-tab/home"
+    const val TAO_BAO_PACKAGE_ID_URL = "https://pages-fast.m.taobao.com/wow/z/uniapp/1011717/last-mile-fe/end-collect-platform/identity-code"
+//    const val TAO_BAO_PACKAGE_ID_URL = ":https://pages-fast.m.taobao.com/wow/z/uniapp/1100333/identityCode"
     // WEBVPN COOKIE前缀
     const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
     // PC UA

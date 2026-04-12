@@ -14,12 +14,13 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.common.ui.component.text.ScrollText
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
+import com.hfut.schedule.ui.nav.window.ExpressWindow
+import com.xah.floating.util.LocalFloatingController
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Express() {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val floatController = LocalFloatingController.current
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_express)) },
         leadingContent = {
@@ -27,9 +28,7 @@ fun Express() {
 
         },
         modifier = Modifier.clickable {
-            scope.launch {
-                Starter.startPddExpress(context)
-            }
+            floatController.push(ExpressWindow)
         }
     )
 }

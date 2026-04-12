@@ -31,6 +31,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -103,7 +104,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
-                    onClick = { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
+                    onClick = { Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL) },
 //                    colors =  if(text!!.length <= 4) {
 //                        IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
 //                    } else IconButtonDefaults.filledTonalIconButtonColors()

@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
+import com.hfut.schedule.ui.nav.window.ExpressWindow
 
 import com.hfut.schedule.ui.screen.home.search.function.community.appointment.Appointment
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
@@ -249,7 +250,7 @@ fun SearchScreen(
                 SearchAppBean(46,"${CommunityAppointmentDestination.title.asString(context)} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment() }, CommunityAppointmentDestination.key),
                 SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI() }, AiDestination.key),
                 SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track() }, TrackDestination.key),
-                SearchAppBean(49,"拼多多 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() }),
+                SearchAppBean(49,"拼多多 淘宝 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() },ExpressWindow.key),
             )
         )
     }

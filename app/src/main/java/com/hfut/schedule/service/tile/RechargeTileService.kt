@@ -6,13 +6,14 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.xah.shared.LogUtil
 
 class RechargeTileService : TileService() {
     override fun onClick() {
         super.onClick()
         try {
-            val intent = Intent(Intent.ACTION_DEFAULT, MyApplication.ALIPAY_CARD_URL.toUri())
+            val intent = Intent(Intent.ACTION_DEFAULT, Constant.ALIPAY_CARD_URL.toUri())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         } catch (e : Exception) {

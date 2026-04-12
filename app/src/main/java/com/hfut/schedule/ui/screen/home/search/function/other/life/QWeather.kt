@@ -23,12 +23,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -55,17 +57,89 @@ fun LifeScreenMini(vm: NetWorkViewModel) {
     DividerTextExpandedWith(text = "校园地图") {
         SchoolMapScreen(vm)
     }
-    DividerTextExpandedWith("办事") {
+    DividerTextExpandedWith("外部应用") {
         CardListItem(
             headlineContent = { Text(Starter.AppPackages.ANHUI_HALL.appName) },
             supportingContent = {
-                Text("学校医保缴费、宣城市实时公交等功能")
+                Text("医保缴费、宣城市实时公交等功能")
             },
             modifier = Modifier.clickable {
                 Starter.startAppLaunch(Starter.AppPackages.ANHUI_HALL,context)
             },
             leadingContent = {
                 StartAppIcon(Starter.AppPackages.ANHUI_HALL)
+            }
+        )
+        CardListItem(
+            headlineContent = { Text(Starter.AppPackages.PDD.appName) },
+            supportingContent = {
+                Text("拼多多身份码，校区快递站用")
+            },
+            modifier = Modifier.clickable {
+                Starter.startPddExpress(context)
+            },
+            leadingContent = {
+                StartAppIcon(Starter.AppPackages.PDD)
+            }
+        )
+        CardListItem(
+            headlineContent = { Text(Starter.AppPackages.TAO_BAO.appName) },
+            supportingContent = {
+                Text("淘宝身份码，合肥校区快递站用")
+            },
+            modifier = Modifier.clickable {
+                Starter.startTaoBaoExpress(context)
+            },
+            leadingContent = {
+                StartAppIcon(Starter.AppPackages.TAO_BAO)
+            }
+        )
+        CardListItem(
+            headlineContent = { Text(Starter.AppPackages.ALIPAY.appName) },
+            supportingContent = {
+                Text("校园卡缴费")
+            },
+            modifier = Modifier.clickable {
+                Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL, Starter.AppPackages.ALIPAY.appName)
+            },
+            leadingContent = {
+                StartAppIcon(Starter.AppPackages.ALIPAY)
+            }
+        )
+        CardListItem(
+            headlineContent = { Text(Starter.AppPackages.ALIPAY.appName) },
+            supportingContent = {
+                Text("海乐生活热水机")
+            },
+            modifier = Modifier.clickable {
+                Starter.startAppUrl(context, Constant.ALIPAY_HOT_WATER_URL, Starter.AppPackages.ALIPAY.appName)
+            },
+            leadingContent = {
+                StartAppIcon(Starter.AppPackages.ALIPAY)
+            }
+        )
+        CardListItem(
+            headlineContent = { Text(Starter.AppPackages.LE_PAO.appName) },
+            supportingContent = {
+                Text("大一大二校园跑")
+            },
+            modifier = Modifier.clickable {
+                Starter.startAppLaunch(Starter.AppPackages.LE_PAO,context)
+            },
+            leadingContent = {
+                StartAppIcon(Starter.AppPackages.LE_PAO)
+            }
+        )
+        CardListItem(
+            headlineContent = { Text(Starter.AppPackages.TODAY_CAMPUS.appName) },
+            supportingContent = {
+                Text("节假日离返校、心理测试等")
+            },
+            modifier = Modifier.clickable {
+                Starter.startAppLaunch(Starter.AppPackages.TODAY_CAMPUS,context)
+            },
+            leadingContent = {
+                StartAppIcon(Starter.AppPackages.TODAY_CAMPUS)
             }
         )
     }
