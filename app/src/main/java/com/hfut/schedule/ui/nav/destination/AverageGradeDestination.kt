@@ -12,6 +12,7 @@ data class AverageGradeDestination(
     val useUniAppData : Boolean
 ) : NavDestination() {
     override val key = "average_grade_$useUniAppData"
+    override val description = if(useUniAppData) "合工大教务数据源" else "教务系统数据源"
     override val title = TITLE
     override val icon = ICON
 

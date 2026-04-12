@@ -30,6 +30,7 @@ data class FailRateApiDestination(
     val lessonCode : String?,
 ) : NavDestination() {
     override val key = "fail_rate_api_$courseName"
+    override val description = courseName
     override val title = TITLE
     override val icon = ICON
 

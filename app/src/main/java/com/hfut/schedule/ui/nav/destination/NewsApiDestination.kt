@@ -12,6 +12,7 @@ data class NewsApiDestination(
     val keyword : String
 ) : NavDestination() {
     override val key = "news_api_$keyword"
+    override val description = keyword
     override val title = TITLE
     override val icon = ICON
 

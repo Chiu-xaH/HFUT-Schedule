@@ -30,6 +30,7 @@ data class FailRateDetailDestination(
     val bean : List<courseFailRateDTOList>
 ) : NavDestination() {
     override val key = "fail_rate_detail_${courseName}_${lessonId}"
+    override val description = courseName
     override val title = TITLE
     override val icon = ICON
 

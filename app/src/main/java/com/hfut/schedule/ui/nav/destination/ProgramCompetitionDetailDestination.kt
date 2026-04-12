@@ -16,6 +16,10 @@ data class ProgramCompetitionDetailDestination(
     val programTypeMap : Map<Long, String?>
 ) : NavDestination() {
     override val key = "program_competition_detail_${item.hashCode()}"
+    override val description = when(item) {
+        is ProgramPerformanceDetailItem.Outer -> "培养方案外课程"
+        is ProgramPerformanceDetailItem.Inner -> item.bean.nameZh
+    }
     override val title = TITLE
     override val icon = ICON
 

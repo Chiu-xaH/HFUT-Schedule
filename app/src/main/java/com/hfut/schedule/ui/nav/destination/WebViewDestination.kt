@@ -12,6 +12,7 @@ data class WebViewDestination(
     override val icon : Int = R.drawable.net
 ) : NavDestination() {
     override val key = getKey(url)
+    override val description = name
     override val title = res(R.string.navigation_label_web)
 
     companion object {

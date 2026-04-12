@@ -13,6 +13,7 @@ data class ClassroomCourseTableDestination(
     val name : String
 ) : NavDestination() {
     override val key = "classroom_course_table_${roomId}_$name"
+    override val description = name
     override val title = TITLE
     override val icon = ICON
 

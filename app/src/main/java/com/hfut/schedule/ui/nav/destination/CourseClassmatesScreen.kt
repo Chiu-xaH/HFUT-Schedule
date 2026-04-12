@@ -13,17 +13,18 @@ data class CourseClassmatesScreen(
     val courseName : String,
 ) : NavDestination() {
     override val key = "course_classmates_${lessonId}_$courseName"
-    override val title = text("$TITLE-$courseName")
+    override val description = courseName
+    override val title = text(TITLE)
     override val icon = ICON
 
     companion object {
-        val TITLE = "同班同学"
+        const val TITLE = "同班同学"
         val ICON = R.drawable.group
     }
 
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        ClassmatesScreen(vm,lessonId,title)
+        ClassmatesScreen(vm,lessonId,text("$TITLE-$description"))
     }
 }

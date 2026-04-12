@@ -13,6 +13,7 @@ data class AdmissionDetailDestination(
     val type : String
 ) : NavDestination() {
     override val key = "admission_region_${index}_$type"
+    override val description = type
     override val title = TITLE
     override val icon = ICON
 

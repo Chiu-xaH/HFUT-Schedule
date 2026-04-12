@@ -29,6 +29,7 @@ data class TeacherSearchApiDestination(
     val teacherName : String
 ) : NavDestination() {
     override val key = "teacher_search_api_$teacherName"
+    override val description = teacherName
     override val title = TITLE
     override val icon = ICON
 

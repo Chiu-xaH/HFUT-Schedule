@@ -11,6 +11,7 @@ data class WorkAndRestDestination(
 ) : NavDestination() {
     override val key = "work_and_rest_$name"
     override val title = TITLE
+    override val description = name
     override val icon = ICON
 
     companion object {

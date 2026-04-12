@@ -13,6 +13,7 @@ data class SelectCoursesDetailDestination(
     val name : String
 ) : NavDestination() {
     override val key = "select_courses_detail_${name}_$index"
+    override val description = name
     override val title = TITLE
     override val icon = ICON
 

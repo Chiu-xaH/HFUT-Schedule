@@ -13,7 +13,8 @@ data class TransferMajorDetailDestination(
     val batchId : String,
     val isHidden : Boolean
 ) : NavDestination() {
-    override val key = "transfer_major_detail_${name}_${batchId}_${isHidden}"
+    override val key = "transfer_major_detail_${batchId}_${isHidden}"
+    override val description = name
     override val title = TITLE
     override val icon = ICON
 

@@ -13,6 +13,7 @@ data class DropCoursesDestination(
     val name : String,
 ) : NavDestination() {
     override val key = "drop_courses_${index}_$name"
+    override val description = name
     override val title = TITLE
     override val icon = ICON
 

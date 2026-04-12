@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import com.hfut.schedule.BuildConfig
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -15,6 +17,40 @@ import kotlinx.coroutines.launch
 import java.util.Collections
 
 class MyApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        context = applicationContext
+        LogUtil.init(APP_NAME)
+        GlobalScope.launch {
+            DateTimeManager.initCurrentWeekValue()
+        }
+        // 控制SharedNav库的日志
+        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",BuildConfig.DEBUG)
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityCreated(a: Activity, b: Bundle?) {
+                activities.add(a)
+            }
+
+            override fun onActivityDestroyed(a: Activity) {
+                activities.remove(a)
+            }
+
+            override fun onActivityPaused(activity: Activity) {}
+
+            override fun onActivityResumed(activity: Activity) {}
+
+            override fun onActivitySaveInstanceState(
+                activity: Activity,
+                outState: Bundle
+            ) {}
+
+            override fun onActivityStarted(activity: Activity) {}
+
+            override fun onActivityStopped(activity: Activity) {}
+        })
+    }
+
     companion object {
         // 全局动画速度ANIMATION_SPEED=400ms已经迁移到AnimationManager
         @SuppressLint("StaticFieldLeak")
@@ -73,37 +109,6 @@ class MyApplication : Application() {
                 activity.finish()
             }
         }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        context = applicationContext
-        LogUtil.tag = APP_NAME
-        GlobalScope.launch {
-            DateTimeManager.initCurrentWeekValue()
-        }
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            override fun onActivityCreated(a: Activity, b: Bundle?) {
-                activities.add(a)
-            }
-
-            override fun onActivityDestroyed(a: Activity) {
-                activities.remove(a)
-            }
-
-            override fun onActivityPaused(activity: Activity) {}
-
-            override fun onActivityResumed(activity: Activity) {}
-
-            override fun onActivitySaveInstanceState(
-                activity: Activity,
-                outState: Bundle
-            ) {}
-
-            override fun onActivityStarted(activity: Activity) {}
-
-            override fun onActivityStopped(activity: Activity) {}
-        })
     }
 }
 

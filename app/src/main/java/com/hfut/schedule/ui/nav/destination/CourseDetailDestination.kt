@@ -27,6 +27,7 @@ data class CourseDetailDestination(
     val courseBookData : Map<Long, CourseBookBean> = emptyMap()
 ) : NavDestination() {
     override val key = "course_api_detail_${lesson.id}"
+    override val description = lesson.course.nameZh
     override val title = TITLE
     override val icon = ICON
 
@@ -46,7 +47,7 @@ data class CourseDetailDestination(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(lesson.course.nameZh) },
+                    title = { Text(description) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

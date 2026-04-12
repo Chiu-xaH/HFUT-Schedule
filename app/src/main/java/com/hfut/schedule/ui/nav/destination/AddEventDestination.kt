@@ -15,6 +15,7 @@ data class AddEventDestination(
 ) : NavDestination() {
     override val key: String = "add_event_${origin}_$id"
     override val title: UiText = TITLE
+    override val description = "日程 $id"
     override val icon = ICON
 
     companion object {

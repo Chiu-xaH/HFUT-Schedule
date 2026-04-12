@@ -16,6 +16,7 @@ data class CourseApiDetailDestination(
     val classroom : String?,
 ) : NavDestination() {
     override val key = "course_api_detail_${endKey}_$courseName"
+    override val description = courseName
     override val title = TITLE
     override val icon = ICON
 
