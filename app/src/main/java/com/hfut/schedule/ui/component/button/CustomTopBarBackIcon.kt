@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.component.button
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -92,10 +93,12 @@ val LocalAppControlCenter = staticCompositionLocalOf<DrawerState> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarNavigationIcon() {
+    val activity = LocalActivity.current
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val queue = navController.stack.reversed()
     var displayDialog by remember { mutableStateOf(false) }
+    val canPop = navController.canPop()
 
     if(displayDialog) {
         Dialog(
@@ -188,21 +191,25 @@ fun TopBarNavigationIcon() {
         }
     }
 
-    val enabled = navController.canPop()
-
     Box(
         modifier = Modifier
             .padding(horizontal = CARD_NORMAL_DP/2)
             .clip(CircleShape)
             .combinedClickable(
-                enabled = enabled,
+                enabled = true,
                 onClick = {
-                    navController.pop()
+                    if(canPop) {
+                        navController.pop()
+                    } else {
+                        activity?.finish()
+                    }
                 },
                 // TODO 预留唤出启动台
                 onDoubleClick = null,
-                onLongClick = {
-                    displayDialog = true
+                onLongClick = if(canPop) {
+                    { displayDialog = true }
+                } else {
+                    null
                 }
             )
     ) {
@@ -210,13 +217,15 @@ fun TopBarNavigationIcon() {
             modifier = Modifier.padding(DIVIDER_TEXT_VERTICAL_PADDING)
         ) {
             Icon(
-                painterResource(R.drawable.arrow_back),
+                painterResource(
+                    if(canPop) {
+                        R.drawable.arrow_back
+                    } else {
+                        R.drawable.close
+                    }
+                ),
                 contentDescription = null,
-                tint = if(enabled) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.primary.copy(.5f)
-                }
+                tint =  MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -247,15 +256,31 @@ private fun C() {
 fun LiquidTopBarNavigateIcon(
     backdrop: Backdrop,
 ) {
+    val activity = LocalActivity.current
     val navController = LocalNavController.current
+    val canPop = navController.canPop()
     LiquidButton (
-        onClick = { navController.pop() },
+        onClick = {
+            if(canPop) {
+                navController.pop()
+            } else {
+                activity?.finish()
+            }
+        },
         backdrop = backdrop,
         isCircle = true,
-        enabled = navController.canPop(),
         modifier = Modifier.padding(start = APP_HORIZONTAL_DP-2.5.dp, end = 9.dp)
     ) {
-        Icon(painterResource(R.drawable.arrow_back), contentDescription = null)
+        Icon(
+            painterResource(
+                if(canPop) {
+                    R.drawable.arrow_back
+                } else {
+                    R.drawable.close
+                }
+            ),
+            contentDescription = null
+        )
     }
 }
 

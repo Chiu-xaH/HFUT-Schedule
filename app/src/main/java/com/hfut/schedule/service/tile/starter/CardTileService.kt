@@ -1,4 +1,4 @@
-package com.hfut.schedule.service.tile.base
+package com.hfut.schedule.service.tile.starter
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -8,22 +8,18 @@ import android.os.Looper
 import android.service.quicksettings.TileService
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.hfut.schedule.activity.MainActivity
-import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.activity.screen.CardActivity
 import com.xah.shared.LogUtil
 
-open class BaseDestinationTileService(
-    private val destination: NavDestination
-) : TileService() {
+class CardTileService() : TileService() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onClick() {
         super.onClick()
 
         unlockAndRun {
             try {
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    putExtra("route", destination::class.java.name)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val intent = Intent(this, CardActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 }
 
                 // 创建 PendingIntent

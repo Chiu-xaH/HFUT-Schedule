@@ -1,35 +1,227 @@
 package com.hfut.schedule.logic.util.shortcut
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
+import androidx.core.net.toUri
+import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
+import com.hfut.schedule.activity.screen.CardActivity
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.text
+import com.xah.shared.LogUtil
 
-
+/**
+ * 桌面长按图标快捷菜单
+ * 【修复】作为第一个项目并常驻，配置在shortcut.xml中，其余三个可自由定制
+ */
 object AppShortcutManager {
-    fun createScanShortcut(context: Context) {
-        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
 
-        // 构造启动 MainActivity 的 Intent，带参数
-        val intent = Intent(context, MainActivity::class.java).apply {
-//            Intent.setAction = Intent.ACTION_VIEW
-            action = Intent.ACTION_VIEW
-            putExtra("route", "ScanQrCodeDestination")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    data class ShortcutConfig(
+        val id : String,
+        val label : UiText,
+        val icon : Int,
+        val intent : Intent,
+        val longLabel : UiText = label,
+    )
+
+    private fun ShortcutConfig.createShortcut(context: Context) : ShortcutInfo {
+        return ShortcutInfo.Builder(context, "${this.id}_shortcut")
+            .setShortLabel(this.label.asString(context))
+            .setLongLabel(this.longLabel.asString(context))
+            .setIcon(Icon.createWithResource(context, this.icon))
+            .setIntent(this.intent)
+            .build()
+    }
+
+    private const val CARD_ID = "card"
+//    private fun createCardShortcut(context: Context) : ShortcutConfig {
+//        val intent = Intent(context, CardActivity::class.java).apply {
+//            action = Intent.ACTION_VIEW
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//        }
+//        return ShortcutConfig(
+//            CARD_ID,
+//            text("校园卡"),
+//            R.drawable.credit_card_black,
+//            intent
+//        )
+//    }
+    private fun createCardShortcut(): ShortcutConfig {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setClassName(
+                BuildConfig.APPLICATION_ID,
+                CardActivity::class.java.name
+            )
+            addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+            )
         }
 
-        // 构造 ShortcutInfo
-        val shortcut = ShortcutInfo.Builder(context, "scan_shortcut")
-            .setShortLabel("CAS扫码")
-            .setLongLabel("CAS扫码")
-            .setIcon(Icon.createWithResource(context, R.drawable.qr_code_scanner_shortcut))
-            .setIntent(intent)  // 带参数
-            .build()
+        return ShortcutConfig(
+            CARD_ID,
+            text("校园卡"),
+            R.drawable.credit_card_black,
+            intent
+        )
+    }
 
-        // 添加动态快捷方式
-        shortcutManager?.dynamicShortcuts = listOf(shortcut)
+    private const val SCAN_ID = "scan"
+//    private fun createScanShortcut(context: Context) : ShortcutConfig {
+//        val intent = Intent(context, MainActivity::class.java).apply {
+//            action = Intent.ACTION_VIEW
+//            putExtra("route", ScanQrCodeDestination::class.java.name)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
+//        return ShortcutConfig(
+//            SCAN_ID,
+//            text("CAS扫码"),
+//            R.drawable.qr_code_scanner_shortcut,
+//            intent
+//        )
+//    }
+    private fun createScanShortcut(): ShortcutConfig {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setClassName(
+                BuildConfig.APPLICATION_ID,
+                MainActivity::class.java.name
+            )
+            putExtra("route", ScanQrCodeDestination::class.java.name)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        return ShortcutConfig(
+            SCAN_ID,
+            text("CAS扫码"),
+            R.drawable.qr_code_scanner_shortcut,
+            intent
+        )
+    }
+
+    private fun buildAppUrlIntent(url: String): Intent {
+        return Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+    }
+
+    private const val HOT_WATER_ID = "hot_water"
+    private fun createHotWaterShortcut(): ShortcutConfig {
+        val intent = buildAppUrlIntent(Constant.ALIPAY_HOT_WATER_URL)
+        return ShortcutConfig(
+            HOT_WATER_ID,
+            text("热水"),
+            R.drawable.water_voc_shortcut,
+            intent,
+            text("热水(支付宝)"),
+        )
+    }
+
+    private const val RECHARGE_ID = "recharge"
+    private fun createRechargeShortcut(): ShortcutConfig {
+        val intent = buildAppUrlIntent(Constant.ALIPAY_CARD_URL)
+        return ShortcutConfig(
+            RECHARGE_ID,
+            text("校园卡充值"),
+            R.drawable.add_card,
+            intent,
+            text("校园卡充值(支付宝)"),
+        )
+    }
+
+    private const val EXPRESS_PDD_ID = "express_pdd"
+    private fun createExpressPddShortcut(): ShortcutConfig {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            component = ComponentName(
+                Starter.AppPackages.PDD.packageName,
+                "${Starter.AppPackages.PDD.packageName}.ui.activity.MainFrameActivity"
+            )
+            data = Constant.PDD_PACKAGE_URL.toUri()
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        return ShortcutConfig(
+            EXPRESS_PDD_ID,
+            text("快递"),
+            R.drawable.pdd_icon,
+            intent,
+            text("快递(拼多多)")
+        )
+    }
+
+    private const val EXPRESS_TAOBAO_ID = "express_taobao"
+    private fun createExpressTaoBaoShortcut(): ShortcutConfig {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Constant.TAO_BAO_PACKAGE_ID_URL.toUri()
+            setPackage(Starter.AppPackages.TAO_BAO.packageName)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        return ShortcutConfig(
+            EXPRESS_TAOBAO_ID,
+            text("快递"),
+            R.drawable.taobao_icon,
+            intent,
+            text("快递(淘宝)")
+        )
+    }
+
+    private val shortcuts = listOf(
+        createScanShortcut(),
+        createCardShortcut(),
+        createExpressPddShortcut(),
+        createExpressTaoBaoShortcut(),
+        createHotWaterShortcut(),
+        createRechargeShortcut(),
+    )
+
+    fun getStorageStr() = shortcuts.joinToString(",") { it.id }
+
+    // 按字符串排序
+    private fun MutableList<ShortcutConfig>.reorderByIdsStr(idOrder: String): MutableList<ShortcutConfig> {
+        return try {
+            val order = idOrder.split(",").map { it.trim() }
+            reorderByIds(order)
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            // 出错时恢复默认顺序
+            shortcuts.toMutableList()
+        }
+    }
+
+    // 按 List<Int> 排序，并把未出现的新元素追加到末尾
+    private fun MutableList<ShortcutConfig>.reorderByIds(idOrder: List<String>): MutableList<ShortcutConfig> {
+        val map = this.associateBy { it.id }
+
+        // 按顺序取出原有元素
+        val sorted = idOrder.mapNotNull { map[it] }.toMutableList()
+
+        // 追加未在 idOrder 中的新元素
+        val remaining = this.filter { it.id !in idOrder }
+        sorted.addAll(remaining)
+
+        this.clear()
+        this.addAll(sorted)
+        return this
+    }
+
+
+    fun init(context : Context,customSort : String? = null) {
+        // 只能显示前3个
+        try {
+            val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+            val list = customSort?.let {
+                shortcuts.toMutableList().reorderByIdsStr(it)
+            } ?: shortcuts
+            shortcutManager?.dynamicShortcuts = list.map { it.createShortcut(context) }
+        } catch (e : Exception) {
+            LogUtil.error(e)
+        }
     }
 }

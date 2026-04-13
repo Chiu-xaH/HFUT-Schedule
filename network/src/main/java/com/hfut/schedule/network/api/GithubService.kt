@@ -28,4 +28,7 @@ interface GithubService {
         @Query("page") page : Int,
         @Query("per_page") pageSize : String = Constant.DEFAULT_PAGE_SIZE.toString()
     ) : Call<ResponseBody>
+
+    @GET("repos/${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}/contributors")
+    fun getContributors() : Call<ResponseBody>
 }

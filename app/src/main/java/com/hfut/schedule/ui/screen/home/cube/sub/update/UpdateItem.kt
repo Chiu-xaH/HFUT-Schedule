@@ -18,9 +18,11 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.nav.window.ExpressWindow
+import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
 
 @SuppressLint("SuspiciousIndentation")
@@ -32,7 +34,7 @@ private fun VersionInfoCard() {
         Row {
             TransplantListItem(
                 // fixme:这里用gradle自动签日期会影响F-Droid构建后校验Smail代码，暂时还是手动标注吧 [issue#50]
-                overlineContent = { ScrollText(text = "2026-04-12") },
+                overlineContent = { ScrollText(text = "2026-04-13") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -54,7 +56,6 @@ private fun VersionInfoCard() {
 }
 
 
-
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
@@ -64,7 +65,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-快递")//
+            UpdateItems("新增 快递身份码、热水机的长按桌面图标的快捷菜单以及控制中心磁贴")
+            UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-快递",To.Window(ExpressWindow))//
             UpdateItems("优化 打断动画的连贯性")//
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
@@ -144,11 +146,16 @@ private enum class UpdateType(val res : Int) {
     PERFORMANCE(R.drawable.flash_on)
 }
 
+private sealed class To {
+    data class Screen(val destination: NavDestination) : To()
+    data class Window(val window : FloatingWindow) : To()
+}
+
 @Composable
 private fun UpdateItems(
     title : String,
     info : String? = null,
-    destination: NavDestination? = null,
+    to: To? = null,
     type : UpdateType = when(title.substringBefore(" ")) {
         "新增" -> UpdateType.ADD
         "重构" -> UpdateType.RENEW
@@ -167,15 +174,19 @@ private fun UpdateItems(
     }
 ) {
     val navController = LocalNavControllerSafely.current
+    val floatingController = LocalFloatingControllerSafely.current
     TransplantListItem(
         headlineContent = { Text(text = title) },
         supportingContent = { info?.let { Text(text = it) } },
         trailingContent = {
-            navController?.let { controller ->
-                destination?.let { dest ->
+            to?.let {
+                if(navController != null && floatingController != null) {
                     FilledTonalIconButton(
                         onClick = {
-                            controller.push(dest)
+                            when(it) {
+                                is To.Screen -> navController.push(it.destination)
+                                is To.Window -> floatingController.push(it.window)
+                            }
                         }
                     ) {
                         Icon(painterResource(R.drawable.arrow_forward),null)

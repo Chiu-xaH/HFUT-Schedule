@@ -2,18 +2,6 @@
 <shortcuts xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
-        android:icon="@drawable/credit_card_black"
-        android:shortcutId="card"
-        android:shortcutLongLabel="@string/card"
-        android:shortcutShortLabel="@string/card"
-        tools:ignore="UnusedAttribute">
-        <intent
-            android:action="com.hfut.schedule.shortcut"
-            android:targetClass="com.hfut.schedule.activity.screen.CardActivity"
-            android:targetPackage="com.hfut.schedule" />
-    </shortcut>
-
-    <shortcut
         android:icon="@drawable/build_shortcut"
         android:shortcutId="fix"
         android:shortcutLongLabel="@string/fix"

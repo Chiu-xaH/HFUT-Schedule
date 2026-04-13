@@ -17,6 +17,7 @@ import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
@@ -117,6 +118,7 @@ object DataStoreManager : IDataStore {
     private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style_2")
     private val CUSTOM_CALENDAR_SQUARE_ALPHA = floatPreferencesKey("custom_calendar_square_alpha")
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
+    private val SHORTCUT_SORT = stringPreferencesKey("shortcut_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
     private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
     private val KEEP_PREVIOUS_PAGE = booleanPreferencesKey("keep_previous_page")
@@ -180,6 +182,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
     suspend fun saveScreenCorner(value: Float) = saveValue(SCREEN_CORNER,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
+    suspend fun saveShortcutSort(value: List<Int>) = saveValue(SHORTCUT_SORT, value.joinToString(","))
     suspend fun saveReadNotifications(value: List<Int>) = saveValue(READ_NOTIFICATIONS, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
@@ -246,6 +249,7 @@ object DataStoreManager : IDataStore {
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
     val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)
+    val shortcutSort = getFlow(SHORTCUT_SORT, AppShortcutManager.getStorageStr())
     val readNotifications = getFlow(READ_NOTIFICATIONS, EMPTY_STRING)
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)

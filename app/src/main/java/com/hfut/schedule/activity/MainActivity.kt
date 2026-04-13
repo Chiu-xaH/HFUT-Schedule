@@ -37,7 +37,7 @@ class MainActivity : BaseActivity() {
             }
             launch {
                 // 动态ShortCut添加（长按图标菜单）
-                AppShortcutManager.createScanShortcut(this@MainActivity)
+                AppShortcutManager.init(this@MainActivity)
             }
             launch {
                 // 大文本迁移

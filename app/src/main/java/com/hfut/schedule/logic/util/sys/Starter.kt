@@ -117,9 +117,7 @@ object Starter {
     fun startAppUrl(context: Context,url : String,appName : String? = null) {
         try {
             val intent = Intent(Intent.ACTION_DEFAULT, url.toUri())
-            if (context !is Activity) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         } catch (e : Exception) {
             LogUtil.error(e)
