@@ -40,22 +40,24 @@ import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
+import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
-import com.xah.floating.model.Window
 import com.xah.floating.util.LocalFloatingController
-import com.xah.shared.LogUtil
 
 
 data class TimeTableSquareWindow(
     val list : List<TimeTableItem>
-) : Window() {
+) : FloatingWindow() {
 
     override val key = getSharedKey()
+
+    override val title = text("方格详情")
 
     private fun getSharedKey() : String {
         return if(list.size == 1) {
@@ -96,7 +98,7 @@ data class TimeTableSquareWindow(
                         val item = list[0]
                         item.detail.date.substringAfter("-") + " 周${numToChinese(item.dayOfWeek)}"
                     } else {
-                        "方格详情"
+                        title.asString()
                     }
                     Box {
                         LazyColumn {

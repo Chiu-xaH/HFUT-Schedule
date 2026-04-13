@@ -7,7 +7,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.datetime.Celebration
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel

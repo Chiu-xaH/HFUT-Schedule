@@ -83,5 +83,4 @@ fun LifeScreen(
             InnerPaddingHeight(innerPadding,false)
         }
     }
-//    }
 }

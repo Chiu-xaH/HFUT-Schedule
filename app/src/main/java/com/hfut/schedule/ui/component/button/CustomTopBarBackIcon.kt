@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination.title
 import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.xah.mirror.util.ShaderState

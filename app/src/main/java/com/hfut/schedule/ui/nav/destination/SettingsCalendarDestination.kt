@@ -21,7 +21,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusWidgetSettingsScreen
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.style.color.topBarTransplantColor

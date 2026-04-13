@@ -19,7 +19,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.navigation.util.LocalNavControllerSafely
 
@@ -64,8 +64,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-生活服务")
-            UpdateItems("优化 关闭页面时支持打开其他页面")
+            UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-快递")//
+            UpdateItems("优化 打断动画的连贯性")//
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
             // 海乐生活二级界面适配

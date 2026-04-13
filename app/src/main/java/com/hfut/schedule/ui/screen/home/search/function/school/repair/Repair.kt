@@ -23,49 +23,22 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-   
+import com.hfut.schedule.ui.nav.window.RepairWindow
+
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.floating.util.LocalFloatingController
 import dev.chrisbanes.haze.HazeState
 
 @Composable
-fun Repair(hazeState : HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+fun Repair() {
+    val floatController = LocalFloatingController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_repair)) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {
-            showBottomSheet = true
+            floatController.push(RepairWindow)
         }
     )
-    if (showBottomSheet ) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet
-        ) {
-            Column(){
-                HazeBottomSheetTopBar("选择校区", isPaddingStatusBar = false)
-
-                CardListItem(
-                    headlineContent = {
-                        Text("宣城校区")
-                    },
-                    modifier = Modifier.clickable {
-                        Starter.startWebUrl(context,Constant.REPAIR_XC_URL)
-                    }
-                )
-                CardListItem(
-                    headlineContent = {
-                        Text("合肥校区")
-                    },
-                    modifier = Modifier.clickable {
-                        Starter.startWebUrl(context,Constant.REPAIR_URL)
-                    }
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-        }
-    }
 }

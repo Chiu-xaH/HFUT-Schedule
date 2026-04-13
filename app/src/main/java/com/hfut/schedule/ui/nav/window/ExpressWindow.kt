@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
@@ -35,17 +34,20 @@ import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.AutoSizeText
+import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.util.res
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
-import com.xah.floating.model.Window
 import com.xah.floating.util.LocalFloatingController
 
-object ExpressWindow: Window() {
+object ExpressWindow: FloatingWindow() {
 
     override val key = "express"
+
+    override val title = res(R.string.navigation_label_express)
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
@@ -105,7 +107,7 @@ object ExpressWindow: Window() {
                         }
 
                         AutoSizeText(
-                            stringResource(R.string.navigation_label_express),
+                            title.asString(),
                             innerPadding,
                             Modifier
                                 .align(Alignment.TopStart)

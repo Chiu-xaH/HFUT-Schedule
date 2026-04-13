@@ -42,7 +42,7 @@ import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 
 // 跨Activity的类UiViewModel
 object GlobalStateHolder {

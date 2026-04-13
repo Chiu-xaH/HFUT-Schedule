@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.nav.window.ExpressWindow
+import com.hfut.schedule.ui.nav.window.RepairWindow
 
 import com.hfut.schedule.ui.screen.home.search.function.community.appointment.Appointment
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
@@ -222,7 +223,7 @@ fun SearchScreen(
                 SearchAppBean(18,"${ProgramDestination.TITLE.asString(context)}完成情况", { Program(ifSaved) }, ProgramDestination(ifSaved).key),
                 SearchAppBean(19,"${LibraryDestination.title.asString(context)} 座位预约 ${context.getString(R.string.navigation_label_library_borrowed)}", { LibraryItem() }, LibraryDestination.key),
                 SearchAppBean(20,"${BusDestination.title.asString(context)}", { SchoolBus() }, BusDestination.key),
-                SearchAppBean(21,"${context.getString(R.string.navigation_label_repair)} 维修 后勤", { Repair(hazeState) }),
+                SearchAppBean(21,"${context.getString(R.string.navigation_label_repair)} 维修 后勤", { Repair() }, RepairWindow.key),
 //                SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,navController ) },AppNavRoute.NextCourse.receiveRoute()),
                 SearchAppBean(23,"饮水机 ${context.getString(R.string.navigation_label_hot_water)}机 趣智校园", { HotWater() }),
                 SearchAppBean(24,"${ClassroomDestination.TITLE.asString(context)} 空教室", { Classroom() }, ClassroomDestination().key),

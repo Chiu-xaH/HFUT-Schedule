@@ -1,14 +1,17 @@
 package com.hfut.schedule.ui.nav.window
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,30 +24,46 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.common.ui.util.text
+import com.xah.common.ui.util.res
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
 import com.xah.floating.util.LocalFloatingController
 
-data class ProgramRemarkWindow(
-    val text : String,
-) : FloatingWindow() {
-    override val key = "program_remark_${text.hashCode()}"
-    override val title = text("备注")
+object RepairWindow: FloatingWindow() {
+
+    override val key = "repair"
+
+    override val title = res(R.string.navigation_label_repair)
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     override fun Content() {
         val controller = LocalFloatingController.current
+        val context = LocalContext.current
+
+        val displayList = remember {
+            if(getCampusRegion() == CampusRegion.XUANCHENG) {
+                listOf(CampusRegion.XUANCHENG, CampusRegion.HEFEI)
+            } else {
+                listOf(CampusRegion.HEFEI,CampusRegion.XUANCHENG)
+            }
+        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             SharedContent(
@@ -62,21 +81,40 @@ data class ProgramRemarkWindow(
                     shape = RoundedCornerShape(0.dp)
                 ) {
                     var innerPadding by remember { mutableStateOf(0.dp) }
-
                     Box {
+                        Column(
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
+                            Spacer(Modifier.height(innerPadding+APP_HORIZONTAL_DP-CARD_NORMAL_DP))
 
-                        LazyColumn {
-                            item { Spacer(Modifier.height(innerPadding)) }
-                            item {
-                                Text(
-                                    text,
-                                    modifier = Modifier
-                                        .padding(end = APP_HORIZONTAL_DP/2)
-                                        .padding(start = APP_HORIZONTAL_DP)
-                                        .padding(top = APP_HORIZONTAL_DP)
-                                        .padding(bottom = APP_HORIZONTAL_DP)
-                                )
+                            displayList.forEach { campus ->
+                                when(campus) {
+                                    CampusRegion.HEFEI -> {
+                                        CardListItem(
+                                            headlineContent = { Text("智慧后勤-合肥校区") },
+                                            modifier = Modifier.clickable {
+                                                Starter.startWebUrl(context,Constant.REPAIR_URL)
+                                            },
+                                            leadingContent = {
+                                                Icon(painterResource(R.drawable.net),null)
+                                            }
+                                        )
+                                    }
+                                    CampusRegion.XUANCHENG -> {
+                                        CardListItem(
+                                            headlineContent = { Text("智慧后勤-宣城校区") },
+                                            modifier = Modifier.clickable {
+                                                Starter.startWebUrl(context,Constant.REPAIR_XC_URL)
+                                            },
+                                            leadingContent = {
+                                                Icon(painterResource(R.drawable.net),null)
+                                            }
+                                        )
+                                    }
+                                }
                             }
+
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP-CARD_NORMAL_DP))
                         }
 
                         AutoSizeText(

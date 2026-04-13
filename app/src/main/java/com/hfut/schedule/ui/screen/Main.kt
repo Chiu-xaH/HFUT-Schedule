@@ -32,7 +32,7 @@ import com.hfut.schedule.ui.nav.destination.AgreementDestination
 import com.hfut.schedule.ui.nav.destination.ExceptionDestination
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.UpdateSuccessfullyDestination
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel

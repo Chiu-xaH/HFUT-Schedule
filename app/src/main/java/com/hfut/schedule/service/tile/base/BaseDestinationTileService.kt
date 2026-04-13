@@ -9,7 +9,7 @@ import android.service.quicksettings.TileService
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.activity.MainActivity
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.shared.LogUtil
 
 open class BaseDestinationTileService(

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionScreen
-import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.res

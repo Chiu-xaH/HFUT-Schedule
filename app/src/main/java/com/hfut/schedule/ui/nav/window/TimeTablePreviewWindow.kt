@@ -12,18 +12,21 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
+import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
-import com.xah.floating.model.Window
 
 data class TimeTablePreviewWindow(
     val items: List<List<TimeTableItem>>,
     val currentWeek: Int,
     val onItemClick : (Int) -> Unit,
-) : Window() {
+) : FloatingWindow() {
     override val key = KEY
+
+    override val title = text("第${currentWeek}周")
 
     companion object {
         const val KEY = "time_table_preview"
@@ -47,8 +50,8 @@ data class TimeTablePreviewWindow(
             ) {
                 TimeTablePreview(
                     items = items, // 一周课程,
-                    currentWeek = currentWeek.toInt(),
-                    title = semester?.let { SemesterParser.parseSemesterSimply(it) } ?: "第${currentWeek}周",
+                    currentWeek = currentWeek,
+                    title = semester?.let { SemesterParser.parseSemesterSimply(it) } ?: title.asString(),
                     onItemClick = onItemClick
                 )
             }
