@@ -36,7 +36,7 @@ private fun VersionInfoCard() {
         Row {
             TransplantListItem(
                 // fixme:这里用gradle自动签日期会影响F-Droid构建后校验Smail代码，暂时还是手动标注吧 [issue#50]
-                overlineContent = { ScrollText(text = "2026-04-13") },
+                overlineContent = { ScrollText(text = "2026-04-14") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -67,7 +67,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 长按桌面图标的快捷菜单自定义设置","位于 选项-偏好与配置",To.Screen(SettingsShortcutEditDestination))//
+            UpdateItems("新增 长按桌面图标快捷菜单的自定义设置","位于 选项-偏好与配置-Shortcut",To.Screen(SettingsShortcutEditDestination))//
             UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-快递",To.Window(ExpressWindow))//
             UpdateItems("优化 打断动画的连贯性")//
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
