@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -1132,6 +1133,11 @@ fun SearchEditScreen() {
         )
     }
     var show by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = inEdit) {
+        inEdit = false
+    }
+
     Column (modifier = Modifier
         .background(MaterialTheme.colorScheme.surface)
         .fillMaxSize()
@@ -1255,7 +1261,6 @@ fun SearchEditScreen() {
                     .height(APP_HORIZONTAL_DP)) }
             }
         }
-
     }
 }
 

@@ -2,11 +2,14 @@ package com.hfut.schedule.activity
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
 import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
@@ -34,10 +37,6 @@ class MainActivity : BaseActivity() {
                     // 立刻刷新小组件
                     refreshFocusWidget(this@MainActivity)
                 }
-            }
-            launch {
-                // 动态ShortCut添加（长按图标菜单）
-                AppShortcutManager.init(this@MainActivity)
             }
             launch {
                 // 大文本迁移

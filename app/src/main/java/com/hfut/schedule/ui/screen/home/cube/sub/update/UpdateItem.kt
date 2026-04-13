@@ -18,6 +18,8 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
+import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.ExpressWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
@@ -65,7 +67,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 快递身份码、热水机的长按桌面图标的快捷菜单以及控制中心磁贴")
+            UpdateItems("新增 长按桌面图标的快捷菜单自定义设置","位于 选项-偏好与配置",To.Screen(SettingsShortcutEditDestination))//
             UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-快递",To.Window(ExpressWindow))//
             UpdateItems("优化 打断动画的连贯性")//
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")

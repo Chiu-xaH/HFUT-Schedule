@@ -51,6 +51,7 @@ object DataStoreManager : IDataStore {
     private val dataStore = MyApplication.context.dataStore
 
     val SEARCH_DEFAULT_STR = GlobalStateHolder.funcDefault.map { it.id }.joinToString(",")
+    val SHORTCUT_DEFAULT_STR = AppShortcutManager.getStorageStr()
 
     private const val EMPTY_STRING = ""
 
@@ -182,7 +183,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
     suspend fun saveScreenCorner(value: Float) = saveValue(SCREEN_CORNER,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
-    suspend fun saveShortcutSort(value: List<Int>) = saveValue(SHORTCUT_SORT, value.joinToString(","))
+    suspend fun saveShortcutSort(value: List<String>?) = saveValue(SHORTCUT_SORT, value?.joinToString(",") ?: DataStoreManager.SHORTCUT_DEFAULT_STR)
     suspend fun saveReadNotifications(value: List<Int>) = saveValue(READ_NOTIFICATIONS, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
@@ -249,7 +250,7 @@ object DataStoreManager : IDataStore {
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
     val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)
-    val shortcutSort = getFlow(SHORTCUT_SORT, AppShortcutManager.getStorageStr())
+    val shortcutSort = getFlow(SHORTCUT_SORT, SHORTCUT_DEFAULT_STR)
     val readNotifications = getFlow(READ_NOTIFICATIONS, EMPTY_STRING)
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)

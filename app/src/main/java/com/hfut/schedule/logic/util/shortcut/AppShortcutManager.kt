@@ -42,18 +42,6 @@ object AppShortcutManager {
     }
 
     private const val CARD_ID = "card"
-//    private fun createCardShortcut(context: Context) : ShortcutConfig {
-//        val intent = Intent(context, CardActivity::class.java).apply {
-//            action = Intent.ACTION_VIEW
-//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//        }
-//        return ShortcutConfig(
-//            CARD_ID,
-//            text("校园卡"),
-//            R.drawable.credit_card_black,
-//            intent
-//        )
-//    }
     private fun createCardShortcut(): ShortcutConfig {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setClassName(
@@ -70,25 +58,12 @@ object AppShortcutManager {
         return ShortcutConfig(
             CARD_ID,
             text("校园卡"),
-            R.drawable.credit_card_black,
+            R.drawable.credit_card_shortcut,
             intent
         )
     }
 
     private const val SCAN_ID = "scan"
-//    private fun createScanShortcut(context: Context) : ShortcutConfig {
-//        val intent = Intent(context, MainActivity::class.java).apply {
-//            action = Intent.ACTION_VIEW
-//            putExtra("route", ScanQrCodeDestination::class.java.name)
-//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//        }
-//        return ShortcutConfig(
-//            SCAN_ID,
-//            text("CAS扫码"),
-//            R.drawable.qr_code_scanner_shortcut,
-//            intent
-//        )
-//    }
     private fun createScanShortcut(): ShortcutConfig {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setClassName(
@@ -121,7 +96,6 @@ object AppShortcutManager {
             text("热水"),
             R.drawable.water_voc_shortcut,
             intent,
-            text("热水(支付宝)"),
         )
     }
 
@@ -131,9 +105,8 @@ object AppShortcutManager {
         return ShortcutConfig(
             RECHARGE_ID,
             text("校园卡充值"),
-            R.drawable.add_card,
+            R.drawable.add_card_shortcut,
             intent,
-            text("校园卡充值(支付宝)"),
         )
     }
 
@@ -175,10 +148,10 @@ object AppShortcutManager {
     private val shortcuts = listOf(
         createScanShortcut(),
         createCardShortcut(),
-        createExpressPddShortcut(),
-        createExpressTaoBaoShortcut(),
         createHotWaterShortcut(),
         createRechargeShortcut(),
+        createExpressPddShortcut(),
+        createExpressTaoBaoShortcut(),
     )
 
     fun getStorageStr() = shortcuts.joinToString(",") { it.id }
@@ -211,14 +184,19 @@ object AppShortcutManager {
         return this
     }
 
+    fun getFinalList(customSort : String? = null) : List<ShortcutConfig> {
+        val list = customSort?.let {
+            shortcuts.toMutableList().reorderByIdsStr(it)
+        } ?: shortcuts
+        return list
+    }
+
 
     fun init(context : Context,customSort : String? = null) {
         // 只能显示前3个
         try {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-            val list = customSort?.let {
-                shortcuts.toMutableList().reorderByIdsStr(it)
-            } ?: shortcuts
+            val list = getFinalList(customSort)
             shortcutManager?.dynamicShortcuts = list.map { it.createShortcut(context) }
         } catch (e : Exception) {
             LogUtil.error(e)

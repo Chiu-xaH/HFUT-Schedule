@@ -17,9 +17,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -105,6 +107,7 @@ fun MainHost(
         put(isSuccessActivity,"isSuccessActivity")
     }
 
+    val context = LocalContext.current
     val transitionLevels = remember { EffectLevel.entries }
     val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NONE.levelNum)
     val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
@@ -114,6 +117,12 @@ fun MainHost(
     val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
     val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+    val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
+
+    // 动态ShortCut添加（长按图标菜单）
+    LaunchedEffect(shortcutSort) {
+        AppShortcutManager.init(context,shortcutSort)
+    }
 
     LaunchedEffect(corner) {
         if(corner >= 0f) {

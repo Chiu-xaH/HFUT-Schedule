@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
 import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination
+import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -339,10 +340,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsOcrDestination.key,
-                    shape = MaterialTheme.shapes.medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                    ),
+                    shape = RoundedCornerShape(0.dp),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -357,6 +355,30 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         ) },
                         modifier = Modifier.clickable {
                             navTopController.push(SettingsOcrDestination)
+                        }
+                    )
+                }
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsShortcutEditDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp),
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.app_settings_shortcut_title)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.app_settings_shortcut_description))
+                        },
+                        leadingContent = { Icon(
+                            painterResource(R.drawable.keyboard_command_key),
+                            contentDescription = "Localized description"
+                        ) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsShortcutEditDestination)
                         }
                     )
                 }

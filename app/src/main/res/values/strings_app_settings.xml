@@ -83,5 +83,7 @@
     <string name="app_settings_default_calendar_choice_uni_app">Uni-App</string>
     <string name="app_settings_default_calendar_choice_zhi_jian">ZhiJian</string>
     <string name="app_settings_default_calendar_choice_jxglstu_2">Academic2</string>
+    <string name="app_settings_shortcut_title">Shortcut</string>
+    <string name="app_settings_shortcut_description">The shortcut menu triggered by long-pressing the desktop icon</string>
 
 </resources>
