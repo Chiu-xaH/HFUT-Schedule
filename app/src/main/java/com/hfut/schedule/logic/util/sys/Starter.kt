@@ -2,15 +2,20 @@ package com.hfut.schedule.logic.util.sys
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent
+import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
+import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.core.net.toUri
+import androidx.core.service.quicksettings.TileServiceCompat.startActivityAndCollapse
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
@@ -23,6 +28,7 @@ import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.enumeration.XwxScreen
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
@@ -353,6 +359,24 @@ object Starter {
         } catch (e : Exception) {
             LogUtil.error(e)
             showToast("启动下载管理失败")
+        }
+    }
+
+    @JvmStatic
+    fun TileService.startActivitySafely(intent : Intent) {
+        if (AppVersion.sdkInt >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            startActivityAndCollapse(pendingIntent)
+
+        } else {
+            @Suppress("DEPRECATION")
+            startActivityAndCollapse(intent)
         }
     }
 }

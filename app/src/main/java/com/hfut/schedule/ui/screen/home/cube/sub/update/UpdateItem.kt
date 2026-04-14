@@ -67,9 +67,14 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 长按桌面图标快捷菜单的自定义设置","位于 选项-偏好与配置-Shortcut",To.Screen(SettingsShortcutEditDestination))//
-            UpdateItems("新增 快速跳转快递身份码的入口","位于 查询中心-快递",To.Window(ExpressWindow))//
-            UpdateItems("优化 打断动画的连贯性")//
+            UpdateItems("修复 在低版本系统上Shortcut界面崩溃的Bug")//
+            UpdateItems("修复 在低版本系统上退出登录界面时崩溃的Bug")//
+            UpdateItems("修复 在低版本系统上Shortcut图标颜色异常的Bug")//
+            UpdateItems("修复 在低版本系统上不显示动态添加的Shortcut的Bug")
+            UpdateItems("修复 在低版本系统上CAS扫码与一卡通QS磁贴崩溃的Bug")//
+            UpdateItems("修复 在低版本系统上部分页面转场未响应的Bug")//
+            UpdateItems("修复 在低版本系统上丢失冷启动遮罩的Bug")//
+//            UpdateItems("修复 在着色器效果关闭时容器共享转场时路线偏移的Bug")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
             // 海乐生活二级界面适配

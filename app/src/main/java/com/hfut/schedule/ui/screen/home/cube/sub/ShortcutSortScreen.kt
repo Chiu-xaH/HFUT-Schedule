@@ -191,7 +191,7 @@ fun ShortcutSortScreen() {
             }
             items(funcMaps.size,key = { funcMaps[it].id }) { index ->
                 val item = funcMaps[index]
-                val displayed = index < 3
+                val displayed = index < AppShortcutManager.MAX_SIZE
                 ReorderableItem (reorderableLazyGridState, key = item.id, enabled = inEdit) { isDragging ->
                     val elevation by animateDpAsState(
                         targetValue = if (isDragging) APP_HORIZONTAL_DP else 0.dp,
@@ -261,7 +261,7 @@ fun ShortcutSortScreen() {
                 }
             }
             item {
-                BottomTip("由于系统限制，仅前3个选项可以在桌面长按图标快捷菜单中显示")
+                BottomTip("由于系统限制，仅前${AppShortcutManager.MAX_SIZE}个选项可以在桌面长按图标快捷菜单中显示")
             }
             if(!inEdit) {
                 item {

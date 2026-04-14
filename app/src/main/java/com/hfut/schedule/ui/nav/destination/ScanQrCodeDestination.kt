@@ -21,7 +21,7 @@ import com.xah.common.ui.util.res
 object ScanQrCodeDestination : NavDestination() {
     override val key = "scan_qr_code"
     override val title = res(R.string.navigation_label_scan_qr_code)
-    override val icon = R.drawable.qr_code_scanner_shortcut
+    override val icon = R.drawable.qr_code_scanner
     override val enforcePlaceHolder = true
     override val PlaceHolder = @Composable {
         Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {

@@ -41,7 +41,6 @@ object AppShortcutManager {
             .build()
     }
 
-    private const val CARD_ID = "card"
     private fun createCardShortcut(): ShortcutConfig {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setClassName(
@@ -56,14 +55,13 @@ object AppShortcutManager {
         }
 
         return ShortcutConfig(
-            CARD_ID,
+            "card",
             text("校园卡"),
-            R.drawable.credit_card_shortcut,
+            R.drawable.credit_card,
             intent
         )
     }
 
-    private const val SCAN_ID = "scan"
     private fun createScanShortcut(): ShortcutConfig {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setClassName(
@@ -75,9 +73,9 @@ object AppShortcutManager {
         }
 
         return ShortcutConfig(
-            SCAN_ID,
+            "scan",
             text("CAS扫码"),
-            R.drawable.qr_code_scanner_shortcut,
+            R.drawable.qr_code_scanner,
             intent
         )
     }
@@ -88,29 +86,26 @@ object AppShortcutManager {
         }
     }
 
-    private const val HOT_WATER_ID = "hot_water"
     private fun createHotWaterShortcut(): ShortcutConfig {
         val intent = buildAppUrlIntent(Constant.ALIPAY_HOT_WATER_URL)
         return ShortcutConfig(
-            HOT_WATER_ID,
+            "hot_water",
             text("热水"),
-            R.drawable.water_voc_shortcut,
+            R.drawable.water_voc,
             intent,
         )
     }
 
-    private const val RECHARGE_ID = "recharge"
     private fun createRechargeShortcut(): ShortcutConfig {
         val intent = buildAppUrlIntent(Constant.ALIPAY_CARD_URL)
         return ShortcutConfig(
-            RECHARGE_ID,
+            "recharge",
             text("校园卡充值"),
-            R.drawable.add_card_shortcut,
+            R.drawable.add_card,
             intent,
         )
     }
 
-    private const val EXPRESS_PDD_ID = "express_pdd"
     private fun createExpressPddShortcut(): ShortcutConfig {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             component = ComponentName(
@@ -121,7 +116,7 @@ object AppShortcutManager {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         return ShortcutConfig(
-            EXPRESS_PDD_ID,
+            "express_pdd",
             text("快递"),
             R.drawable.pdd_icon,
             intent,
@@ -129,7 +124,6 @@ object AppShortcutManager {
         )
     }
 
-    private const val EXPRESS_TAOBAO_ID = "express_taobao"
     private fun createExpressTaoBaoShortcut(): ShortcutConfig {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Constant.TAO_BAO_PACKAGE_ID_URL.toUri()
@@ -137,7 +131,7 @@ object AppShortcutManager {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         return ShortcutConfig(
-            EXPRESS_TAOBAO_ID,
+            "express_taobao",
             text("快递"),
             R.drawable.taobao_icon,
             intent,
@@ -191,12 +185,14 @@ object AppShortcutManager {
         return list
     }
 
+    const val MAX_SIZE = 3
 
     fun init(context : Context,customSort : String? = null) {
         // 只能显示前3个
         try {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-            val list = getFinalList(customSort)
+            val list = getFinalList(customSort).take(MAX_SIZE)
+            LogUtil.debug("shortcuts = [${list.joinToString(",") { it.id }}]")
             shortcutManager?.dynamicShortcuts = list.map { it.createShortcut(context) }
         } catch (e : Exception) {
             LogUtil.error(e)
