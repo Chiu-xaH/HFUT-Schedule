@@ -1,6 +1,7 @@
-package com.hfut.schedule.ui.screen.home.cube.sub.update
+package com.hfut.schedule.ui.screen.home.cube.sub
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -18,62 +19,21 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
-import com.hfut.schedule.ui.nav.window.ExpressWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
 
-@SuppressLint("SuspiciousIndentation")
-@Composable
-private fun VersionInfoCard() {
-    LargeCard(
-        title = "版本 " + AppVersion.getVersionName()
-    ) {
-        Row {
-            TransplantListItem(
-                // fixme:这里用gradle自动签日期会影响F-Droid构建后校验Smail代码，暂时还是手动标注吧 [issue#50]
-                overlineContent = { ScrollText(text = "2026-04-14") },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
-                headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
-                modifier = Modifier.weight(.5f)
-            )
-            AppVersion.getSplitType().let {
-                TransplantListItem(
-                    overlineContent = { Text(text = if(it == AppVersion.SplitType.COMMON) "全量包" else "架构分包") },
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.package_2), contentDescription = "") },
-                    headlineContent = { Text(text = it.description) },
-                    modifier = Modifier.weight(.5f)
-                )
-            }
-            // 包体标识
-            /*
-            Dev开发版可能存在更多的日志、更差的性能、以及部分隐藏入口
-             */
-        }
-    }
-}
-
+private const val RELEASE_DATE = "2026-04-15"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
-    Spacer(Modifier.height(CARD_NORMAL_DP))
-    DividerTextExpandedWith("版本信息",openBlurAnimation = false) {
-        VersionInfoCard()
-    }
+    VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 在低版本系统上Shortcut界面崩溃的Bug")//
-            UpdateItems("修复 在低版本系统上退出登录界面时崩溃的Bug")//
-            UpdateItems("修复 在低版本系统上Shortcut图标颜色异常的Bug")//
-            UpdateItems("修复 在低版本系统上不显示动态添加的Shortcut的Bug")
-            UpdateItems("修复 在低版本系统上CAS扫码与一卡通QS磁贴崩溃的Bug")//
-            UpdateItems("修复 在低版本系统上部分页面转场未响应的Bug")//
-            UpdateItems("修复 在低版本系统上丢失冷启动遮罩的Bug")//
+            UpdateItems("新增 第二课堂","位于 查询中心-第二课堂。但由于一些限制，无法获取到二课成绩单")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路线偏移的Bug")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
@@ -129,6 +89,42 @@ fun VersionInfo() {
 //            UpdateItems("新增 本地聚焦卡片快速转化为云端卡片", null, UpdateType.ADD)
 //            UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //            UpdateItems("新增 智慧后勤的登录")
+        }
+    }
+}
+
+
+@SuppressLint("SuspiciousIndentation")
+@Composable
+private fun VersionInfoCard() {
+    Column {
+        Spacer(Modifier.height(CARD_NORMAL_DP))
+        DividerTextExpandedWith("版本信息",openBlurAnimation = false) {
+            LargeCard(
+                title = "版本 " + AppVersion.getVersionName()
+            ) {
+                Row {
+                    TransplantListItem(
+                        // fixme:这里用gradle自动签日期会影响F-Droid构建后校验Smail代码，暂时还是手动标注吧 [issue#50]
+                        overlineContent = { ScrollText(text = RELEASE_DATE) },
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
+                        headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    AppVersion.getSplitType().let {
+                        TransplantListItem(
+                            overlineContent = { Text(text = if(it == AppVersion.SplitType.COMMON) "全量包" else "架构分包") },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.package_2), contentDescription = "") },
+                            headlineContent = { Text(text = it.description) },
+                            modifier = Modifier.weight(.5f)
+                        )
+                    }
+                    // 包体标识
+                    /*
+                    Dev开发版可能存在更多的日志、更差的性能、以及部分隐藏入口
+                     */
+                }
+            }
         }
     }
 }
@@ -204,6 +200,3 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
-
-
-

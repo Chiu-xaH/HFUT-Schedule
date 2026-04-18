@@ -26,6 +26,9 @@ object CasLoginRepository {
     suspend fun gotoCommunity(cookie : String) = launchRequestNone {
         login.loginGoTo(service = CasLoginType.COMMUNITY.service, cookie = cookie)
     }
+    suspend fun gotoSecondClass(cookie : String) = launchRequestNone {
+        login.loginGoTo(service = CasLoginType.SECOND_CLASS.service, cookie = cookie)
+    }
     suspend fun gotoZhiJian(cookie : String) = launchRequestNone {
         login.loginGoTo(service = CasLoginType.ZHI_JIAN.service, cookie = cookie)
     }

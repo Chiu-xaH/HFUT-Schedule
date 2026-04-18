@@ -34,6 +34,7 @@ import com.hfut.schedule.network.api.DormitoryScore
 import com.hfut.schedule.network.api.HaiLeWashingService
 import com.hfut.schedule.network.api.OfficeHallService
 import com.hfut.schedule.network.api.PeService
+import com.hfut.schedule.network.api.SecondClassService
 import com.hfut.schedule.network.api.StuService
 import com.hfut.schedule.network.api.TeachersService
 import com.hfut.schedule.network.api.WorkService
@@ -43,6 +44,7 @@ import com.hfut.schedule.network.impl.DormitoryScoreServiceCreator
 import com.hfut.schedule.network.impl.HaiLeWashingServiceCreator
 import com.hfut.schedule.network.impl.OfficeHallServiceCreator
 import com.hfut.schedule.network.impl.PeServiceCreator
+import com.hfut.schedule.network.impl.SecondClassServiceCreator
 import com.hfut.schedule.network.impl.StuServiceCreator
 import com.hfut.schedule.network.impl.TeacherServiceCreator
 import com.hfut.schedule.network.impl.WorkServiceCreator
@@ -65,6 +67,7 @@ object OthersRepository {
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val zhiJian = ZhiJianServiceCreator.create(ZhiJianService::class.java)
     private val pe = PeServiceCreator.create(PeService::class.java)
+    private val secondClass = SecondClassServiceCreator.create(SecondClassService::class.java)
 
     suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestState(
         holder = holder,
@@ -74,6 +77,18 @@ object OthersRepository {
     @JvmStatic
     private fun parseCheckPeLogin(json: String) : Boolean = try {
         json.contains("成功")
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun checkSecondClassLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestState(
+        holder = holder,
+        request = { secondClass.checkLogin(cookie) },
+        transformSuccess = { _, json -> parseCheckSecondClassLogin(json) }
+    )
+    @JvmStatic
+    private fun parseCheckSecondClassLogin(json: String) : Boolean = try {
+        val name = getPersonInfo().name ?: return false
+        json.contains(name)
     } catch (e : Exception) { throw e }
 
 

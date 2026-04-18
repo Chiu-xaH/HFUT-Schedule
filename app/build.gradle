@@ -29,8 +29,8 @@ android {
         applicationId packageName
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 259
-        versionName "4.20.2.4"
+        versionCode 260
+        versionName "4.20.3 Dev"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -223,12 +223,12 @@ dependencies {
      * 如需启用SharedNav的全部Log，请导入libs/common-debug.aar，release只有WARN和ERROR日志
      * SharedNav管理整个应用绝大部分页面与部分浮窗，修改后务必详细测试，并在jitpack发布最新的Release，再注释掉导入的aar，换回implementation(libs.sharednav)
      */
-    implementation(libs.sharednav)
-//    def tag = "release"
-//    implementation(files("libs/common-${tag}.aar"))
-//    implementation(files("libs/navigation-${tag}.aar"))
-//    implementation(files("libs/shared-container-${tag}.aar"))
-//    implementation(files("libs/floating-window-${tag}.aar"))
+//    implementation(libs.sharednav)
+    def tag = "release"
+    implementation(files("libs/common-${tag}.aar"))
+    implementation(files("libs/navigation-${tag}.aar"))
+    implementation(files("libs/shared-container-${tag}.aar"))
+    implementation(files("libs/floating-window-${tag}.aar"))
     // 通用UI模块
     implementation implementation(project(':common'))
     // 共用模块

@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
-import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
+import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.Dispatchers

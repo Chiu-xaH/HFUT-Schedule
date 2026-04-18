@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.network.interceptor
 
 import com.hfut.schedule.logic.util.network.encodeUrl
 import com.hfut.schedule.logic.util.network.isNotBadRequest
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
@@ -120,6 +121,36 @@ class RedirectTicketInterceptor() : Interceptor {
                         showToast("体测平台登录失败")
                     }
                 }
+                location.contains(Constant.SECOND_CLASS_URL) -> {
+                    // 二课登录
+                    // 向前重定向一次
+                    val newRequest = request
+                        .newBuilder()
+                        .url(location)
+                        .build()
+                    val nextResponse = chain.proceed(newRequest)
+                    val cookie = parseLoginSecondClass(nextResponse.headers)
+                    val homeLocation = nextResponse.header("Location")
+                    nextResponse.close()
+                    cookie?.let {
+                        // 向主页发送一个请求 使cookie生效
+                        val checkRequest = request
+                            .newBuilder()
+                            .header("Cookie", cookie)
+                            .url(
+                                homeLocation ?: (Constant.SECOND_CLASS_URL + "scReports/uccp_index")
+                            )
+                            .build()
+                        val checkResponse = chain.proceed(checkRequest)
+                        LogUtil.debug("CAS 第二课堂登录 ${checkResponse.code}")
+                        if(isNotBadRequest(checkResponse.code)) {
+                            showToast("第二课堂登陆成功")
+                        } else {
+                            showToast("第二课堂登陆失败 ${checkResponse.code}")
+                        }
+                        checkResponse.close()
+                    }
+                }
             }
         }
         return response
@@ -178,3 +209,20 @@ private fun parseLoginLibrary(headers: Headers)  = try {
     LogUtil.error(e)
 }
 
+
+private fun parseLoginSecondClass(headers: Headers) : String? = try {
+    val cookie = headers["Set-Cookie"] ?: throw Exception("解析失败")
+    val token = cookie.substringBefore(";")
+    LogUtil.debug("登录第二课堂 ${token}")
+
+    if (token.contains("SESSION=")) {
+        saveString(SharedPrefs.SECOND_CLASS_TOKEN, token)
+        token
+    } else {
+        showToast("第二课堂登陆失败")
+        null
+    }
+} catch (e : Exception) {
+    LogUtil.error(e)
+    null
+}

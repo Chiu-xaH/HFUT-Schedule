@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
@@ -249,7 +250,6 @@ fun JxglstuCourseTableUI(
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
         val tgcCookie = prefs.getString("TGC", "")
-        val nextBoolean = remember { isNextOpen() }
 
        LaunchedEffect(Unit) {
            // 如果已经加载过 跳过
@@ -257,11 +257,8 @@ fun JxglstuCourseTableUI(
                loadingJxglstu = false
                return@LaunchedEffect
            }
-           launch {
-               if (nextBoolean) saveInt("FIRST", 1)
-           }
            // 等待读取本地Cookie
-           if(loadingJxglstu == false) return@LaunchedEffect
+           if(!loadingJxglstu) return@LaunchedEffect
            val cookie = getJxglstuCookie()
 
            launch {
@@ -279,14 +276,14 @@ fun JxglstuCourseTableUI(
                            return@community
                        }
                        val communityAuth = prefs.getString("TOKEN", "")
-                       if(communityAuth == null || communityAuth.isEmpty()) {
+                       if(communityAuth.isNullOrEmpty()) {
                            loginCommunity(cookies,vm)
                        } else {
                            // 检测智慧社区可用性
                            vm.checkCommunityLogin(communityAuth)
                            val result = (vm.checkCommunityResponse.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                                   showToast("无需刷新智慧社区")
+                               LogUtil.debug("无需刷新智慧社区")
                                return@community
                            } else {
                                // 登录community
@@ -298,13 +295,13 @@ fun JxglstuCourseTableUI(
                    launch huiXin@ {
                        //检测慧新易校可用性
                        val auth = prefs.getString("auth", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.goToHuiXin(cookies)
                        } else {
                            vm.checkHuiXinLogin(auth)
                            val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                                   showToast("无需刷新慧新易校")
+                               LogUtil.debug("无需刷新慧新易校")
                                return@huiXin
                            } else {
                                if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
@@ -321,13 +318,13 @@ fun JxglstuCourseTableUI(
                            return@one
                        }
                        val token = prefs.getString("bearer","")
-                       if(token == null|| token.isEmpty()) {
+                       if(token.isNullOrEmpty()) {
                            loginOne(cookies,vm)
                        } else {
                            vm.checkOneLogin(token)
                            val result = (vm.checkOneLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                                   showToast("无需刷新信息门户")
+                               LogUtil.debug("无需刷新信息门户")
                                return@one
                            } else {
                                loginOne(cookies,vm)
@@ -340,14 +337,14 @@ fun JxglstuCourseTableUI(
                            return@stu
                        }
                        val auth = prefs.getString("stu", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.goToStu(cookies)
                        } else {
                            // 检测学工系统可用性
                            vm.checkStuLogin(auth)
                            val result =  (vm.checkStuLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                               showToast("无需刷新学工平台")
+                               LogUtil.debug("无需刷新学工平台")
                                return@stu
                            } else {
                                // 登录
@@ -361,14 +358,14 @@ fun JxglstuCourseTableUI(
                            return@library
                        }
                        val auth = prefs.getString(LIBRARY_TOKEN, "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.gotoLibrary(cookies)
                        } else {
                            // 检测可用性
                            vm.checkLibraryLogin(auth)
                            val result =  (vm.checkLibraryLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                               showToast("无需刷新图书馆")
+                               LogUtil.debug("无需刷新图书馆")
                                return@library
                            } else {
                                // 登录
@@ -382,16 +379,16 @@ fun JxglstuCourseTableUI(
                            return@zhiJian
                        }
                        val auth = prefs.getString("ZhiJian", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.gotoZhiJian(cookies)
                        } else {
                            // 检测可用性
                            vm.zhiJianCheckLogin(auth)
                            val result = (vm.zhiJianCheckLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
+                               LogUtil.debug("无需刷新指间工大")
                                return@zhiJian
                            } else {
-//                                登录
                                vm.gotoZhiJian(cookies)
                            }
                        }
@@ -402,17 +399,37 @@ fun JxglstuCourseTableUI(
                            return@pe
                        }
                        val auth = prefs.getString("PE", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.goToPe(cookies)
                        } else {
                            // 检测可用性
                            vm.checkPeLogin(auth)
                            val result = (vm.checkPeLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
+                               LogUtil.debug("无需刷新体测平台")
                                return@pe
                            } else {
-//                                登录
                                vm.goToPe(cookies)
+                           }
+                       }
+                   }
+                   // 第二课堂
+                   launch second@ {
+                       if(useWebVpn) {
+                           return@second
+                       }
+                       val auth = prefs.getString(SharedPrefs.SECOND_CLASS_TOKEN, "")
+                       if(auth.isNullOrEmpty()) {
+                           vm.gotoSecondClass(cookies)
+                       } else {
+                           // 检测可用性
+                           vm.checkSecondClassLogin(auth)
+                           val result = (vm.checkSecondClassLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+                               LogUtil.debug("无需刷新第二课堂")
+                               return@second
+                           } else {
+                               vm.gotoSecondClass(cookies)
                            }
                        }
                    }

@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.nav.window
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,7 +52,7 @@ object ExpressWindow: FloatingWindow() {
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    override fun Content() {
+    override fun BoxScope.Content() {
         val controller = LocalFloatingController.current
         val context = LocalContext.current
 
@@ -59,7 +60,7 @@ object ExpressWindow: FloatingWindow() {
             SharedContent(
                 shape = MaterialTheme.shapes.largeIncreased,
                 key = key,
-                contentStrategy = ContentStrategy.FloatingWindow,
+                contentStrategy = ContentStrategy.Layer(isFloating = true),
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding()

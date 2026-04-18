@@ -34,6 +34,8 @@ object Constant {
     const val HUI_XIN_URL = "http://121.251.19.62/"
     // 指间工大
     const val ZHI_JIAN_URL = "https://zjgd.hfut.edu.cn:8181/"
+    // 第二课堂
+    const val SECOND_CLASS_URL = "https://dekt.hfut.edu.cn/"
     // 乐跑云运动
     const val LE_PAO_URL = "http://210.45.246.53:8080/"
     // 信息门户

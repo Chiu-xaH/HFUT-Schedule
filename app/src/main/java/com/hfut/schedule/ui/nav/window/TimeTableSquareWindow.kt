@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.nav.window
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -75,14 +76,14 @@ data class TimeTableSquareWindow(
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    override fun Content() {
+    override fun BoxScope.Content() {
         val controller = LocalFloatingController.current
 
         Box(modifier = Modifier.fillMaxSize()) {
             SharedContent(
                 shape = MaterialTheme.shapes.largeIncreased,
                 key = key,
-                contentStrategy = ContentStrategy.FloatingWindow,
+                contentStrategy = ContentStrategy.Layer(isFloating = true),
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding()

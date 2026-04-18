@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.nav.window
 
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -34,14 +35,14 @@ data class TimeTablePreviewWindow(
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    override fun Content() {
+    override fun BoxScope.Content() {
         val semester by produceState<Int?>(initialValue = null) {
             value = SemesterParser.getSemester()
         }
         CenterScreen {
             SharedContent(
                 key = KEY,
-                contentStrategy = ContentStrategy.FloatingWindow,
+                contentStrategy = ContentStrategy.Layer(isFloating = true),
                 shape = MaterialTheme.shapes.largeIncreased,
                 modifier = Modifier
                     .padding(APP_HORIZONTAL_DP)

@@ -289,6 +289,7 @@ class NetWorkViewModel() : ViewModel() {
 // 核心业务 ////////////////////////////////////////////////////////////////////////////////////////////////
     suspend fun gotoCommunity(cookie : String) = CasLoginRepository.gotoCommunity(cookie)
     suspend fun gotoZhiJian(cookie : String) = CasLoginRepository.gotoZhiJian(cookie)
+    suspend fun gotoSecondClass(cookie : String) = CasLoginRepository.gotoSecondClass(cookie)
     suspend fun gotoLibrary(cookie : String) = CasLoginRepository.gotoLibrary(cookie)
     suspend fun goToStu(cookie : String) = CasLoginRepository.goToStu(cookie)
     suspend fun goToPe(cookie : String) = CasLoginRepository.goToPe(cookie)
@@ -386,6 +387,8 @@ class NetWorkViewModel() : ViewModel() {
     val checkPeLoginResp = StateHolder<Boolean>()
     suspend fun checkPeLogin(cookie : String) = OthersRepository.checkPeLogin(cookie,checkPeLoginResp)
 
+    val checkSecondClassLoginResp = StateHolder<Boolean>()
+    suspend fun checkSecondClassLogin(cookie : String) = OthersRepository.checkSecondClassLogin(cookie,checkSecondClassLoginResp)
     val huiXinLoginResp = StateHolder<String>()
     suspend fun huiXinSingleLogin(studentId : String,password: String) = HuiXinRepository.huiXinSingleLogin(studentId,password,huiXinLoginResp)
 
