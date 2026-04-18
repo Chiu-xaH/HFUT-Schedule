@@ -34,6 +34,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 第二课堂","位于 查询中心-第二课堂。但由于一些限制，无法获取到二课成绩单")
+            UpdateItems("修复 开课查询从详情界面返回后，切换学期无作用的Bug")
+            UpdateItems("优化 更换马克思、经济、管理学院的图标，以提高可读性")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路线偏移的Bug")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//

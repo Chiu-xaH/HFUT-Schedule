@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.school.SecondClassScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.util.res
+import com.xah.navigation.util.LocalNavDependencies
 
 object SecondClassDestination : NavDestination() {
     override val key = "second_class"
@@ -13,6 +15,7 @@ object SecondClassDestination : NavDestination() {
 
     @Composable
     override fun Content() {
-        SecondClassScreen()
+        val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
+        SecondClassScreen(vm)
     }
 }

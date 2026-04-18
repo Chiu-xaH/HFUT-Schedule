@@ -18,6 +18,8 @@ interface SecondClassService {
     fun getActivities(
         @Header("Cookie") cookie : String,
         @Query("pageNo") page : Int,
+//        @Query("module") type : String,
+//        @Query("campus") campus : Int,
         @Query("pageSize") pageSize : Int = Constant.DEFAULT_PAGE_SIZE,
     ) : Call<ResponseBody>
 }

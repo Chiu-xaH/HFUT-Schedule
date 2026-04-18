@@ -27,6 +27,7 @@ import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherWarnBean
+import com.hfut.schedule.logic.model.SecondClassActivity
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.model.SupabaseLoginResponse
@@ -149,6 +150,9 @@ class NetWorkViewModel() : ViewModel() {
 
     val haiLeDeviceDetailResp = StateHolder<List<HaiLeDeviceDetailBean>>()
     suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequest) = OthersRepository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)
+
+    val secondClassActivitiesResp = StateHolder<List<SecondClassActivity>>()
+    suspend fun getSecondClassActivities(cookie: String, page: Int) = OthersRepository.getSecondClassActivities(cookie,page,secondClassActivitiesResp)
 
     val githubStarsData = StateHolder<Int>()
     suspend fun getStarNum() = GithubRepository.getStarNum(githubStarsData)

@@ -14,15 +14,15 @@ fun departmentIcon(name : String) : Int =
     else if(name.contains("资源与环境工程")) R.drawable.eco
     else if(name.contains("数学")) R.drawable.function
     else if(name.contains("外国语")) R.drawable.translate
-    else if(name.contains("马克思主义")) R.drawable.neurology
+    else if(name.contains("马克思主义")) R.drawable.cognition
     else if(name.contains("机械工程")) R.drawable.settings
     else if(name.contains("材料科学")) R.drawable.texture
     else if(name.contains("电气与自动化工程")) R.drawable.flash_on
     else if(name.contains("土木与水利工程")) R.drawable.precision_manufacturing
     else if(name.contains("化学与化工")) R.drawable.science
-    else if(name.contains("经济")) R.drawable.paid
+    else if(name.contains("经济")) R.drawable.currency_pound
     else if(name.contains("文法")) R.drawable.newsstand
-    else if(name.contains("管理")) R.drawable.pie_chart
+    else if(name.contains("管理")) R.drawable.account_tree
     else if(name.contains("仪器科学与光电工程")) R.drawable.body_fat
     else if(name.contains("建筑与艺术")) R.drawable.domain
     else if(name.contains("食品与生物工程")) R.drawable.genetics
@@ -32,7 +32,14 @@ fun departmentIcon(name : String) : Int =
     else if(name.contains("软件")) R.drawable.code
     else if(name.contains("体育部")) R.drawable.directions_run
     else if(name.contains("国际教育")) R.drawable.publics
-    else R.drawable.calendar_view_month
+    else if(name.contains("校医院")) R.drawable.emergency
+    else if(name.contains("工程素质教育中心")) R.drawable.massage
+    else if(name.contains("创新创业教育处")) R.drawable.stylus_laser_pointer
+    // 下面是为二课适配的图标
+    else if(name.contains("教务处") || name.contains("研究生")) R.drawable.school
+    else if(name.contains("党委学生工作部") || name.contains("团委")) R.drawable.person_celebrate
+    else if(name.contains("招生与就业处")) R.drawable.azm
+    else R.drawable.crossword
 
 @Composable
 fun ScheduleIcons(title : String) {

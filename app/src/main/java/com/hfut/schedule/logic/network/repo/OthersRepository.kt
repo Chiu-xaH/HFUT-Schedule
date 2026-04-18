@@ -19,6 +19,8 @@ import com.hfut.schedule.logic.model.MsgResponse
 import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.model.OfficeHallSearchResponse
 import com.hfut.schedule.logic.model.SearchEleResponse
+import com.hfut.schedule.logic.model.SecondClassActivitiesResponse
+import com.hfut.schedule.logic.model.SecondClassActivity
 import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.XuanquResponse
@@ -51,6 +53,7 @@ import com.hfut.schedule.network.impl.WorkServiceCreator
 import com.hfut.schedule.network.impl.ZhiJianServiceCreator
 import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.flow.first
@@ -370,4 +373,27 @@ object OthersRepository {
             throw Exception(result)
         }
     } catch (e: Exception) { throw e }
+
+    suspend fun getSecondClassActivities(
+        cookie: String,
+        page: Int = 1,
+        holder : StateHolder<List<SecondClassActivity>>
+    ) = launchRequestState(
+            holder = holder,
+            request = { secondClass.getActivities(cookie,page) },
+            transformRedirect = { throw Exception("登陆状态失效") },
+            transformSuccess = { _, json -> parseSecondClassActivities(json) }
+        )
+
+
+    @JvmStatic
+    private fun parseSecondClassActivities(result: String): List<SecondClassActivity> = try {
+        val data = Gson().fromJson(result, SecondClassActivitiesResponse::class.java)
+//        if(data.code == StatusCode.OK.toString()) {
+            data.list
+//        } else {
+//            throw Exception(result)
+//        }
+    } catch (e: Exception) { throw e }
+
 }
