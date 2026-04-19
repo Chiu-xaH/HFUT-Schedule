@@ -89,7 +89,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                 headlineContent = { Text(text = "生物识别") },
                 supportingContent = { Text(text = "调用指纹传感器以免密码") },
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.how_to_reg), contentDescription = "")
+                    Icon(painter = painterResource(id = R.drawable.password), contentDescription = "")
                 },
                 modifier = Modifier.clickable {
                     showToast("正在开发")

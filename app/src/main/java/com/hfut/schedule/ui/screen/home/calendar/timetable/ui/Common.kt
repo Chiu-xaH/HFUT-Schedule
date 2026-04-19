@@ -31,13 +31,13 @@ import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
-import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
+import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.xah.container.component.base.sharedContainer
 import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
@@ -101,7 +101,6 @@ fun TimeTable(
             maxOf(parseTimeToFloat(it), defaultTime)
         } ?: defaultTime
     }
-    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     if(enableMergeSquare) {
         TimetableCommonSquare(
@@ -170,7 +169,6 @@ fun TimeTable(
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
-                                            enableLiquidGlass && !isTransitioning,
                                         )
                                     } else {
                                         it
@@ -367,7 +365,6 @@ fun TimeTable(
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
-                                            enableLiquidGlass && !isTransitioning,
                                         )
                                     } else {
                                         it

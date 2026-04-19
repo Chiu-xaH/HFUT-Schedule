@@ -158,7 +158,8 @@ fun OfficeHallScreen(
                         items(list.size, key = { list[it].id }) { index ->
                             val item = list[index]
                             with(item) {
-                                val needLogin = serviceMode == OfficeHallType.HANDLE.serviceMode
+                                val needLogin = false
+//                                    serviceMode == OfficeHallType.HANDLE.serviceMode
                                 CustomCard (
                                     color = cardNormalColor(),
                                     modifier = Modifier.clickable {

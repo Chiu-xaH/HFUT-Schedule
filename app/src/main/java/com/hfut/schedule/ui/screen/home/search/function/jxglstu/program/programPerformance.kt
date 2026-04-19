@@ -559,7 +559,7 @@ private fun PerformanceInfo(
                                     },
                                     leadingContent = {
                                         Icon(
-                                            painterResource(type?.icon ?: R.drawable.question_mark),
+                                            painterResource(type?.icon ?: R.drawable.help),
                                             null,
                                             tint = (
                                                     if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
@@ -632,7 +632,7 @@ private fun PerformanceInfo(
                             },
                             leadingContent = {
                                 Icon(
-                                    painterResource(type?.icon ?: R.drawable.question_mark),
+                                    painterResource(type?.icon ?: R.drawable.help),
                                     null,
                                     tint = (
                                             if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error

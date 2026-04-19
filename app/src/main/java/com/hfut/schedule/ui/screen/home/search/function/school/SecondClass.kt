@@ -6,7 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +38,9 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.StartAppIconButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -46,9 +52,12 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.SecondClassDestination
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.navigation.util.LocalNavController
@@ -95,6 +104,7 @@ fun SecondClassScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val listState = rememberLazyListState()
+    val backDrop = rememberLayerBackdrop()
 
     LaunchedEffect(page) {
         refreshNetwork()
@@ -111,12 +121,18 @@ fun SecondClassScreen(
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
+                actions = {
+                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        StartAppIconButton(backDrop,Starter.AppPackages.WECHAT)
+                    }
+                }
             )
         },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .hazeSource(hazeState)
+                .backDropSource(backDrop)
                 .fillMaxSize()
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {

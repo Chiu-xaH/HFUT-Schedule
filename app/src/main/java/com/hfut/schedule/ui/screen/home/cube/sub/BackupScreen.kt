@@ -115,7 +115,7 @@ fun BackupScreen(
                         Text("文件名将以'${MyApplication.APP_NAME}备份_时间戳.zip'写出")
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.save_clock),null)
+                        Icon(painterResource(R.drawable.save),null)
                     },
                     modifier = Modifier.clickable {
                         scope.launch {

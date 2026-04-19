@@ -136,7 +136,7 @@ fun ClassmatesScreen(
                                     leadingContent = {
                                         FilledTonalIconButton(
                                             onClick = {},
-                                            shape = CircleShape
+                                            shape = MaterialTheme.shapes.small
                                         ) {
                                             if(photoUrl != null && isValidWebUrl(photoUrl)) {
                                                 UrlImage(photoUrl)

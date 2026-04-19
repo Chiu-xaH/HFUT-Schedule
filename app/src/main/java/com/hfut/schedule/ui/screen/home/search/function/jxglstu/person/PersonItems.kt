@@ -582,7 +582,7 @@ private fun PersonItems(
                             headlineContent = {  Text(it) },
                             overlineContent = { Text("手机") },
                             leadingContent = {
-                                Icon(painterResource(R.drawable.smartphone),null)
+                                Icon(painterResource(R.drawable.call),null)
                             },
                             modifier = Modifier.clickable {
                                 ClipBoardHelper.copy(it)

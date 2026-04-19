@@ -157,7 +157,7 @@ fun TodayInfo(bean : TodayResult) {
                     headlineContent = { Text(text = it.toString()) },
                     supportingContent = { Text(text = "归还时间 $returnTime") },
                     overlineContent = { Text(text = "借阅于 $outTime\n应还于 $dueTime")},
-                    leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = "")},
                 )
             }
         }

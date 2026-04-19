@@ -536,7 +536,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                         TransplantListItem(
                             headlineContent = { Text(text = "范围支出(接口废弃)") },
                             supportingContent = { Text(text = "手动点选范围查询总消费")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.arrow_range), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Range = true }
                         )
                     }

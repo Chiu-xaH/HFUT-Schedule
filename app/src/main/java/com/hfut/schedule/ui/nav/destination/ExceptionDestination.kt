@@ -16,7 +16,7 @@ data class ExceptionDestination(
 
     companion object {
         val TITLE = res(R.string.navigation_label_exception)
-        val ICON =  R.drawable.bug_report
+        val ICON =  R.drawable.error
     }
 
     @Composable

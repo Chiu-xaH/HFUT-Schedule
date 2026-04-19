@@ -110,7 +110,7 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { ScrollText("English") },
-                    supportingContent = { Text("约21MB" + if(isExistModule) " 长按删除" else "") },
+                    supportingContent = { Text("约11MB" + if(isExistModule) " 长按删除" else "") },
                     trailingContent = {
                         if(!isExistModule) {
                             Row {

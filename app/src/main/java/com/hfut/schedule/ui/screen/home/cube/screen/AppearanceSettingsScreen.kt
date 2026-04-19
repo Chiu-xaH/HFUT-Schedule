@@ -739,7 +739,7 @@ fun SharedAppearanceSettingsScreen(
                         scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) }
                     },
                     leadingContent = {
-                        Icon(painterResource(SettingsAppearanceDestination.icon),null)
+                        Icon(painterResource(R.drawable.label),null)
                     },
                     trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
                 )

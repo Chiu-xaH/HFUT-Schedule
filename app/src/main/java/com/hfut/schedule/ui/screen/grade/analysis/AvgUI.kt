@@ -90,7 +90,7 @@ fun AvgGrade(vm: NetWorkViewModel) {
                 TransplantListItem(
                     headlineContent = { Text("绩点 ${resultAvg.myAvgGpa}") },
                     supportingContent = { Text("排名 ${resultAvg.majorAvgGpaRanking}") },
-                    leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
@@ -114,7 +114,7 @@ fun AvgGrade(vm: NetWorkViewModel) {
                 TransplantListItem(
                     headlineContent = { Text("绩点") },
                     supportingContent = { Text("平均 ${resultAvg.majorAvgGpa}\n最高 (待开发)") },
-                    leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                     modifier = Modifier
 
                         .fillMaxWidth()
@@ -165,7 +165,7 @@ fun AllGrade(vm: NetWorkViewModel) {
                         Row {
                             TransplantListItem(
                                 headlineContent = { Text("绩点 ${item.myAvgGpa}") },
-                                leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                                leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(.5f),
@@ -187,7 +187,7 @@ fun AllGrade(vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { Text("绩点(GPA)") },
                                 supportingContent = { Text("平均 ${item.majorAvgGpa}\n最高 ${item.maxAvgGpa}") },
-                                leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                                leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(.5f),

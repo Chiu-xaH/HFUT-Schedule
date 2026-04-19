@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
@@ -56,8 +57,12 @@ import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
+import com.xah.mirror.shader.GlassStyle
+import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.shaderSource
+import com.xah.navigation.model.anim.EffectLevel
+import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -68,6 +73,30 @@ import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.delay
 
+@Composable
+fun enableEffect() : Boolean {
+    val navController = LocalNavControllerSafely.current ?: return true
+    return !navController.isTransitioning
+    // fixme:模糊是Haze库，玻璃是AndroidLiquidGlass库，页面转场是SharedNav库，转场时保证动画流畅，必须关闭其余两个库的特效
+//    val level = navController.transitionLevel
+//    val needAuto = level == EffectLevel.FULL || level == EffectLevel.NO_BLUR
+//    val enableEffect = if(needAuto) {
+//        val isTransitioning = navController.isTransitioning
+//        if(isTransitioning) {
+//            val isPredictive = navController.inPredictive
+//            if(isPredictive) {
+//                true
+//            } else {
+//                false
+//            }
+//        } else {
+//            true
+//        }
+//    } else {
+//        true
+//    }
+//    return enableEffect
+}
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
@@ -78,9 +107,10 @@ fun Modifier.bottomBarBlur(
     color : Color = MaterialTheme.colorScheme.surface,
 ) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val enableEffect = enableEffect()
+
     return if(
-        !isTransitioning &&
+        enableEffect &&
         blur
         && CAN_HAZE_BLUR_BAR
         && !HAZE_BLUR_FOR_S
@@ -123,8 +153,9 @@ fun Modifier.topBarBlur(
     color : Color = backgroundColor
 ) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
-    return if(!isTransitioning && blur && CAN_HAZE_BLUR_BAR) {
+    val enableEffect = enableEffect()
+
+    return if(enableEffect && blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -160,8 +191,9 @@ fun Modifier.backDropSource(
     backdrop : ShaderState
 ): Modifier {
     val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val enableEffect = enableEffect()
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-    return if(enableLiquidGlass && !isTransitioning) {
+    return if(enableLiquidGlass && enableEffect) {
         this.shaderSource(backdrop)
     } else {
         this
@@ -172,8 +204,9 @@ fun Modifier.backDropSource(
     backdrop : LayerBackdrop
 ): Modifier {
     val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val enableEffect = enableEffect()
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-    return if(enableLiquidGlass && !isTransitioning) {
+    return if(enableLiquidGlass && enableEffect) {
         this.layerBackdrop(backdrop)
     } else {
         this
@@ -189,8 +222,9 @@ fun Modifier.normalTopBarBlur(
     color : Color = Color.Transparent
 ) : Modifier {
     val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val enableEffect = enableEffect()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(!isTransitioning && blur && CAN_HAZE_BLUR_BAR) {
+    return if(enableEffect && blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -248,7 +282,6 @@ fun HazeBottomSheet(
     val screenHeight = with(density) { LocalConfiguration.current.screenHeightDp.dp.roundToPx() }
     val finalScreenHeight = screenHeight - statusBarHeight - navigationBarHeight
     val isFullScreen = height != null && height!! >= finalScreenHeight
-//    com.xah.uicommon.util.LogUtil.debug("$height ~ $finalScreenHeight $isFullScreen")
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
@@ -306,6 +339,27 @@ fun Modifier.coverBlur(
             } else it
         }
 }
+
+fun Modifier.calendarSquareGlass(
+    state : ShaderState,
+    color : Color,
+) : Modifier = composed {
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    val enableEffect = enableEffect()
+    this.glassLayer(
+        state,
+        style = GlassStyle(
+            blur = 3.5.dp ,
+            border = 30f,
+            dispersion = 0f,
+            distortFactor = 0f,
+            stretchFactor = 0.4f,
+            overlayColor = color
+        ),
+        enabled = enableEffect && enableLiquidGlass
+    )
+}
+
 
 
 

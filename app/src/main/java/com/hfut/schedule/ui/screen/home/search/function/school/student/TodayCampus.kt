@@ -34,10 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.community.getTodayCampusApps
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -59,20 +57,17 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
-
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
-import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -133,16 +128,11 @@ fun StuTodayCampusScreen(
                         }
                     }
                 )
-                val s = MaterialTheme.shapes.medium
                 CustomTextField(
                     modifier = Modifier
                         .padding(horizontal = APP_HORIZONTAL_DP)
-//                        .clip(s)
-                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
-                    ,
-//                        ,
+                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
                     colors = textFiledAllTransplant(),
-                    
                     input = input,
                     label = { Text("检索功能") },
                     leadingIcon = { Icon(painterResource(R.drawable.search),null) },
@@ -157,13 +147,11 @@ fun StuTodayCampusScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .backDropSource(backDrop)
-//                .shaderSource(shaderState)
                 .hazeSource(hazeState)
         ) {
             StuAppsScreen(vm,input,innerPadding)
         }
     }
-//    }
 }
 
 
@@ -172,9 +160,7 @@ fun StuAppsScreen(
     vm : NetWorkViewModel,
     input : String,
     innerPadding : PaddingValues,
-//    navController: NavHostController
 ) {
-    val navController = LocalNavController.current
     val refreshNetwork : suspend () -> Unit = {
         prefs.getString("TOKEN","")?.let {
             vm.stuAppsResponse.clear()
@@ -393,9 +379,6 @@ fun StuAppsScreen(
                         }
                     }
                 }
-//                DividerTextExpandedWith("学工系统") {
-//
-//                }
                 InnerPaddingHeight(innerPadding,false)
             }
         }
