@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,12 +25,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
 
@@ -139,7 +142,7 @@ fun ClassmatesScreen(
                                             shape = MaterialTheme.shapes.small
                                         ) {
                                             if(photoUrl != null && isValidWebUrl(photoUrl)) {
-                                                UrlImage(photoUrl)
+                                                UrlImage(photoUrl, modifier = Modifier.size(DEFAULT_IMAGE_SIZE), shape = MaterialTheme.shapes.small)
                                             } else {
                                                 Text(name.substring(0,1))
                                             }

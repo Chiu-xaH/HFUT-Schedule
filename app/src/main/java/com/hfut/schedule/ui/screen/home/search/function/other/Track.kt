@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -207,13 +208,11 @@ fun TrackScreen(
                                         Text(item.title,textDecoration = textDecoration)
                                     },
                                     leadingContent = {
-                                        Box(modifier = Modifier.clip(CircleShape)){
-                                            UrlImage(
-                                                url = item.user.photoUrl,
-                                                width = 36.dp,
-                                                height = 36.dp,
-                                            )
-                                        }
+                                        UrlImage(
+                                            url = item.user.photoUrl,
+                                            modifier = Modifier.size(36.dp),
+                                            shape = CircleShape
+                                        )
                                     },
                                     overlineContent = {
                                         Text("创建于 ${item.createTime}",textDecoration = textDecoration)

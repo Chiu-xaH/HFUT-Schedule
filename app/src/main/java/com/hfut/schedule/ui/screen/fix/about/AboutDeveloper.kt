@@ -411,20 +411,39 @@ private fun OverlappingAvatars(
         } else 0.dp
 
         imageUrls.forEachIndexed { index, url ->
-            Box(
+            UrlImage(
+                url = url,
+                shape = CircleShape,
                 modifier = Modifier
                     .offset(x = spacing * index)
                     .size(avatarSize)
                     .shadow(elevation = APP_HORIZONTAL_DP, shape = CircleShape, clip = false)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surface)
-            ) {
-                UrlImage(
-                    url = url,
-                    width = avatarSize,
-                    height = avatarSize,
-                )
-            }
+//                    width = avatarSize,
+//                    height = avatarSize,
+            )
+//            Box(
+//                modifier = Modifier
+//                    .offset(x = spacing * index)
+//                    .size(avatarSize)
+//                    .shadow(elevation = APP_HORIZONTAL_DP, shape = CircleShape, clip = false)
+//                    .clip(CircleShape)
+//                    .background(MaterialTheme.colorScheme.surface)
+//            ) {
+//                UrlImage(
+//                    url = url,
+//                    modifier = Modifier
+//                        .size(avatarSize)
+//                        .offset(x = spacing * index)
+//                        .size(avatarSize)
+//                        .shadow(elevation = APP_HORIZONTAL_DP, shape = CircleShape, clip = false)
+//                        .clip(CircleShape)
+//                        .background(MaterialTheme.colorScheme.surface)
+////                    width = avatarSize,
+////                    height = avatarSize,
+//                )
+//            }
         }
     }
 }

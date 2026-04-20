@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -53,6 +54,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
@@ -206,7 +208,7 @@ fun StuAppsScreen(
                         ) {
                             TransplantListItem(
                                 leadingContent = {
-                                    UrlImage(iconUrl, width = size, height = size)
+                                    UrlImage(iconUrl, modifier = Modifier.size(size), shape = MaterialTheme.shapes.extraSmall)
                                 },
                                 headlineContent = { ScrollText(name) },
                                 modifier = Modifier.clickable {
@@ -234,7 +236,7 @@ fun StuAppsScreen(
                             ) {
                                 TransplantListItem(
                                     leadingContent = {
-                                        UrlImage(logo, width = size, height = size)
+                                        UrlImage(logo, modifier = Modifier.size(size),shape = MaterialTheme.shapes.extraSmall)
                                     },
                                     headlineContent = { ScrollText(name) },
                                     modifier = Modifier.clickable {
@@ -271,7 +273,7 @@ fun StuAppsScreen(
                                         ) {
                                             TransplantListItem(
                                                 leadingContent = {
-                                                    UrlImage(iconUrl, width = size, height = size)
+                                                    UrlImage(iconUrl, modifier = Modifier.size(size),shape = MaterialTheme.shapes.extraSmall)
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
@@ -295,7 +297,7 @@ fun StuAppsScreen(
                                             ) {
                                                 TransplantListItem(
                                                     leadingContent = {
-                                                        UrlImage(iconUrl, width = size, height = size)
+                                                        UrlImage(iconUrl, modifier = Modifier.size(size),shape = MaterialTheme.shapes.extraSmall)
                                                     },
                                                     headlineContent = { ScrollText(name) },
                                                     modifier = Modifier.clickable {
@@ -334,7 +336,7 @@ fun StuAppsScreen(
                                     ) {
                                         TransplantListItem(
                                             leadingContent = {
-                                                UrlImage(logo, width = size, height = size)
+                                                UrlImage(logo, modifier = Modifier.size(size),shape = MaterialTheme.shapes.extraSmall)
                                             },
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
@@ -361,7 +363,7 @@ fun StuAppsScreen(
                                         ) {
                                             TransplantListItem(
                                                 leadingContent = {
-                                                    UrlImage(logo, width = size, height = size)
+                                                    UrlImage(logo,modifier = Modifier.size(size),shape = MaterialTheme.shapes.extraSmall)
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {

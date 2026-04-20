@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +51,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -176,7 +178,10 @@ fun OfficeHallScreen(
                                             Text(serviceDpt)
                                         },
                                         leadingContent = {
-                                            UrlImage(photoUrl, width = imageSize, height = imageSize, useCut = false, roundSize = 0.dp)
+                                            UrlImage(
+                                                photoUrl,
+                                                modifier = Modifier.size(imageSize)
+                                            )
                                         },
                                         trailingContent = if(needLogin) {
                                             { Text("需登录") }

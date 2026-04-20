@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -67,7 +68,6 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.component.network.UrlImageNoCrop
 import com.hfut.schedule.ui.component.screen.pager.PageIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -275,15 +275,17 @@ fun ShortcutSortScreen() {
                                 HorizontalPager(state = pagerState) { page ->
                                     when(page) {
                                         0 -> {
-                                            UrlImageNoCrop(
+                                            UrlImage(
                                                 "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/tips_shortcut.jpg",
-                                                modifier = Modifier
+                                                contentScale = ContentScale.FillWidth,
+                                                shape = MaterialTheme.shapes.medium,
                                             )
                                         }
                                         1 -> {
-                                            UrlImageNoCrop(
+                                            UrlImage(
                                                 "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/tips_qs.jpg",
-                                                modifier = Modifier
+                                                contentScale = ContentScale.FillWidth,
+                                                shape = MaterialTheme.shapes.medium,
                                             )
                                         }
                                     }
