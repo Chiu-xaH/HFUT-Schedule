@@ -24,9 +24,10 @@ import com.xah.common.ui.util.res
 
 data class CourseDetailDestination(
     val lesson : lessons,
-    val courseBookData : Map<Long, CourseBookBean> = emptyMap()
+    val courseBookData : Map<Long, CourseBookBean> = emptyMap(),
+    val origin : String? = null,
 ) : NavDestination() {
-    override val key = "course_api_detail_${lesson.id}"
+    override val key = "course_api_detail_${lesson.id}_${origin}"
     override val description = lesson.course.nameZh
     override val title = TITLE
     override val icon = ICON

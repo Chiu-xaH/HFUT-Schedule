@@ -306,7 +306,7 @@ fun DetailItems(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    JxglstuCourseTableSearch(showAll,vm,innerPadding,listOf(lessons)) {
+                    JxglstuCourseTableSearch(showAll,innerPadding,listOf(lessons)) {
                         showAll = it
                     }
                 }

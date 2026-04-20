@@ -44,8 +44,8 @@ import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.shared.LogUtil
 
-private const val timeTextFactor = 0.85
-private const val placeTextFactor = 0.9
+const val timeTextFactor = 0.85
+const val placeTextFactor = 0.9
 
 @Composable
 fun TimeTable(
@@ -64,12 +64,12 @@ fun TimeTable(
 ) {
     val floatingController = LocalFloatingController.current
 
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
-    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
+
+    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
 
     val list = if(week > items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -162,16 +162,16 @@ fun TimeTable(
                         if (hasBackground) {
                             it
                                 .clip(round)
-                                .let {
+                                .let { i ->
                                     if (AppVersion.CAN_SHADER) {
-                                        it.calendarSquareGlass(
+                                        i.calendarSquareGlass(
                                             shaderState,
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
                                         )
                                     } else {
-                                        it
+                                        i
                                     }
                                 }
                         } else {

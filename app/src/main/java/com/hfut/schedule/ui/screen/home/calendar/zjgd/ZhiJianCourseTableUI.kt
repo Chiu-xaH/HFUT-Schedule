@@ -55,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
@@ -82,6 +83,7 @@ import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.placeTextFactor
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
@@ -117,10 +119,7 @@ fun ZhiJianCourseTableUI(
     val table = remember { List(30) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val tableAll = remember { List(42) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val refreshNetwork = suspend m@ {
-        val token = prefs.getString("ZhiJian","")
-        if(token == null) {
-            return@m
-        }
+        val token = prefs.getString("ZhiJian", "") ?: return@m
         val date = getMondayOfWeek(today).format(DateTimeManager.formatter_YYYY_MM_DD)
         vm.zhiJianCourseResp.clear()
         vm.getZhiJianCourses(studentId,date,token)
@@ -226,6 +225,15 @@ fun ZhiJianCourseTableUI(
     var findNewCourse by remember { mutableStateOf(false) }
 
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
+    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val calendarSquareHeight = height * 2
+    val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
+
+    val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
+    val lineHeight = textSize * calendarSquareTextPadding
+    val placeTextLineHeight = lineHeight * placeTextFactor
+    val placeTextSize = textSize * placeTextFactor
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
@@ -478,7 +486,9 @@ fun ZhiJianCourseTableUI(
         val style = CalendarStyle(showAll)
         val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+//        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+//        val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+//        val calendarSquareHeight = height * 2
         val squareColor =  containerColor.copy(customBackgroundAlpha)
         Box {
             LazyVerticalGrid(
@@ -511,14 +521,14 @@ fun ZhiJianCourseTableUI(
                                     if(backGroundHaze != null) {
                                         it
                                             .clip(style.containerCorner)
-                                            .let {
+                                            .let { i ->
                                                 if(AppVersion.CAN_SHADER) {
-                                                    it.calendarSquareGlass(
+                                                    i.calendarSquareGlass(
                                                         backGroundHaze,
                                                         squareColor,
                                                     )
                                                 } else {
-                                                    it
+                                                    i
                                                 }
                                             }
                                     } else {
@@ -538,7 +548,6 @@ fun ZhiJianCourseTableUI(
                                     }
                                 }
                         ) {
-
                             if (itemList.size == 1) {
                                 val l = itemList[0]
                                 Column(
@@ -550,19 +559,27 @@ fun ZhiJianCourseTableUI(
                                 ) {
                                     Text(
                                         text = "${l.startPeriod}-${l.endPeriod}节",
-                                        fontSize = style.textSize,
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+                                        overflow = TextOverflow.Clip,
+                                        maxLines = 1,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = CARD_NORMAL_DP)
                                     )
                                     Box(
                                         modifier = Modifier
                                             .weight(1f) // 占据中间剩余的全部空间
                                             .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = l.courseName,
-                                            fontSize = style.textSize,
+                                            fontSize = textSize,
+                                            lineHeight = lineHeight,
+//                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                             modifier = Modifier.fillMaxWidth()
@@ -571,9 +588,13 @@ fun ZhiJianCourseTableUI(
                                     l.place?.let {
                                         Text(
                                             text = it,
-                                            fontSize = style.textSize,
+                                            fontSize = placeTextSize,
+                                            lineHeight = placeTextLineHeight,
+//                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = CARD_NORMAL_DP)
                                         )
                                     }
                                 }
@@ -591,19 +612,27 @@ fun ZhiJianCourseTableUI(
                                 ) {
                                     Text(
                                         text = "${l.startPeriod}-${l.endPeriod}节",
-                                        fontSize = style.textSize,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth(),
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+                                        overflow = TextOverflow.Clip,
+                                        maxLines = 1,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = CARD_NORMAL_DP),
                                     )
                                     Box(
                                         modifier = Modifier
                                             .weight(1f) // 占据中间剩余的全部空间
                                             .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = "${itemList.size}节课冲突",
-                                            fontSize = style.textSize,
+                                            fontSize = textSize,
+                                            lineHeight = lineHeight,
+//                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                             modifier = Modifier.fillMaxWidth(),
@@ -611,9 +640,13 @@ fun ZhiJianCourseTableUI(
                                     }
                                     Text(
                                         text = name,
-                                        fontSize = style.textSize,
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = CARD_NORMAL_DP)
                                     )
                                 }
                             }

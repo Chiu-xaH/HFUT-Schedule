@@ -963,41 +963,6 @@ fun CalendarUISettings(
                 showProcessText = true
             )
         }
-        if(!tiny) {
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = {
-                    Text(
-                        stringResource(
-                            R.string.appearance_settings_old_calendar_square_height_title,
-                            formatDecimal(calendarSquareHeight.toDouble(), 0)
-                        ))
-                },
-                supportingContent = {
-                    if(!tiny)
-                        Text(stringResource(R.string.appearance_settings_old_calendar_square_height_description))
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.height),null)
-                },
-            )
-
-            CustomSlider(
-                value = calendarSquareHeight,
-                onValueChange = {
-                    scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
-                },
-                modifier = Modifier.let {
-                    if(tiny) it
-                    else it.padding(bottom = APP_HORIZONTAL_DP)
-                },
-                valueRange = 50f..200f,
-                showProcessText = true,
-                steps = 149,
-                processText = formatDecimal(calendarSquareHeight.toDouble(),0)
-            )
-            PaddingHorizontalDivider()
-        }
 
         TransplantListItem(
             headlineContent = {

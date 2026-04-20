@@ -115,13 +115,13 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
                 }
                 list.add(
                     TimeTableItem(
-                        teacher = teacher,
+                        teacher = teacher?.trim(),
                         type = TimeTableType.COURSE,
-                        name = courseName,
+                        name = courseName.trim(),
                         dayOfWeek = schedule.weekday,
                         startTime = parseJxglstuIntTime(schedule.startTime),
                         endTime = parseJxglstuIntTime(schedule.endTime),
-                        place = schedule.room?.nameZh,
+                        place = schedule.room?.nameZh?.trim(),
                         detail = TimeTableDetail(
                             teacher = schedule.teacherName,
                             date = schedule.date,
@@ -181,13 +181,13 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
             }
             list.add(
                 TimeTableItem(
-                    teacher = teacher,
+                    teacher = teacher?.trim(),
                     type = TimeTableType.COURSE,
-                    name = item.lessonId.toString().let { courseNameMap[it] ?: it },
+                    name = item.lessonId.toString().let { courseNameMap[it] ?: it }.trim(),
                     dayOfWeek = item.weekday,
                     startTime = parseJxglstuIntTime(item.startTime),
                     endTime = parseJxglstuIntTime(item.endTime),
-                    place = item.room?.nameZh,
+                    place = item.room?.nameZh?.trim(),
                     detail = TimeTableDetail(
                         teacher = item.personName,
                         date = item.date,
@@ -202,7 +202,7 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
-        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+        return List(MyApplication.MAX_WEEK) { emptyList() }
     }
 }
 
@@ -257,11 +257,11 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
                     list.add(
                         TimeTableItem(
                             type = TimeTableType.FOCUS,
-                            name = name,
+                            name = name.trim(),
                             dayOfWeek = currentWeek.second,
                             startTime = currentStartTime,
                             endTime = currentEndTime,
-                            place = place,
+                            place = place?.trim(),
                             teacher = null,
                             detail = TimeTableDetail(
                                 teacher = null,
@@ -280,11 +280,11 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
                 list.add(
                     TimeTableItem(
                         type = TimeTableType.FOCUS,
-                        name = name,
+                        name = name.trim(),
                         dayOfWeek = weekInfo.second,
                         startTime = startTime,
                         endTime = endTime,
-                        place = place,
+                        place = place?.trim(),
                         teacher = null,
                         detail = TimeTableDetail(
                             teacher = null,
@@ -300,7 +300,7 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
-        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+        return List(MyApplication.MAX_WEEK) { emptyList() }
     }
 }
 
@@ -321,11 +321,11 @@ private suspend fun examToTimeTableData(): List<List<TimeTableItem>> {
             list.add(
                 TimeTableItem(
                     type = TimeTableType.EXAM,
-                    name = name + (item.type?.let { "-$it" } ?: ""),
+                    name = (name + (item.type?.let { "-$it" } ?: "")).trim(),
                     dayOfWeek = weekInfo.second,
                     startTime = startTime,
                     endTime = endTime,
-                    place = place,
+                    place = place?.trim(),
                     teacher = null,
                     detail = TimeTableDetail(
                         teacher = null,
@@ -339,7 +339,7 @@ private suspend fun examToTimeTableData(): List<List<TimeTableItem>> {
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
-        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+        return List(MyApplication.MAX_WEEK) { emptyList() }
     }
 }
 
@@ -352,7 +352,7 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
             val originalData = getCoursesFromCommunity(targetWeek = week+1, friendUserName = friendStudentId)
             val list = result[week]
             repeat(7) { weekday ->
-                val data = originalData[weekday].flatMap { it }
+                val data = originalData[weekday].flatten()
                 for(item in data) {
                     val time = item.classTime.split("-")
                     if(time.size != 2) {
@@ -364,13 +364,13 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
                     }
                     list.add(
                         TimeTableItem(
-                            teacher = teacher,
+                            teacher = teacher?.trim(),
                             type = TimeTableType.COURSE,
-                            name = item.name,
+                            name = item.name.trim(),
                             dayOfWeek = weekday + 1,
                             startTime = time[0],
                             endTime = time[1],
-                            place = item.place,
+                            place = item.place?.trim(),
                             detail = TimeTableDetail(
                                 teacher = item.teacher,
                                 date = weekToDate(week+1,weekday+1) ?: "Error",

@@ -142,7 +142,7 @@ fun CourseSearchCalendarScreen(
             val uiState by vm.courseSearchResponse.state.collectAsState()
             CommonNetworkScreen(uiState, onReload = {}) {
                 val list = (uiState as UiState.Success).data
-                JxglstuCourseTableSearch(showAll,vm,innerPadding,list) {
+                JxglstuCourseTableSearch(showAll,innerPadding,list) {
                     showAll = it
                 }
             }

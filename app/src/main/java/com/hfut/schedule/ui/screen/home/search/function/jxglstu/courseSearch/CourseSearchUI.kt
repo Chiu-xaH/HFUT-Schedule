@@ -390,7 +390,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                     ) {
                         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
                             val list = (uiState as UiState.Success).data
-                            JxglstuCourseTableSearch(showAll,vm,innerPadding,list) {
+                            JxglstuCourseTableSearch(showAll,innerPadding,list) {
                                 showAll = it
                             }
                         }

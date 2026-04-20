@@ -22,7 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +45,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
@@ -60,25 +60,28 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.CourseDetailDestination
+import com.hfut.schedule.ui.nav.destination.ExceptionDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.placeTextFactor
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.timeTextFactor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.mirror.util.ShaderState
-import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.container.component.base.sharedContainer
+import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
@@ -90,34 +93,9 @@ private fun MultiCourseSheetUIForSearch(
     week : Int,
     weekday : Int,
     courses : List<CardBean>,
-    vm: NetWorkViewModel,
-    list : List<lessons>
+    lessons : List<lessons>
 ) {
-    var numItem by remember { mutableIntStateOf(0) }
-
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(list[numItem].course.nameZh)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    DetailItems(list[numItem],vm,mapOf(),)
-                }
-            }
-        }
-    }
+    val navController = LocalNavController.current
 
     Column {
         HazeBottomSheetTopBar("第${week}周 周${numToChinese(weekday)}", isPaddingStatusBar = false)
@@ -144,8 +122,11 @@ private fun MultiCourseSheetUIForSearch(
                         Text((index+1).toString())
                     },
                     modifier = Modifier.clickable {
-                        numItem = course.lessonNum
-                        showBottomSheet = true
+                        try {
+                            navController.push(CourseDetailDestination(lessons[course.lessonNum]))
+                        } catch (e : Exception) {
+                            navController.push(ExceptionDestination(e))
+                        }
                     }
                 )
             }
@@ -170,7 +151,7 @@ fun JxglstuCourseTableTwo(
     backGroundHaze : ShaderState?,
     onSwapShowAll : (Boolean) -> Unit
 ) {
-    val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
+    val list by produceState(initialValue = emptyList(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
                 LargeStringDataManager.read(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()))?.let { value = JxglstuRepository.parseDatumCourse(it) }
@@ -183,7 +164,7 @@ fun JxglstuCourseTableTwo(
         }
     }
 
-    JxglstuCourseTableSearch(showAll,vm,innerPadding,list,onDateChange,today,backGroundHaze,onSwapShowAll)
+    JxglstuCourseTableSearch(showAll,innerPadding,list,onDateChange,today,backGroundHaze,onSwapShowAll)
 }
 
 
@@ -192,7 +173,7 @@ fun JxglstuCourseTableTwo(
 @Composable
 fun JxglstuCourseTableSearch(
     showAll: Boolean,
-    vm: NetWorkViewModel,
+//    vm: NetWorkViewModel,
     innerPadding : PaddingValues,
     list : List<lessons>,
     onDateChange: ((LocalDate) ->Unit)? = null,
@@ -200,31 +181,42 @@ fun JxglstuCourseTableSearch(
     backGroundHaze : ShaderState? = null,
     onSwapShowAll : (Boolean) -> Unit
 ) {
-    var numItem by remember { mutableIntStateOf(0) }
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
+    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val calendarSquareHeight = height * 2
+    val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
 
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(list[numItem].course.nameZh)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    DetailItems(list[numItem],vm,mapOf())
-                }
-            }
-        }
-    }
+    val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
+    val lineHeight = textSize * calendarSquareTextPadding
+    val placeTextLineHeight = lineHeight * placeTextFactor
+    val placeTextSize = textSize * placeTextFactor
+
+//    var numItem by remember { mutableIntStateOf(0) }
+//
+//    var showBottomSheet by remember { mutableStateOf(false) }
+//    if (showBottomSheet) {
+//        HazeBottomSheet (
+//            onDismissRequest = { showBottomSheet = false },
+//            showBottomSheet = showBottomSheet,
+//        ) {
+//            Scaffold(
+//                modifier = Modifier.fillMaxSize(),
+//                containerColor = Color.Transparent,
+//                topBar = {
+//                    HazeBottomSheetTopBar(list[numItem].course.nameZh)
+//                },
+//            ) { innerPadding ->
+//                Column(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .fillMaxSize()
+//                ) {
+//                    DetailItems(list[numItem],vm,mapOf())
+//                }
+//            }
+//        }
+//    }
 
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
 
@@ -240,7 +232,7 @@ fun JxglstuCourseTableSearch(
                 showBottomSheetMultiCourse = false
             },
         ) {
-            MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm,list = list)
+            MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek, lessons = list)
         }
     }
 
@@ -308,9 +300,7 @@ fun JxglstuCourseTableSearch(
         }
     }
 
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     var findNewCourse by remember { mutableStateOf(false) }
     fun refreshUI() {
         // 清空
@@ -573,7 +563,7 @@ fun JxglstuCourseTableSearch(
             onSwapShowAll(true)
         }
     }
-    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val navController = LocalNavController.current
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
 
@@ -615,6 +605,16 @@ fun JxglstuCourseTableSearch(
                 if(texts.isEmpty() && backGroundHaze != null) {
                     Box(modifier = Modifier.height(calendarSquareHeight.dp).padding(style.everyPadding))
                 } else {
+                    val dest = if (texts.size == 1) {
+                        try {
+                            CourseDetailDestination(list[texts[0].lessonNum], origin = "SQUARE_$cell")
+                        } catch (e : Exception) {
+                            LogUtil.error(e)
+                            null
+                        }
+                    } else {
+                        null
+                    }
                     Card(
                         shape = style.containerCorner,
                         colors = CardDefaults.cardColors(containerColor = color),
@@ -627,25 +627,30 @@ fun JxglstuCourseTableSearch(
                                 if(backGroundHaze != null) {
                                     it
                                         .clip(style.containerCorner)
-                                        .let {
+                                        .let { i ->
                                             if(AppVersion.CAN_SHADER) {
-                                                it.calendarSquareGlass(
+                                                i.calendarSquareGlass(
                                                     backGroundHaze,
                                                     squareColor,
                                                 )
                                             } else {
-                                                it
+                                                i
                                             }
                                         }
                                 } else {
                                     it
+                                        .sharedContainer(
+                                            key = dest?.key,
+                                            shape = style.containerCorner,
+                                        )
                                 }
                             }
                             .clickableWithScale(ClickScale.SMALL.scale){
                                 // 只有一节课
                                 if (texts.size == 1) {
-                                    numItem = texts[0].lessonNum
-                                    showBottomSheet = true
+                                    dest?.let { navController.push(it) }
+//                                    numItem = texts[0].lessonNum
+//                                    showBottomSheet = true
                                 } else if (texts.size > 1) {
                                     multiWeekday =
                                         if (showAll) (cell + 1) % 7 else (cell + 1) % 5
@@ -667,19 +672,27 @@ fun JxglstuCourseTableSearch(
                             ) {
                                 Text(
                                     text = time,
-                                    fontSize = style.textSize,
+//                                    fontSize = style.textSize,
+                                    fontSize = placeTextSize,
+                                    lineHeight = placeTextLineHeight,
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
+                                    overflow = TextOverflow.Clip,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = CARD_NORMAL_DP)
                                 )
                                 Box(
                                     modifier = Modifier
                                         .weight(1f) // 占据中间剩余的全部空间
                                         .fillMaxWidth(),
-                                    contentAlignment = Alignment.TopCenter
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = name,
-                                        fontSize = style.textSize,
+                                        fontSize = textSize,
+                                        lineHeight = lineHeight,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                         modifier = Modifier.fillMaxWidth()
@@ -688,30 +701,72 @@ fun JxglstuCourseTableSearch(
                                 place?.let {
                                     Text(
                                         text = it,
-                                        fontSize = style.textSize,
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = CARD_NORMAL_DP)
                                     )
                                 }
                             }
-                        } else {
-                            Column (
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(rememberScrollState())
-//                        contentAlignment = Alignment.Center // 文字垂直水平居中
+                        } else if(texts.size > 1) {
+                            val time = texts[0].text.substringBefore("\n")
+                            val name = "${texts.size}节课冲突"
+                            val place = try {
+                                texts.joinToString(",") { it.text.split("\n")[1].take(1) }
+                            } catch (e : Exception) {
+                                LogUtil.error(e)
+                                null
+                            }
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text =
-                                        if (texts.size == 1) texts[0].text
-                                        else if (texts.size > 1) "${texts[0].text.substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                        else "",
-                                    fontSize = style.textSize ,
+                                    text = time,
+//                                    fontSize = style.textSize,
+                                    fontSize = placeTextSize,
+                                    lineHeight = placeTextLineHeight,
                                     textAlign = TextAlign.Center,
+                                    overflow = TextOverflow.Clip,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = CARD_NORMAL_DP)
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f) // 占据中间剩余的全部空间
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = name,
+                                        fontSize = textSize,
+                                        lineHeight = lineHeight,
+//                                        fontSize = style.textSize,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                place?.let {
+                                    Text(
+                                        text = it,
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+                            //                                        fontSize = style.textSize,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = CARD_NORMAL_DP)
+                                    )
+                                }
                             }
                         }
-
                     }
                 }
             }
