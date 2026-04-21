@@ -20,6 +20,7 @@
     <string name="navigation_label_community_appointment">社区预约</string>
     <string name="navigation_label_work_and_rest">作息</string>
     <string name="navigation_label_washing">海乐生活</string>
+    <string name="navigation_label_washing_detail">海乐生活详情</string>
     <string name="navigation_label_fee">学费</string>
     <string name="navigation_label_stu">今日校园</string>
     <string name="navigation_label_teacher_search">教师检索</string>
@@ -35,6 +36,8 @@
     <string name="navigation_label_library">图书馆</string>
     <string name="navigation_label_all_programs">全校培养方案</string>
     <string name="navigation_label_transfer_major_detail">转专业详情</string>
+    <string name="navigation_label_transfer_major_applied_detail">申请详情</string>
+    <string name="navigation_label_transfer_major_applied">我的申请</string>
     <string name="navigation_label_select_courses_detail">选课入口</string>
     <string name="navigation_label_drop_courses">退课</string>
     <string name="navigation_label_program">培养方案</string>

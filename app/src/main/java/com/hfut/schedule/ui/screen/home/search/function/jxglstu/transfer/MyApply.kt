@@ -12,13 +12,17 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,12 +35,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -46,54 +54,41 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
+import com.hfut.schedule.ui.nav.destination.TransferMajorAppliedDetailDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.util.text
+import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) {
-    var idx by remember { mutableIntStateOf(0) }
+fun MyApplyListUI(vm: NetWorkViewModel, batchId : String,title : String) {
 
-    var showBottomSheetApply by remember { mutableStateOf(false) }
-
-    if (showBottomSheetApply) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheetApply = false },
-            showBottomSheet = showBottomSheetApply,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("申请详情")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    MyApply(vm,batchId,idx)
-                }
-            }
-        }
-    }
-
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navController = LocalNavController.current
 
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie()
@@ -121,59 +116,95 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
         )
     }
 
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as UiState.Success).data
-        val applyList = response.models
-        if(showBottomSheet) {
-            HazeBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                showBottomSheet = showBottomSheet,
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
-                Column {
-                    HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
-                    TransferCancelStatusUI(vm,batchId, applyList[idx].id)
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
-                }
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text("我的申请") },
+                    navigationIcon = {
+                        TopBarNavigationIcon()
+                    }
+                )
             }
-        }
-
-
-        if(applyList.isNotEmpty()) {
-            LazyColumn {
-                items(applyList.size, key = { it }) { index ->
-                    val data = applyList[index]
-                    val info = data.changeMajorSubmit
-                    CardListItem(
-                        headlineContent = { Text(info.major.nameZh) },
-                        leadingContent = { DepartmentIcons(info.department.nameZh) },
-                        trailingContent = {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    displayWarningDialog = true
-                                }
-                            ) {
-                                Icon(painterResource(R.drawable.close),null)
-                            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                val response = (uiState as UiState.Success).data
+                val applyList = response.models
+                var idx by remember { mutableIntStateOf(0) }
+                if(showBottomSheet) {
+                    HazeBottomSheet(
+                        onDismissRequest = {
+                            showBottomSheet = false
                         },
-                        modifier = Modifier.clickable {
-                            idx = index
-                            showBottomSheetApply = true
+                        showBottomSheet = showBottomSheet,
+                    ) {
+                        Column {
+                            HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
+                            TransferCancelStatusUI(vm,batchId, applyList[idx].id)
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
                         }
-                    )
+                    }
                 }
-            }
-        } else {
-            CenterScreen {
-                EmptyIcon()
+
+                if(applyList.isNotEmpty()) {
+                    LazyColumn {
+                        item { InnerPaddingHeight(innerPadding,true) }
+                        items(applyList.size, key = { it }) { index ->
+                            val data = applyList[index]
+                            val info = data.changeMajorSubmit
+                            val dest = TransferMajorAppliedDetailDestination(batchId,index)
+                            CardListItem(
+                                shape = RoundedCornerShape(0.dp),
+                                cardModifier = Modifier
+                                    .sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
+                                headlineContent = { Text(info.major.nameZh) },
+                                leadingContent = { DepartmentIcons(info.department.nameZh) },
+                                trailingContent = {
+                                    FilledTonalIconButton(
+                                        onClick = {
+                                            idx = index
+                                            displayWarningDialog = true
+                                        }
+                                    ) {
+                                        Icon(painterResource(R.drawable.close),null)
+                                    }
+                                },
+                                modifier = Modifier.clickable {
+                                    navController.push(dest)
+                                }
+                            )
+                        }
+                        item { InnerPaddingHeight(innerPadding,false) }
+                    }
+                } else {
+                    CenterScreen {
+                        EmptyIcon()
+                    }
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
+
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navController = LocalNavController.current
 
 
     val uiState1 by vm.myApplyData.state.collectAsState()
@@ -192,13 +223,13 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
     val uiState2 by vm.myApplyInfoData.state.collectAsState()
 
-    var successLoad = uiState1 is UiState.Success
+    val successLoad = uiState1 is UiState.Success
     val refreshNetwork2 : suspend () -> Unit = {
         onListenStateHolder(vm.myApplyData) { data ->
             val cookie = getJxglstuCookie()
 
             val list = data.models
-            val id = if(list.isNotEmpty() == true) {
+            val id = if(list.isNotEmpty()) {
                 list[indexs].id
             } else {
                 null
@@ -211,6 +242,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
             } }
         }
     }
+
     LaunchedEffect(Unit) {
         refreshNetwork2()
     }
@@ -227,126 +259,156 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     }
 
     val isSuccessTransfer = remember { isSuccessTransfer() }
-    DividerTextExpandedWith(text = "状态",false) {
-        Box {
-            LoadingLargeCard(
-                prepare = false,
-                title = if(isSuccessTransfer)"恭喜 已转入"
-                else if(getApplyStatus(list,indexs) == true) "学籍尚未变更"
-                else if(getApplyStatus(list,indexs) == false) "未申请或申请不通过"
-                else "状态未知",
-                loading = !successLoad
+
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
-                if(isSuccessTransfer) {
-                    TransplantListItem(
-                        headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
-                        overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
-                        leadingContent = { getPersonInfo().department?.let { DepartmentIcons(it) } }
-                    )
-                } else {
-                    if(data != null) {
-                        Row {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text("申请详情") },
+                    navigationIcon = {
+                        TopBarNavigationIcon()
+                    }
+                )
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+
+            DividerTextExpandedWith(text = "状态",false) {
+                Box {
+                    LoadingLargeCard(
+                        prepare = false,
+                        title = if(isSuccessTransfer)"恭喜 已转入"
+                        else if(getApplyStatus(list,indexs) == true) "学籍尚未变更"
+                        else if(getApplyStatus(list,indexs) == false) "未申请或申请不通过"
+                        else "状态未知",
+                        loading = !successLoad
+                    ) {
+                        if(isSuccessTransfer) {
                             TransplantListItem(
                                 headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
                                 overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
-                                modifier = Modifier.weight(.4f)
+                                leadingContent = { getPersonInfo().department?.let { DepartmentIcons(it) } }
                             )
-                            TransplantListItem(
-                                headlineContent = { ScrollText(text = data!!.major.nameZh) },
-                                overlineContent = { ScrollText(text = data!!.department.nameZh) },
-                                leadingContent = { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") },
-                                modifier = Modifier.weight(.6f)
-                            )
-                        }
-                        TransplantListItem(
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
-                            overlineContent = { ScrollText(text = "已申请/计划录取") },
-                            headlineContent = { Text(text = "${data!!.applyStdCount} / ${data!!.preparedStdCount}", fontWeight = FontWeight.Bold ) },
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    DividerTextExpandedWith("成绩") {
-        CommonNetworkScreen(uiState2, isFullScreen = false, onReload = refreshNetwork2) {
-            val bean = (uiState2 as UiState.Success).data
-
-            val grade = bean.grade
-
-            CustomCard(
-                color = cardNormalColor()
-            ) {
-                Column {
-                    if(!isSuccessTransfer) {
-                        val examSchedule = bean.examSchedule
-                        val meetSchedule = bean.meetSchedule
-
-                        if(examSchedule != null) {
-                            TransplantListItem(
-                                headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
-                                supportingContent = { Text(examSchedule.time) },
-                                overlineContent = { Text("笔试安排") }
-                            )
-                        }
-                        if(meetSchedule != null) {
-                            TransplantListItem(
-                                headlineContent = { Text(meetSchedule.place.replace("；","\n").replace("："," ")) },
-                                supportingContent = { Text(meetSchedule.time) },
-                                overlineContent = { Text("面试安排") }
-                            )
-                        }
-                    }
-                    if(data != null) {
-                        Row {
-                            TransplantListItem(
-//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
-                                overlineContent = { ScrollText(text = "绩点") },
-                                headlineContent = { Text(text = "${grade.gpa.score}" ) },
-                                supportingContent = {
-                                    Text("${grade.gpa.rank}/${data!!.applyStdCount} 名")
-                                },
-                                modifier = Modifier.weight(.5f)
-                            )
-                            TransplantListItem(
-//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
-                                overlineContent = { ScrollText(text = "加权均分") },
-                                headlineContent = { Text(text = "${grade.weightAvg.score}" ) },
-                                supportingContent = {
-                                    Text("${grade.weightAvg.rank}/${data!!.applyStdCount} 名")
-                                },
-                                modifier = Modifier.weight(.5f)
-                            )
-                        }
-                        Row {
-                            TransplantListItem(
-//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
-                                overlineContent = { ScrollText(text = "转专业考核") },
-                                headlineContent = { Text(text = "${grade.transferAvg.score}", fontWeight = FontWeight.Bold ) },
-                                supportingContent = {
-                                    val rank = grade.transferAvg.rank
-                                    if(rank != null) {
-                                        Text("$rank/${data!!.applyStdCount} 名")
-                                    } else {
-                                        Text("教务无数据")
-                                    }
-                                },
-                                modifier = Modifier.weight(.5f)
-                            )
-                            TransplantListItem(
-//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
-                                overlineContent = { ScrollText(text = "算术均分") },
-                                headlineContent = { Text(text = "${grade.operateAvg.score}") },
-                                supportingContent = {
-                                    Text("${grade.operateAvg.rank}/${data!!.applyStdCount} 名")
-                                },
-                                modifier = Modifier.weight(.5f)
-                            )
+                        } else {
+                            if(data != null) {
+                                Row {
+                                    TransplantListItem(
+                                        headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
+                                        overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
+                                        modifier = Modifier.weight(.4f)
+                                    )
+                                    TransplantListItem(
+                                        headlineContent = { ScrollText(text = data!!.major.nameZh) },
+                                        overlineContent = { ScrollText(text = data!!.department.nameZh) },
+                                        leadingContent = { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") },
+                                        modifier = Modifier.weight(.6f)
+                                    )
+                                }
+                                TransplantListItem(
+                                    leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
+                                    overlineContent = { ScrollText(text = "已申请/计划录取") },
+                                    headlineContent = { Text(text = "${data!!.applyStdCount} / ${data!!.preparedStdCount}", fontWeight = FontWeight.Bold ) },
+                                )
+                            }
                         }
                     }
                 }
             }
+
+            DividerTextExpandedWith("成绩") {
+                CommonNetworkScreen(uiState2, isFullScreen = false, onReload = refreshNetwork2) {
+                    val bean = (uiState2 as UiState.Success).data
+
+                    val grade = bean.grade
+
+                    CustomCard(
+                        color = cardNormalColor()
+                    ) {
+                        Column {
+                            if(!isSuccessTransfer) {
+                                val examSchedule = bean.examSchedule
+                                val meetSchedule = bean.meetSchedule
+
+                                if(examSchedule != null) {
+                                    TransplantListItem(
+                                        headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
+                                        supportingContent = { Text(examSchedule.time) },
+                                        overlineContent = { Text("笔试安排") }
+                                    )
+                                }
+                                if(meetSchedule != null) {
+                                    TransplantListItem(
+                                        headlineContent = { Text(meetSchedule.place.replace("；","\n").replace("："," ")) },
+                                        supportingContent = { Text(meetSchedule.time) },
+                                        overlineContent = { Text("面试安排") }
+                                    )
+                                }
+                            }
+                            if(data != null) {
+                                Row {
+                                    TransplantListItem(
+//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                                        overlineContent = { ScrollText(text = "绩点") },
+                                        headlineContent = { Text(text = "${grade.gpa.score}" ) },
+                                        supportingContent = {
+                                            Text("${grade.gpa.rank}/${data!!.applyStdCount} 名")
+                                        },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                    TransplantListItem(
+//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
+                                        overlineContent = { ScrollText(text = "加权均分") },
+                                        headlineContent = { Text(text = "${grade.weightAvg.score}" ) },
+                                        supportingContent = {
+                                            Text("${grade.weightAvg.rank}/${data!!.applyStdCount} 名")
+                                        },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                }
+                                Row {
+                                    TransplantListItem(
+//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                                        overlineContent = { ScrollText(text = "转专业考核") },
+                                        headlineContent = { Text(text = "${grade.transferAvg.score}", fontWeight = FontWeight.Bold ) },
+                                        supportingContent = {
+                                            val rank = grade.transferAvg.rank
+                                            if(rank != null) {
+                                                Text("$rank/${data!!.applyStdCount} 名")
+                                            } else {
+                                                Text("教务无数据")
+                                            }
+                                        },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                    TransplantListItem(
+//                                leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
+                                        overlineContent = { ScrollText(text = "算术均分") },
+                                        headlineContent = { Text(text = "${grade.operateAvg.score}") },
+                                        supportingContent = {
+                                            Text("${grade.operateAvg.rank}/${data!!.applyStdCount} 名")
+                                        },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            InnerPaddingHeight(innerPadding,false)
         }
     }
 }

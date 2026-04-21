@@ -76,7 +76,9 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+import com.hfut.schedule.ui.nav.destination.TransferMajorAppliedDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDetailDestination
 
@@ -323,31 +325,9 @@ fun TransferDetailScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var showBottomSheet_apply by remember { mutableStateOf(false) }
     val backDrop = rememberLayerBackdrop()
-    if (showBottomSheet_apply) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet_apply = false },
-            showBottomSheet = showBottomSheet_apply
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = true)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    MyApplyListUI(vm,batchId,hazeState)
-                }
-            }
-        }
-    }
     var input by remember { mutableStateOf("") }
+    val navController = LocalNavController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -361,13 +341,20 @@ fun TransferDetailScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                            LiquidButton(
+                        val dest = TransferMajorAppliedDestination(batchId,title)
+                        SharedContainer(
+                            key = dest.key,
+                            shape = CircleShape,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ) {
+                            LiquidButton (
+                                shape = RoundedCornerShape(0.dp),
+                                backdrop = backDrop,
                                 onClick = {
-                                    showBottomSheet_apply = true
+                                    navController.push(dest)
                                 },
-                                backdrop = backDrop
-                                ) {
+                            ) {
                                 Text("我的申请")
                             }
                         }
@@ -400,7 +387,6 @@ fun TransferDetailScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-//                        colors = textFiledTransplant(),
                     )
                 }
                 Spacer(Modifier.height(CARD_NORMAL_DP))
@@ -413,10 +399,9 @@ fun TransferDetailScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            TransferUI(vm,batchId,hazeState,isHidden,input,innerPadding)
+            TransferUI(vm,batchId,isHidden,input,innerPadding)
         }
     }
-//    }
 }
 
 
@@ -425,7 +410,6 @@ fun TransferDetailScreen(
 private fun TransferUI(
     vm: NetWorkViewModel,
     batchId: String,
-    hazeState: HazeState,
     isHidden : Boolean = false,
     input : String,
     innerPadding: PaddingValues
@@ -454,7 +438,6 @@ private fun TransferUI(
                 showBottomSheet = false
             },
             showBottomSheet = showBottomSheet,
-//            expandFully = false
         ) {
             Column(
                 modifier = Modifier
@@ -471,7 +454,6 @@ private fun TransferUI(
             onDismissRequest = {
                 showBottomSheet_select = false
             },
-//            expandFully = false,
             showBottomSheet = showBottomSheet_select
         ) {
             Column {
@@ -594,7 +576,7 @@ private fun TransferUI(
                 val count = dataItem.applyStdCount
                 val limit = dataItem.preparedStdCount
                 val isFull = count >= limit
-                var successRate = limit.toDouble() safeDiv count.toDouble()
+                val successRate = limit.toDouble() safeDiv count.toDouble()
 
                 // 已申请 $count / $limit
                 CustomCard(
