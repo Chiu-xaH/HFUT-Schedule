@@ -93,46 +93,47 @@ fun CourseSearchScreen(
     var courseName by rememberSaveable { mutableStateOf("") }
     var courseId by rememberSaveable { mutableStateOf("") }
 
-
-    var semester by remember { mutableStateOf<Int?>(null) }
-    LaunchedEffect(Unit) {
-        semester = getSemester()
-    }
-    var firstSearch by remember { mutableStateOf(true) }
-
-    val refreshNetwork : suspend () -> Unit = {
-        if(semester != null) {
-            val cookie = getJxglstuCookie()
-            cookie?.let {
-                vm.courseSearchResponse.clear()
-                if(firstSearch) firstSearch = false
-                vm.searchCourse(it, className, courseName, semester!!,courseId)
-            }
-        }
-    }
-    val scope = rememberCoroutineScope()
     val uiState by vm.courseSearchResponse.state.collectAsState()
+    var semester by rememberSaveable { mutableStateOf<Int?>(null) }
+
     LaunchedEffect(Unit) {
         if(uiState is UiState.Success) {
+            val data = (uiState as UiState.Success).data
+            if(data.isEmpty()) {
+                return@LaunchedEffect
+            }
+            semester = data[0].semester.id
             return@LaunchedEffect
-        }
-        vm.courseSearchResponse.emitPrepare()
-    }
-    if(!firstSearch) {
-        LaunchedEffect(semester) {
-            if(semester != null)
-                refreshNetwork()
+        } else {
+            semester = getSemester()
+            vm.courseSearchResponse.emitPrepare()
         }
     }
 
-    val loading = uiState is UiState.Loading
-    if(!firstSearch) {
-        LaunchedEffect(loading) {
-            if(!loading) {
-                showSearch = false
-            }
+    val refreshNetwork : suspend (Boolean) -> Unit = m@ { skip ->
+        if(uiState is UiState.Success && skip) return@m
+        if(semester == null) return@m
+        val cookie = getJxglstuCookie() ?: return@m
+
+        vm.courseSearchResponse.clear()
+        vm.searchCourse(cookie, className, courseName, semester!!,courseId)
+    }
+
+    val scope = rememberCoroutineScope()
+
+//    LaunchedEffect(semester) {
+//        refreshNetwork(true)
+//    }
+
+    LaunchedEffect(uiState) {
+        showSearch = when(uiState) {
+            is UiState.Loading -> false
+            is UiState.Error -> true
+            is UiState.Prepare -> true
+            is UiState.Success -> false
         }
     }
+
     val listState = rememberLazyListState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -148,20 +149,23 @@ fun CourseSearchScreen(
                     TopBarNavigationIcon()
                 },
                 actions = {
-                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {
-                        val classNameNil = className.let { if(it.isEmpty()) null else it }
-                        val courseCodeNil = courseId.let { if(it.isEmpty()) null else it }
-                        val courseNameNil = courseName.let { if(it.isEmpty()) null else it }
+                    Row(modifier = Modifier
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                        .animateContentSize()) {
+                        val classNameNil = className.let { it.ifEmpty { null } }
+                        val courseCodeNil = courseId.let { it.ifEmpty { null } }
+                        val courseNameNil = courseName.let { it.ifEmpty { null } }
                         val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
                         LiquidButton(
                             onClick = {
-                                semester?.let {
+                                semester?.let { term ->
                                     navController.push(
                                         CourseSearchTableDestination(
-                                            it,
+                                            term,
                                             classNameNil,
                                             courseCodeNil,
                                             courseNameNil,
+                                            (uiState as UiState.Success).data
                                         )
                                     )
                                 }
@@ -190,7 +194,7 @@ fun CourseSearchScreen(
                                 enabled = uiState is UiState.Success && !canNotUse,
                                 backdrop = backdrop
                             ) {
-                                Text("显示搜索框")
+                                Text("开始搜索")
                             }
                         }
                     }
@@ -287,7 +291,7 @@ fun CourseSearchScreen(
                             )
                             FilledTonalIconButton(
                                 onClick = {
-                                    scope.launch{ refreshNetwork() }
+                                    scope.launch{ refreshNetwork(false) }
                                 },
                                 modifier = Modifier
                                     .weight(.5f)
@@ -306,7 +310,7 @@ fun CourseSearchScreen(
                     }
                 }
 
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
+                CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }, prepareContent = { PrepareSearchIcon() }) {
                     CourseTotalUI(
                         dataSource = TotalCourseDataSource.SEARCH,
                         sortType = true,
@@ -325,8 +329,14 @@ fun CourseSearchScreen(
                 PageController(
                     listState = listState,
                     currentPage = page,
-                    onNextPage = { semester = it },
-                    onPreviousPage = { semester = it },
+                    onNextPage = {
+                        semester = it
+                        scope.launch { refreshNetwork(false) }
+                    },
+                    onPreviousPage = {
+                        semester = it
+                        scope.launch { refreshNetwork(false) }
+                    },
                     gap = 20,
                     text = parseSemester(page),
                     range = Pair(null,null),

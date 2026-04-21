@@ -84,6 +84,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.CourseClassmatesScreen
 import com.hfut.schedule.ui.nav.destination.CourseDetailDestination
+import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
@@ -135,7 +136,7 @@ fun CourseTotalUI(
         value = JxglstuRepository.parseCourseBook(json)
     }
 
-    if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
+    if(dataSource != TotalCourseDataSource.SEARCH && !ifSaved) {
         LaunchedEffect(Unit) {
             val term = SemesterParser.getSemester()
             val skip = (vm.courseBookResponse.state.first() as? UiState.Success)?.data?.first == term
@@ -150,7 +151,7 @@ fun CourseTotalUI(
         }
     }
 
-    val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
+    val list by produceState(initialValue = emptyList(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
                 LargeStringDataManager.read(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()))?.let { value = JxglstuRepository.parseDatumCourse(it) }
@@ -638,18 +639,28 @@ fun DetailItems(
         }
         item {
             lessons.scheduleText.dateTimePlacePersonText.textZh?.let {
+                val dest = CourseSearchTableDestination(
+                    lessons.semester.id,
+                    lessons.course.nameZh,
+                    lessons.code,
+                    null,
+                    listOf(lessons)
+                )
                 TransplantListItem(
                     overlineContent = { Text("上课安排") },
                     headlineContent = { Text(it) },
+                    colors = MaterialTheme.colorScheme.surface,
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.schedule),
                             contentDescription = "Localized description",
                         )
                     },
-                    modifier = Modifier.clickable {
-                        showBottomSheetSchedule = true
-                    }
+                    modifier = Modifier
+                        .sharedContainer(dest.key, RoundedCornerShape(0.dp))
+                        .clickable {
+                            navController.push(dest)
+                        }
                 )
             }
         }

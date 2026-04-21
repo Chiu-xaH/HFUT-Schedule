@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch
 
+
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,10 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -36,16 +36,11 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
-
-
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.rememberShaderState
-
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
@@ -54,11 +49,11 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CourseSearchCalendarScreen(
-    term : Int,
+    term : Int?,
     courseName : String?,
     courseCode : String?,
     classes : String?,
-    vm : NetWorkViewModel,
+    list: List<lessons>
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -80,30 +75,32 @@ fun CourseSearchCalendarScreen(
                             Text(CourseSearchTableDestination.TITLE.asString())
                             classes?.let {
                                 Text(
-                                    "检索班级: $it",
+                                    "班级: $it",
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
                             courseName?.let {
                                 Text(
-                                    "检索课程名: $it",
+                                    "课程名: $it",
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
                             courseCode?.let {
                                 Text(
-                                    "检索课程代码: $it",
+                                    "课程代码: $it",
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
-                            Text(
-                                "检索学期: ${SemesterParser.parseSemester(term)}",
-                                modifier = Modifier.padding(start = 2.dp),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
+                            term?.let {
+                                Text(
+                                    "学期: ${SemesterParser.parseSemester(it)}",
+                                    modifier = Modifier.padding(start = 2.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
                         }
                     },
                     navigationIcon = {
@@ -111,14 +108,6 @@ fun CourseSearchCalendarScreen(
                     },
                     actions = {
                         Row() {
-                            LiquidButton(
-                                onClick = { showToast("正在开发") },
-                                isCircle = true,
-                                backdrop = backdrop
-                            ) {
-                                Icon(painter = painterResource(id = R.drawable.save), contentDescription = "")
-                            }
-                            Spacer(Modifier.width(BUTTON_PADDING))
                             LiquidButton(
                                 onClick = { showAll = !showAll },
                                 isCircle = true,
@@ -139,12 +128,8 @@ fun CourseSearchCalendarScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            val uiState by vm.courseSearchResponse.state.collectAsState()
-            CommonNetworkScreen(uiState, onReload = {}) {
-                val list = (uiState as UiState.Success).data
-                JxglstuCourseTableSearch(showAll,innerPadding,list) {
-                    showAll = it
-                }
+            JxglstuCourseTableSearch(showAll,innerPadding,list) {
+                showAll = it
             }
         }
     }
