@@ -16,10 +16,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,24 +46,21 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
-import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) {
+fun MyApplyListUI(vm: NetWorkViewModel, batchId : String) {
     var idx by remember { mutableIntStateOf(0) }
 
     var showBottomSheetApply by remember { mutableStateOf(false) }
@@ -121,7 +116,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
         )
     }
 
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
         val response = (uiState as UiState.Success).data
         val applyList = response.models
         if(showBottomSheet) {
@@ -151,6 +146,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                         trailingContent = {
                             FilledTonalIconButton(
                                 onClick = {
+                                    idx = index
                                     displayWarningDialog = true
                                 }
                             ) {
@@ -163,6 +159,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                         }
                     )
                 }
+                item { Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding()) }
             }
         } else {
             CenterScreen {

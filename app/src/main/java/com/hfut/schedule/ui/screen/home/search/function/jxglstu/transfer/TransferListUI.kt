@@ -49,11 +49,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
@@ -79,7 +77,6 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDetailDestination
-
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
@@ -89,17 +86,16 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
-import com.xah.container.component.base.SharedContainer
-import com.xah.navigation.util.LocalNavController
+import com.xah.common.logic.safeDiv
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.util.text
-import com.xah.common.logic.safeDiv
+import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -111,7 +107,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun TransferScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -309,7 +304,6 @@ fun TransferScreen(
             }
         }
     }
-//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -330,20 +324,9 @@ fun TransferDetailScreen(
             onDismissRequest = { showBottomSheet_apply = false },
             showBottomSheet = showBottomSheet_apply
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = true)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    MyApplyListUI(vm,batchId,hazeState)
-                }
+            Column() {
+                HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = false)
+                MyApplyListUI(vm,batchId)
             }
         }
     }

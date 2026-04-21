@@ -53,7 +53,6 @@ import com.hfut.schedule.network.impl.WorkServiceCreator
 import com.hfut.schedule.network.impl.ZhiJianServiceCreator
 import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.flow.first
