@@ -11,6 +11,7 @@ import com.xah.common.ui.util.text
 data class CourseClassmatesScreen(
     val lessonId : Int,
     val courseName : String,
+    val isScheduled : Boolean
 ) : NavDestination() {
     override val key = "course_classmates_${lessonId}_$courseName"
     override val description = courseName
@@ -25,6 +26,6 @@ data class CourseClassmatesScreen(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        ClassmatesScreen(vm,lessonId,text("$TITLE-$description"))
+        ClassmatesScreen(vm,lessonId,text("$TITLE-$description"),isScheduled)
     }
 }

@@ -64,7 +64,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -84,7 +83,6 @@ import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
@@ -95,7 +93,6 @@ import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
@@ -110,8 +107,6 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ClassroomCourseTableDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
-import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow.Companion.KEY
-
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
@@ -122,7 +117,6 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniA
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.hfut.schedule.ui.screen.home.smoothToOne
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -132,13 +126,12 @@ import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.xah.floating.util.LocalFloatingController
+import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource

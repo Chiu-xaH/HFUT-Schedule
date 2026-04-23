@@ -35,7 +35,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
-import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
+import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -65,7 +65,7 @@ data class TimeTableSquareWindow(
             val item = list[0]
             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
             when (item.type) {
-                TimeTableType.COURSE -> CourseApiDetailDestination(item.name, origin,item.place).key
+                TimeTableType.COURSE -> CourseDetailApiDestination(item.name, origin,item.place).key
                 TimeTableType.FOCUS -> AddEventDestination(item.detail.eventId,CourseDetailOrigin.CALENDAR_JXGLSTU.t).key
                 TimeTableType.EXAM -> ExamDestination(origin).key
             }

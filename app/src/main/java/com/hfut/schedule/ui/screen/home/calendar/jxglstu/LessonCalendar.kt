@@ -123,7 +123,7 @@ private fun MultiCourseSheetUIForSearch(
                     },
                     modifier = Modifier.clickable {
                         try {
-                            navController.push(CourseDetailDestination(lessons[course.lessonNum]))
+                            navController.push(CourseDetailDestination(lessons[course.lessonNum], classroom = place))
                         } catch (e : Exception) {
                             navController.push(ExceptionDestination(e))
                         }
@@ -236,8 +236,8 @@ fun JxglstuCourseTableSearch(
         }
     }
 
-    val table = rememberSaveable { List(30) { mutableStateListOf<CardBean>() } }
-    val tableAll = rememberSaveable { List(42) { mutableStateListOf<CardBean>() } }
+    val table = remember { List(30) { mutableStateListOf<CardBean>() } }
+    val tableAll = remember { List(42) { mutableStateListOf<CardBean>() } }
 
     val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
@@ -607,7 +607,9 @@ fun JxglstuCourseTableSearch(
                 } else {
                     val dest = if (texts.size == 1) {
                         try {
-                            CourseDetailDestination(list[texts[0].lessonNum], origin = "SQUARE_$cell")
+                            val l = texts[0].text.split("\n")
+                            val place = if(l.size>=3) l[2] else null
+                            CourseDetailDestination(list[texts[0].lessonNum], classroom = place, origin = "SQUARE_$cell")
                         } catch (e : Exception) {
                             LogUtil.error(e)
                             null

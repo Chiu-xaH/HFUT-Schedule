@@ -47,10 +47,10 @@ data class FailRateDetailDestination(
         val hazeState = rememberHazeState(blurEnabled = blur)
 
         Scaffold(
-            modifier = Modifier.Companion.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 MediumTopAppBar(
-                    modifier = Modifier.Companion.topBarBlur(hazeState),
+                    modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     title = { Text("${title.asString()}: $courseName") },
                     colors = topBarTransplantColor(),

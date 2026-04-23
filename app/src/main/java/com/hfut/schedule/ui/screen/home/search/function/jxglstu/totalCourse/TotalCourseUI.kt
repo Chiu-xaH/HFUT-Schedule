@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,26 +37,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.huixin.card
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
-import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.UniAppRepository
@@ -79,40 +74,33 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.CourseClassmatesScreen
 import com.hfut.schedule.ui.nav.destination.CourseDetailDestination
+import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
 import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
-
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
-import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
-import com.xah.container.component.base.SharedContainer
-import com.xah.container.model.ContainerFilledStrategy
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
-import com.xah.common.ui.model.text.UiText
+import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -129,7 +117,9 @@ fun CourseTotalUI(
     sortType: Boolean,
     vm : NetWorkViewModel,
     ifSaved : Boolean,
-    state: LazyListState = rememberLazyListState()
+    state: LazyListState = rememberLazyListState(),
+    innerPadding : PaddingValues? = null,
+    input : String = "",
 ) {
     val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
         val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
@@ -166,7 +156,6 @@ fun CourseTotalUI(
 
     val isSearch = dataSource == TotalCourseDataSource.SEARCH
 
-    var input by remember { mutableStateOf("") }
     val sortList =  list
         .filter {
             input.isBlank() || it.course.nameZh.contains(input) || it.course.courseType.nameZh.contains(input) || it.openDepartment.nameZh.contains(input) || it.code.contains(input) ||( it.remark?.contains(input) == true)
@@ -181,43 +170,9 @@ fun CourseTotalUI(
 
     val navController = LocalNavController.current
 
-    var numItem by remember { mutableIntStateOf(0) }
-
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(sortList[numItem].course.nameZh)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    DetailItems(sortList[numItem],vm,courseBookData)
-                }
-            }
-        }
-    }
     if(list.isNotEmpty()) {
-        if(!isSearch) {
-            CustomTextField(
-                input = input,
-                label = { Text("搜索 学院、课程、代码、类型")},
-                leadingIcon = {
-                    Icon(painterResource(R.drawable.search),null)
-                }
-            ) { input = it }
-            Spacer(Modifier.height(CARD_NORMAL_DP))
-        }
         LazyColumn(state = state) {
+            item { innerPadding?.let { InnerPaddingHeight(it,true) } }
             item { TermFirstlyInfo(list) }
             items(sortList.size, key = { sortList[it].code }) { item ->
                 val data = sortList[item]
@@ -265,6 +220,7 @@ fun CourseTotalUI(
             }
             if(isSearch)
                 item { PaddingForPageControllerButton() }
+            item { innerPadding?.let { InnerPaddingHeight(it,false) } }
         }
     } else {
         CenterScreen {
@@ -278,49 +234,14 @@ fun CourseTotalUI(
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun DetailItems(
+    innerPadding : PaddingValues,
     lessons: lessons,
-    vm : NetWorkViewModel,
     courseBookData : Map<Long, CourseBookBean>,
     classroom : String? = null,
 ) {
     val navController = LocalNavController.current
-
-    var showBottomSheetSchedule by remember { mutableStateOf(false) }
-    if(showBottomSheetSchedule) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheetSchedule = false },
-            showBottomSheet = showBottomSheetSchedule,
-        ) {
-            var showAll by remember { mutableStateOf(false) }
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("开课课程表 ${lessons.course.nameZh}") {
-                        FilledTonalIconButton (onClick = { showAll = !showAll }) {
-                            Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                        }
-                    }
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    JxglstuCourseTableSearch(showAll,innerPadding,listOf(lessons)) {
-                        showAll = it
-                    }
-                }
-            }
-        }
-    }
-
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
-    ApiForCourseSearch(vm,null, lessons.code.substringBefore("--"),showBottomSheet_Search) {
-        showBottomSheet_Search = false
-    }
-
     LazyColumn {
+        item { InnerPaddingHeight(innerPadding,true) }
         item {
             Row {
                 TransplantListItem(
@@ -356,7 +277,8 @@ fun DetailItems(
         item {
             val dest = CourseClassmatesScreen(
                 lessons.id,
-                lessons.course.nameZh
+                lessons.course.nameZh,
+                lessons.stdCount == 0
             )
             Row {
                 lessons.stdCount?.let {
@@ -583,6 +505,19 @@ fun DetailItems(
             }
         }
         item {
+            TransplantListItem(
+                overlineContent = { Text("学期") },
+                headlineContent = { Text(lessons.semester.nameZh) },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.approval),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {},
+            )
+        }
+        item {
             lessons.nameZh?.let {
                 TransplantListItem(
                     overlineContent = { Text("班级") },
@@ -599,12 +534,12 @@ fun DetailItems(
         }
         item {
             courseBookData[lessons.course.id]?.let {
-                var t1 : String? = if(it.textbook.isEmpty() || it.textbook.isBlank()) {
+                val t1 : String? = if(it.textbook.isEmpty() || it.textbook.isBlank()) {
                     null
                 } else {
                     "基本教材: " + it.textbook.replace("<br/>"," ").replace("<br>"," ")
                 }
-                var t2 : String? = if(it.specialTextbook.isEmpty() || it.specialTextbook.isBlank()) {
+                val t2 : String? = if(it.specialTextbook.isEmpty() || it.specialTextbook.isBlank()) {
                     null
                 } else {
                     "辅助教材: " + it.specialTextbook.replace("<br/>"," ").replace("<br>"," ")
@@ -684,88 +619,83 @@ fun DetailItems(
                 color = cardNormalColor(),
                 modifier = Modifier.padding(top = CARD_NORMAL_DP*2)
             ) {
-                TransplantListItem(
-                    headlineContent = { Text("其他教学班开课查询") },
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.search),
-                            contentDescription = "Localized description",
+                CourseSearchApiDestination(null, lessons.code.substringBefore("--")).let { dest ->
+                    SharedContainer(
+                        key = dest.key,
+                        containerColor = cardNormalColor(),
+                        shape = MaterialTheme.shapes.medium.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
+                    ) {
+                        TransplantListItem(
+                            headlineContent = { Text("其他教学班开课查询") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.search),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            colors = cardNormalColor(),
+                            modifier = Modifier.clickable {
+                                navController.push(dest)
+                            }
                         )
-                    },
-                    modifier = Modifier.clickable {
-                        showBottomSheet_Search = true
                     }
-                )
-//                classroom?.let {
-//                    TransplantListItem(
-//                        supportingContent = {
-//                            Text(it)
-//                        },
-//                        headlineContent = { Text("教室状态查询") },
-//                        trailingContent = {
-//                        },
-//                        leadingContent = {
-//                            Icon(
-//                                painterResource(R.drawable.meeting_room),
-//                                contentDescription = "Localized description",
-//                            )
-//                        },
-//                        modifier = Modifier
-//                            .clickable {
-//                                navController.push(ClassroomDestination("CourseDetail"))
-//                            }
-//                    )
-//                }
-                val dest = FailRateApiDestination(lessons.course.nameZh,lessons.code.substringBefore("--"))
-                SharedContainer(
-                    key = dest.key,
-                    shape = MaterialTheme.shapes.medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp)
-                    ),
-                    containerColor = cardNormalColor()
-                ) {
-                    TransplantListItem(
-                        colors = cardNormalColor(),
-                        headlineContent = { Text(text =FailRateDestination.title.asString() + "查询") },
-                        leadingContent = {
-                            Icon(
-                                painterResource(FailRateDestination.icon),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            navController.push(dest)
-                        }
-                    )
+                }
+
+                classroom?.let {
+                    val dest = ClassroomDestination("CourseDetail")
+                    SharedContainer(
+                        key = dest.key,
+                        shape = RoundedCornerShape(0.dp),
+                        containerColor = cardNormalColor()
+                    ) {
+                        TransplantListItem(
+                            supportingContent = {
+                                Text(it)
+                            },
+                            colors = cardNormalColor(),
+                            headlineContent = { Text("教室状态查询") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.meeting_room),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable {
+                                    navController.push(dest)
+                                }
+                        )
+                    }
+
+                }
+
+                FailRateApiDestination(lessons.course.nameZh,lessons.code.substringBefore("--")).let { dest ->
+                    SharedContainer(
+                        key = dest.key,
+                        shape = MaterialTheme.shapes.medium.copy(
+                            topStart = CornerSize(0.dp),
+                            topEnd = CornerSize(0.dp)
+                        ),
+                        containerColor = cardNormalColor()
+                    ) {
+                        TransplantListItem(
+                            colors = cardNormalColor(),
+                            headlineContent = { Text(text =FailRateDestination.title.asString() + "查询") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(FailRateDestination.icon),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                navController.push(dest)
+                            }
+                        )
+                    }
                 }
             }
         }
-        item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
-    }
-}
-
-fun getTotalCourse(json : String?): MutableList<lessons>  {
-    val list = mutableListOf<lessons>()
-
-    try {
-        if (json != null) {
-            if(json.contains("lessonIds")) {
-                val result = Gson().fromJson(json,lessonResponse::class.java).lessons
-                return result.toMutableList()
-            }
-            else {
-                val result = Gson().fromJson(json,CourseSearchResponse::class.java).data
-                for (i in result.indices) {
-                    val courses = result[i].lesson
-                    list.add(courses)
-                }
-                return list
-            }
-        } else return list
-    } catch (e : Exception) {
-        LogUtil.error(e)
-        return list
+        item { InnerPaddingHeight(innerPadding,false) }
     }
 }
 
@@ -774,7 +704,8 @@ fun getTotalCourse(json : String?): MutableList<lessons>  {
 fun ClassmatesScreen(
     vm: NetWorkViewModel,
     lessonId : Int,
-    title : UiText
+    title : UiText,
+    isScheduled : Boolean
 ) {
     val uiState by vm.classmatesResp.state.collectAsState()
     val refreshNetwork = suspend m@ {
@@ -841,7 +772,13 @@ fun ClassmatesScreen(
 
                 if(list.isEmpty()) {
                     CenterScreen {
-                        EmptyIcon("未加入本班级")
+                        EmptyIcon(
+                            if(isScheduled) {
+                                "课程待安排"
+                            } else {
+                                "未加入本班级"
+                            }
+                        )
                     }
                 } else {
                     // 初始化统计Map
@@ -980,7 +917,9 @@ fun ClassmatesScreen(
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             InnerPaddingHeight(innerPadding,false)
                         }
-                        item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
+                        item { Spacer(Modifier
+                            .height(APP_HORIZONTAL_DP)
+                            .navigationBarsPadding()) }
                     }
                 }
             }

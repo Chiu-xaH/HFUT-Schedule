@@ -329,7 +329,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
         if(showInfo) {
             courseInfo?.let {
                 planCoursesTransform(it)?.let { b ->
-                    ProgramDetailInfo(courseInfo = b,vm, hazeState, ifSaved){ showInfo = false }
+                    ProgramDetailInfo(courseInfo = b, ifSaved){ showInfo = false }
                 }
             }
         }

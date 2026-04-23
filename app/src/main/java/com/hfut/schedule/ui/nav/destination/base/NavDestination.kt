@@ -20,11 +20,11 @@ abstract class NavDestination : Destination() {
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override val PlaceHolder = @Composable {
         Box(
-            modifier = Modifier.Companion.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             Box(
-                modifier = Modifier.Companion.align(Alignment.Companion.Center)
+                modifier = Modifier.align(Alignment.Center)
             ) {
                 StatusIcon(icon, title, textColor = MaterialTheme.colorScheme.secondary)
             }

@@ -52,8 +52,6 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -64,18 +62,20 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
-import com.xah.common.ui.component.status.LoadingUI
-import com.xah.common.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.safeDiv
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
@@ -359,7 +359,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         if(showInfo) {
             courseInfo?.let {
                 planCoursesTransform(it)?.let { b ->
-                    ProgramDetailInfo(courseInfo = b,vm, hazeState, ifSaved){ showInfo = false }
+                    ProgramDetailInfo(courseInfo = b, ifSaved){ showInfo = false }
                 }
             }
         }
@@ -452,13 +452,10 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
 }
 
 @Composable
-fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeState: HazeState, ifSaved: Boolean, onDismissRequest : () -> Unit) {
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
+fun ProgramDetailInfo(courseInfo : ProgramPartThree,ifSaved: Boolean, onDismissRequest : () -> Unit) {
     val context = LocalContext.current
+    val navController = LocalNavController.current
 
-    ApiForCourseSearch(vm,null, courseInfo.code,showBottomSheet_Search) {
-        showBottomSheet_Search = false
-    }
     HazeBottomSheet(
         showBottomSheet = true,
         onDismissRequest = onDismissRequest
@@ -468,7 +465,7 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                 FilledTonalButton(
                     onClick = {
                         if(!ifSaved) {
-                            showBottomSheet_Search = true
+                            navController.push(CourseSearchApiDestination(null,courseInfo.code))
                         } else {
                             showToast("登录教务后可查询开课")
                             refreshLogin(context)

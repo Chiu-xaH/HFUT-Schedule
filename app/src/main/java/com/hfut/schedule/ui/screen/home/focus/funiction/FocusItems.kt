@@ -9,7 +9,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,7 +20,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,8 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -75,7 +71,7 @@ import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
-import com.hfut.schedule.ui.nav.destination.CourseApiDetailDestination
+import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -84,7 +80,6 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
@@ -298,7 +293,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
 //            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
-            DetailInfos(list,vm = vm, hazeState = hazeState)
+            DetailInfos(list)
         }
     }
 
@@ -371,7 +366,7 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
 //            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
-            DetailInfos(list,vm = vm, hazeState = hazeState)
+            DetailInfos(list)
         }
     }
 
@@ -763,7 +758,7 @@ fun JxglstuTodayCourseItem(
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
     val name = item.courseName
-    val dest = CourseApiDetailDestination(
+    val dest = CourseDetailApiDestination(
         name,
         CourseDetailOrigin.FOCUS_TODAY.t + "$index",
         item.place
@@ -830,7 +825,7 @@ fun JxglstuTomorrowCourseItem(
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val name = item.courseName
-    val dest = CourseApiDetailDestination(
+    val dest = CourseDetailApiDestination(
         name,
         CourseDetailOrigin.FOCUS_TOMORROW.t + "$index",
         item.place

@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.SecondClassDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.component.text.ScrollText
@@ -33,7 +34,7 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 第二课堂","位于 查询中心-第二课堂。由于学校平台限制，无法获取到二课成绩单")//
+            UpdateItems("新增 第二课堂","位于 查询中心-第二课堂。由于学校平台限制，无法拿到二课成绩单",to = To.Screen(SecondClassDestination))//
             UpdateItems("新增 适配若干二级界面为新的转场动画")//
             UpdateItems("修复 开课查询从详情界面返回后，切换学期不刷新列表的Bug")//
             UpdateItems("修复 从快捷方式打开扫码界面，在扫码登录成功后界面未自动关闭的Bug")//

@@ -32,9 +32,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -76,18 +74,17 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
+import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
+import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.placeTextFactor
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
-import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
@@ -98,7 +95,7 @@ import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.mirror.util.ShaderState
-import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
@@ -218,7 +215,7 @@ fun ZhiJianCourseTableUI(
             },
 //            isFullScreen = false,
         ) {
-            CourseDetail(vm,selectedItem[0])
+            CourseDetail(selectedItem[0])
         }
     }
 
@@ -739,7 +736,7 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
 //            isFullScreen = false,
             showBottomSheet = showBottomSheetTotalCourse
         ) {
-            CourseDetail(vm,courses[selectedIndex])
+            CourseDetail(courses[selectedIndex])
         }
     }
     Column {
@@ -773,70 +770,9 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CourseDetail(
-    vm: NetWorkViewModel,
     course : ZhiJianCourseItemDto
 ) {
-
-    var showBottomSheet_Teacher by remember { mutableStateOf(false) }
-//    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    if (showBottomSheet_Teacher) {
-        HazeBottomSheet(
-            showBottomSheet = showBottomSheet_Teacher,
-            onDismissRequest = { showBottomSheet_Teacher = false },
-//            sheetState = sheetState_Teacher,
-//            shape = bottomSheetRound(sheetState_Teacher)
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("教师检索 ${course.teacher}")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    ApiToTeacherSearch(course.teacher,vm,innerPadding)
-                }
-            }
-        }
-    }
-
-    val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_FailRate by remember { mutableStateOf(false) }
-
-    if (showBottomSheet_FailRate) {
-        HazeBottomSheet(
-            showBottomSheet = showBottomSheet_FailRate,
-            onDismissRequest = { showBottomSheet_FailRate = false },
-//            sheetState = sheetState_FailRate,
-//            shape = bottomSheetRound(sheetState_FailRate)
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("挂科率 ${course.courseName}")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    ApiToFailRate(course.courseName,vm,innerPadding,course.code)
-                }
-            }
-        }
-    }
-
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
-
-    var searchAll by remember { mutableStateOf(false) }
-    ApiForCourseSearch(vm,null, course.code.let { if(searchAll) it.substringBefore("--") else it },showBottomSheet_Search) {
-        showBottomSheet_Search = false
-    }
+    val navController = LocalNavController.current
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar(course.courseName, isPaddingStatusBar = false)
@@ -858,7 +794,7 @@ private fun CourseDetail(
                 },
                 overlineContent = { Text("教师") },
                 modifier = Modifier.clickable {
-                    showBottomSheet_Teacher = true
+                    navController.push(TeacherSearchApiDestination(course.teacher))
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.person),null)
@@ -884,8 +820,7 @@ private fun CourseDetail(
                 trailingContent = {
                     FilledTonalButton(
                         onClick = {
-                            searchAll = true
-                            showBottomSheet_Search = true
+                            navController.push(CourseSearchApiDestination(null,course.code.substringBefore("--")))
                         }
                     ) {
                         Text("开课查询")
@@ -935,7 +870,7 @@ private fun CourseDetail(
                     Icon(painterResource(FailRateDestination.icon),null)
                 },
                 modifier = Modifier.clickable {
-                    showBottomSheet_FailRate = true
+                    navController.push(FailRateApiDestination(course.courseName,course.code))
                 }
             )
         }
@@ -944,8 +879,7 @@ private fun CourseDetail(
                 Text("在开课查询中查看详情")
             },
             modifier = Modifier.clickable {
-                searchAll = false
-                showBottomSheet_Search = true
+                navController.push(CourseSearchApiDestination(null,course.code))
             },
             trailingContent = {
                 Icon(painterResource(R.drawable.arrow_forward),null)

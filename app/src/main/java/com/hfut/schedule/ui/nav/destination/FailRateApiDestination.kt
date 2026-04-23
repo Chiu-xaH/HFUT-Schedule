@@ -48,10 +48,10 @@ data class FailRateApiDestination(
         val hazeState = rememberHazeState(blurEnabled = blur)
 
         Scaffold(
-            modifier = Modifier.Companion.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 MediumTopAppBar(
-                    modifier = Modifier.Companion.topBarBlur(hazeState),
+                    modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     title = { Text("${title.asString()}: $courseName") },
                     colors = topBarTransplantColor(),
@@ -62,7 +62,7 @@ data class FailRateApiDestination(
             }
         ) { innerPadding ->
             Column(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .fillMaxSize()
                     .hazeSource(hazeState)
             ) {

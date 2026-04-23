@@ -30,7 +30,7 @@ class RefreshFocusWidgetWorker(
         private const val WORK_NAME = "refresh_glance_widget"
 
         fun getStatus(context : Context) {
-            val workInfos = WorkManager.Companion.getInstance(context)
+            val workInfos = WorkManager.getInstance(context)
                 .getWorkInfosForUniqueWork(WORK_NAME)
                 .get()
 
@@ -51,7 +51,7 @@ class RefreshFocusWidgetWorker(
                 .setInitialDelay(intervalMinutes, TimeUnit.MINUTES)
                 .build()
 
-            WorkManager.Companion.getInstance(context).enqueueUniquePeriodicWork(
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
                 request
@@ -59,7 +59,7 @@ class RefreshFocusWidgetWorker(
         }
 
         fun stopPeriodicWork(context: Context) {
-            WorkManager.Companion.getInstance(context).cancelUniqueWork(WORK_NAME)
+            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
         }
     }
 }

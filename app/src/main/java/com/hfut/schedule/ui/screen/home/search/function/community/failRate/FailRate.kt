@@ -33,6 +33,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -169,17 +170,35 @@ fun ApiToFailRate(
     lessonCode : String?,
 ) {
     val uiState by vm.failRateData.state.collectAsState()
+    val scope = rememberCoroutineScope()
     var page by remember { mutableIntStateOf(1) }
-    val refreshNetwork : suspend () -> Unit = {
+    val refreshNetwork : suspend () -> Unit = m@ {
         SharedPrefs.prefs.getString("TOKEN","")?.let {
             vm.failRateData.clear()
             vm.searchFailRate(it,input,page)
         }
     }
-    LaunchedEffect(page) {
+    LaunchedEffect(Unit) {
+        if(uiState is UiState.Success) {
+            return@LaunchedEffect
+        }
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding,lessonCode)
+        FailRateUI(
+            vm,
+            page,
+            nextPage = {
+                page = it
+                scope.launch { refreshNetwork() }
+            },
+            previousPage = {
+                page = it
+                scope.launch { refreshNetwork() }
+
+            },
+            innerPadding,
+            lessonCode
+        )
     }
 }

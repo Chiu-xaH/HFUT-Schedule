@@ -39,7 +39,7 @@ fun LargeButton(
     ) {
         ColumnVertical {
             Icon(painterResource(icon),null,modifier = iconModifier)
-            Spacer(Modifier.Companion.height(CARD_NORMAL_DP))
+            Spacer(Modifier.height(CARD_NORMAL_DP))
             ScrollText(text)
         }
     }
