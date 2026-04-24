@@ -35,6 +35,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.status.StatusIcon
+import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
 import com.xah.common.ui.component.status.LoadingScreen
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
@@ -50,12 +51,7 @@ fun ScanQrCode(
     when(enableCameraDynamicRecord) {
         true -> ScanQrCodeView2(modifier,onResult)
         false -> ScanQrCodeView(modifier,onResult)
-        null -> CenterScreen {
-            StatusIcon(
-                R.drawable.monochrome_photos,
-                text("加载中")
-            )
-        }
+        null -> ScanQrCodeDestination.PlaceHolder()
     }
 }
 @Composable

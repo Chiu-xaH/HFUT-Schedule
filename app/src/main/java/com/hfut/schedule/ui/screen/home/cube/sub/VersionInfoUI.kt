@@ -41,6 +41,7 @@ fun VersionInfo() {
             UpdateItems("优化 旧课程表的显示与若干冲突交互")//
             UpdateItems("优化 更换马克思、经济、管理学院的图标，以提高可读性")//
             UpdateItems("优化 点击图片查看预览的使用体验")//
+            UpdateItems("优化 部分界面的显示")//
 
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路线偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//

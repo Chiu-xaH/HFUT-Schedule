@@ -929,9 +929,7 @@ fun CalendarUISettings(
                 }
             }
         )
-
         if(useCustomBackground) {
-//            var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
             if(!tiny)
                 PaddingHorizontalDivider()
             TransplantListItem(
@@ -963,6 +961,8 @@ fun CalendarUISettings(
                 showProcessText = true
             )
         }
+        if(!tiny)
+            PaddingHorizontalDivider()
 
         TransplantListItem(
             headlineContent = {

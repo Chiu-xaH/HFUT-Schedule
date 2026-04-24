@@ -353,9 +353,9 @@ fun ApiForCourseSearch(
     val uiState by vm.courseSearchResponse.state.collectAsState()
 
     val refreshNetwork : suspend () -> Unit = m@ {
-        if(uiState is UiState.Success) {
-            return@m
-        }
+//        if(uiState is UiState.Success) {
+//            return@m
+//        }
         if(semester != null) {
             val cookie = getJxglstuCookie()
             cookie?.let {

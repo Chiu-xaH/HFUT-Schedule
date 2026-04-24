@@ -82,6 +82,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.shared.LogUtil
@@ -197,9 +198,7 @@ fun XwxLoginScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
-    val context = LocalContext.current
     var selectSchoolUi by remember { mutableStateOf(false) }
-
     var hidden by rememberSaveable { mutableStateOf(true) }
     var password by remember { mutableStateOf("") }
     var username by remember { mutableStateOf(prefs.getString("Username", "") ?: "") }
@@ -271,39 +270,25 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                     val item = list[index]
                     CustomCard(
                         color = cardNormalColor(),
-                        modifier = Modifier.clickable {
-                            schoolCode = item.schoolCode
-                            selectSchoolUi = false
-                        }
+                        modifier = Modifier
+                            .clickable {
+                                schoolCode = item.schoolCode
+                                selectSchoolUi = false
+                            }
                     ) {
-                        UrlImage(
-                            Constant.XWX_PICTURE_URL + item.iconUrl,
-                            contentScale = ContentScale.Fit,
-                            enableClick = false,
-                            modifier = Modifier
-                                .padding(CARD_NORMAL_DP*2)
-                                .height(DEFAULT_IMAGE_SIZE)
-                                .wrapContentWidth()
-                        )
-                        RowHorizontal {
+                        ColumnVertical(modifier = Modifier.fillMaxWidth()) {
+                            UrlImage(
+                                Constant.XWX_PICTURE_URL + item.iconUrl,
+                                contentScale = ContentScale.Fit,
+                                enableClick = false,
+                                modifier = Modifier
+                                    .padding(CARD_NORMAL_DP*2)
+                                    .height(DEFAULT_IMAGE_SIZE)
+                                    .wrapContentWidth()
+                            )
                             Text(item.schoolName, modifier = Modifier.padding(bottom = CARD_NORMAL_DP*2))
                         }
                     }
-//                    CardListItem(
-//                        headlineContent = { Text() },
-//                        trailingContent = {
-//                            if (schoolCode == item.schoolCode) {
-//                                Icon(painterResource(R.drawable.check), null)
-//                            }
-//                        },
-//                        leadingContent = {
-//
-//                        },
-//                        modifier = Modifier.clickable {
-//                            schoolCode = item.schoolCode
-//                            selectSchoolUi = false
-//                        }
-//                    )
                 }
             }
         }
