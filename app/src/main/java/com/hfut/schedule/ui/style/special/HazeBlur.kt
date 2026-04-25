@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
+import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.ShaderState
@@ -75,27 +76,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun enableEffect() : Boolean {
-    val navController = LocalNavControllerSafely.current ?: return true
-    return !navController.isTransitioning
-    // fixme:模糊是Haze库，玻璃是AndroidLiquidGlass库，页面转场是SharedNav库，转场时保证动画流畅，必须关闭其余两个库的特效
-//    val level = navController.transitionLevel
-//    val needAuto = level == EffectLevel.FULL || level == EffectLevel.NO_BLUR
-//    val enableEffect = if(needAuto) {
-//        val isTransitioning = navController.isTransitioning
-//        if(isTransitioning) {
-//            val isPredictive = navController.inPredictive
-//            if(isPredictive) {
-//                true
-//            } else {
-//                false
-//            }
-//        } else {
-//            true
-//        }
-//    } else {
-//        true
-//    }
-//    return enableEffect
+    val navController = LocalNavControllerSafely.current
+    val floatingController = LocalFloatingControllerSafely.current
+    if(navController?.isTransitioning == true) {
+        return false
+    }
+    if(floatingController?.isRunning == true) {
+        return false
+    }
+    return true
+    // fixme:转场时保证动画流畅，必须关闭Haze库的特效（即使画面不动，只要它还留存，就特别吃性能）
 }
 
 @OptIn(ExperimentalHazeMaterialsApi::class)

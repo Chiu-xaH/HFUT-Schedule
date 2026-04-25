@@ -26,7 +26,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
 
-private const val RELEASE_DATE = "2026-04-25"
+private const val RELEASE_DATE = "2026-05-06"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -34,15 +34,7 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 第二课堂","位于 查询中心-第二课堂。由于学校平台限制，无法拿到二课成绩单",to = To.Screen(SecondClassDestination))//
-            UpdateItems("新增 适配若干二级界面为新的转场动画")//
-            UpdateItems("修复 开课查询从详情界面返回后，切换学期不刷新列表的Bug")//
-            UpdateItems("修复 从快捷方式打开扫码界面，在扫码登录成功后界面未自动关闭的Bug")//
-            UpdateItems("优化 旧课程表的显示与若干冲突交互")//
-            UpdateItems("优化 更换马克思、经济、管理学院的图标")//
-            UpdateItems("优化 点击图片查看预览的使用体验")//
-            UpdateItems("优化 部分界面的显示与交互")//
-
+            UpdateItems("优化 浮窗动画的掉帧卡顿")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
