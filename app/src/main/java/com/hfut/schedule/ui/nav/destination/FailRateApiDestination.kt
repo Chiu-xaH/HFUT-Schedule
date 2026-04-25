@@ -27,7 +27,7 @@ import dev.chrisbanes.haze.rememberHazeState
 
 data class FailRateApiDestination(
     val courseName : String,
-    val lessonCode : String?,
+    val lessonCode : String,
 ) : NavDestination() {
     override val key = "fail_rate_api_$courseName"
     override val description = courseName

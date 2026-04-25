@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.community.failRate
 
-
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,11 +26,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -42,7 +41,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
-
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -79,28 +77,30 @@ fun FailRateScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    var input by remember { mutableStateOf( "") }
-
+    var input by rememberSaveable { mutableStateOf( "") }
+    val uiState by vm.failRateData.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        vm.failRateData.emitPrepare()
+        // 成功&&first不为null时需要emitPrepare；不成功时需要emitPrepare
+        if(uiState !is UiState.Success || (uiState as? UiState.Success)?.data?.first != null) {
+            vm.failRateData.emitPrepare()
+        }
     }
 
-    val uiState by vm.failRateData.state.collectAsState()
-    var firstUse by remember { mutableStateOf(true) }
-    var page by remember { mutableIntStateOf(1) }
+//    var firstUse by remember { mutableStateOf(true) }
+    var page by rememberSaveable { mutableIntStateOf(1) }
     val refreshNetwork : suspend () -> Unit = {
         SharedPrefs.prefs.getString("TOKEN","")?.let {
             vm.failRateData.clear()
-            vm.searchFailRate(it,input,page)
-            firstUse = false
+            vm.searchFailRate(it,input,page,null)
+//            firstUse = false
         }
     }
-    LaunchedEffect(page) {
-        if(!firstUse) {
-            refreshNetwork()
-        }
-    }
+//    LaunchedEffect(page) {
+//        if(!firstUse) {
+//            refreshNetwork()
+//        }
+//    }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
@@ -156,7 +156,19 @@ fun FailRateScreen(
                 .fillMaxSize()
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-                FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding)
+                FailRateUI(
+                    vm,
+                    page,
+                    nextPage = {
+                        page = it
+                        scope.launch { refreshNetwork() }
+                    },
+                    previousPage = {
+                        page = it
+                        scope.launch { refreshNetwork() }
+                    },
+                    innerPadding
+                )
             }
         }
     }
@@ -167,7 +179,7 @@ fun ApiToFailRate(
     input : String,
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-    lessonCode : String?,
+    lessonCode : String
 ) {
     val uiState by vm.failRateData.state.collectAsState()
     val scope = rememberCoroutineScope()
@@ -175,11 +187,11 @@ fun ApiToFailRate(
     val refreshNetwork : suspend () -> Unit = m@ {
         SharedPrefs.prefs.getString("TOKEN","")?.let {
             vm.failRateData.clear()
-            vm.searchFailRate(it,input,page)
+            vm.searchFailRate(it,input,page,lessonCode)
         }
     }
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
+        if((uiState as? UiState.Success)?.data?.first == lessonCode) {
             return@LaunchedEffect
         }
         refreshNetwork()

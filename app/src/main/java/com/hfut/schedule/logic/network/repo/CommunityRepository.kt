@@ -72,7 +72,7 @@ object CommunityRepository {
         throw e
     }
 
-    suspend fun searchFailRate(token : String, name: String, page : Int,holder : StateHolder<List<FailRateRecord>>) =
+    suspend fun searchFailRate(token : String, name: String, page : Int,code : String?,holder : StateHolder<Pair<String?,List<FailRateRecord>>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -82,7 +82,7 @@ object CommunityRepository {
                     page,
                 )
             },
-            transformSuccess = { _, json -> parseFailRate(json) }
+            transformSuccess = { _, json -> Pair(code,parseFailRate(json)) }
         )
     @JvmStatic
     private fun parseFailRate(json : String) : List<FailRateRecord> = try {

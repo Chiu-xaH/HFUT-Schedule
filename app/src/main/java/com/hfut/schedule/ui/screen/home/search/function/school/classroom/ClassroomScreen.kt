@@ -106,6 +106,7 @@ import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.ClassroomCourseTableDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
+import com.hfut.schedule.ui.nav.window.ClassroomSquareWindow
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
@@ -176,8 +177,8 @@ fun ClassroomScreen(
 
     var date by remember { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
     var campus by remember { mutableStateOf<Campus?>(getCampus()) }
-    var selectedBuildings = remember { mutableStateListOf<UniAppBuildingBean>() }
-    var selectedFloors = remember { mutableStateListOf<Int>() }
+    val selectedBuildings = remember { mutableStateListOf<UniAppBuildingBean>() }
+    val selectedFloors = remember { mutableStateListOf<Int>() }
     var input by remember { mutableStateOf("") }
 
     val refreshNetworkSearch = suspend m@ {
@@ -422,78 +423,19 @@ private fun EmptyClassroomScreen(
     }
     val isToday = DateTimeManager.Date_yyyy_MM_dd == date
 
-    val occupyList = remember { ClassroomOccupiedCause.entries }
-    var showDialog by remember { mutableStateOf(false) }
-    var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
-    var title by remember { mutableStateOf("占用详情") }
-    if(showDialog && info != null) {
-        HazeBottomSheet (
-            showBottomSheet = showDialog,
-            onDismissRequest = { showDialog = false },
-        ) {
-            val cause = occupyList.find { it.activityType == info!!.activityType }
-
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
-                HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
-                CustomCard(color = cardNormalColor()) {
-                    info!!.teacherName?.let { teacherName ->
-                        TransplantListItem(
-                            headlineContent = {
-                                Text(teacherName)
-                            },
-                            overlineContent = {
-                                Text("教师")
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.person),null)
-                            }
-                        )
-                    }
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("${info!!.date} ${info!!.startTimeString}~${info!!.endTimeString}"  )
-                        },
-                        overlineContent = {
-                            Text("时间")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.schedule),null)
-                        }
-                    )
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(info!!.activityName)
-                        },
-                        overlineContent = {
-                            Text("类型: ${cause?.description ?: info!!.activityType}")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(
-                                when(cause) {
-                                    ClassroomOccupiedCause.BORROWED -> {
-                                        R.drawable.groups
-                                    }
-                                    ClassroomOccupiedCause.EXAM -> {
-                                        R.drawable.draw
-                                    }
-                                    ClassroomOccupiedCause.IN_LESSON -> {
-                                        R.drawable.calendar
-                                    }
-                                    null -> {
-                                        R.drawable.category
-                                    }
-                                }
-                            ),null)
-                        }
-                    )
-                }
-                Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
-            }
-        }
-    }
+//    val occupyList = remember { ClassroomOccupiedCause.entries }
+    val floatingController = LocalFloatingController.current
+//    var showDialog by remember { mutableStateOf(false) }
+//    var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
+//    var title by remember { mutableStateOf("占用详情") }
+//    if(showDialog && info != null) {
+//        HazeBottomSheet (
+//            showBottomSheet = showDialog,
+//            onDismissRequest = { showDialog = false },
+//        ) {
+//
+//        }
+//    }
 
     val listState = rememberLazyListState()
     val scheduleModifier =  Modifier
@@ -564,10 +506,11 @@ private fun EmptyClassroomScreen(
                             )
                             // 横向时间轴
                             if(!isAllDayFree) {
-                                ClassroomSchedule(activities, modifier = scheduleModifier) {
-                                    info = it
-                                    title = item.nameZh
-                                    showDialog = true
+                                ClassroomSchedule(activities, item.nameZh, modifier = scheduleModifier) {
+                                    floatingController.push(ClassroomSquareWindow(it,item.nameZh))
+//                                    info = it
+//                                    title = item.nameZh
+//                                    showDialog = true
                                 }
                             }
                         }
@@ -592,6 +535,7 @@ private fun EmptyClassroomScreen(
 @Composable
 private fun ClassroomSchedule(
     lessons: List<UniAppEmptyClassroomLesson>,
+    room : String,
     modifier: Modifier = Modifier,
     rangeMinutes :  Pair<Int,Int> = Pair(8 * 60,22 * 60),
     onClick : (UniAppEmptyClassroomLesson) -> Unit
@@ -606,34 +550,7 @@ private fun ClassroomSchedule(
 
         // 绘制课程时间块
         lessons.forEach { lesson ->
-            val containerColor = when(lesson.activityType) {
-                ClassroomOccupiedCause.BORROWED.activityType -> {
-                    MaterialTheme.colorScheme.primary
-                }
-                ClassroomOccupiedCause.IN_LESSON.activityType -> {
-                    MaterialTheme.colorScheme.inversePrimary
-                }
-                ClassroomOccupiedCause.EXAM.activityType -> {
-                    MaterialTheme.colorScheme.error
-                }
-                else -> {
-                    MaterialTheme.colorScheme.primary
-                }
-            }
-//            val contentColor = when(lesson.activityType) {
-//                ClassroomOccupiedCause.BORROWED.activityType -> {
-//                    MaterialTheme.colorScheme.onPrimary
-//                }
-//                ClassroomOccupiedCause.IN_LESSON.activityType -> {
-//                    MaterialTheme.colorScheme.onPrimaryContainer
-//                }
-//                ClassroomOccupiedCause.EXAM.activityType -> {
-//                    MaterialTheme.colorScheme.onError
-//                }
-//                else -> {
-//                    MaterialTheme.colorScheme.onPrimary
-//                }
-//            }
+            val containerColor = getClassroomSquareContainerColor(lesson)
             val contentColor = contentColorFor(containerColor)
             val startMinutes = convertTimeToMinutes(lesson.startTimeString)
             val endMinutes = convertTimeToMinutes(lesson.endTimeString)
@@ -651,12 +568,17 @@ private fun ClassroomSchedule(
                     .offset(x = offsetX.dp)
                     .width(width.dp)
                     .fillMaxHeight()
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .background(containerColor)
+//                    .clip(MaterialTheme.shapes.extraSmall)
                     .align(Alignment.TopStart)
                     .onGloballyPositioned { coordinates ->
                         parentHeight = coordinates.size.height.dp
                     }
+                    .sharedContainer(
+                        ClassroomSquareWindow(lesson,room).key,
+                        shape = MaterialTheme.shapes.extraSmall,
+                        containerColor = containerColor
+                    )
+                    .background(containerColor)
                     .clickable {
                         onClick(lesson)
                     }
@@ -688,6 +610,26 @@ private fun ClassroomSchedule(
         }
     }
 }
+
+@Composable
+fun getClassroomSquareContainerColor(lesson : UniAppEmptyClassroomLesson) : Color {
+    val containerColor = when(lesson.activityType) {
+        ClassroomOccupiedCause.BORROWED.activityType -> {
+            MaterialTheme.colorScheme.primary
+        }
+        ClassroomOccupiedCause.IN_LESSON.activityType -> {
+            MaterialTheme.colorScheme.inversePrimary
+        }
+        ClassroomOccupiedCause.EXAM.activityType -> {
+            MaterialTheme.colorScheme.error
+        }
+        else -> {
+            MaterialTheme.colorScheme.primary
+        }
+    }
+    return containerColor
+}
+
 
 // 辅助函数：转换HH-MM格式的时间为分钟数
 private fun convertTimeToMinutes(time: String): Int {

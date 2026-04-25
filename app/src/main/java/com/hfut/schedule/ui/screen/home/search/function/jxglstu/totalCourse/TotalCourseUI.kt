@@ -617,7 +617,7 @@ fun DetailItems(
         item {
             CustomCard(
                 color = cardNormalColor(),
-                modifier = Modifier.padding(top = CARD_NORMAL_DP*2)
+                modifier = Modifier.padding(top = CARD_NORMAL_DP*3)
             ) {
                 CourseSearchApiDestination(null, lessons.code.substringBefore("--")).let { dest ->
                     SharedContainer(

@@ -2,9 +2,13 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -12,19 +16,25 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavDependencies
 import dev.chrisbanes.haze.hazeSource
@@ -68,22 +78,40 @@ data class CourseSearchApiDestination(
                     },
                     actions = {
                         val canNotUse = courseName == null && code == null
-                        FilledTonalIconButton(
-                            onClick = {
+                        val enabled = uiState is UiState.Success && !canNotUse
+                        val dest = remember(enabled) {
+                            if(enabled) {
                                 val data = (uiState as UiState.Success).data
                                 val term = if(data.isNotEmpty()) {
                                     data[0].semester.id
                                 } else {
                                     null
                                 }
-                                navController.push(CourseSearchTableDestination(term,courseName,code,null,data))
-                            },
-                            enabled = uiState is UiState.Success && !canNotUse
+                                CourseSearchTableDestination(term,courseName,code,null,data)
+                            } else {
+                                null
+                            }
+                        }
+                        SharedContainer(
+                            key = dest?.key,
+                            shape = CircleShape,
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                         ) {
-                            Icon(
-                                painterResource(R.drawable.calendar),
-                                null,
-                            )
+                            LiquidButton(
+                                onClick = {
+                                    navController.push(dest!!)
+                                },
+                                shape = RoundedCornerShape(0.dp),
+                                backdrop = rememberLayerBackdrop(),
+                                isCircle = true,
+                                enabled = enabled
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.calendar),
+                                    null,
+                                )
+                            }
                         }
                     }
                 )

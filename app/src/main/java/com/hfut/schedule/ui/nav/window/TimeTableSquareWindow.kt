@@ -25,10 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -37,11 +37,12 @@ import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
-import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText
@@ -50,6 +51,9 @@ import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
 import com.xah.floating.util.LocalFloatingController
+import com.xah.navigation.util.LocalNavController
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 data class TimeTableSquareWindow(
@@ -60,24 +64,28 @@ data class TimeTableSquareWindow(
 
     override val title = text("方格详情")
 
-    private fun getSharedKey() : String {
+    private fun getSharedKey() : String? {
         return if(list.size == 1) {
-            val item = list[0]
-            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
-            when (item.type) {
-                TimeTableType.COURSE -> CourseDetailApiDestination(item.name, origin,item.place).key
-                TimeTableType.FOCUS -> AddEventDestination(item.detail.eventId,CourseDetailOrigin.CALENDAR_JXGLSTU.t).key
-                TimeTableType.EXAM -> ExamDestination(origin).key
-            }
+            getSharedDest(list[0])?.key
         } else {
-            "multi_${list.hashCode()}"
+            null
+        }
+    }
+
+    private fun getSharedDest(item : TimeTableItem) : NavDestination? {
+        val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
+        return when (item.type) {
+            TimeTableType.COURSE -> CourseDetailApiDestination(item.name, origin,item.place)
+            TimeTableType.FOCUS -> AddEventDestination(item.detail.eventId,CourseDetailOrigin.CALENDAR_JXGLSTU.t)
+            TimeTableType.EXAM -> ExamDestination(origin)
         }
     }
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     override fun BoxScope.Content() {
-        val controller = LocalFloatingController.current
+        val floatingController = LocalFloatingController.current
+        val navController = LocalNavController.current
 
         Box(modifier = Modifier.fillMaxSize()) {
             SharedContent(
@@ -112,7 +120,21 @@ data class TimeTableSquareWindow(
                                     TimeTableType.FOCUS -> MaterialTheme.colorScheme.primary
                                 }
                                 val contentColor = contentColorFor(containerColor)
-                                CustomCard(color = containerColor, modifier = Modifier.padding(bottom = CARD_NORMAL_DP)) {
+                                CustomCard(
+                                    color = containerColor,
+                                    modifier = Modifier
+                                        .padding(bottom = CARD_NORMAL_DP)
+                                        .clip(MaterialTheme.shapes.medium)
+                                        .clickable {
+                                            GlobalScope.launch {
+                                                getSharedDest(item)?.let { dest ->
+                                                    floatingController.pop()
+                                                    floatingController.awaitRunning()
+                                                    navController.push(dest)
+                                                }
+                                            }
+                                        }
+                                ) {
                                     TransplantListItem(
                                         headlineContent = {
                                             Text(item.name, color = contentColor)
@@ -123,9 +145,6 @@ data class TimeTableSquareWindow(
                                         leadingContent = {
                                             Icon(painterResource(item.type.icon),null, tint = contentColor)
                                         },
-                                        modifier = Modifier.clickable {
-                                            item.detail.code?.let { ClipBoardHelper.copy(it,"已将课程代码复制到剪切板") }
-                                        }
                                     )
                                     item.place?.let {
                                         TransplantListItem(
@@ -209,7 +228,7 @@ data class TimeTableSquareWindow(
                                     .measureDpSize { _,h -> innerPadding = h }
                             ,
                             onClick = {
-                                controller.pop()
+                                floatingController.pop()
                             },
                             backdrop = rememberLayerBackdrop(),
                             isCircle = true

@@ -455,8 +455,8 @@ class NetWorkViewModel() : ViewModel() {
     val dormitoryResult = StateHolder<List<XuanquResponse>>()
     suspend fun searchDormitoryXuanCheng(code : String) = OthersRepository.searchDormitoryXuanCheng(code,dormitoryResult)
 
-    val failRateData = StateHolder<List<FailRateRecord>>()
-    suspend fun searchFailRate(token : String, name: String, page : Int) = CommunityRepository.searchFailRate(token,name,page,failRateData)
+    val failRateData = StateHolder<Pair<String?,List<FailRateRecord>>>()
+    suspend fun searchFailRate(token : String, name: String, page : Int, code : String?) = CommunityRepository.searchFailRate(token,name,page,code,failRateData)
 
     val checkCommunityResponse = StateHolder<Boolean>()
     suspend fun checkCommunityLogin(token: String) = CommunityRepository.checkCommunityLogin(token,checkCommunityResponse)

@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -36,7 +35,6 @@ import com.hfut.schedule.ui.nav.destination.FailRateDetailDestination
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -55,9 +53,9 @@ fun FailRateUI(
     val navController = LocalNavController.current
     val uiState by vm.failRateData.state.collectAsState()
     val listState = rememberLazyListState()
-    val list = (uiState as UiState.Success).data.let {
-        filterCode?.let { code ->
-            it.filter { it.courseMetaId == filterCode }
+    val list = (uiState as UiState.Success).data.second.let {
+        filterCode?.let { _ ->
+            it.filter { record -> record.courseMetaId == filterCode }
         } ?: it
     }
     if(list.isEmpty()) {
