@@ -55,6 +55,7 @@ import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
@@ -384,15 +385,12 @@ object OthersRepository {
             transformSuccess = { _, json -> parseSecondClassActivities(json) }
         )
 
-
     @JvmStatic
     private fun parseSecondClassActivities(result: String): List<SecondClassActivity> = try {
+        if(result.startsWith("<!DOCTYPE html>")) {
+            throw Exception("登录状态失效")
+        }
         val data = Gson().fromJson(result, SecondClassActivitiesResponse::class.java)
-//        if(data.code == StatusCode.OK.toString()) {
-            data.list
-//        } else {
-//            throw Exception(result)
-//        }
+        data.list
     } catch (e: Exception) { throw e }
-
 }

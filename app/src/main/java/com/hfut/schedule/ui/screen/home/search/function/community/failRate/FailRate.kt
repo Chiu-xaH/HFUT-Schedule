@@ -138,7 +138,10 @@ fun FailRateScreen(
                         trailingIcon = {
                             IconButton(
                                 onClick = {
-                                    scope.launch { refreshNetwork() }
+                                    scope.launch {
+                                        page = 1
+                                        refreshNetwork()
+                                    }
                                 }) {
                                 Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                             }

@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseFailRateDTOList
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -32,7 +31,6 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDetailDestination
-
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.navigation.util.LocalNavController
@@ -58,13 +56,12 @@ fun FailRateUI(
             it.filter { record -> record.courseMetaId == filterCode }
         } ?: it
     }
-    if(list.isEmpty()) {
-        CenterScreen {
-            EmptyIcon("未搜到课程" + (filterCode?.let { "($it)" } ?: ""))
-        }
-    } else {
-        Box(modifier = Modifier.fillMaxSize()) {
-            PageController(listState,page,onNextPage=nextPage,onPreviousPage=previousPage,modifier = Modifier.zIndex(2f))
+    Box(modifier = Modifier.fillMaxSize()) {
+        if(list.isEmpty()) {
+            CenterScreen {
+                EmptyIcon("未搜到课程" + (filterCode?.let { "($it)" } ?: ""))
+            }
+        } else {
             LazyColumn(state = listState) {
                 item { Spacer(Modifier.height(CARD_NORMAL_DP)) }
                 item { InnerPaddingHeight(innerPadding,true) }
@@ -90,6 +87,7 @@ fun FailRateUI(
                 item { InnerPaddingHeight(innerPadding,false) }
             }
         }
+        PageController(listState,page,onNextPage=nextPage,onPreviousPage=previousPage)
     }
 }
 

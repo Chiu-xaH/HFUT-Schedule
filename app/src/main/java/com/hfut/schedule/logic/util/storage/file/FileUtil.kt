@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Environment
 import android.webkit.WebStorage
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.ui.component.media.clearVideoCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -57,6 +58,10 @@ suspend fun cleanCache(context : Context): Double = withContext(Dispatchers.IO) 
                         it.delete()
                     }
                 }
+            }
+            launch {
+                // 视频缓存
+                clearVideoCache(context)
             }
         }.await()
         // 转换为 MB，保留两位小数

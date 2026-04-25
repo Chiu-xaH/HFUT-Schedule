@@ -181,6 +181,25 @@ fun SimpleVideo(
 
 
 /**
+ * 清除所有视频缓存（删除整个 videos 文件夹）
+ *
+ * @param context 上下文
+ * @return 是否删除成功
+ */
+suspend fun clearVideoCache(context: Context): Boolean = withContext(Dispatchers.IO) {
+    val dir = File(context.getExternalFilesDir(null), "videos")
+
+    if (!dir.exists()) return@withContext true
+
+    return@withContext try {
+        dir.deleteRecursively()
+    } catch (e: Exception) {
+        LogUtil.error(e)
+        false
+    }
+}
+
+/**
  * 检查视频文件是否存在，不存在则自动下载。
  *
  * @param context 上下文

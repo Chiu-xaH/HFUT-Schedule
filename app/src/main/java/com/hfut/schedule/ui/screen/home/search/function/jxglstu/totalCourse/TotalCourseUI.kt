@@ -592,7 +592,7 @@ fun DetailItems(
                         )
                     },
                     modifier = Modifier
-                        .sharedContainer(dest.key, RoundedCornerShape(0.dp))
+                        .sharedContainer(dest.key, RoundedCornerShape(0.dp), containerColor = MaterialTheme.colorScheme.surface)
                         .clickable {
                             navController.push(dest)
                         }
