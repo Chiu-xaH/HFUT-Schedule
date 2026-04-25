@@ -84,7 +84,7 @@ object GlobalStateHolder {
         SearchAppBeanLite(25, R.string.navigation_label_physical_fitness_test,R.drawable.sports_volleyball),
         SearchAppBeanLite(26, WorkAndRestDestination.TITLE.resId, WorkAndRestDestination.ICON),
         SearchAppBeanLite(27, R.string.navigation_label_chsi, R.drawable.school),
-        SearchAppBeanLite(28, LifeDestination.TITLE.resId,LifeDestination.ICON),
+        SearchAppBeanLite(28, LifeDestination.title.resId,LifeDestination.icon),
         SearchAppBeanLite(29, TransferMajorDestination.title.resId,  TransferMajorDestination.icon),
         SearchAppBeanLite(30, CourseSearchDestination.title.resId, CourseSearchDestination.icon),
         SearchAppBeanLite(31, TeacherSearchDestination.title.resId, TeacherSearchDestination.icon),

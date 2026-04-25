@@ -8,17 +8,10 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.res
 
-data class LifeDestination(
-    val inFocus: Boolean
-) : NavDestination() {
-    override val key = "life_$inFocus"
-    override val title = TITLE
-    override val icon = ICON
-
-    companion object {
-        val TITLE = res(R.string.navigation_label_life)
-        val ICON = R.drawable.near_me
-    }
+object LifeDestination : NavDestination() {
+    override val key = "life"
+    override val title = res(R.string.navigation_label_life)
+    override val icon = R.drawable.near_me
 
     @Composable
     override fun Content() {

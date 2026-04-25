@@ -265,13 +265,12 @@ fun FocusCard(
     val showWeb = prefs.getBoolean("SWITCHWEB",true)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
-    val dest = LifeDestination(true)
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = cardNormalColor(),
             modifier = if(showWeather) {
                 Modifier.sharedContainer(
-                    key = dest.key,
+                    key = LifeDestination.key,
                     MaterialTheme.shapes.medium,
                     cardNormalColor()
                 )
@@ -322,7 +321,7 @@ fun FocusCard(
                                     overlineContent = { Text(typeName)},
                                     leadingContent = { Icon(painterResource(R.drawable.warning),null)},
                                     modifier = Modifier.clickable {
-                                        navController.push(dest)
+                                        navController.push(LifeDestination)
                                     },
                                 )
                             }

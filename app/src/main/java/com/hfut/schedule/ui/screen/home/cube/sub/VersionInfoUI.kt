@@ -19,7 +19,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.SecondClassDestination
+import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.component.text.ScrollText
@@ -35,6 +35,9 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("优化 浮窗动画的掉帧卡顿")
+            UpdateItems("新增 临近课程适配 Android 16 的实时通知功能")
+            UpdateItems("新增 楼层导向（Beta）","仅使用新安学堂4F进行测试", to = To.Screen(LifeDestination))
+            UpdateItems("新增 活在肥宣","位于 查询中心-生活服务；才发现【活在肥宣】对【聚在工大】进行了宣传，礼尚往来，我也应内置一个入口。", to = To.Screen(LifeDestination))
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")

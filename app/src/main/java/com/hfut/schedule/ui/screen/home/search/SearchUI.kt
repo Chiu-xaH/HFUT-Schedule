@@ -230,7 +230,7 @@ fun SearchScreen(
                 SearchAppBean(25,"体育 云运动 乐跑 校园跑 ${context.getString(R.string.navigation_label_physical_fitness_test)} 体育测试 体检", { LePaoYun() }, WebViewDestination.getKey(Constant.PE_HOME_URL)),
                 SearchAppBean(26,"${WorkAndRestDestination.TITLE.asString(context)} 校历", { WorkAndRest() }, WorkAndRestDestination(null).key),
                 SearchAppBean(27,"${context.getString(R.string.navigation_label_chsi)}", { XueXin() }, WebViewDestination.getKey(Constant.XUE_XIN_URL)),
-                SearchAppBean(28,"${LifeDestination.TITLE.asString(context)} 校园 天气 新生 地图", { Life() }, LifeDestination(false).key),
+                SearchAppBean(28,"${LifeDestination.title.asString(context)} 校园 天气 新生 地图", { Life() }, LifeDestination.key),
                 SearchAppBean(29,"${TransferMajorDestination.title.asString(context)}", { Transfer(ifSaved) }, TransferMajorDestination.key),
                 SearchAppBean(30,"${CourseSearchDestination.title.asString(context)} 全校开课 课程", { CoursesSearch(ifSaved) }, CourseSearchDestination.key),
                 SearchAppBean(31,"${TeacherSearchDestination.title.asString(context)} 老师检索", { TeacherSearch() }, TeacherSearchDestination.key),
