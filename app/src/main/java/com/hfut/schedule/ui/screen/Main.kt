@@ -6,19 +6,24 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
@@ -42,6 +47,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.container.util.LocalSharedRegistry
+import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
 import com.xah.navigation.controller.NavigationController
@@ -168,7 +174,7 @@ fun MainHost(
                 navigationController.enablePredictiveBack = enablePredictive
                 registry.enablePredictiveBack = enablePredictive
             }
-
+            // 系统返回手势控制
             DefaultBackHandler()
         }
     }
