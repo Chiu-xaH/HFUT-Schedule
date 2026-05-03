@@ -1,13 +1,25 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -22,12 +34,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.QWeatherNowBean
@@ -35,13 +48,17 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.StartAppIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.window.FloorMapWindow
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
@@ -49,18 +66,16 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.floating.util.LocalFloatingController
 import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 
 fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campus) {
     CampusRegion.XUANCHENG -> "101221401"
     CampusRegion.HEFEI -> "101220101"
 }
-
-enum class BuildingMapItem(val title : String) {
-    JING_TING("敬亭学堂"),
-    XIN_AN("新安学堂")
-}
-
 
 /*
 天气 预警   ->    天气
@@ -177,38 +192,132 @@ fun StarterScreen() {
 }
 
 
+data class FloorMap(
+    val width: Float,
+    val height: Float,
+    val rooms: List<RoomRect>
+)
+
+data class RoomRect(
+    val id: String,
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float
+)
+
 @Composable
-fun CampusMapScreen(vm: NetWorkViewModel) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+fun RoomMap(
+    floor: FloorMap,
+    modifier: Modifier = Modifier,
+    selectedIds: Set<String> = emptySet(),
+) {
+    val selectedColor = Color.Red.copy(.4f)
+    // 无限闪烁 0.4f透明度到0透明度
+//    val alphaAnim = rememberInfiniteTransition(label = "blink")
+//
+//    val alpha by alphaAnim.animateFloat(
+//        initialValue = 0.4f,
+//        targetValue = 0f,
+//        animationSpec = infiniteRepeatable(
+//            animation = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2),
+//            repeatMode = RepeatMode.Reverse
+//        ),
+//        label = "alpha"
+//    )
 
-    DividerTextExpandedWith(text = "校园地图") {
-        SchoolMapScreen(vm)
-    }
-    DividerTextExpandedWith("楼层导向") {
-        val list = remember { BuildingMapItem.entries }
-        val titles = remember { list.map { it.title } }
-        val pagerState = rememberPagerState(pageCount = { list.size })
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(floor.width / floor.height)
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
 
-        CardListItem(
-            headlineContent = {
-                Text("提示")
-            },
-            supportingContent = {
-                Text("仅收录宣城校区的敬亭学堂与新安学堂，两栋教学楼设计比较复杂，感兴趣可点击y阅读文章：《合肥工业大学宣城二期教学楼——徽派文化元素的探索 / 华南理工大学建筑设计研究院陶郅工作室》")
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.info),null)
-            },
-            modifier = Modifier.clickable {
-                scope.launch {
-                    Starter.startWebView(context,"https://www.archcollege.com/39655.html", title = "合肥工业大学宣城二期教学楼——徽派文化元素的探索")
+            val w = size.width
+            val h = size.height
+
+            floor.rooms.forEach { room ->
+
+                val left = room.left * w
+                val top = room.top * h
+                val right = room.right * w
+                val bottom = room.bottom * h
+
+                val isSelected = room.id in selectedIds
+
+                if (isSelected) {
+                    drawRect(
+                        color = selectedColor,
+                        topLeft = Offset(left, top),
+                        size = Size(right - left, bottom - top)
+                    )
                 }
             }
-        )
-        CustomTabRow(pagerState,titles)
-        HorizontalPager(state = pagerState) { page ->
-            DevelopingIcon()
+        }
+    }
+}
+
+fun RoomRect.contains(offset: Offset, size: Size): Boolean {
+    val x = offset.x / size.width
+    val y = offset.y / size.height
+
+    return x in left..right && y in top..bottom
+}
+
+@Composable
+fun CampusMapScreen(
+    vm: NetWorkViewModel,
+    innerPadding : PaddingValues
+) {
+    val floatingController = LocalFloatingController.current
+    val uiState by vm.githubBuildingMapsResp.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        vm.githubBuildingMapsResp.clear()
+        vm.getBuildingMaps()
+    }
+
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val list = (uiState as UiState.Success).data
+        LazyColumn {
+            item { InnerPaddingHeight(innerPadding,true) }
+            items(list.size,key = { list[it].building.id} ) { index ->
+                val item = list[index]
+                val floors = item.detail
+                CustomCard {
+                    TransplantListItem(
+                        headlineContent = {
+                            Text(item.building.nameZh)
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.near_me),null)
+                        }
+                    )
+                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                        items(floors.size, key = { floors[it].floor }) { index ->
+                            val item = floors[index]
+                            NoPadding {
+                                AssistChip(
+                                    onClick = {
+                                        // TODO
+                                        floatingController.push(FloorMapWindow(item,vm))
+                                    },
+                                    border = null,
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
+                                    label = { Text("${item.floor}F") },
+                                    modifier = Modifier.padding(end = if(index == floors.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                )
+                            }
+                        }
+                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                    }
+                }
+            }
+            item { InnerPaddingHeight(innerPadding,false) }
         }
     }
 }
@@ -336,6 +445,10 @@ fun WeatherScreen(vm: NetWorkViewModel) {
         }
         Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
         BottomTip("数据来源 和风天气")
+
+        DividerTextExpandedWith(text = "校园地图") {
+            SchoolMapScreen(vm)
+        }
     }
 }
 

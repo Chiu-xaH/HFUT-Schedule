@@ -1,0 +1,16 @@
+[
+    {
+        "building" : {
+            "id" : 112,
+            "code": "XC001",
+            "nameZh" : "新安学堂"
+        },
+        "campus" : "宣城校区",
+        "detail" : [
+            {
+                "filename" : "XC001_4",
+                "floor" : 4
+            }
+        ]
+    }
+]

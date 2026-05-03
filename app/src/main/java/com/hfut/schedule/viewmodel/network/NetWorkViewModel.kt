@@ -15,6 +15,7 @@ import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.model.AdmissionTokenResponse
+import com.hfut.schedule.logic.model.BuildingMapResponseBean
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.model.GithubIssueBean
@@ -108,6 +109,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
+import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
 import com.xah.forecast.model.network.BillBean
@@ -162,6 +164,12 @@ class NetWorkViewModel() : ViewModel() {
 
     val githubIssuesResp = StateHolder<List<GithubIssueBean>>()
     suspend fun getIssues(page : Int) = GithubRepository.getIssues(page,githubIssuesResp)
+
+    val githubBuildingMapsResp = StateHolder<List<BuildingMapResponseBean>>()
+    suspend fun getBuildingMaps() = GithubRepository.getBuildingMaps(githubBuildingMapsResp)
+
+    val githubFloorXmlResp = StateHolder<FloorMap>()
+    suspend fun getFloorXml(filename : String) = GithubRepository.getFloorXml(filename,githubFloorXmlResp)
 
     val workSearchResult = StateHolder<WorkSearchResponse>()
     suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: CampusRegion) = OthersRepository.searchWorks(keyword,page,type,campus,workSearchResult)

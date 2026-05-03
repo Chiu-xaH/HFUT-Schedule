@@ -276,14 +276,14 @@ fun ShortcutSortScreen() {
                                     when(page) {
                                         0 -> {
                                             UrlImage(
-                                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/tips_shortcut.jpg",
+                                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/image/tips_shortcut.jpg",
                                                 contentScale = ContentScale.FillWidth,
                                                 shape = MaterialTheme.shapes.medium,
                                             )
                                         }
                                         1 -> {
                                             UrlImage(
-                                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/tips_qs.jpg",
+                                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/image/tips_qs.jpg",
                                                 contentScale = ContentScale.FillWidth,
                                                 shape = MaterialTheme.shapes.medium,
                                             )

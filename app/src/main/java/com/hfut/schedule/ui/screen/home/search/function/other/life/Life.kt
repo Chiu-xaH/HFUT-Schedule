@@ -128,13 +128,14 @@ fun LifeScreen(
         ) {
             nav2Composable(LifeBarItems.CAMPUS.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState())
-                    ) {
-                        InnerPaddingHeight(innerPadding,true)
-                        CampusMapScreen(vm)
-                        InnerPaddingHeight(innerPadding,false)
-                    }
+                    CampusMapScreen(vm,innerPadding)
+//                    Column(
+//                        modifier = Modifier.verticalScroll(rememberScrollState())
+//                    ) {
+//                        InnerPaddingHeight(innerPadding,true)
+//                        CampusMapScreen(vm)
+//                        InnerPaddingHeight(innerPadding,false)
+//                    }
                 }
             }
             nav2Composable(LifeBarItems.WEATHER.name) {
