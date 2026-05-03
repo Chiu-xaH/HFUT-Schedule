@@ -8,7 +8,8 @@
         "campus" : "宣城校区",
         "detail" : [
             {
-                "filename" : "XC001_4",
+                "image_url" : "XC001_4.jpg",
+                "xml_url" : "XC001_4.xml",
                 "floor" : 4
             }
         ]

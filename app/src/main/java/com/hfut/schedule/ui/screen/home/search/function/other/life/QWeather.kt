@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
@@ -67,10 +67,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.sharedContainer
 import com.xah.floating.util.LocalFloatingController
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import org.jsoup.parser.Parser
 
 fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campus) {
     CampusRegion.XUANCHENG -> "101221401"
@@ -287,7 +286,7 @@ fun CampusMapScreen(
             items(list.size,key = { list[it].building.id} ) { index ->
                 val item = list[index]
                 val floors = item.detail
-                CustomCard {
+                CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = {
                             Text(item.building.nameZh)
@@ -296,20 +295,24 @@ fun CampusMapScreen(
                             Icon(painterResource(R.drawable.near_me),null)
                         }
                     )
-                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*4)) {
                         item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                         items(floors.size, key = { floors[it].floor }) { index ->
                             val item = floors[index]
+                            val window = FloorMapWindow(item,vm)
                             NoPadding {
                                 AssistChip(
                                     onClick = {
                                         // TODO
-                                        floatingController.push(FloorMapWindow(item,vm))
+                                        floatingController.push(window)
                                     },
+                                    shape = RoundedCornerShape(0.dp),
                                     border = null,
-                                    colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                                     label = { Text("${item.floor}F") },
-                                    modifier = Modifier.padding(end = if(index == floors.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                    modifier = Modifier
+                                        .padding(end = if(index == floors.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                        .sharedContainer(window.key, (AssistChipDefaults.shape as? CornerBasedShape) ?: MaterialTheme.shapes.small,MaterialTheme.colorScheme.secondaryContainer)
                                 )
                             }
                         }

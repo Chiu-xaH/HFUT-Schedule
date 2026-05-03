@@ -2,12 +2,15 @@ package com.hfut.schedule.ui.nav.window
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -77,50 +80,50 @@ data class FloorMapWindow(
                     color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(0.dp)
                 ) {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        Box() {
+                            UrlImage(
+                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/building/detail/${floor.imageUrl}",
+                                contentScale = ContentScale.FillWidth,
+                                shape = RoundedCornerShape(0.dp)
+                            )
 
-                    if(uiState is UiState.Success) {
-                        val buildings = (uiState as UiState.Success).data
-                        RowHorizontal {
-                            NoPadding {
-                                FlowRow(
-                                    modifier = Modifier
-                                        .padding(horizontal = APP_HORIZONTAL_DP)
-                                        .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
-                                ) {
-                                    val rooms = buildings.rooms.map { it.id }.distinct()
-                                    rooms.forEach {
-                                        val selected = selectedRooms.contains(it)
-                                        FilterChip(
-                                            selected = selected,
-                                            onClick = {
-                                                if(selected) {
-                                                    selectedRooms.remove(it)
-                                                } else {
-                                                    selectedRooms.add(it)
-                                                }
-                                            },
-                                            label = { Text(it) },
-                                            modifier = Modifier
-                                                .padding(end = CARD_NORMAL_DP * 3)
-                                                .padding(bottom = CARD_NORMAL_DP * 3)
-                                        )
-                                    }
-                                }
+                            if(uiState is UiState.Success && controller.current()?.window == this@FloorMapWindow) {
+                                val buildings = (uiState as UiState.Success).data
+                                RoomMap(buildings, selectedIds = selectedRooms)
                             }
                         }
-                    }
-
-                    Box() {
-                        UrlImage(
-                            "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/building/${floor.imageUrl}",
-                            contentScale = ContentScale.FillWidth,
-                            shape = RoundedCornerShape(0.dp)
-                        )
 
                         if(uiState is UiState.Success) {
                             val buildings = (uiState as UiState.Success).data
-
-                            RoomMap(buildings, selectedIds = selectedRooms)
+                            RowHorizontal(modifier = Modifier.padding(top = APP_HORIZONTAL_DP)) {
+                                NoPadding {
+                                    FlowRow(
+                                        modifier = Modifier
+                                            .padding(horizontal = APP_HORIZONTAL_DP)
+                                            .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
+                                    ) {
+                                        val rooms = buildings.rooms.map { it.id }.distinct()
+                                        rooms.forEach {
+                                            val selected = selectedRooms.contains(it)
+                                            FilterChip(
+                                                selected = selected,
+                                                onClick = {
+                                                    if(selected) {
+                                                        selectedRooms.remove(it)
+                                                    } else {
+                                                        selectedRooms.add(it)
+                                                    }
+                                                },
+                                                label = { Text(it) },
+                                                modifier = Modifier
+                                                    .padding(end = CARD_NORMAL_DP * 3)
+                                                    .padding(bottom = CARD_NORMAL_DP * 3)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
