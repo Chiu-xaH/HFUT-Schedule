@@ -13,6 +13,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
 import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
+import com.hfut.schedule.ui.nav.destination.TestDestination
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.state.GlobalStateHolder.postedUse
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,7 @@ class MainActivity : BaseActivity() {
         super.uiVm,
         intent.getBooleanExtra("login", false),
         false,
+//        TestDestination::class.java.name,
         intent.getStringExtra("route"),
     )
 

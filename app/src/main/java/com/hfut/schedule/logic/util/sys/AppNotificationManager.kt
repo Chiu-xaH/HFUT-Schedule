@@ -114,5 +114,5 @@ object AppNotificationManager {
         // 更新
         manager.cancel(COURSE_PROGRESS_ID)
         manager.notify(COURSE_PROGRESS_ID, builder.build())
-    } else null
+    } else Unit
 }
