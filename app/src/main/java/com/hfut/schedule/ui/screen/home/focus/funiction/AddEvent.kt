@@ -596,7 +596,7 @@ fun AddEventUI(
     val classList = remember { mutableStateListOf<String>() }
     var updateLoading by remember { mutableStateOf(false) }
     val typeIcon = @Composable {
-        Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.net),null)
+        Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.timer),null)
     }
 
     if(showSelectDateDialog)

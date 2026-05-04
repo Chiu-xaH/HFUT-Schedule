@@ -50,7 +50,7 @@ object SettingsLiveUpdateDestination : NavDestination() {
 //                    modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer),
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
-                    title = { Text(SettingsTipsDestination.title.asString()) },
+                    title = { Text(title.asString()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

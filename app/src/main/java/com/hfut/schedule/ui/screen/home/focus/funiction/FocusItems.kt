@@ -200,7 +200,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                             supportingContent = { Text(text = info)},
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.net),
+                                    painterResource(R.drawable.timer),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -235,7 +235,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                             supportingContent = { Text(text = info)},
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.net),
+                                    painterResource(R.drawable.timer),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -300,7 +300,6 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, timeNow : String) {
                         )
                     }
                 }
-
             },
             modifier = Modifier.clickable {
                 showBottomSheet = true
@@ -494,7 +493,7 @@ fun CustomItemUI(
                     }
                 ) {
                     Icon(
-                        painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
+                        painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.timer),
                         contentDescription = "Localized description",
                         tint = if(isOutOfDate) LocalContentColor.current.copy(.5f) else LocalContentColor.current
                     )

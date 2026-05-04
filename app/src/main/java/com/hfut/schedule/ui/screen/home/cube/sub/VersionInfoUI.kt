@@ -20,7 +20,9 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.LifeDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
+import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.component.text.ScrollText
@@ -35,16 +37,15 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-//            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsConfigurationDestination))
+            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))
             UpdateItems("新增 楼层导向(Beta)","位于 查询中心-生活服务-楼层导向；目前仅上线新安学堂四楼进行测试，如可行则继续逐渐扩展", to = To.Screen(LifeDestination))//
-            UpdateItems("新增 支持关闭容器共享的开关","位于 选项-外观-动效")//TODO需要库配合，改一下
-            UpdateItems("修复 部分场景下返回界面异常不刷新的Bug")
-            UpdateItems("优化 DDL在聚焦中的显示机制","DDL类型在截止前72h将会显示在重要事项中，以提醒用户完成任务")//
-            UpdateItems("重构 生活服务","重新拆分页面")//
-            UpdateItems("修复 部分场景下状态栏的未反色问题")// 课程表插入图片TODO
+            UpdateItems("新增 支持关闭容器共享的开关","位于 选项-外观-动效",To.Screen(SettingsAppearanceDestination))//TODO SharedNav
+            UpdateItems("修复 部分场景下返回画面冻结的Bug")//TODO SharedNav
+            UpdateItems("修复 浮窗收起过程的末尾时动效顿挫的Bug")//TODO SharedNav
+            UpdateItems("修复 部分场景下状态栏的未反色问题")//
             UpdateItems("修复 在开启层级模糊的情况下，空教室列表点击时间轴方块展开收起浮窗动效卡顿的Bug")//
             UpdateItems("修复 一键刷新合工大教务登录时因为网络问题导致应用崩溃的Bug")//
-            UpdateItems("修复 浮窗收起过程的末尾时动效顿挫的Bug")
+            UpdateItems("优化 DDL在聚焦中的显示机制","DDL类型在截止前72h将会显示在重要事项中，以提醒用户完成任务")//
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
