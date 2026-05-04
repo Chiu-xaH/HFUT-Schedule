@@ -67,6 +67,7 @@ object AppVersion {
     val CAN_DYNAMIC_COLOR = sdkInt >= 31
 
     val CAN_PREDICTIVE = sdkInt >= 33
+    val CAN_LIVE_UPDATE = sdkInt >= 36
     val CAN_SHADER = sdkInt >= 33
 
     val deviceName: String = Build.MODEL

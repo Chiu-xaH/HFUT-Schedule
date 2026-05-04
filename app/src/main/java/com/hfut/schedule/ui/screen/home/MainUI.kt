@@ -169,16 +169,20 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.color.extractColor
+import com.hfut.schedule.ui.util.color.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.TransparentSystemBars2
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.model.ContainerFilledStrategy
@@ -875,8 +879,19 @@ fun MainScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
                     if (useCustomBackground) {
+                        // 状态栏反色
+                        val file = remember(customBackground) { File(customBackground) }
+                        val color by produceState<Int?>(initialValue = null) {
+                            value = withContext(Dispatchers.IO) {
+                                val bitmap = loadBitmap(file) ?: return@withContext null
+                                val result = pickColorFromTop(bitmap)
+                                bitmap.recycle()
+                                result
+                            }
+                        }
+                        TransparentSystemBars2(color?.let { it1 -> Color(it1) })
                         GlideImage(
-                            model = File(customBackground),
+                            model = file,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier

@@ -18,8 +18,8 @@
 
     <string name="app_settings_language_title">语言</string>
 
-    <string name="app_settings_display_overdue_courses_on_focus_title">聚焦仍显示已上完的课程</string>
-    <string name="app_settings_display_overdue_courses_on_focus_description">显示或隐藏今天上完的课程</string>
+    <string name="app_settings_display_overdue_courses_on_focus_title">聚焦仍显示今天已完成的项目</string>
+    <string name="app_settings_display_overdue_courses_on_focus_description">显示或隐藏今天上完的课程、考试及日程</string>
 
     <string name="app_settings_display_overdue_events_on_focus_title">聚焦中仍显示已结束的日程</string>
     <string name="app_settings_display_overdue_events_on_focus_description">显示或隐藏自行添加的日程中已过期的项目</string>
@@ -83,4 +83,7 @@
     <string name="app_settings_default_calendar_choice_jxglstu_2">教务备用</string>
     <string name="app_settings_shortcut_title">Shortcut</string>
     <string name="app_settings_shortcut_description">桌面图标长按快捷菜单</string>
+    <string name="app_settings_live_update_title">实时通知</string>
+    <string name="app_settings_live_update_description_supported">在通知栏显示实时状态的通知</string>
+    <string name="app_settings_live_update_description_unsupported">需Android 16+</string>
 </resources>

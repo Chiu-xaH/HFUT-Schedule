@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
 import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
+import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
 import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -98,9 +99,9 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         .padding(innerPaddings)
     ) {
         Spacer(modifier = Modifier.height(5.dp))
-        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
+//        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
         val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
-        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
+//        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 
         val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
         var showSUpdate by remember { mutableStateOf(switch_update) }
@@ -247,27 +248,27 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
                     modifier = Modifier.clickable { showEnded = !showEnded }
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_events_on_focus_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_display_overdue_events_on_focus_description))
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.search_activity),
-                        contentDescription = "Localized description"
-                    ) },
-                    trailingContent = { Switch(checked = enableShowOutOfDateEvent, onCheckedChange = {
-                        scope.launch {
-                            DataStoreManager.saveShowOutOdDateEvent(!enableShowOutOfDateEvent)
-                        }
-                    }) },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            DataStoreManager.saveShowOutOdDateEvent(!enableShowOutOfDateEvent)
-                        }
-                    }
-                )
+//                PaddingHorizontalDivider()
+//                TransplantListItem(
+//                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_events_on_focus_title)) },
+//                    supportingContent = {
+//                        Text(stringResource(R.string.app_settings_display_overdue_events_on_focus_description))
+//                    },
+//                    leadingContent = { Icon(
+//                        painterResource(R.drawable.search_activity),
+//                        contentDescription = "Localized description"
+//                    ) },
+//                    trailingContent = { Switch(checked = enableShowOutOfDateEvent, onCheckedChange = {
+//                        scope.launch {
+//                            DataStoreManager.saveShowOutOdDateEvent(!enableShowOutOfDateEvent)
+//                        }
+//                    }) },
+//                    modifier = Modifier.clickable {
+//                        scope.launch {
+//                            DataStoreManager.saveShowOutOdDateEvent(!enableShowOutOfDateEvent)
+//                        }
+//                    }
+//                )
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(
@@ -361,10 +362,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsShortcutEditDestination.key,
-                    shape = MaterialTheme.shapes.medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                    ),
+                    shape = RoundedCornerShape(0.dp),
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -379,6 +377,34 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         ) },
                         modifier = Modifier.clickable {
                             navTopController.push(SettingsShortcutEditDestination)
+                        }
+                    )
+                }
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsLiveUpdateDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp),
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.app_settings_live_update_title)) },
+                        supportingContent = {
+                            if(AppVersion.CAN_LIVE_UPDATE) {
+                                Text(text = stringResource(R.string.app_settings_live_update_description_supported))
+                            } else {
+                                Text(text = stringResource(R.string.app_settings_live_update_description_unsupported))
+                            }
+                        },
+                        leadingContent = { Icon(
+                            painterResource(R.drawable.notifications_active),
+                            contentDescription = "Localized description"
+                        ) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsLiveUpdateDestination)
                         }
                     )
                 }

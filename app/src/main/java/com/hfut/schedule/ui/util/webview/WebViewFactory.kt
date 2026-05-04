@@ -1,12 +1,11 @@
 package com.hfut.schedule.ui.util.webview
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
@@ -38,7 +37,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,7 +57,6 @@ import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
@@ -79,8 +76,6 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.shared.LogUtil
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 
@@ -432,33 +427,46 @@ fun getPaddingPxJs(top : Int?,bottom : Int?) : String = """
 
 
 // 从左取到右，传入step一定间距，最后选择取色中最多同色的那个
-fun selectColor(view : WebView?,step : Int = 3,onColor : (Color?) -> Unit) {
+fun selectColor(
+    view: WebView?,
+    step: Int = 3,
+    onColor: (Color?) -> Unit
+) {
     view?.postDelayed({
         try {
             val bitmap = createBitmap(view.width, view.height)
             val canvas = Canvas(bitmap)
             view.draw(canvas)
 
-            // 读取顶部某个位置的像素颜色，比如(10, 10)
-            // 取色从最左侧、最右侧、中间
-            val width = bitmap.width
-            val height = bitmap.height
-            // 从左取到右，传入step一定间距，最后选择取色中最多同色的那个
-            val y = 0
-            val colorMap = mutableMapOf<Int, Int>()
-            for (i in 0..step) {
-                val x = (i * width) / step
-                val color = bitmap[x.coerceAtMost(width - 1), y]
-                colorMap[color] = colorMap.getOrDefault(color, 0) + 1
-            }
+            val colorInt = pickColorFromTop(bitmap, step)
 
-            val mostFrequentColor = colorMap.maxByOrNull { it.value }?.key
-            onColor(mostFrequentColor?.let { Color(it) })
+            bitmap.recycle()
+
+            onColor(colorInt?.let { Color(it) })
         } catch (e: Exception) {
             LogUtil.error(e)
             onColor(null)
         }
     }, 100)
+}
+
+fun pickColorFromTop(
+    bitmap: Bitmap,
+    step: Int = 3,
+): Int? {
+    if (bitmap.width == 0 || bitmap.height == 0) return null
+
+    val width = bitmap.width
+
+    val colorMap = mutableMapOf<Int, Int>()
+
+    for (i in 0..step) {
+        val x = ((i * width) / step).coerceAtMost(width - 1)
+        val color = bitmap[x, 0]
+        colorMap[color] = colorMap.getOrDefault(color, 0) + 1
+    }
+
+    return colorMap.maxByOrNull { it.value }?.key
 }
 
 @Composable

@@ -122,6 +122,7 @@ fun MainHost(
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
     val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+    val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
 
@@ -159,6 +160,10 @@ fun MainHost(
 
             LaunchedEffect(useDoubleExtension) {
                 registry.extensionDouble = useDoubleExtension
+            }
+
+            LaunchedEffect(enableContainerShare) {
+                registry.enabled = enableContainerShare
             }
 
             LaunchedEffect(enableLiquidGlass) {

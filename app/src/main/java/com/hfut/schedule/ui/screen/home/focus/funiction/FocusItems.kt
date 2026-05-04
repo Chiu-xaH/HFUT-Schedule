@@ -89,6 +89,9 @@ import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Composable
 fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
@@ -99,13 +102,13 @@ fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
 
         //判断过期不显示信息
         val startYear = startTime[0]
-        var startDateStr = parseTimeItem(startTime[2])
-        var startMonthStr = parseTimeItem(startTime[1])
+        val startDateStr = parseTimeItem(startTime[2])
+        val startMonthStr = parseTimeItem(startTime[1])
         val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
 
         val endYear = endTime[0]
-        var endDateStr = parseTimeItem(endTime[2])
-        var endMonthStr = parseTimeItem(endTime[1])
+        val endDateStr = parseTimeItem(endTime[2])
+        val endMonthStr = parseTimeItem(endTime[1])
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
@@ -125,73 +128,64 @@ fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
 
 @Composable
 private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Activity) {
+    if(!listItem.showPublic) {
+        return
+    }
     val time = listItem.time
     val info = listItem.info
     val title = listItem.title
-    val showPublic = listItem.showPublic
-
     val scope = rememberCoroutineScope()
-    val itemUI = @Composable {
-            CardListItem(
-                headlineContent = {  Text(text = title) },
-                overlineContent = {Text(text = time)},
-                supportingContent = { Text(text = info)},
-                leadingContent = { ScheduleIcons(title = title) },
-                modifier = Modifier.clickable {},
-                trailingContent = {
-                    if(isFuture)
-                        FilledTonalIconButton(
-                            onClick = {
-                                scope.launch {
-                                    try {
-                                        val startTime = listItem.startTime
-                                        val endTime = listItem.endTime
-                                        addToCalendars(startTime,endTime, info, title,time,activity,true)
-                                        showToast("添加到系统日历成功")
-                                    } catch (e : SecurityException) {
-                                        showToast("未授予权限")
-                                        LogUtil.error(e)
-                                    }
-                                }
+    //仅接受showPublic为true
+    CardListItem(
+        headlineContent = {  Text(text = title) },
+        overlineContent = {Text(text = time)},
+        supportingContent = { Text(text = info)},
+        leadingContent = { ScheduleIcons(title = title) },
+        modifier = Modifier.clickable {},
+        trailingContent = {
+            if(isFuture)
+                FilledTonalIconButton(
+                    onClick = {
+                        scope.launch {
+                            try {
+                                val startTime = listItem.startTime
+                                val endTime = listItem.endTime
+                                addToCalendars(startTime,endTime, info, title,time,activity,true)
+                                showToast("添加到系统日历成功")
+                            } catch (e : SecurityException) {
+                                showToast("未授予权限")
+                                LogUtil.error(e)
                             }
-                        ) {
-                            Icon( painterResource(R.drawable.event_upcoming),
-                                contentDescription = "Localized description",)
                         }
+                    }
+                ) {
+                    Icon( painterResource(R.drawable.event_upcoming),
+                        contentDescription = "Localized description",)
                 }
-            )
-//        }
-    }
-
-//    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
-        //正常接受所有来自服务器的信息
-//        itemUI()
-//    } else {
-        //仅接受showPublic为true
-        if(showPublic) {
-            itemUI()
         }
-//    }
+    )
 }
 
 @Composable
 fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
+    if(!listItem.showPublic) {
+        return
+    }
     val time = listItem.time
     val info = listItem.info
     val title = listItem.title
-    val showPublic = listItem.showPublic
     val context = LocalContext.current
-
     val scope = rememberCoroutineScope()
-    val itemUI = @Composable {
-        if(prefs.getString("my","")?.contains("Schedule") == true) {
+
+    //仅接受showPublic为true
+    if(prefs.getString("my","")?.contains("Schedule") == true) {
             val startTime = listItem.startTime
             val endTime = listItem.endTime
 
             //判断过期不显示信息
             val endYear = endTime[0]
-            var endDateStr = parseTimeItem(endTime[2])
-            var endMonthStr = parseTimeItem(endTime[1])
+            val endDateStr = parseTimeItem(endTime[2])
+            val endMonthStr = parseTimeItem(endTime[1])
             val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
@@ -253,30 +247,16 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                 }
             }
         }
-    }
-
-//    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
-        //正常接受所有来自服务器的信息
-//        itemUI()
-//    } else {
-        //仅接受showPublic为true
-        if(showPublic) {
-            itemUI()
-        }
-//    }
 }
 
 @Composable
-fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, hazeState: HazeState, timeNow : String) {
+fun CommunityTodayCourseItem(list : courseDetailDTOList, timeNow : String) {
 
     val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
-
 
     var weekday = DateTimeManager.dayWeek
     if(weekday == 0) weekday = 7
     //课程详情
-//    val list =
-
     var showBottomSheet by remember { mutableStateOf(false) }
     val time = list.classTime
 
@@ -347,17 +327,16 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
 }
 
 @Composable
-fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel, hazeState: HazeState) {
+fun CommunityTomorrowCourseItem(list: courseDetailDTOList) {
 
     val weekdayTomorrow = DateTimeManager.dayWeek + 1
     var week = DateTimeManager.currentWeek.toInt()
     //当第二天为下一周的周一时，周数+1
-    when(weekdayTomorrow) {
-        1 -> week += 1
+    if(weekdayTomorrow == 1) {
+        week += 1
     }
 
     //课程详情
-//    val list = getCourseInfoFromCommunity(weekdayTomorrow,week)[index][0]
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -396,42 +375,60 @@ fun CustomItem(
     val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
     val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
+    val isOutOfDate = nowTimeNum > endNum
 
     if(item.type == CustomEventType.SCHEDULE) {
         val startNumSummary = with(dateTime.start) { "$year-${parseTimeItem(month)}-${parseTimeItem(day)}" }
-        val isTomorrow = DateTimeManager.tomorrow_YYYY_MM_DD == startNumSummary
-        if(nowTimeNum in startNum..endNum || isTomorrow && showTomorrow || startNumSummary == DateTimeManager.Date_yyyy_MM_dd) {
-            // 显示在首页
-            // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
-            if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh)
+        val isTomorrow = DateTimeManager.tomorrow_YYYY_MM_DD == startNumSummary && showTomorrow
+        if(nowTimeNum in startNum..endNum || isTomorrow || startNumSummary == DateTimeManager.Date_yyyy_MM_dd) {
+            /** 日程类型：显示在首页
+             * 1.开始日期等于明天（isTomorrow）并且今天的事件全部完毕 isTomorrow
+             * 2.对于非跨天日程，开始日期等于今天 startNumSummary == DateTimeManager.Date_yyyy_MM_dd
+             * 3.对于跨天日程，正在进行时 nowTimeNum in startNum..endNum
+             */
+            if(!isFuture) {
+                if(!(!showOutOfDateItems && isOutOfDate)) {
+                    CustomItemUI(item, false, activity, hazeState,isTomorrow = isTomorrow, refresh = refresh, isOutOfDate = isOutOfDate)
+                }
+            }
         } else {
-            // 显示在第二页
+            // 日程类型：显示在第二页
             if(isFuture) {
                 // 判断是否过期
-                val isOutOfDate = nowTimeNum > endNum
-                if(!showOutOfDateItems && isOutOfDate) { } else {
-                    CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh)
+                if(!(!showOutOfDateItems && isOutOfDate)) {
+                    CustomItemUI(item, true, activity, hazeState, isOutOfDate = isOutOfDate,isTomorrow = false, refresh = refresh)
                 }
             }
         }
     } else {
-        // 今天截止 并且尚未截止
-        if((endNum / 10000 == nowTimeNum  / 10000) && (endNum % 10000 >= nowTimeNum % 10000)) {
+        /** DDL类型：显示在首页
+         * 1.距离截止日期还有XXh（用户可自定义）时
+         */
+        // 暂时定义为48h，后面看用户呼声
+        val deadTime = item.dateTime.end.toLocalDateTime()
+        val nowTime = DateTimeManager.currentTime
+        val duration = Duration.between(nowTime, deadTime)
+        val hours = duration.toHours()
+
+        val shouldShowDDL = hours in 0..72
+        if(shouldShowDDL) {
             // 显示在首页
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh)
+                CustomItemUI(item, false, activity, hazeState,isTomorrow = false,isOutOfDate = isOutOfDate, refresh = refresh)
         } else {
-            // 显示在第二页
+            // DDL类型：显示在第二页
             if(isFuture) {
                 // 判断是否过期
-                val isOutOfDate = nowTimeNum > endNum
-                if(!showOutOfDateItems && isOutOfDate) { } else {
-                    CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh)
+                if(!(!showOutOfDateItems && isOutOfDate)) {
+                    CustomItemUI(item, true, activity, hazeState, isTomorrow = false,isOutOfDate = isOutOfDate, refresh = refresh)
                 }
             }
         }
     }
+}
+
+fun DateTimeBean.toLocalDateTime(): LocalDateTime {
+    return LocalDateTime.of(year, month, day, hour, minute)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -533,7 +530,18 @@ fun CustomItemUI(
                         ) { Icon(painterResource(R.drawable.event_upcoming), null) }
                     } else {
                         if(item.type == CustomEventType.NET_COURSE) {
-                            Text("今日截止")
+                            val deadTime = item.dateTime.end.toLocalDateTime()
+                            val nowTime = DateTimeManager.currentTime
+                            val duration = Duration.between(nowTime, deadTime)
+                            val hours = duration.toHours()
+
+                            val text = when {
+                                duration.isNegative -> "已截止"
+                                hours > 0 -> "剩余${hours}h"
+                                else -> "不足1h"
+                            }
+
+                            Text(text)
                         }
                     }
                 }
@@ -569,7 +577,7 @@ fun TermTip() {
 }
 
 @Composable
-fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
+fun TodayUI(vm: NetWorkViewModel) {
     val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
 
     val data by produceState<TodayResult?>(initialValue = null) {
@@ -577,7 +585,6 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
             value = data
         }
     }
-    val context = LocalContext.current
     val noDataUI = @Composable {
         when {
             isHolidayTomorrow() -> {
@@ -685,7 +692,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     with(todayExam) {
                         courseName?.let {
                             TransplantListItem(
-                                headlineContent = { ScrollText(text = it.toString(), color = MaterialTheme.colorScheme.error) },
+                                headlineContent = { ScrollText(text = it, color = MaterialTheme.colorScheme.error) },
                                 overlineContent = { ScrollText(text = "${place?.simplifyPlace()} $startTime", color = MaterialTheme.colorScheme.error) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "", tint = MaterialTheme.colorScheme.error)},
                                 modifier = Modifier
@@ -697,7 +704,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     with(todayCourse) {
                         courseName?.let {
                             TransplantListItem(
-                                headlineContent = { ScrollText(text =  it.toString()) },
+                                headlineContent = { ScrollText(text = it) },
                                 overlineContent = { ScrollText(text =  place?.simplifyPlace() + " " +  startTime) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
                                 modifier = Modifier
@@ -709,7 +716,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     with(bookLending) {
                         bookName?.let {
                             TransplantListItem(
-                                headlineContent = { ScrollText(text =  it.toString()) },
+                                headlineContent = { ScrollText(text = it) },
                                 overlineContent = { ScrollText(text =  returnTime.toString()) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = "")},
                                 modifier = Modifier
@@ -721,7 +728,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     with(todayActivity) {
                         activityName?.let {
                             TransplantListItem(
-                                headlineContent = { ScrollText(text =  it.toString()) },
+                                headlineContent = { ScrollText(text = it) },
                                 overlineContent = { ScrollText(text =  startTime.toString()) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.person_play), contentDescription = "")},
                                 modifier = Modifier

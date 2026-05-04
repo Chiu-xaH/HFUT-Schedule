@@ -286,7 +286,7 @@ fun FocusCard(
                         if(showToday)
                             Box(modifier = Modifier
                                 .weight(.5f)) {
-                                TodayUI(hazeState,vm)
+                                TodayUI(vm)
                             }
                     }
                 if(showWeb || showEle)

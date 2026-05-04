@@ -222,6 +222,7 @@ fun SharedAppearanceSettingsScreen(
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
         val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+        val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
 //        val enableKeepPreviousPage by DataStoreManager.enableKeepPreviousPage.collectAsState(initial = false)
 
@@ -628,20 +629,58 @@ fun SharedAppearanceSettingsScreen(
                 PaddingHorizontalDivider()
                 if(transition != EffectLevel.NONE.levelNum) {
                     TransplantListItem(
-                        headlineContent = { Text(text = "视差效果") },
+                        headlineContent = { Text(text = "容器共享") },
                         supportingContent = {
-                            Text("过渡时容器带有倾斜的视差效果")
+                            Text("过渡时容器带有共享效果")
                         },
                         trailingContent = {
-                            Switch(checked = enableContainerTilt, onCheckedChange = {
+                            Switch(checked = enableContainerShare, onCheckedChange = {
                                 scope.launch {
-                                    DataStoreManager.saveContainerTilt(!enableContainerTilt)
+                                    DataStoreManager.saveContainerShare(!enableContainerShare)
                                 }
                             })
                         },
-                        leadingContent = { Icon(painterResource(R.drawable.ic_360), contentDescription = "Localized description") },
+                        leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
                     )
                     PaddingHorizontalDivider()
+
+
+                    if(enableContainerShare) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "视差效果") },
+                            supportingContent = {
+                                Text("过渡时容器带有倾斜的视差效果")
+                            },
+                            trailingContent = {
+                                Switch(checked = enableContainerTilt, onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveContainerTilt(!enableContainerTilt)
+                                    }
+                                })
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.ic_360), contentDescription = "Localized description") },
+                        )
+                        PaddingHorizontalDivider()
+
+                        TransplantListItem(
+                            headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_extension_title)) },
+                            supportingContent = {
+                                Text(stringResource(R.string.appearance_settings_transition_extension_description))
+                            },
+                            trailingContent = {
+                                Switch(checked = useDoubleExtension, onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
+                                    }
+                                })
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                        )
+                        ExtensionSample()
+                        PaddingHorizontalDivider()
+                    }
+
+
                     TransplantListItem(
                         headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_splash_title)) },
                         supportingContent = {
@@ -656,39 +695,9 @@ fun SharedAppearanceSettingsScreen(
                         },
                         leadingContent = { Icon(painterResource(R.drawable.resize), contentDescription = "Localized description") },
                     )
-                    PaddingHorizontalDivider()
-                    TransplantListItem(
-                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_extension_title)) },
-                        supportingContent = {
-                            Text(stringResource(R.string.appearance_settings_transition_extension_description))
-                        },
-                        trailingContent = {
-                            Switch(checked = useDoubleExtension, onCheckedChange = {
-                                scope.launch {
-                                    DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
-                                }
-                            })
-                        },
-                        leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
-                    )
-                    ExtensionSample()
+
                     PaddingHorizontalDivider()
                 }
-//                TransplantListItem(
-//                    headlineContent = { Text(text = "栈留存(Beta)") },
-//                    supportingContent = {
-//                        Text("以内存换性能，部分栈中页面不再销毁，提高流畅度")
-//                    },
-//                    trailingContent = {
-//                        Switch(checked = enableKeepPreviousPage, onCheckedChange = {
-//                            scope.launch {
-//                                DataStoreManager.saveEnableKeepPreviousPage(!enableKeepPreviousPage)
-//                            }
-//                        })
-//                    },
-//                    leadingContent = { Icon(painterResource(R.drawable.rocket_launch), contentDescription = "Localized description") },
-//                )
-//                PaddingHorizontalDivider()
                 SharedContainer(
                     key = CornerSettingsDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
@@ -709,16 +718,6 @@ fun SharedAppearanceSettingsScreen(
                         leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
                     )
                 }
-//                PaddingHorizontalDivider()
-//                TransplantListItem(
-//                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_bottom_bar_title)) },
-//                    supportingContent = {
-//                        Text(stringResource(R.string.appearance_settings_transition_bottom_bar_description))
-//                    },
-//                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
-//                )
-//                AnimationSetting()
-//                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
         DividerTextExpandedWith(stringResource(R.string.appearance_settings_calendar_half_title),contentColor=contentColor) {
@@ -872,7 +871,7 @@ private fun ExtensionSample() {
 fun CalendarUISettings(
     tiny : Boolean  = false
 ) {
-    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+//    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,9 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,7 +32,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
@@ -43,6 +48,7 @@ import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -78,6 +84,13 @@ import kotlinx.coroutines.withContext
 private const val TAB_LEFT = 0
 private const val TAB_RIGHT = 1
 
+/**
+ * 按时间线顺序，获取今天的课程、考试、日程（DDL除外）
+ */
+suspend fun getTodayEvents() {
+
+}
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -96,7 +109,7 @@ fun TodayScreen(
     var refreshDB by remember { mutableStateOf(false) }
     var refreshing by rememberSaveable { mutableStateOf(true) }
     var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
-    val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
+    var enableShowOutOfDateEvent by rememberSaveable { mutableStateOf(false) }
     val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
 
     var scheduleList by remember { mutableStateOf(getSchedule()) }
@@ -192,7 +205,7 @@ fun TodayScreen(
         // 冷启动
         launch {
             // 避免重复加载
-            if(refreshing == false) {
+            if(!refreshing) {
                 return@launch
             }
             async {
@@ -233,11 +246,11 @@ fun TodayScreen(
                                 CourseType.COMMUNITY.code -> {
                                     if (showTomorrow) {
                                         if(!isHolidayTomorrow()) {
-                                            items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState) }
+                                            items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item]) }
                                         }
                                     } else {
                                         if(!isHoliday()) {
-                                            items(todayCourseList.size) { item -> CommunityTodayCourseItem(list = todayCourseList[item],vm, hazeState,timeNow) }
+                                            items(todayCourseList.size) { item -> CommunityTodayCourseItem(list = todayCourseList[item],timeNow) }
                                         }
                                     }
                                 }
@@ -265,7 +278,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow,showOutOfDateItems = switchShowEnded) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
@@ -291,6 +304,35 @@ fun TodayScreen(
 
                         }
                         TAB_RIGHT -> {
+                            item {
+                                CardListItem(
+                                    headlineContent = { Text(
+                                        if(enableShowOutOfDateEvent) {
+                                            "收起"
+                                        } else {
+                                            "展开"
+                                        } + "已过期日程",
+                                        color = MaterialTheme.colorScheme.primary
+                                    ) },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(
+                                                if(enableShowOutOfDateEvent) {
+                                                    R.drawable.visibility
+                                                } else {
+                                                    R.drawable.visibility_off
+                                                }
+                                            ),
+                                            null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    },
+                                    modifier = Modifier.clickable {
+                                        enableShowOutOfDateEvent = !enableShowOutOfDateEvent
+                                    }
+                                )
+                            }
+
                             //日程
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
@@ -324,7 +366,7 @@ fun TodayScreen(
                                     CourseType.COMMUNITY.code -> {
                                         if (DateTimeManager.compareTime(lastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             items(tomorrowCourseList.size) { item ->
-                                                CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState)
+                                                CommunityTomorrowCourseItem(list = tomorrowCourseList[item])
                                             }
                                         }
                                     }
@@ -332,7 +374,7 @@ fun TodayScreen(
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],)
+                                                    JxglstuTomorrowCourseItem(item,list[item])
                                                 }
                                             }
                                         }

@@ -88,4 +88,5 @@
     <string name="navigation_label_average_grade">Average grade</string>
     <string name="navigation_label_settings_corner">Screen corner</string>
     <string name="navigation_label_shortcut">Shortcut</string>
+    <string name="navigation_label_live_update">Live Update</string>
 </resources>

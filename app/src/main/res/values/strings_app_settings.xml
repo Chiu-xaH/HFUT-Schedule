@@ -85,5 +85,8 @@
     <string name="app_settings_default_calendar_choice_jxglstu_2">Academic2</string>
     <string name="app_settings_shortcut_title">Shortcut</string>
     <string name="app_settings_shortcut_description">The shortcut menu triggered by long-pressing the desktop icon</string>
+    <string name="app_settings_live_update_title">Live Update</string>
+    <string name="app_settings_live_update_description_supported">Notifications that display real-time status in the notification bar</string>
+    <string name="app_settings_live_update_description_unsupported">Require Android 16+</string>
 
 </resources>
