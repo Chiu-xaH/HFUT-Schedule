@@ -1,11 +1,13 @@
 package com.hfut.schedule.logic.util.sys.datetime
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.xah.common.logic.safeDiv
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
@@ -29,9 +31,8 @@ object DateTimeManager {
             DataStoreManager.termStartDate.first(),
             formatter_YYYY_MM_DD
         )
-       currentWeek =  ChronoUnit.WEEKS.between(firstWeekStartJxglstu, today) + 1
+        currentWeek =  ChronoUnit.WEEKS.between(firstWeekStartJxglstu, LocalDate.now()) + 1
     }
-
 
     // 解析
     val simpleFormatter_YYYY_MM = SimpleDateFormat("yyyy-MM")
@@ -44,6 +45,9 @@ object DateTimeManager {
     val formatter_YYYY_MM_DD = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val formatter_YYYY_MM = DateTimeFormatter.ofPattern("yyyy-MM")
     val formatter_MM_DD = DateTimeFormatter.ofPattern("MM-dd")
+    val formatter_Year = DateTimeFormatter.ofPattern("YYYY")
+    val formatter_Month = DateTimeFormatter.ofPattern("MM")
+    val formatter_Day = DateTimeFormatter.ofPattern("dd")
 
     val formatterTime_HH_MM = DateTimeFormatter.ofPattern("HH:mm")
     val formatterTime_HH_MM_SS = DateTimeFormatter.ofPattern("HH:mm:ss")
@@ -55,34 +59,34 @@ object DateTimeManager {
     const val APP_BIRTHDAY = "2023-10-16"
 
     // 日期
-    private var today: LocalDate = LocalDate.now()
-    private var currentTime = LocalDateTime.now()
-    private var date = Date()
+//    private var today: LocalDate = LocalDate.now()
+//    private var currentTime = LocalDateTime.now()
+//    private var date = Date()
 
-    val Date_yyyy_MM: String = simpleFormatter_YYYY_MM.format(date)
-    val Date_MM_dd: String = simpleFormatter_MM_DD.format(date)
-    val Date_MM: String = simpleFormatter_Month.format(date)
-    val Date_dd: String = simpleFormatter_Day.format(date)
-    val Date_yyyy: String = simpleFormatter_Year.format(date)
-    val Date_yyyy_MM_dd: String = simpleFormatter_YYYY_MM_DD.format(date)
-    private var dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+    val Date_yyyy_MM: String get() = LocalDate.now().format(formatter_YYYY_MM)
+    val Date_MM_dd: String get() =  LocalDate.now().format(formatter_MM_DD)
+    val Date_MM: String get() = LocalDate.now().format(formatter_Month)
+    val Date_dd: String get() = LocalDate.now().format(formatter_Day)
+    val Date_yyyy: String get() = LocalDate.now().format(formatter_Year)
+    val Date_yyyy_MM_dd: String get() = LocalDate.now().format(formatter_YYYY_MM_DD)
+
+    //周几
+    val dayWeek get() = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1
 
     // 周数
-    var currentWeek by mutableStateOf(1L)
+    var currentWeek by mutableLongStateOf(1L)
         private set
-    //周几
-    val dayWeek = dayOfWeek - 1
 
     //时间
-    val Time_HH_MM = currentTime.format(formatterTime_HH_MM)
-    val Time_HH_MM_SS = currentTime.format(formatterTime_HH_MM_SS)
-    val Time_Hour = currentTime.format(formatterTime_Hour)
-    val Time_Minute = currentTime.format(formatterTime_Minute)
-    val Time_Second = currentTime.format(formatterTime_Second)
+    val Time_HH_MM get() = LocalDateTime.now().format(formatterTime_HH_MM)
+    val Time_HH_MM_SS get() = LocalDateTime.now().format(formatterTime_HH_MM_SS)
+    val Time_Hour get() = LocalDateTime.now().format(formatterTime_Hour)
+    val Time_Minute get() = LocalDateTime.now().format(formatterTime_Minute)
+    val Time_Second get() = LocalDateTime.now().format(formatterTime_Second)
 
     // 明天
-    val tomorrow_MM_DD: String = today.plusDays(1).format(formatter_MM_DD)
-    val tomorrow_YYYY_MM_DD: String = today.plusDays(1).format(formatter_YYYY_MM_DD)
+    val tomorrow_MM_DD: String get() = LocalDate.now().plusDays(1).format(formatter_MM_DD)
+    val tomorrow_YYYY_MM_DD: String get() = LocalDate.now().plusDays(1).format(formatter_YYYY_MM_DD)
 
     val DateTime_T = Date_yyyy_MM_dd + "T" + Time_HH_MM_SS
     val DateTimeBeanNow = DateTimeBean(
@@ -100,7 +104,7 @@ object DateTimeManager {
         val endDate = LocalDate.parse(endDateStr, formatter_YYYY_MM_DD)
         // 计算总天数和已过天数
         val totalDays = endDate.toEpochDay() - startDate.toEpochDay()
-        val pastDays = today.toEpochDay() - startDate.toEpochDay()
+        val pastDays = LocalDate.now().toEpochDay() - startDate.toEpochDay()
         // 计算百分比
         val percentage = (pastDays.toDouble() safeDiv totalDays.toDouble()) * 100
         return percentage
@@ -111,7 +115,7 @@ object DateTimeManager {
         val endTime = LocalTime.parse(endTimeStr, formatterTime_HH_MM)
 
         val totalSeconds = Duration.between(startTime, endTime).seconds.toDouble()
-        val passedSeconds = Duration.between(startTime, currentTime).seconds.toDouble()
+        val passedSeconds = Duration.between(startTime, LocalDateTime.now()).seconds.toDouble()
 
         val percentage = (passedSeconds safeDiv totalSeconds).coerceIn(0.0, 1.0)
         return percentage
@@ -123,7 +127,7 @@ object DateTimeManager {
         return when {
             now.isBefore(startTime) -> 0
             now.isAfter(endTime) -> null
-            else -> Duration.between(startTime, currentTime).toMinutes().toInt()
+            else -> Duration.between(startTime, LocalDateTime.now()).toMinutes().toInt()
         }
     }
 
@@ -144,6 +148,7 @@ object DateTimeManager {
                 TimeState.ONGOING
             }
         } catch (e: Exception) {
+            LogUtil.error(e)
             return TimeState.NOT_STARTED
         }
     }
@@ -163,6 +168,7 @@ object DateTimeManager {
                 TimeState.ONGOING
             }
         } catch (e: Exception) {
+            LogUtil.error(e)
             return TimeState.NOT_STARTED
         }
     }
@@ -191,6 +197,7 @@ object DateTimeManager {
                 else -> TimeState.ONGOING                  // 当前时间在开始和结束之间
             }
         } catch (e : Exception) {
+            LogUtil.error(e)
             return TimeState.NOT_STARTED
         }
     }
@@ -198,10 +205,10 @@ object DateTimeManager {
     fun daysBetween(dateString: String): Long {
         val inputDate = LocalDate.parse(dateString, formatter_YYYY_MM_DD)
         // 计算两个日期之间的天数
-        return ChronoUnit.DAYS.between(today, inputDate)
+        return ChronoUnit.DAYS.between(LocalDate.now(), inputDate)
     }
 
-    fun getToday() = today
+    fun getToday(): LocalDate = LocalDate.now()
 
     fun updateTime(formatter : DateTimeFormatter = formatterTime_HH_MM, onChange : (String) -> Unit) = onChange(
         LocalDateTime.now().format(formatter))
@@ -209,9 +216,10 @@ object DateTimeManager {
     fun isTodayAnniversary(dateString: String): Boolean {
         return try {
             val inputMonthDay = MonthDay.parse(dateString, formatter_MM_DD)
-            val todayMonthDay = MonthDay.from(today)
+            val todayMonthDay = MonthDay.from(LocalDate.now())
             inputMonthDay == todayMonthDay
         } catch (e: Exception) {
+            LogUtil.error(e)
             false // 日期格式不对时，返回 false
         }
     }
@@ -229,6 +237,7 @@ object DateTimeManager {
             val currentYearMonth = YearMonth.now()
             inputYearMonth == currentYearMonth
         } catch (e: Exception) {
+            LogUtil.error(e)
             false // 格式错误时返回 false
         }
     }
