@@ -44,34 +44,39 @@ object UniAppRepository {
     private const val FAILED_TEXT = "登陆合工大教务失败"
 
     suspend fun login() : Boolean {
-        val sId = getPersonInfo().studentId
-        val pwd = getJxglstuPassword()
-        if(pwd == null || sId == null) {
-            showToast("$FAILED_TEXT(游客)")
+        try {
+            val sId = getPersonInfo().studentId
+            val pwd = getJxglstuPassword()
+            if(pwd == null || sId == null) {
+                showToast("$FAILED_TEXT(游客)")
+                return false
+            }
+            val request = uniApp.login(
+                studentId = sId,
+                password = CryptoUtil.rsaEncrypt(pwd)
+            ).awaitResponse()
+            val json = request.body()?.string()
+            if(json == null) {
+                showToast(FAILED_TEXT)
+                return false
+            }
+            if(!request.isSuccessful) {
+                val msg = parseLogin(json,false)
+                showToast("$FAILED_TEXT$msg")
+                return false
+            }
+            val token = parseLogin(json,true)
+            if(token == null) {
+                showToast("${FAILED_TEXT}2")
+                return false
+            }
+            DataStoreManager.saveUniAppJwt(token)
+            showToast("登陆合工大教务成功")
+            return true
+        } catch (e : Exception) {
+            e.message?.let { showToast(it) } ?: showToast("登录失败，可能是服务器问题，稍后再试")
             return false
         }
-        val request = uniApp.login(
-            studentId = sId,
-            password = CryptoUtil.rsaEncrypt(pwd)
-        ).awaitResponse()
-        val json = request.body()?.string()
-        if(json == null) {
-            showToast(FAILED_TEXT)
-            return false
-        }
-        if(!request.isSuccessful) {
-            val msg = parseLogin(json,false)
-            showToast("$FAILED_TEXT$msg")
-            return false
-        }
-        val token = parseLogin(json,true)
-        if(token == null) {
-            showToast("${FAILED_TEXT}2")
-            return false
-        }
-        DataStoreManager.saveUniAppJwt(token)
-        showToast("登陆合工大教务成功")
-        return true
     }
     @JvmStatic
     private fun parseLogin(

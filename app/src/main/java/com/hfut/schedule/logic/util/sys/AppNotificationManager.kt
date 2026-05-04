@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.Icon
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.IconCompat
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -86,14 +87,14 @@ object AppNotificationManager {
 
     @RequiresApi(36)
     private var progressStyle = if(AppVersion.sdkInt >= 36) {
-        Notification.ProgressStyle()
+        NotificationCompat.ProgressStyle()
             .setStyledByProgress(false)
-            .setProgressTrackerIcon(Icon.createWithResource(MyApplication.context, R.drawable.expand_circle_right))
+            .setProgressTrackerIcon(IconCompat.createWithResource(MyApplication.context, R.drawable.expand_circle_right))
             .setProgressSegments(
                 listOf(
-                    Notification.ProgressStyle.Segment(500).setColor(Color.YELLOW),
-                    Notification.ProgressStyle.Segment(100).setColor(Color.GREEN),
-                    Notification.ProgressStyle.Segment(500).setColor(Color.YELLOW),
+                    NotificationCompat.ProgressStyle.Segment(500).setColor(Color.YELLOW),
+                    NotificationCompat.ProgressStyle.Segment(100).setColor(Color.GREEN),
+                    NotificationCompat.ProgressStyle.Segment(500).setColor(Color.YELLOW),
                 )
             )
     } else null
@@ -105,12 +106,21 @@ object AppNotificationManager {
         // 设置进度
         getPassedMinutesInRange(startTime,endTime)?.let { progressStyle!!.progress = it*10 } ?: manager.cancel(COURSE_PROGRESS_ID)
 
-        val builder = Notification.Builder(MyApplication.context,AppNotificationChannel.COURSE_PROGRESS.name)
+        val builder = NotificationCompat.Builder(MyApplication.context,AppNotificationChannel.COURSE_PROGRESS.name)
             .setSmallIcon(R.drawable.notifications)
             .setContentTitle(AppNotificationChannel.COURSE_PROGRESS.title)
             .setContentText(courseName)
-            .setPriority(Notification.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(progressStyle)
+            .setShortCriticalText("ss")
+            .setLargeIcon(
+                IconCompat.createWithResource(
+                    MyApplication.context, R.drawable.net
+                ).toIcon(MyApplication.context)
+            )
+            .setWhen(System.currentTimeMillis().plus(11 * 60 * 1000 /* 10 min */))
+            .setUsesChronometer(true)
+            .setChronometerCountDown(true)
         // 更新
         manager.cancel(COURSE_PROGRESS_ID)
         manager.notify(COURSE_PROGRESS_ID, builder.build())
