@@ -29,7 +29,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
 
-private const val RELEASE_DATE = "2026-05-05"
+private const val RELEASE_DATE = "2026-05-06"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -37,15 +37,8 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-//            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))
-            UpdateItems("新增 楼层导向","位于 查询中心-生活服务-楼层导向；目前仅上线新安学堂四楼进行测试，且功能尚未齐全，仅做Beta测试用，如可行则继续完善", to = To.Screen(LifeDestination))//
-            UpdateItems("新增 支持关闭容器共享的开关","位于 选项-外观-动效",To.Screen(SettingsAppearanceDestination))// SharedNav
-            UpdateItems("修复 在页面返回时偶见部分场景下返回手势失效的Bug")// SharedNav
-            UpdateItems("修复 浮窗收起过程的末尾时动效顿挫的Bug")//
-            UpdateItems("修复 部分场景下状态栏的未反色问题")//
-            UpdateItems("修复 在开启层级模糊的情况下，空教室列表点击时间轴方块展开收起浮窗动效卡顿的Bug")//
-            UpdateItems("修复 一键刷新合工大教务登录时因为对面服务器响应时长过长，App误判为网络超时而导致无法刷新登录的Bug")//
-            UpdateItems("优化 DDL在聚焦中的显示机制","DDL类型在截止前72h将会显示在重要事项中，以提醒用户完成任务")//
+            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))
+            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
