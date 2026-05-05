@@ -3,12 +3,17 @@ package com.hfut.schedule.network.util
 object Constant {
     // 默认每页数量
     const val DEFAULT_PAGE_SIZE = 30
+    // Github常量池
+    const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"
+    const val GITHUB_REPO_NAME = "HFUT-Schedule"
     const val GITEE_TOKEN = "bf51445a2add374b70205ca460f9a696"
     // 教务系统 有时需校园网
     const val JXGLSTU_URL = "http://jxglstu.hfut.edu.cn/eams5-student/"
     // Github
     const val GITHUB_API_URL = "https://api.github.com/"
     const val GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
+    const val GITHUB_RAW_RESOURCES = "$GITHUB_DEVELOPER_NAME/$GITHUB_REPO_NAME/dev/src/source/"
+    const val GITHUB_RAW_RESOURCES_URL = GITHUB_RAW_URL + GITHUB_RAW_RESOURCES
     // WEBVPN 有时无法访问
     const val WEBVPN_URL = "https://webvpn.hfut.edu.cn/"
     // 教务系统-WEBVPN 校外访问
@@ -34,7 +39,7 @@ object Constant {
     const val HUI_XIN_URL = "http://121.251.19.62/"
     // 指间工大
     const val ZHI_JIAN_URL = "https://zjgd.hfut.edu.cn:8181/"
-    // 第二课堂 wx1e3feaf804330562
+    // 第二课堂
     const val SECOND_CLASS_URL = "https://dekt.hfut.edu.cn/"
     // 乐跑云运动
     const val LE_PAO_URL = "http://210.45.246.53:8080/"
@@ -125,11 +130,11 @@ object Constant {
 //    const val TAO_BAO_PACKAGE_ID_URL = ":https://pages-fast.m.taobao.com/wow/z/uniapp/1100333/identityCode"
     // WEBVPN COOKIE前缀
     const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
+    const val SECOND_CLASS_WX_ID = "wx1e3feaf804330562"
     // PC UA
     const val PC_UA = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17"
-    // Github常量池
-    const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"
-    const val GITHUB_REPO_NAME = "HFUT-Schedule"
     // 仓库地址
     const val GITHUB_REPO_URL = "${GITHUB_URL}${GITHUB_DEVELOPER_NAME}/${GITHUB_REPO_NAME}"
+
+    private fun getHfutUrl(domain : String) = "https://$domain.hfut.edu.cn/"
 }

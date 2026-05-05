@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.BuildingMapFloorBean
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.UrlImage
@@ -83,7 +84,7 @@ data class FloorMapWindow(
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                         Box() {
                             UrlImage(
-                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/building/detail/${floor.imageUrl}",
+                                "${Constant.GITHUB_RAW_RESOURCES_URL}building/detail/${floor.imageUrl}",
                                 contentScale = ContentScale.FillWidth,
                                 shape = RoundedCornerShape(0.dp)
                             )
@@ -103,7 +104,7 @@ data class FloorMapWindow(
                                             .padding(horizontal = APP_HORIZONTAL_DP)
                                             .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
                                     ) {
-                                        val rooms = buildings.rooms.map { it.id }.distinct()
+                                        val rooms = buildings.rooms.map { it.id }.distinct().sorted()
                                         rooms.forEach {
                                             val selected = selectedRooms.contains(it)
                                             FilterChip(

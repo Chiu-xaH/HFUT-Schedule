@@ -16,12 +16,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
+import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
+import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
+import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -31,11 +36,13 @@ import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -64,22 +71,22 @@ enum class LifeBarItems(val page : Int) {
 
 private val items = listOf(
     NavigationBarItemData(
-        LifeBarItems.CAMPUS.name,
-        "校园",
-        R.drawable.search,
-        R.drawable.search_filled,
+        LifeBarItems.WEATHER.name,
+        "生活服务",
+        R.drawable.near_me,
+        R.drawable.near_me_filled,
     ),
     NavigationBarItemData(
-        LifeBarItems.WEATHER.name,
-        "天气",
-        R.drawable.person,
-        R.drawable.person_filled,
+        LifeBarItems.CAMPUS.name,
+        "楼层导向",
+        R.drawable.directions_alt,
+        R.drawable.directions_alt_filled,
     ),
     NavigationBarItemData(
         LifeBarItems.STARTER.name,
-        "外部",
-        R.drawable.search,
-        R.drawable.search_filled,
+        "第三方应用",
+        R.drawable.widgets,
+        R.drawable.widgets_filled,
     )
 )
 
@@ -93,6 +100,16 @@ fun LifeScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val lifeNavController = rememberNavController()
+    val targetRoute = lifeNavController.currentRouteWithoutArgs()
+    val targetPage = remember(targetRoute) {
+        try {
+            LifeBarItems.valueOf(targetRoute!!)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            LifeBarItems.CAMPUS
+        }
+    }
+
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -101,7 +118,13 @@ fun LifeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(LifeDestination.title.asString()) },
+                title = { Text(
+                    when(targetPage) {
+                        LifeBarItems.CAMPUS -> "楼层导向"
+                        LifeBarItems.STARTER -> "第三方应用"
+                        LifeBarItems.WEATHER -> "生活服务"
+                    }
+                ) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -117,7 +140,7 @@ fun LifeScreen(
     ) { innerPadding ->
         NavHost(
             navController = lifeNavController,
-            startDestination = LifeBarItems.CAMPUS.name,
+            startDestination = LifeBarItems.WEATHER.name,
             enterTransition = {
                 AppAnimationManager.centerAnimation.enter
             },
@@ -129,13 +152,6 @@ fun LifeScreen(
             nav2Composable(LifeBarItems.CAMPUS.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CampusMapScreen(vm,innerPadding)
-//                    Column(
-//                        modifier = Modifier.verticalScroll(rememberScrollState())
-//                    ) {
-//                        InnerPaddingHeight(innerPadding,true)
-//                        CampusMapScreen(vm)
-//                        InnerPaddingHeight(innerPadding,false)
-//                    }
                 }
             }
             nav2Composable(LifeBarItems.WEATHER.name) {

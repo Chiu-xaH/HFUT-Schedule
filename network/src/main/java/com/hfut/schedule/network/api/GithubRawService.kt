@@ -1,5 +1,6 @@
 package com.hfut.schedule.network.api
 
+import com.hfut.schedule.network.util.Constant
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -12,10 +13,10 @@ interface GithubRawService {
         @Path("year") year : String
     ) : Call<ResponseBody>
 
-    @GET("Chiu-xaH/HFUT-Schedule/dev/src/source/building/list.json")
+    @GET("${Constant.GITHUB_RAW_RESOURCES}building/list.json")
     fun getBuildingMaps() : Call<ResponseBody>
 
-    @GET("Chiu-xaH/HFUT-Schedule/dev/src/source/building/detail/{filename}")
+    @GET("${Constant.GITHUB_RAW_RESOURCES}building/detail/{filename}")
     fun getFloorXml(
         @Path("filename") filename : String
     ) : Call<ResponseBody>

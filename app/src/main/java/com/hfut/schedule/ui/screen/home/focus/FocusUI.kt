@@ -306,33 +306,35 @@ fun TodayScreen(
 
                         }
                         TAB_RIGHT -> {
-                            item {
-                                CardListItem(
-                                    headlineContent = { Text(
-                                        if(enableShowOutOfDateEvent) {
-                                            "收起"
-                                        } else {
-                                            "展开"
-                                        } + "已过期日程",
-                                        color = MaterialTheme.colorScheme.primary
-                                    ) },
-                                    leadingContent = {
-                                        Icon(
-                                            painterResource(
-                                                if(enableShowOutOfDateEvent) {
-                                                    R.drawable.visibility
-                                                } else {
-                                                    R.drawable.visibility_off
-                                                }
-                                            ),
-                                            null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    },
-                                    modifier = Modifier.clickable {
-                                        enableShowOutOfDateEvent = !enableShowOutOfDateEvent
-                                    }
-                                )
+                            if(customScheduleList.isNotEmpty()) {
+                                item {
+                                    CardListItem(
+                                        headlineContent = { Text(
+                                            if(enableShowOutOfDateEvent) {
+                                                "收起"
+                                            } else {
+                                                "展开"
+                                            } + "已过期日程",
+                                            color = MaterialTheme.colorScheme.primary
+                                        ) },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(
+                                                    if(enableShowOutOfDateEvent) {
+                                                        R.drawable.visibility
+                                                    } else {
+                                                        R.drawable.visibility_off
+                                                    }
+                                                ),
+                                                null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        },
+                                        modifier = Modifier.clickable {
+                                            enableShowOutOfDateEvent = !enableShowOutOfDateEvent
+                                        }
+                                    )
+                                }
                             }
 
                             //日程

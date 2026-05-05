@@ -61,6 +61,7 @@ import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -276,14 +277,14 @@ fun ShortcutSortScreen() {
                                     when(page) {
                                         0 -> {
                                             UrlImage(
-                                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/image/tips_shortcut.jpg",
+                                                "${Constant.GITHUB_RAW_RESOURCES_URL}image/tips_shortcut.jpg",
                                                 contentScale = ContentScale.FillWidth,
                                                 shape = MaterialTheme.shapes.medium,
                                             )
                                         }
                                         1 -> {
                                             UrlImage(
-                                                "https://raw.githubusercontent.com/Chiu-xaH/HFUT-Schedule/dev/src/source/image/tips_qs.jpg",
+                                                "${Constant.GITHUB_RAW_RESOURCES_URL}image/tips_qs.jpg",
                                                 contentScale = ContentScale.FillWidth,
                                                 shape = MaterialTheme.shapes.medium,
                                             )

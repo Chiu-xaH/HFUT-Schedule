@@ -285,7 +285,7 @@ fun CampusMapScreen(
             item { InnerPaddingHeight(innerPadding,true) }
             items(list.size,key = { list[it].building.id} ) { index ->
                 val item = list[index]
-                val floors = item.detail
+                val floors = item.detail.sortedBy { it.floor }
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = {
@@ -295,7 +295,7 @@ fun CampusMapScreen(
                             Icon(painterResource(R.drawable.near_me),null)
                         }
                     )
-                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*4)) {
+                    LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)) {
                         item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                         items(floors.size, key = { floors[it].floor }) { index ->
                             val item = floors[index]
@@ -303,7 +303,6 @@ fun CampusMapScreen(
                             NoPadding {
                                 AssistChip(
                                     onClick = {
-                                        // TODO
                                         floatingController.push(window)
                                     },
                                     shape = RoundedCornerShape(0.dp),
@@ -447,7 +446,7 @@ fun WeatherScreen(vm: NetWorkViewModel) {
             }
         }
         Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
-        BottomTip("数据来源 和风天气")
+        BottomTip("天气数据源为和风天气")
 
         DividerTextExpandedWith(text = "校园地图") {
             SchoolMapScreen(vm)
