@@ -74,6 +74,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getC
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.util.LocalSharedRegistry
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

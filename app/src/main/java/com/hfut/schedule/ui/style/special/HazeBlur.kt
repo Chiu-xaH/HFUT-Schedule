@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
+import com.xah.container.util.LocalSharedRegistrySafely
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
@@ -78,10 +79,14 @@ import kotlinx.coroutines.delay
 fun enableEffect() : Boolean {
     val navController = LocalNavControllerSafely.current
     val floatingController = LocalFloatingControllerSafely.current
+    val regisiry = LocalSharedRegistrySafely.current
     if(navController?.isTransitioning == true) {
         return false
     }
     if(floatingController?.isRunning == true) {
+        return false
+    }
+    if(regisiry?.isRunning == true) {
         return false
     }
     return true
