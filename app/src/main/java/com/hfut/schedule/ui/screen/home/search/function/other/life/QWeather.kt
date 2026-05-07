@@ -1,5 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -63,6 +68,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.MID
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -211,19 +217,17 @@ fun RoomMap(
     modifier: Modifier = Modifier,
     selectedIds: Set<String> = emptySet(),
 ) {
-    val selectedColor = Color.Red.copy(.4f)
-    // 无限闪烁 0.4f透明度到0透明度
-//    val alphaAnim = rememberInfiniteTransition(label = "blink")
-//
-//    val alpha by alphaAnim.animateFloat(
-//        initialValue = 0.4f,
-//        targetValue = 0f,
-//        animationSpec = infiniteRepeatable(
-//            animation = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2),
-//            repeatMode = RepeatMode.Reverse
-//        ),
-//        label = "alpha"
-//    )
+    val selectedColor = Color(0x66D900F6)
+//    val color by rememberInfiniteTransition(label = "blink")
+//        .animateColor(
+//            initialValue = Color.Transparent,
+//            targetValue = selectedColor,
+//            animationSpec = infiniteRepeatable(
+//                animation = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2),
+//                repeatMode = RepeatMode.Reverse
+//            ),
+//            label = "alpha"
+//        )
 
     Box(
         modifier = modifier
@@ -292,7 +296,7 @@ fun CampusMapScreen(
                             Text(item.building.nameZh)
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.near_me),null)
+                            Icon(painterResource(R.drawable.domain),null)
                         }
                     )
                     LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)) {

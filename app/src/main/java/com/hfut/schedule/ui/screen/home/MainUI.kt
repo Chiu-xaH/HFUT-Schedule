@@ -61,7 +61,6 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -114,7 +113,6 @@ import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
 import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.other.AppVersion.deviceName
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
@@ -137,13 +135,11 @@ import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
-
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
@@ -169,7 +165,6 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.color.extractColor
 import com.hfut.schedule.ui.util.color.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -185,12 +180,14 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.TransparentSystemBars2
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.model.ContainerFilledStrategy
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.anim.effect.Direction
+import com.xah.navigation.anim.effect.JumpTransitionEffect
+import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
@@ -424,13 +421,13 @@ fun MainScreen(
                         actions = {
                             when (targetPage) {
                                 SEARCH -> {
-                                    SharedContainer(
-                                        key = FunctionsSortDestination.key,
-                                        shape = CircleShape,
-                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
-                                    ) {
+//                                    SharedContainer(
+//                                        key = FunctionsSortDestination.key,
+//                                        shape = CircleShape,
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+//                                    ) {
                                         IconButton(onClick = {
-                                            navHostTopController.push(FunctionsSortDestination)
+                                            navHostTopController.push(FunctionsSortDestination,effect = SlideTransitionEffect())
                                         }) {
                                             Icon(
                                                 painterResource(id = R.drawable.edit),
@@ -438,7 +435,7 @@ fun MainScreen(
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
                                         }
-                                    }
+//                                    }
                                     IconButton(onClick = { showSearch = !showSearch }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.search),
@@ -450,13 +447,13 @@ fun MainScreen(
 
                                 FOCUS -> {
                                     ApiToSupabase(vm)
-                                    SharedContainer(
-                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent),
-                                        key = NotificationBoxDestination.key,
-                                        shape = CircleShape
-                                    ) {
+//                                    SharedContainer(
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent),
+//                                        key = NotificationBoxDestination.key,
+//                                        shape = CircleShape
+//                                    ) {
                                         IconButton(onClick = {
-                                            navHostTopController.push(NotificationBoxDestination)
+                                            navHostTopController.push(NotificationBoxDestination, effect = SlideTransitionEffect(Direction.BOTTOM))
                                         }) {
                                             BadgedBox(badge = {
                                                 if (count != 0) {
@@ -468,7 +465,7 @@ fun MainScreen(
                                                 Icon(painterResource(id = NotificationBoxDestination.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                             }
                                         }
-                                    }
+//                                    }
                                     if (ifSaved) {
                                         IconButton(onClick = { refreshLogin(context) }) {
                                             Icon(
@@ -626,7 +623,8 @@ fun MainScreen(
                                                 navHostTopController.push(
                                                     WorkAndRestDestination(
                                                         swapUI.toString()
-                                                    )
+                                                    ),
+                                                    effect = JumpTransitionEffect()
                                                 )
                                             },
                                         color = Color.Transparent
@@ -658,8 +656,9 @@ fun MainScreen(
                                                 navHostTopController.push(
                                                     TermCoursesDestination(
                                                         ifSaved,
-                                                        COURSES.name
-                                                    )
+                                                        COURSES.name,
+                                                    ),
+                                                    effect = JumpTransitionEffect()
                                                 )
                                             }
                                         ,
@@ -751,14 +750,14 @@ fun MainScreen(
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
                                     val dest = WorkAndRestDestination(swapUI.toString())
-                                    SharedContainer(
-                                        key = dest.key,
-                                        shape = CircleShape,
-                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
-                                    ) {
+//                                    SharedContainer(
+//                                        key = dest.key,
+//                                        shape = CircleShape,
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+//                                    ) {
                                         IconButton(
                                             onClick = {
-                                                navHostTopController.push(dest)
+                                                navHostTopController.push(dest,effect = JumpTransitionEffect())
                                             }
                                         ) {
                                             Icon(
@@ -767,19 +766,19 @@ fun MainScreen(
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
                                         }
-                                    }
+//                                    }
                                 } else {
                                     val dest = TermCoursesDestination(
                                         ifSaved,
                                         COURSES.name
                                     )
-                                    SharedContainer(
-                                        key = dest.key,
-                                        shape = CircleShape,
-                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
-                                    ) {
+//                                    SharedContainer(
+//                                        key = dest.key,
+//                                        shape = CircleShape,
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+//                                    ) {
                                         IconButton(onClick = {
-                                            navHostTopController.push(dest)
+                                            navHostTopController.push(dest,effect = JumpTransitionEffect())
                                         }) {
                                             Icon(
                                                 painter = painterResource(id = TermCoursesDestination.ICON),
@@ -787,7 +786,7 @@ fun MainScreen(
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
                                         }
-                                    }
+//                                    }
                                 }
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true

@@ -46,7 +46,7 @@ data class FloorMapWindow(
     val floor : BuildingMapFloorBean,
     val vm : NetWorkViewModel,
 ) : FloatingWindow() {
-    override val key = "floor_map_${floor.floor}"
+    override val key = "floor_map_${floor.hashCode()}"
     override val title = text("楼层导向图")
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
