@@ -23,6 +23,11 @@
         "campus" : "宣城校区",
         "detail" : [
             {
+                "image_url" : "XC002_4.jpg",
+                "xml_url" : "XC002_4.xml",
+                "floor" : 4
+            },
+            {
                 "image_url" : "XC002_5.jpg",
                 "xml_url" : "XC002_5.xml",
                 "floor" : 5
