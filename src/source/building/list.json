@@ -8,9 +8,29 @@
         "campus" : "宣城校区",
         "detail" : [
             {
+                "image_url" : "XC001_1.jpg",
+                "xml_url" : "XC001_1.xml",
+                "floor" : 1
+            },
+            {
+                "image_url" : "XC001_2.jpg",
+                "xml_url" : "XC001_2.xml",
+                "floor" : 2
+            },
+            {
+                "image_url" : "XC001_3.jpg",
+                "xml_url" : "XC001_3.xml",
+                "floor" : 3
+            },
+            {
                 "image_url" : "XC001_4.jpg",
                 "xml_url" : "XC001_4.xml",
                 "floor" : 4
+            },
+            {
+                "image_url" : "XC001_5.jpg",
+                "xml_url" : "XC001_5.xml",
+                "floor" : 5
             }
         ]
     },
@@ -22,6 +42,21 @@
         },
         "campus" : "宣城校区",
         "detail" : [
+            {
+                "image_url" : "XC002_1.jpg",
+                "xml_url" : "XC002_1.xml",
+                "floor" : 1
+            },
+            {
+                "image_url" : "XC002_2.jpg",
+                "xml_url" : "XC002_2.xml",
+                "floor" : 2
+            },
+            {
+                "image_url" : "XC002_3.jpg",
+                "xml_url" : "XC002_3.xml",
+                "floor" : 3
+            },
             {
                 "image_url" : "XC002_4.jpg",
                 "xml_url" : "XC002_4.xml",
