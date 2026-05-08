@@ -154,7 +154,7 @@ fun MainHost(
         SharedNavHost(
             navController = navigationController,
             dependencies = dependencies,
-            modifier = Modifier.background(MaterialTheme.colorScheme.onSurface)
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
         ) {
             val registry = LocalSharedRegistry.current
 
