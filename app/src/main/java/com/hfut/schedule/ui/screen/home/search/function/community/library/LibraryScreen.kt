@@ -598,7 +598,7 @@ fun LibraryMineUI(
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
+                                    Starter.startWebUrlInner(
                                         context,
                                         url = Constant.NEW_LIBRARY_URL,
                                         title = "图书馆",
@@ -622,7 +622,7 @@ fun LibraryMineUI(
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
+                                    Starter.startWebUrlInner(
                                         context,
                                         url = Constant.OLD_LIBRARY_URL,
                                         title = "图书馆",
@@ -646,7 +646,7 @@ fun LibraryMineUI(
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
+                                    Starter.startWebUrlInner(
                                         context,
                                         url = seatUrl,
                                         title = "座位预约",
@@ -670,7 +670,7 @@ fun LibraryMineUI(
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
+                                    Starter.startWebUrlInner(
                                         context,
                                         url = Constant.MEETING_ROOM_URL,
                                         title = "研讨间预约",

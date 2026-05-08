@@ -111,7 +111,7 @@ fun MailUI(vm: NetWorkViewModel) {
                                 response.data.let {
                                     if(it != null) {
                                         used = !used
-                                        Starter.startWebView(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
+                                        Starter.startWebUrlInner(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
                                     } else {
                                         showToast( "错误 " + response.msg)
                                     }
@@ -127,7 +127,7 @@ fun MailUI(vm: NetWorkViewModel) {
                         onClick = {
                             response.data.let {
                                 if(it != null) {
-                                    Starter.startWebUrl(context,it)
+                                    Starter.startWebUrlOuter(context,it)
                                     used = !used
                                 } else {
                                     showToast( "错误 " + response.msg)
@@ -158,7 +158,7 @@ fun MailUI(vm: NetWorkViewModel) {
                 Text("若为首次使用，请前往信息门户(点击此项)进入邮箱，进行激活")
             },
             modifier = Modifier.clickable {
-                Starter.startWebUrl(context,Constant.ONE_URL)
+                Starter.startWebUrlOuter(context,Constant.ONE_URL)
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.arrow_forward),null)

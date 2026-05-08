@@ -108,7 +108,7 @@ fun FeeScreen(
                 },
                 actions = {
                     LiquidButton(
-                        onClick = { Starter.startWebUrl(context,Constant.PAY_FEE_URL) },
+                        onClick = { Starter.startWebUrlOuter(context,Constant.PAY_FEE_URL) },
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                         backdrop = backDrop
                     ) {

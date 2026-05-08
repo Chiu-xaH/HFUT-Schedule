@@ -51,7 +51,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val titles = AcademicType.entries.map { it.title }
     val pagerState = rememberPagerState(pageCount = { titles.size })
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
 
     var page by remember { mutableIntStateOf(1) }

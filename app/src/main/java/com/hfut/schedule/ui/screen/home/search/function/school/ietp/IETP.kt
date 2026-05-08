@@ -35,7 +35,7 @@ fun IETP() {
         },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(
+                Starter.startWebUrlInner(
                     context,
                     url = Constant.IETP_URL,
                     title = title,

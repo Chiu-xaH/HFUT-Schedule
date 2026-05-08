@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.newsXuanChengResult.state.collectAsState()

@@ -240,7 +240,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,urlHuixin,"慧新易校")
+                            Starter.startWebUrlInner(context,urlHuixin,"慧新易校")
                         }
                     }
                 )
@@ -479,7 +479,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${Constant.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart)
+                                    Starter.startWebUrlInner(context,"${Constant.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart)
                                 }
                             }
                         )
@@ -490,7 +490,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,url,"付款码", icon = R.drawable.barcode)
+                                    Starter.startWebUrlInner(context,url,"付款码", icon = R.drawable.barcode)
                                 }
                             }
                         )
@@ -510,7 +510,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.lock_reset), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                                    Starter.startWebUrlInner(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                                 }
                             }
                         )
@@ -521,7 +521,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare)
+                                    Starter.startWebUrlInner(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare)
                                 }
                             }
                         )

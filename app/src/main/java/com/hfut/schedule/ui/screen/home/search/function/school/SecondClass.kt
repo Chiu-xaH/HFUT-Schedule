@@ -150,7 +150,7 @@ fun SecondClassScreen(
                                 color = cardNormalColor(),
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,url, title = item.name, cookie = cookie)
+                                        Starter.startWebUrlInner(context,url, title = item.name, cookie = cookie)
                                     }
                                 },
                             ) {

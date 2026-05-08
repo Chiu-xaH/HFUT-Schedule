@@ -216,7 +216,7 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
                         },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                Starter.startWebView(
+                                Starter.startWebUrlInner(
                                     context, Constant.XWX_PICTURE_URL + "xwx-cms/","校务行"
                                 )
                             }

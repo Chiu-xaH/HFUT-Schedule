@@ -84,7 +84,7 @@ fun ExamNotificationsScreen(
         }
     ) { campusList.size }
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

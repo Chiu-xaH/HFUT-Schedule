@@ -160,7 +160,7 @@ fun BackupScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebUrl(context,"https://gitee.com/chiu-xah/HFUT-Schedule/releases/download/Android/hfut_schedule_guest_data.zip")
+                            Starter.startWebUrlOuter(context,"https://gitee.com/chiu-xah/HFUT-Schedule/releases/download/Android/hfut_schedule_guest_data.zip")
                         }
                     }
                 )

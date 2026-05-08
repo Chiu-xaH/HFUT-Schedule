@@ -224,7 +224,7 @@ fun ScanScreen(
                                         },
                                         CardBottomButton("打开链接",isValidWebUrl(resultText)) {
                                             scope.launch {
-                                                Starter.startWebView(context,resultText)
+                                                Starter.startWebUrlInner(context,resultText)
                                             }
                                         },
                                         CardBottomButton("隐藏") {

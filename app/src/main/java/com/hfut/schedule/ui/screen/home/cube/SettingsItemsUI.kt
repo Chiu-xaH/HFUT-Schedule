@@ -268,7 +268,7 @@ fun GithubDownloadUI() {
         leadingContent = { Icon(painterResource(R.drawable.cloud_download),null)},
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(context ,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}/releases/latest")
+                Starter.startWebUrlInner(context ,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}/releases/latest")
             }
         }
     )
@@ -312,7 +312,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                             headlineContent = { Text("v$versionName") },
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                    Starter.startWebUrlInner(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
                                 }
                             }
                         )

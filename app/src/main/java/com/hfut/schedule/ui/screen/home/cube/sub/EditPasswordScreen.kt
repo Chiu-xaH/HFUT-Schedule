@@ -141,7 +141,7 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                            Starter.startWebUrlInner(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
@@ -228,7 +228,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context, "","修改密码", icon = R.drawable.lock_reset)
+                            Starter.startWebUrlInner(context, "","修改密码", icon = R.drawable.lock_reset)
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },

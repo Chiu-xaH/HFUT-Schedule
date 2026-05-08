@@ -86,7 +86,7 @@ fun TeacherListUI(
                         },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                Starter.startWebView(context,it.url,it.name, icon = icon)
+                                Starter.startWebUrlInner(context,it.url,it.name, icon = icon)
                             }
                         }
                     )

@@ -36,7 +36,7 @@ fun XueXin() {
         },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(
+                Starter.startWebUrlInner(
                     context,
                     url = Constant.XUE_XIN_URL,
                     title = title,

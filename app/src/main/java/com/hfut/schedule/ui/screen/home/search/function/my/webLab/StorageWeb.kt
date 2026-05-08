@@ -113,7 +113,7 @@ fun StorageWeb(hazeState : HazeState) {
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
                                         scope.launch {
-                                            Starter.startWebView(context,url,name, icon = WebFolderDestination.icon)
+                                            Starter.startWebUrlInner(context,url,name, icon = WebFolderDestination.icon)
                                         }
                                     },
                                     onDoubleClick = {},

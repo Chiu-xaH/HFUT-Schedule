@@ -117,7 +117,7 @@ private fun Buttons() {
             contentColor = Color.White,
             onClick = {
                 scope.launch {
-                    Starter.startWebUrl(
+                    Starter.startWebUrlOuter(
                         context,
                         Constant.GITHUB_REPO_URL + "/issues",
                     )
@@ -199,7 +199,7 @@ fun TrackScreen(
                                 color = cardNormalColor(),
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,item.url,tag)
+                                        Starter.startWebUrlInner(context,item.url,tag)
                                     }
                                 },
                             ) {

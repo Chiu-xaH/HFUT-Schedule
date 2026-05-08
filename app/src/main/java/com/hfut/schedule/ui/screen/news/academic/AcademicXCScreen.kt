@@ -59,7 +59,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         vm.getAcademicXCNews(AcademicXCType.entries[pagerState.currentPage],page)
     }
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

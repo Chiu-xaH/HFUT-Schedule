@@ -147,7 +147,7 @@ object Starter {
     }
     //传入网页URL打开
     @JvmStatic
-    fun startWebUrl(context: Context,url : String) {
+    fun startWebUrlOuter(context: Context, url : String) {
         try {
             val it = Intent(Intent.ACTION_VIEW, url.toUri())
             if (context !is Activity) {
@@ -230,7 +230,7 @@ object Starter {
         context.startActivity(it)
     }
     @JvmStatic
-    suspend fun startWebView(
+    suspend fun startWebUrlInner(
         context: Context,
         url : String,
         title : String = getPureUrl(url),
@@ -249,7 +249,7 @@ object Starter {
         }
     }
     @JvmStatic
-    suspend fun startWebView(
+    suspend fun startWebUrlInner(
         navController: NavigationController,
         url : String,
         title : String = getPureUrl(url),

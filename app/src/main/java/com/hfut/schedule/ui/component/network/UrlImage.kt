@@ -81,7 +81,7 @@ fun UrlImage(
                         ) {
                             floatingControllerSafely?.push(window)
                                 ?: scope.launch {
-                                    Starter.startWebView(context, url, "图片", cookie)
+                                    Starter.startWebUrlInner(context, url, "图片", cookie)
                                 }
                         }
                     } else {

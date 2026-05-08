@@ -51,7 +51,7 @@ fun LePaoYun() {
         },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(
+                Starter.startWebUrlInner(
                     context,
                     url = Constant.PE_HOME_URL,
                     title = title,

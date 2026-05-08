@@ -106,7 +106,7 @@ fun StarterScreen() {
         },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(context,"https://survive-hfut.cc/intro", title = "活在肥宣")
+                Starter.startWebUrlInner(context,"https://survive-hfut.cc/intro", title = "活在肥宣")
             }
         }
     )

@@ -145,7 +145,7 @@ private fun SupportItem(item : SupportItemBean) {
                     CardBottomButton(item.android),
                     CardBottomButton("预览效果",item.url != null) {
                         scope.launch {
-                            item.url?.let { Starter.startWebView(context,it,"Github", icon = R.drawable.github) }
+                            item.url?.let { Starter.startWebUrlInner(context,it,"Github", icon = R.drawable.github) }
                         }
                     }
                 )

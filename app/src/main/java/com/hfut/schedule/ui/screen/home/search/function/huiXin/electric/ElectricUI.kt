@@ -414,7 +414,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,getUrl(pagerState.currentPage), title = "慧新易校")
+                                Starter.startWebUrlInner(context,getUrl(pagerState.currentPage), title = "慧新易校")
                             }
                         }
                     ) {

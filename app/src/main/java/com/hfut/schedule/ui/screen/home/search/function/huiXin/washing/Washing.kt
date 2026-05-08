@@ -142,7 +142,7 @@ fun WashingUI() {
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
                                scope.launch {
-                                   Starter.startWebView(context,url = Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
+                                   Starter.startWebUrlInner(context,url = Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
                                }
                             },
                             trailingContent = {

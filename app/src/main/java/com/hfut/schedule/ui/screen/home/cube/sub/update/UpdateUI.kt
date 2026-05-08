@@ -257,7 +257,7 @@ fun UpdateUI(
                     )
                 }
             },
-            modifier = Modifier.clickable{ Starter.startWebUrl(context,Constant.GITEE_UPDATE_URL+ "/releases/tag/Android") },
+            modifier = Modifier.clickable{ Starter.startWebUrlOuter(context,Constant.GITEE_UPDATE_URL+ "/releases/tag/Android") },
         )
 
         AnimatedVisibility(

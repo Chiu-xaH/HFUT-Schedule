@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,12 +46,13 @@ import com.xah.common.ui.util.res
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
 import com.xah.floating.util.LocalFloatingController
+import kotlinx.coroutines.launch
 
-object RepairWindow: FloatingWindow() {
+object FeedbackWindow: FloatingWindow() {
 
-    override val key = "repair"
+    override val key = "feedback"
 
-    override val title = res(R.string.navigation_label_repair)
+    override val title = res(R.string.navigation_label_feedback)
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
@@ -65,6 +67,8 @@ object RepairWindow: FloatingWindow() {
                 listOf(CampusRegion.HEFEI,CampusRegion.XUANCHENG)
             }
         }
+
+        val scope = rememberCoroutineScope()
 
         Box(modifier = Modifier.fillMaxSize()) {
             SharedContent(
@@ -92,23 +96,27 @@ object RepairWindow: FloatingWindow() {
                                 when(campus) {
                                     CampusRegion.HEFEI -> {
                                         CardListItem(
-                                            headlineContent = { Text("智慧后勤-合肥校区") },
+                                            headlineContent = { Text("合肥校区") },
                                             modifier = Modifier.clickable {
-                                                Starter.startWebUrlOuter(context,Constant.REPAIR_URL)
+                                                scope.launch {
+                                                    Starter.startWebUrlInner(context,Constant.FEEDBACK_URL)
+                                                }
                                             },
                                             leadingContent = {
-                                                Icon(painterResource(R.drawable.net),null)
+                                                Icon(painterResource(R.drawable.mail),null)
                                             }
                                         )
                                     }
                                     CampusRegion.XUANCHENG -> {
                                         CardListItem(
-                                            headlineContent = { Text("智慧后勤-宣城校区") },
+                                            headlineContent = { Text("宣城校区") },
                                             modifier = Modifier.clickable {
-                                                Starter.startWebUrlOuter(context,Constant.REPAIR_XC_URL)
+                                                scope.launch {
+                                                    Starter.startWebUrlInner(context,Constant.FEEDBACK_XC_URL)
+                                                }
                                             },
                                             leadingContent = {
-                                                Icon(painterResource(R.drawable.net),null)
+                                                Icon(painterResource(R.drawable.mail),null)
                                             }
                                         )
                                     }

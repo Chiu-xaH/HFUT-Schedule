@@ -68,8 +68,10 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 private const val PAGE_TO_WEBVPN = 0
@@ -86,7 +88,7 @@ fun WebVpnScreen(
     val context = LocalContext.current
     val backdrop = rememberLayerBackdrop()
     val cookies by produceState<String?>(initialValue = null)  {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val pagerState = rememberPagerState { 2 }
     val scope = rememberCoroutineScope()
@@ -232,7 +234,7 @@ fun WebVpnScreen(
                                                         CardBottomButton("打开") {
                                                             scope.launch {
                                                                 if(webVpn) {
-                                                                    Starter.startWebView(context,it, cookie = cookies)
+                                                                    Starter.startWebUrlInner(context,it, cookie = cookies)
                                                                 } else {
                                                                     showToast("先以外地访问模式登录")
                                                                     Starter.refreshLogin(context)
@@ -330,7 +332,7 @@ fun WebVpnScreen(
                                                         },
                                                         CardBottomButton("打开") {
                                                             scope.launch {
-                                                                Starter.startWebView(context,it)
+                                                                Starter.startWebUrlInner(context,it)
                                                             }
                                                         },
                                                         CardBottomButton("清除") {
@@ -352,14 +354,16 @@ fun WebVpnScreen(
     }
 }
 
-suspend fun getWebVpnCookie() : String? {
-    val webVpnCookie = DataStoreManager.webVpnCookies.first()
-    return Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
-}
+//suspend fun getWebVpnCookie() : String {
+//    val webVpnCookie = DataStoreManager.webVpnCookies.first()
+//    return Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
+//}
 
-suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
+suspend fun getWebVpnCookie() : String? =
     if(GlobalStateHolder.webVpn) {
-        val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
+        val webVpnCookie = withContext(Dispatchers.IO) {
+            DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
+        }
         Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
         null
@@ -373,9 +377,9 @@ suspend fun autoWebVpnForNews(
     icon: Int? = null
 ) {
     if(cookie == null) {
-        Starter.startWebView(context,url,title,null,icon)
+        Starter.startWebUrlInner(context,url,title,null,icon)
     } else {
-        Starter.startWebView(context,WebVpnConvertor.getWebVpnUrl(url),title,cookie,icon)
+        Starter.startWebUrlInner(context,WebVpnConvertor.getWebVpnUrl(url),title,cookie,icon)
     }
 }
 

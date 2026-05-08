@@ -47,7 +47,7 @@ fun WebItem() {
                                 contentDescription = null
                             )
                         },
-                        modifier = Modifier.clickable { Starter.startWebUrl(context,item.url) }
+                        modifier = Modifier.clickable { Starter.startWebUrlOuter(context,item.url) }
                     )
                 }
                 if(index+1 != webs.size) {
@@ -66,7 +66,7 @@ fun WebItem() {
                                     contentDescription = null
                                 )
                             },
-                            modifier = Modifier.clickable { Starter.startWebUrl(context,item2.url) }
+                            modifier = Modifier.clickable { Starter.startWebUrlOuter(context,item2.url) }
                         )
                     }
                 }

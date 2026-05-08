@@ -122,7 +122,7 @@ fun StuTodayCampusScreen(
                             LiquidButton(
                                 backdrop = backDrop,
                                 onClick = {
-                                    Starter.startWebUrl(context,Constant.STU_URL)
+                                    Starter.startWebUrlOuter(context,Constant.STU_URL)
                                 },
                             ) {
                                 Text("学工系统")
@@ -213,7 +213,7 @@ fun StuAppsScreen(
                                 headlineContent = { ScrollText(name) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                        Starter.startWebUrlInner(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                     }
                                 }
                             )
@@ -241,7 +241,7 @@ fun StuAppsScreen(
                                     headlineContent = { ScrollText(name) },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebView(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                            Starter.startWebUrlInner(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                         }
                                     }
                                 )
@@ -278,7 +278,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                                        Starter.startWebUrlInner(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                     }
                                                 }
                                             )
@@ -302,7 +302,7 @@ fun StuAppsScreen(
                                                     headlineContent = { ScrollText(name) },
                                                     modifier = Modifier.clickable {
                                                         scope.launch {
-                                                            Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                                            Starter.startWebUrlInner(context,openUrl, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                         }
                                                     }
                                                 )
@@ -341,7 +341,7 @@ fun StuAppsScreen(
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
                                                 scope.launch {
-                                                    Starter.startWebView(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                                    Starter.startWebUrlInner(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                 }
                                             }
                                         )
@@ -368,7 +368,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebView(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                                        Starter.startWebUrlInner(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                     }
                                                 }
                                             )

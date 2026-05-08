@@ -29,7 +29,7 @@ fun Alumni() {
         leadingContent = { Icon(painter = painterResource(id = R.drawable.local_library), contentDescription = "") },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(context,Constant.ALUMNI_URL,"校友平台", icon = R.drawable.local_library)
+                Starter.startWebUrlInner(context,Constant.ALUMNI_URL,"校友平台", icon = R.drawable.local_library)
             }
         }
     )

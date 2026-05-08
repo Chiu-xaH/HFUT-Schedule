@@ -70,6 +70,7 @@
     <string name="navigation_label_school_email">Educational email</string>
     <string name="navigation_label_shower">Shower</string>
     <string name="navigation_label_repair">Repair</string>
+    <string name="navigation_label_feedback">Feedback</string>
     <string name="navigation_label_hot_water">Hot water</string>
     <string name="navigation_label_chsi">CHSI</string>
     <string name="navigation_label_ietp">IETP</string>

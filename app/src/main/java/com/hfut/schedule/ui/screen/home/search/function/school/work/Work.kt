@@ -141,7 +141,7 @@ fun WorkScreen(
                                 backdrop = backDrop,
                                 onClick = {
                                     scope.launch {
-                                        Starter.startWebView(
+                                        Starter.startWebUrlInner(
                                             context,
                                             url = url,
                                             title = "就业网(${campus.description})",
@@ -265,7 +265,7 @@ private fun WorkSearchUI(
                                 
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebView(context,url,title, icon = WorkDestination.icon)
+                                            Starter.startWebUrlInner(context,url,title, icon = WorkDestination.icon)
                                         }
                                     },
                                     leadingContent = { Text((index+1).toString()) }

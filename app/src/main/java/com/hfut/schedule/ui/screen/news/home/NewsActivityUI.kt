@@ -137,7 +137,7 @@ fun NewsScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         val cookies by produceState<String?>(initialValue = null) {
-            value = getWebVpnCookie(vm)
+            value = getWebVpnCookie()
         }
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
@@ -162,7 +162,7 @@ fun NewsScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,Constant.ACADEMIC_URL, title = "总教务处", cookie = cookies)
+                            Starter.startWebUrlInner(context,Constant.ACADEMIC_URL, title = "总教务处", cookie = cookies)
                         }
                     }
                 )
@@ -300,7 +300,7 @@ fun TotalNewsScreen(
     paddingBottom : Boolean = true
 ) {
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

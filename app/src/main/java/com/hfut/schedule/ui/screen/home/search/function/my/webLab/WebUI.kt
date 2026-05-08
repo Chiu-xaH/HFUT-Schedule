@@ -255,7 +255,7 @@ fun WebNavigationScreen(
                                 enabled = isValidWebUrl(input),
                                 onClick = {
                                     scope.launch {
-                                        Starter.startWebView(
+                                        Starter.startWebUrlInner(
                                             context,
                                             url = input,
                                             title = getPureUrl(input),

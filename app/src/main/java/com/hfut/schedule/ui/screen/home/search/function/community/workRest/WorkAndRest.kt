@@ -224,7 +224,7 @@ fun TimeTableScreen(
                                 if(url == null) {
                                     showToast("正在从云端获取数据")
                                 } else {
-                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
+                                    Starter.startWebUrlInner(context,url!!,"校历", icon = R.drawable.schedule)
                                     showToast("即将打开网页链接,可自行下载或保存图片")
                                 }
                             }

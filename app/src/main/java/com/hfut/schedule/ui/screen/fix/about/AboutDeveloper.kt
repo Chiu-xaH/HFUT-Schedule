@@ -152,7 +152,7 @@ fun About(vm : NetWorkViewModel) {
                     TransplantListItem(
                         modifier = Modifier.clickable {
                             scope.launch {
-                                Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}")
+                                Starter.startWebUrlInner(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}")
                             }
                         },
                         headlineContent = {
@@ -224,7 +224,7 @@ fun About(vm : NetWorkViewModel) {
                     Row(
                         modifier = Modifier.clickable {
                             scope.launch {
-                                Starter.startWebView(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                                Starter.startWebUrlInner(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
                             }
                         }
                     ) {
@@ -257,7 +257,7 @@ fun About(vm : NetWorkViewModel) {
                         TransplantListItem(
                             modifier = Modifier.weight(.5f).clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                                    Starter.startWebUrlInner(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
                                 }
                             },
                             headlineContent = {
@@ -289,7 +289,7 @@ fun About(vm : NetWorkViewModel) {
                         TransplantListItem(
                             modifier = Modifier.weight(.5f).clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                                    Starter.startWebUrlInner(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
                                 }
                             },
                             headlineContent = {
@@ -322,7 +322,7 @@ fun About(vm : NetWorkViewModel) {
                 LargeButton(
                     onClick = {
                         scope.launch {
-                            Starter.startWebView(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                            Starter.startWebUrlInner(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
                         }
                     },
                     text = "Github",
@@ -339,7 +339,7 @@ fun About(vm : NetWorkViewModel) {
                                 headlineContent = { Text(openSourceProjects[index].name) },
                                 supportingContent = { Text(openSourceProjects[index].description) },
                                 modifier = Modifier.weight(.5f).clickable{
-                                    openSourceProjects[index].url?.let { Starter.startWebUrl(context,it) }
+                                    openSourceProjects[index].url?.let { Starter.startWebUrlOuter(context,it) }
                                 }
                             )
                             if(index+1 < openSourceProjects.size)
@@ -347,7 +347,7 @@ fun About(vm : NetWorkViewModel) {
                                     headlineContent = { Text(openSourceProjects[index+1].name) },
                                     supportingContent = { Text(openSourceProjects[index+1].description) },
                                     modifier = Modifier.weight(.5f).clickable {
-                                        openSourceProjects[index+1].url?.let { Starter.startWebUrl(context,it) }
+                                        openSourceProjects[index+1].url?.let { Starter.startWebUrlOuter(context,it) }
                                     }
                                 )
                         }

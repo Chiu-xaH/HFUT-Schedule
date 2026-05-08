@@ -37,7 +37,7 @@ fun HuiXin() {
         },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebView(
+                Starter.startWebUrlInner(
                     context,
                     url = url,
                     title = title,

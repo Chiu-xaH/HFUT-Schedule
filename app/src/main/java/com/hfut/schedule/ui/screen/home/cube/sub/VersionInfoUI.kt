@@ -30,7 +30,7 @@ import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.anim.effect.JumpTransitionEffect
 import com.xah.navigation.util.LocalNavControllerSafely
 
-private const val RELEASE_DATE = "2026-05-06"
+private const val RELEASE_DATE = "2026-05-11"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -40,24 +40,18 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))
             UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
-            UpdateItems("优化 在鸿蒙卓易通中运行时跳转外部App的适配")
+//            UpdateItems("优化 在鸿蒙卓易通中运行时跳转外部App的适配")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
-//            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")//
+//            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
-            // 校车点击跳转导航
-            /*
-            就业二级界面 通知公告二级界面
-            教师检索二级界面
-            一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
-             */
-            // TODO 挂科率下拉刷新 [P0]
+            // TODO 一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
+            // TODO 校车点击跳转导航
             // TODO WebView适配新库 [P2]
             // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
             // TODO Drawer重做  [P2]
-//            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
@@ -74,7 +68,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 合肥校区电费的快速充值")
 
             // TODO 远期规划
-//            UpdateItems("新增 课程表的方格支持自动适应背景透明度")
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
@@ -86,7 +79,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 为低版本Android用户的开屏显示")
 //            UpdateItems("新增 单独登录教务系统")
-//            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //            UpdateItems("新增 本地聚焦卡片快速转化为云端卡片", null, UpdateType.ADD)

@@ -296,7 +296,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
+                                Starter.startWebUrlInner(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
                             }
                         }
                     ) {
@@ -335,7 +335,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
+                                    Starter.startWebUrlInner(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
                                 }
                             },
                             trailingContent = {

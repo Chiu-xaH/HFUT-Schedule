@@ -70,6 +70,7 @@
     <string name="navigation_label_school_email">教育邮箱</string>
     <string name="navigation_label_shower">洗浴</string>
     <string name="navigation_label_repair">报修</string>
+    <string name="navigation_label_feedback">校长信箱</string>
     <string name="navigation_label_hot_water">热水</string>
     <string name="navigation_label_chsi">学信网</string>
     <string name="navigation_label_ietp">大创系统</string>

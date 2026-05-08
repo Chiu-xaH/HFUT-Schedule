@@ -92,7 +92,7 @@ fun NotificationItems() {
             val clickAction = {
                 scope.launch {
                     item.url?.let {
-                        Starter.startWebView(context,it,item.title, icon = NotificationsDestination.icon)
+                        Starter.startWebUrlInner(context,it,item.title, icon = NotificationsDestination.icon)
                     } ?: showToast("暂无点击操作")
                 }
             }

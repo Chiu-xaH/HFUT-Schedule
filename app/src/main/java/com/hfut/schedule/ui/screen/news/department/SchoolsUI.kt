@@ -61,7 +61,7 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
                     overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,url, icon = icon )
+                            Starter.startWebUrlInner(context,url, icon = icon )
                         }
                     }
                 )

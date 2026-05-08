@@ -85,9 +85,9 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
         Constant.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
     if(!needLogin || GlobalStateHolder.globalWebVpn == true) {
-        Starter.startWebView(context,finalUrl,name,null, OfficeHallDestination.icon)
+        Starter.startWebUrlInner(context,finalUrl,name,null, OfficeHallDestination.icon)
     } else {
-        Starter.startWebUrl(context,finalUrl)
+        Starter.startWebUrlOuter(context,finalUrl)
     }
 }
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)

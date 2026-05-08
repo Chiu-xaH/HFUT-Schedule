@@ -351,7 +351,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
                         scope.launch {
-                            Starter.startWebView(context,"https://www.bing.cn/")
+                            Starter.startWebUrlInner(context,"https://www.bing.cn/")
                         }
                     }
                 ) {
@@ -376,7 +376,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,url = zjgdUrl, title = "慧新易校")
+                                Starter.startWebUrlInner(context,url = zjgdUrl, title = "慧新易校")
                             }
                         },
                     ) {

@@ -469,7 +469,7 @@ fun LoginScreen(
                                         )
                                     },
                                     modifier = Modifier.clickable {
-                                        Starter.startWebUrl(context,Constant.CAS_LOGIN_URL)
+                                        Starter.startWebUrlOuter(context,Constant.CAS_LOGIN_URL)
                                     },
                                 )
                             }
@@ -547,7 +547,7 @@ fun LoginScreen(
                                 leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
+                                        Starter.startWebUrlInner(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
                                     }
                                 },
                             )

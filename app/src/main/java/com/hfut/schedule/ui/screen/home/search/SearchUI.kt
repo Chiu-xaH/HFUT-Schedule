@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.nav.window.ExpressWindow
+import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.RepairWindow
 
 import com.hfut.schedule.ui.screen.home.search.function.community.appointment.Appointment
@@ -117,6 +118,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Express
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
+import com.hfut.schedule.ui.screen.home.search.function.school.Feedback
 import com.hfut.schedule.ui.screen.home.search.function.school.SecondClass
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreXuanCheng
@@ -252,6 +254,7 @@ fun SearchScreen(
                 SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI() }, AiDestination.key),
                 SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track() }, TrackDestination.key),
                 SearchAppBean(49,"拼多多 淘宝 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() },ExpressWindow.key),
+                SearchAppBean(50,"${context.getString(R.string.navigation_label_feedback)} 反馈 建议", { Feedback() }, FeedbackWindow.key),
             )
         )
     }

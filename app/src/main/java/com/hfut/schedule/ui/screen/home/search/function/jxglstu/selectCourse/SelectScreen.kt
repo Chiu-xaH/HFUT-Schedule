@@ -199,7 +199,7 @@ fun SelectCourseScreen(
                         LiquidButton (
                             onClick = {
                                 scope.launch {
-                                    Starter.startWebView(
+                                    Starter.startWebUrlInner(
                                         context,
                                         url = url,
                                         title = "教务系统",

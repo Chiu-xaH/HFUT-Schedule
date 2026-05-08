@@ -234,7 +234,7 @@ fun WebViewTools(
         painterResource(id = R.drawable.rotate_right), contentDescription = "") }
 
     IconButton(onClick = {
-        on = { Starter.startWebUrl(context,it) }
+        on = { Starter.startWebUrlOuter(context,it) }
         showBottomSheet = true
     }) { Icon(
         painterResource(id = R.drawable.net), contentDescription = "") }
@@ -604,7 +604,7 @@ fun sharedOverrideUrlLoading(
     val url = request?.url.toString()
 
     if (url.contains("download")) { // 识别下载链接
-        Starter.startWebUrl(context,url)
+        Starter.startWebUrlOuter(context,url)
         return true // 拦截 WebView 处理
     }
 
