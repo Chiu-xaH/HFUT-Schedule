@@ -173,6 +173,7 @@ import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.hjq.device.compat.DeviceOs
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -485,6 +486,7 @@ fun MainScreen(
                                 }
                                 SETTINGS -> {
                                    Row {
+                                       // DeviceOs.isHarmonyOsNextAndroidCompatible();
                                        // AppVersion.getSplitType
                                        if(AppVersion.isDebug) {
                                            IconButton(
@@ -544,6 +546,19 @@ fun MainScreen(
                                            ) {
                                                Icon(
                                                    painterResource(R.drawable.desktop_windows),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                       if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_harmonry_next))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.circle),
                                                    null,
                                                    tint = MaterialTheme.colorScheme.primary
                                                )

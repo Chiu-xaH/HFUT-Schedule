@@ -86,6 +86,7 @@ private val openSourceProjects = listOf(
     OpenSource("SharedNav" , "页面管理、容器共享与浮窗","${Constant.GITHUB_URL}Chiu-xaH/SharedNav"),
     OpenSource("AndroidLiquidGlass" , "液态玻璃","${Constant.GITHUB_URL}Kyant0/AndroidLiquidGlass"),
     OpenSource("Mirror-Android" , "镜面效果","${Constant.GITHUB_URL}Chiu-xaH/Mirror-Android"),
+    OpenSource("DeviceCompat" , "设备识别(供判断鸿蒙NEXT环境)","${Constant.GITHUB_URL}getActivity/DeviceCompat"),
 )
 
 private data class OpenSource(val name : String,val description: String,val url : String?)

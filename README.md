@@ -94,6 +94,8 @@ Android 8.0及以上，接入互联网
 
 [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) 液态玻璃
 
+[DeviceCompat](https://github.com/getActivity/DeviceCompat) 设备识别 (供判断鸿蒙NEXT环境)
+
 ### 从本App解耦的库
 
 [DiffUpdater](https://github.com/Chiu-xaH/DiffUpdater) 增量更新
@@ -112,7 +114,7 @@ Android 8.0及以上，接入互联网
 [Supabase](https://github.com/supabase/supabase) 托管供提供数据库
 
 ### 开源社区
-初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App(例如 [师韵-SmartHNU](https://github.com/JiaLiFuNia/SmartHNU))，还有对一些操作系统的借鉴，在此不一一列举了
+初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App(例如 [师韵-SmartHNU](https://github.com/JiaLiFuNia/SmartHNU))，还有对一些移动操作系统的借鉴，在此不一一列举了
 
 感谢其他高校开发者对本项目的肯定与参考，在此不一一列举了
 
@@ -123,6 +125,6 @@ Android 8.0及以上，接入互联网
 - Today1337 提交PR优化界面
 - zxbmmmmmmmmm 提交PR修复Bug
 - ...
-- 其他用户帮助推广、通过邮件、issue等提供反馈和建议等，在此不一一列举了
+- 其他用户帮助推广、通过邮件、issue等提供功能建议与反馈等，在此不一一列举了
 
 

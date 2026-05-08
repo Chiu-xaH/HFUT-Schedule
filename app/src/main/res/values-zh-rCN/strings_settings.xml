@@ -43,4 +43,5 @@
     <string name="settings_update_patch_button_download_to_version">更新至 %1$s</string>
     <string name="settings_update_patch_button__download_to_latest">下载</string>
     <string name="settings_person_info_tag_sign">非开发者签名</string>
+    <string name="settings_person_info_tag_harmonry_next">运行在鸿蒙NEXT内</string>
 </resources>

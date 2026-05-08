@@ -36,6 +36,7 @@ import com.hfut.schedule.ui.util.webview.getPureUrl
 
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hjq.device.compat.DeviceOs
 import com.xah.navigation.controller.NavigationController
 import com.xah.shared.LogUtil
 
@@ -65,8 +66,13 @@ object Starter {
             val intent = context.packageManager.getLaunchIntentForPackage(app.packageName)
             if(intent == null) showToast("未安装${app.appName}")
             else context.startActivity(intent)
-        } catch (_: Exception) {
-            showToast("启动外部应用失败")
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+                showToast("检测到为鸿蒙NEXT，启动外部应用失败")
+            } else {
+                showToast("启动外部应用失败")
+            }
         }
     }
 

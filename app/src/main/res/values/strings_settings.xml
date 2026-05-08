@@ -43,4 +43,5 @@
     <string name="settings_update_patch_button_download_to_version">Update to %1$s</string>
     <string name="settings_update_patch_button__download_to_latest">Download</string>
     <string name="settings_person_info_tag_sign">Non-developer signature</string>
+    <string name="settings_person_info_tag_harmonry_next">Running on Harmony Next</string>
 </resources>
