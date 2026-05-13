@@ -22,6 +22,7 @@ import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomsResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramResponse
+import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
@@ -34,6 +35,7 @@ import com.hfut.schedule.network.model.UniAppEmptyClassroomRequest
 import com.hfut.schedule.network.model.UniAppSearchProgramRequest
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.LogUtil
@@ -74,6 +76,7 @@ object UniAppRepository {
             showToast("登陆合工大教务成功")
             return true
         } catch (e : Exception) {
+            LogUtil.error(e)
             e.message?.let { showToast(it) } ?: showToast("登录失败，可能是服务器问题，稍后再试")
             return false
         }
@@ -291,4 +294,11 @@ object UniAppRepository {
     private fun parseClassroomLessons(json : String) = try {
         Gson().fromJson(json, UniAppClassroomLessonsResponse::class.java).data
     } catch (e : Exception) { throw e }
+
+
+    suspend fun checkLogin(
+        token : String
+    ) = launchRequestNone {
+        uniApp.getExams(token)
+    }
 }

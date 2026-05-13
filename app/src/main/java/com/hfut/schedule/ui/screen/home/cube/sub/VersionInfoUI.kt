@@ -42,6 +42,7 @@ fun VersionInfo() {
 //            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
             UpdateItems("新增 主界面底栏的图标动画效果")//
+            UpdateItems("优化 支持在刷新登录状态时捎带刷新合工大教务的登录")//
             UpdateItems("新增 校长信箱链接","位于 查询中心",To.Window(FeedbackWindow))//
             UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug")//
             UpdateItems("优化 在鸿蒙NEXT虚拟环境中跳转外部App的失败提示")//

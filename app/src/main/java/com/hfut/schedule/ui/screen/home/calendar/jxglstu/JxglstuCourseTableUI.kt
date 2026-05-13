@@ -29,6 +29,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.interceptor.GoToInterceptorState
+import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -39,6 +40,8 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -68,6 +71,7 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
@@ -130,7 +134,6 @@ fun JxglstuCourseTableUI(
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
-//    navController: NavHostController,
     backGroundHaze : ShaderState?,
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit,
@@ -148,7 +151,7 @@ fun JxglstuCourseTableUI(
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
+            if(DateTimeManager.currentWeek !in 1..20) {
                 if(termStartDate == null) {
                     return
                 }
@@ -390,9 +393,26 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
+                   // 合工大教务
+                   launch uniapp@ {
+                       val auth = DataStoreManager.uniAppJwt.first()
+                       if(auth.isEmpty()) {
+                           vm.gotoSecondClass(cookies)
+                       } else {
+                           // 检测可用性
+                           val statusCode = UniAppRepository.checkLogin(auth)
+                           val result = statusCode != StatusCode.UNAUTHORIZED.code
+                           if(result) {
+                               LogUtil.debug("无需刷新合工大教务")
+                               return@uniapp
+                           } else {
+                               UniAppRepository.login()
+                           }
+                       }
+                   }
                }
-               // 超时10s
-               withTimeoutOrNull(10000) {
+               // fixme:最高等待时长15s，实测合工大教务接口有时比较慢
+               withTimeoutOrNull(Constant.UNI_APP_MAX_WAIT_TIME_SEC*1000) {
                    job.await()
                }
                if(GlobalStateHolder.excludeJxglstu) {
