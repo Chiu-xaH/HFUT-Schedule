@@ -224,7 +224,7 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
         val isFinished = examDateNum < newToday
 //            DateTimeUtils.compareTimeDate(endTime = endTime) == DateTimeUtils.TimeState.ENDED
         CardListItem(
-            headlineContent = {  Text(text = course.toString() + (item.type?.let { "-$it" } ?: ""), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+            headlineContent = {  Text(text = course + (item.type?.let { "-$it" } ?: ""), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
             leadingContent = {
@@ -249,8 +249,8 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
             val navController = LocalNavController.current
             //今天 && 已经考完
             if(
-                "$month-$day" == DateTimeManager.Date_MM_dd && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
-            } else {
+                !("$month-$day" == DateTimeManager.Date_MM_dd && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED)
+            ) {
                 val dest = ExamDestination(CourseDetailOrigin.FOCUS_TODAY.t + "@${item.hashCode()}")
                 CardListItem(
                     headlineContent = {  Text(text = course) },
@@ -264,6 +264,7 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
 //                                }
                         Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
                     },
+                    shape = RoundedCornerShape(0.dp),
                     cardModifier = Modifier.sharedContainer(
                         dest.key,
                         MaterialTheme.shapes.medium,

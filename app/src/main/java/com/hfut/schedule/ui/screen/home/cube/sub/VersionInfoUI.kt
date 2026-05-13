@@ -24,6 +24,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.floating.util.LocalFloatingControllerSafely
@@ -38,12 +39,13 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))//
+//            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
-            UpdateItems("新增 校长信箱链接","位于 查询中心")//
-            UpdateItems("新增 楼层导向图对新安、敬亭学堂的完整适配")//
-            UpdateItems("优化部分场景下的转场动效")//
+            UpdateItems("新增 主界面底栏的图标动画效果")//
+            UpdateItems("新增 校长信箱链接","位于 查询中心",To.Window(FeedbackWindow))//
+            UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug")//
             UpdateItems("优化 在鸿蒙NEXT虚拟环境中跳转外部App的失败提示")//
+            UpdateItems("优化 部分场景下的转场动效")//
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
@@ -51,7 +53,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
             // TODO 一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
-            // TODO 校车点击跳转导航
             // TODO WebView适配新库 [P2]
             // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
             // TODO Drawer重做  [P2]
