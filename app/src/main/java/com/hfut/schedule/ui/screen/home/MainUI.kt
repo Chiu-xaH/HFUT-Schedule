@@ -110,7 +110,7 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
-import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
+import com.hfut.schedule.logic.model.NavigationBarItemDynamicIconModern
 import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -834,38 +834,42 @@ fun MainScreen(
                 NavigationBarItemDataDynamic(
                     COURSES.name,
                     "课程表",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        R.drawable.calendar,
-                        R.drawable.calendar_month_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            R.drawable.avd_calendar
+                        )
+                    },
                 ),
                 NavigationBarItemDataDynamic(
                     FOCUS.name,
                     "聚焦",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        R.drawable.lightbulb,
-                        R.drawable.lightbulb_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            R.drawable.avd_lightbulb
+                        )
+                    },
                 ),
                 NavigationBarItemDataDynamic(
                     SEARCH.name,
                     "查询中心",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        R.drawable.category_search,
-                        R.drawable.category_search_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            R.drawable.avd_category_search,
+                        )
+                    },
                 ),
                 NavigationBarItemDataDynamic(
                     SETTINGS.name,
                     "选项",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        if (!showBadge) R.drawable.deployed_code else R.drawable.deployed_code_update,
-                        if (!showBadge) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            if (!showBadge) R.drawable.avd_deployed_code else R.drawable.avd_deployed_code_update,
+                        )
+                    },
                     badge = {
                         if (showBadge) Badge { Text("1") }
                     }
