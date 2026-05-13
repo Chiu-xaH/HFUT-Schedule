@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
@@ -178,7 +179,7 @@ fun DraggableWeekButton(
             show = !expanded,
             defaultContent = {
                 Surface(
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     color = if(hasBackground) Color.Transparent else containerColor,
                     modifier = Modifier
                         .height(56.dp)
@@ -275,7 +276,7 @@ fun DraggableWeekButton(
             secondContent = {
                 Surface(
                     color = if(hasBackground) Color.Transparent else containerColor,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     modifier = Modifier
                         .let {
                             if(hasBackground) {

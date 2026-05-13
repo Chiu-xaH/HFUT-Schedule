@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.special.dialogBlur
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.util.NoneRoundShape
 import dev.chrisbanes.haze.HazeDialog
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.rememberHazeState
@@ -112,7 +113,7 @@ fun FakeButton(
     height: Dp = 48.dp
 ) {
     Card(
-        shape = RoundedCornerShape(0.dp),
+        shape = NoneRoundShape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
             contentColor = contentColor

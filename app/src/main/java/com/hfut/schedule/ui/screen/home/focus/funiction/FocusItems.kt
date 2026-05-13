@@ -85,6 +85,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -473,7 +474,7 @@ fun CustomItemUI(
 
     CardListItem(
         color = cardNormalColor(),
-        shape = RoundedCornerShape(0.dp),
+        shape = NoneRoundShape,
         cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
@@ -797,7 +798,7 @@ fun JxglstuTodayCourseItem(
 
             },
             modifier = Modifier.clickable { navController.push(dest) },
-            shape = RoundedCornerShape(0.dp),
+            shape = NoneRoundShape,
             color = cardNormalColor(),
             trailingContent = {
                 Text(
@@ -843,7 +844,7 @@ fun JxglstuTomorrowCourseItem(
         cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable { navController.push(dest) },
-        shape = RoundedCornerShape(0.dp),
+        shape = NoneRoundShape,
         color = cardNormalColor(),
         trailingContent = { Text(text = "明日")}
     )

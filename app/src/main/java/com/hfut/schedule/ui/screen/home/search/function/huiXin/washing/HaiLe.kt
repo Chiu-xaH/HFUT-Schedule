@@ -63,6 +63,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -183,7 +184,7 @@ fun HaiLeWashingScreen(
                                                 MaterialTheme.shapes.medium,
                                                 cardNormalColor()
                                             ),
-                                            shape = RoundedCornerShape(0.dp),
+                                            shape = NoneRoundShape,
                                             headlineContent = { Text(name) },
                                             supportingContent = {
                                                 Text(

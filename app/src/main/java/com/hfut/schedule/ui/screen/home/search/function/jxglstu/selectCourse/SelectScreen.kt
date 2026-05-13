@@ -124,6 +124,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -305,7 +306,7 @@ fun SelectCourseDetailScreen(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 LiquidButton(
-                                    shape = RoundedCornerShape(0.dp),
+                                    shape = NoneRoundShape,
                                     backdrop = backDrop,
                                     onClick = {
                                         navController.push(dest)
@@ -489,7 +490,7 @@ private fun SelectCourseList(
                                 MaterialTheme.shapes.medium,
                                 cardNormalColor()
                             ),
-                        shape = RoundedCornerShape(0.dp),
+                        shape = NoneRoundShape,
                         color = cardNormalColor()
                     ) {
                         TransplantListItem(

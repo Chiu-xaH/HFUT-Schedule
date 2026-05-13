@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
 
@@ -153,7 +154,7 @@ fun TimeTable(
 
             Surface(
                 color = containerColor,
-                shape = if(list.size == 1) { RoundedCornerShape(0.dp) } else { round },
+                shape = if(list.size == 1) { NoneRoundShape } else { round },
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
@@ -349,7 +350,7 @@ fun TimeTable(
             val containerColor = if (!hasBackground) color.first else Color.Transparent
             Surface(
                 color = containerColor,
-                shape = RoundedCornerShape(0.dp),
+                shape = NoneRoundShape,
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {

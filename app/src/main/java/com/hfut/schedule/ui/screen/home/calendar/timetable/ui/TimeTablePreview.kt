@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import kotlin.math.roundToInt
 
@@ -67,7 +68,7 @@ fun TimeTablePreview(
 
     Surface(
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(0.dp),
+        shape = NoneRoundShape,
     ) {
         Box {
             var innerPadding by remember { mutableStateOf(0.dp) }

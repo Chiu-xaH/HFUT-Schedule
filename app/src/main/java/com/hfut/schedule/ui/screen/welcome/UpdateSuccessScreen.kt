@@ -82,6 +82,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
+import com.xah.container.util.NoneRoundShape
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
@@ -125,7 +126,7 @@ fun UpdateSuccessScreen() {
                             containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor,
                         ) {
                             FilledTonalIconButton (
-                                shape = RoundedCornerShape(0.dp),
+                                shape = NoneRoundShape,
                                 onClick = {
                                     navController.push(VersionInfoDestination)
                                 }
@@ -161,7 +162,7 @@ fun UpdateSuccessScreen() {
 //                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                         }
                     },
-//                    shape = RoundedCornerShape(0.dp),
+//                    shape = NoneRoundShape,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(APP_HORIZONTAL_DP)

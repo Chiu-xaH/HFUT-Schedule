@@ -50,6 +50,7 @@ import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.util.NoneRoundShape
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -84,7 +85,7 @@ fun Washing(
             ) {
                 NoPadding {
                     FilledTonalIconButton(
-                        shape = RoundedCornerShape(0.dp),
+                        shape = NoneRoundShape,
                         modifier = Modifier.size(30.dp),
                         onClick = {
                             navController.push(HaiLeWashingDestination)

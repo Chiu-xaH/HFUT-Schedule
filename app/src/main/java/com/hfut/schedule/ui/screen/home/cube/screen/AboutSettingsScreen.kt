@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.screen.fix.about.Support
 import com.hfut.schedule.ui.screen.fix.fix.BugShare
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.LocalSharedRegistry
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */
@@ -176,7 +177,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsAboutDeveloperDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -209,7 +210,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsTipsDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(

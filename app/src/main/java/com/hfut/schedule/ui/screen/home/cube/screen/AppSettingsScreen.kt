@@ -79,6 +79,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.LocalSharedRegistry
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -304,7 +305,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsCalendarDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -325,7 +326,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsFocusCardDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -341,7 +342,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsOcrDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -362,7 +363,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsShortcutEditDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(

@@ -50,6 +50,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.GlobalScope
@@ -100,7 +101,7 @@ data class TimeTableSquareWindow(
             ) {
                 Surface(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(0.dp)
+                    shape = NoneRoundShape
                 ) {
                     var innerPadding by remember { mutableStateOf(0.dp) }
                     val title = if(list.isNotEmpty()) {

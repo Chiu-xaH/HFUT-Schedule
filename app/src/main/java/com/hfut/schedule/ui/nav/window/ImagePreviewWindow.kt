@@ -36,6 +36,7 @@ import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import kotlinx.coroutines.launch
 
@@ -58,7 +59,7 @@ data class ImagePreviewWindow(
             SharedContent(
                 key = key,
                 contentStrategy = ContentStrategy.Layer(isFloating = true),
-                shape = RoundedCornerShape(0.dp),
+                shape = NoneRoundShape,
             ) {
                 ZoomableImage(bitmap) {
                     floatingController.pop()

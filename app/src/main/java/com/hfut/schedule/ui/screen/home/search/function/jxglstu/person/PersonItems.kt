@@ -76,6 +76,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -257,7 +258,7 @@ private fun PersonItems(
 
         DividerTextExpandedWith(text = "就读信息") {
             CustomCard(
-                shape = RoundedCornerShape(0.dp),
+                shape = NoneRoundShape,
                 color = cardNormalColor(),
                 modifier = Modifier.sharedContainer(
                     ClassmatesDestination.key,

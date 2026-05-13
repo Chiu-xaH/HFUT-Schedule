@@ -95,6 +95,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -153,7 +154,7 @@ fun TransferScreen(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         LiquidButton(
-                            shape = RoundedCornerShape(0.dp),
+                            shape = NoneRoundShape,
                             backdrop = backDrop,
                             onClick = {
                                 navController.push(dest)
@@ -205,7 +206,7 @@ fun TransferScreen(
                             )
                             var expand by remember { mutableStateOf(false) }
                             CustomCard (
-                                shape = RoundedCornerShape(0.dp),
+                                shape = NoneRoundShape,
                                 modifier = Modifier
                                     .sharedContainer(
                                         dest.key,

@@ -40,6 +40,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 
 data class FloorMapWindow(
@@ -79,14 +80,14 @@ data class FloorMapWindow(
             ) {
                 Surface(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(0.dp)
+                    shape = NoneRoundShape
                 ) {
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                         Box() {
                             UrlImage(
                                 "${Constant.GITHUB_RAW_RESOURCES_URL}building/detail/${floor.imageUrl}",
                                 contentScale = ContentScale.FillWidth,
-                                shape = RoundedCornerShape(0.dp)
+                                shape = NoneRoundShape
                             )
 
                             if(uiState is UiState.Success && controller.current()?.window == this@FloorMapWindow) {

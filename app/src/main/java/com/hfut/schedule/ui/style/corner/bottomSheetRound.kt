@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.xah.container.util.NoneRoundShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,7 +23,7 @@ fun bottomSheetRound(sheetState: SheetState, autoShape : Boolean = true) : Shape
         BottomSheetDefaults.ExpandedShape
     } else {
         val progress = roundDp(sheetState)
-        (BottomSheetDefaults.ExpandedShape as? CornerBasedShape)?.lerp(RoundedCornerShape(0.dp),progress) as? CornerBasedShape ?: BottomSheetDefaults.ExpandedShape
+        (BottomSheetDefaults.ExpandedShape as? CornerBasedShape)?.lerp(NoneRoundShape,progress) as? CornerBasedShape ?: BottomSheetDefaults.ExpandedShape
     }
 }
 @Composable

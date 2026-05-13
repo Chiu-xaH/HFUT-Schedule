@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.LocalSharedRegistry
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -128,7 +129,7 @@ fun NetworkSettingsScreen(
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsJxglstuPasswordDestination.key,
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(

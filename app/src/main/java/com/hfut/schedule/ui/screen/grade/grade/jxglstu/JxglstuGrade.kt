@@ -104,6 +104,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.shared.LogUtil
 import com.xah.common.logic.safeDiv
+import com.xah.container.util.NoneRoundShape
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -345,7 +346,7 @@ fun GradeItemJxglstuUI(
                                 )
                                 val color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor()
                                 CustomCard(
-                                    shape = RoundedCornerShape(0.dp),
+                                    shape = NoneRoundShape,
                                     color = color,
                                     modifier = Modifier
                                         .clickable {
@@ -648,7 +649,7 @@ fun GradeItemUIUniApp(
                                         allTotalCredits
                                     )
                                     CustomCard(
-                                        shape = RoundedCornerShape(0.dp),
+                                        shape = NoneRoundShape,
                                         color = cardNormalColor(),
                                         modifier = Modifier
                                             .clickable {

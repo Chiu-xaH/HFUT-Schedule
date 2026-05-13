@@ -58,6 +58,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
@@ -108,7 +109,7 @@ fun ExamScreen(
                     ) {
                         NoPadding {
                             LiquidButton(
-                                shape = RoundedCornerShape(0.dp),
+                                shape = NoneRoundShape,
                                 backdrop = backdrop,
                                 onClick = { navController.push(ExamNewsDestination) },
                             ) {
@@ -264,7 +265,7 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
 //                                }
                         Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
                     },
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     cardModifier = Modifier.sharedContainer(
                         dest.key,
                         MaterialTheme.shapes.medium,

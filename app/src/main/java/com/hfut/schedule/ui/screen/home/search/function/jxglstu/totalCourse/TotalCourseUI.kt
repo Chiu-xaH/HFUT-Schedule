@@ -100,6 +100,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -187,7 +188,7 @@ fun CourseTotalUI(
                             shape = MaterialTheme.shapes.medium,
                             containerColor = cardNormalColor()
                         ),
-                    shape = RoundedCornerShape(0.dp),
+                    shape = NoneRoundShape,
                     headlineContent = {  Text(data.course.nameZh) },
                     overlineContent = { ScrollText(text =
                         "学分 ${data.course.credits}" +
@@ -295,7 +296,7 @@ fun DetailItems(
                         modifier = Modifier
                             .sharedContainer(
                                 key = dest.key,
-                                shape = RoundedCornerShape(0.dp),
+                                shape = NoneRoundShape,
                                 containerColor = MaterialTheme.colorScheme.surface
                             )
                             .clickable {
@@ -353,7 +354,7 @@ fun DetailItems(
                                 modifier = Modifier
                                     .sharedContainer(
                                         key = dest.key,
-                                        shape = RoundedCornerShape(0.dp),
+                                        shape = NoneRoundShape,
                                         containerColor = MaterialTheme.colorScheme.surface
                                     )
                                     .weight(.5f)
@@ -379,7 +380,7 @@ fun DetailItems(
                                     modifier = Modifier
                                         .sharedContainer(
                                             key = dest.key,
-                                            shape = RoundedCornerShape(0.dp),
+                                            shape = NoneRoundShape,
                                             containerColor = MaterialTheme.colorScheme.surface
                                         )
                                         .weight(.5f)
@@ -397,7 +398,7 @@ fun DetailItems(
 
                         SharedContainer(
                             key = dest.key,
-                            shape = RoundedCornerShape(0.dp),
+                            shape = NoneRoundShape,
                             containerColor = MaterialTheme.colorScheme.surface
                         ) {
                             Row(
@@ -592,7 +593,7 @@ fun DetailItems(
                         )
                     },
                     modifier = Modifier
-                        .sharedContainer(dest.key, RoundedCornerShape(0.dp), containerColor = MaterialTheme.colorScheme.surface)
+                        .sharedContainer(dest.key, NoneRoundShape, containerColor = MaterialTheme.colorScheme.surface)
                         .clickable {
                             navController.push(dest)
                         }
@@ -645,7 +646,7 @@ fun DetailItems(
                     val dest = ClassroomDestination("CourseDetail")
                     SharedContainer(
                         key = dest.key,
-                        shape = RoundedCornerShape(0.dp),
+                        shape = NoneRoundShape,
                         containerColor = cardNormalColor()
                     ) {
                         TransplantListItem(

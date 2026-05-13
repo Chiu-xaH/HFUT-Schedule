@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.container.util.NoneRoundShape
 
 import dev.chrisbanes.haze.HazeState
 
@@ -167,7 +168,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             TextButton(onClick = { /*TODO*/ }, modifier = Modifier
                 .weight(.33f)
                 .height(65.dp),
-                shape = RoundedCornerShape(0.dp)
+                shape = NoneRoundShape
             ) {
                 Text("", fontSize = 13.sp)
             }
@@ -178,7 +179,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             TextButton(onClick =  onBackspaceClick , modifier = Modifier
                 .weight(.33f)
                 .height(65.dp)
-                ,shape = RoundedCornerShape(0.dp)
+                ,shape = NoneRoundShape
             ) {
                 Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
             }
@@ -187,7 +188,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
 }
 @Composable
 fun Key(num : Int, modifier: Modifier = Modifier, onKeyClick: (Int) -> Unit) {
-    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RoundedCornerShape(0.dp)) {
+    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = NoneRoundShape) {
         Text(num.toString(), fontSize = 28.sp)
     }
 }

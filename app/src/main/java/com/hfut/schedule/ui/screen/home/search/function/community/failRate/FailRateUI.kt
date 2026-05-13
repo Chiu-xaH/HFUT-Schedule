@@ -37,6 +37,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +75,7 @@ fun FailRateUI(
                             shape = MaterialTheme.shapes.medium,
                             containerColor = cardNormalColor()
                         ),
-                        shape = RoundedCornerShape(0.dp),
+                        shape = NoneRoundShape,
                         overlineContent = { Text(list[item].courseMetaId)},
                         headlineContent = {  Text(list[item].courseName) },
                         leadingContent = { Icon(painterResource(FailRateDestination.icon), contentDescription = "Localized description",) },

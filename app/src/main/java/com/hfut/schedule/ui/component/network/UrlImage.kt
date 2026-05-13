@@ -36,6 +36,7 @@ import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingControllerSafely
 import kotlinx.coroutines.launch
 
@@ -48,7 +49,7 @@ fun UrlImage(
     modifier: Modifier = Modifier,
     cookie: String? = null,
     enableClick : Boolean = true,
-    shape: CornerBasedShape = RoundedCornerShape(0.dp),
+    shape: CornerBasedShape = NoneRoundShape,
     contentScale: ContentScale = ContentScale.Crop, // 决定是否裁剪
     placeholder: Painter = painterResource(R.drawable.ic_launcher_background),
 ) {
@@ -175,7 +176,7 @@ fun UrlImageNoCrop(
             bitmap = imageBitmap,
             contentDescription = null,
             modifier = modifier
-                .sharedContainer(window.key, containerFilledStrategy = ContainerFilledStrategy.Element, shape = RoundedCornerShape(0.dp))
+                .sharedContainer(window.key, containerFilledStrategy = ContainerFilledStrategy.Element, shape = NoneRoundShape)
                 .clickable {
                     if(floatingControllerSafely == null) {
                         scope.launch {

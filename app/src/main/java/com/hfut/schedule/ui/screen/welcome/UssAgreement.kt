@@ -128,7 +128,7 @@ fun UseAgreementScreen() {
 //                                    navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                                     }
                                 },
-//                                shape = RoundedCornerShape(0.dp),
+//                                shape = NoneRoundShape,
                                 modifier = Modifier
 //                                    .sharedContainer(HomeDestination.key,MaterialTheme.shapes.extraLarge)
                                     .fillMaxWidth()

@@ -58,6 +58,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -86,7 +87,7 @@ fun Program(
             ) {
                 NoPadding {
                     FilledTonalIconButton(
-                        shape = RoundedCornerShape(0.dp),
+                        shape = NoneRoundShape,
                         onClick = {
                             navController.push(dest)
                         },
@@ -160,7 +161,7 @@ fun ProgramScreen(
                             },
                             icon = ProgramCompetitionDestination.ICON,
                             text = ProgramCompetitionDestination.TITLE.asString(),
-                            shape = RoundedCornerShape(0.dp),
+                            shape = NoneRoundShape,
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.secondary
                         )
@@ -188,7 +189,7 @@ fun ProgramScreen(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
                         ) {
                             LiquidButton (
-                                shape = RoundedCornerShape(0.dp),
+                                shape = NoneRoundShape,
                                 backdrop = backDrop,
                                 onClick = {
                                     navController.push(dest)

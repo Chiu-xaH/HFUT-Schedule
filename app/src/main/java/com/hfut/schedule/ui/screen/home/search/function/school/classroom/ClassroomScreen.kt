@@ -131,6 +131,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
@@ -459,7 +460,7 @@ private fun EmptyClassroomScreen(
                         val isAllDayFree = activities.isEmpty()
                         val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
-//                            shape = RoundedCornerShape(0.dp),
+//                            shape = NoneRoundShape,
                             color = cardNormalColor(),
                             modifier = Modifier
                                 .clickable { navTopController.push(dest) }
@@ -676,7 +677,7 @@ private fun SearchClassroomScreen(
                             item.nameZh
                         )
                         CardListItem(
-                            shape = RoundedCornerShape(0.dp),
+                            shape = NoneRoundShape,
                             leadingContent = {
                                 Icon(painterResource(R.drawable.meeting_room),null)
                             },

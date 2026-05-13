@@ -74,6 +74,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import kotlinx.coroutines.launch
 
@@ -309,7 +310,7 @@ fun CampusMapScreen(
                                     onClick = {
                                         floatingController.push(window)
                                     },
-                                    shape = RoundedCornerShape(0.dp),
+                                    shape = NoneRoundShape,
                                     border = null,
                                     colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                                     label = { Text("${item.floor}F") },

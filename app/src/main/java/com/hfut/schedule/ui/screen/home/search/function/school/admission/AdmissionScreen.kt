@@ -68,6 +68,7 @@ import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -146,7 +147,7 @@ fun AdmissionListUI(
                                 pageList[page].description
                             )
                             SmallCard (
-                                shape = RoundedCornerShape(0.dp),
+                                shape = NoneRoundShape,
                                 color = cardNormalColor(),
                                 modifier = Modifier
                                     .padding(CARD_NORMAL_DP)

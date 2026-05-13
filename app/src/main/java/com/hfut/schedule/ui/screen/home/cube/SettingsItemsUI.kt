@@ -71,6 +71,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 
@@ -104,7 +105,7 @@ fun SettingsItemsUI() {
         PaddingHorizontalDivider()
         SharedContainer(
             key = SettingsConfigurationDestination.key,
-            shape = RoundedCornerShape(0.dp),
+            shape = NoneRoundShape,
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             TransplantListItem(
@@ -122,7 +123,7 @@ fun SettingsItemsUI() {
         PaddingHorizontalDivider()
         SharedContainer(
             key = SettingsNetworkDestination.key,
-            shape = RoundedCornerShape(0.dp),
+            shape = NoneRoundShape,
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             TransplantListItem(
