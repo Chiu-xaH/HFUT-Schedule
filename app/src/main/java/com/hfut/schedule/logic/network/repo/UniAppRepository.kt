@@ -53,6 +53,7 @@ object UniAppRepository {
                 showToast("$FAILED_TEXT(游客)")
                 return false
             }
+            showToast("正在登录合工大教务")
             val request = uniApp.login(
                 studentId = sId,
                 password = CryptoUtil.rsaEncrypt(pwd)
@@ -161,7 +162,15 @@ object UniAppRepository {
 
     suspend fun updateExams(token : String) {
         try {
-            val request = uniApp.getExams(token).awaitResponse()
+            var request = uniApp.getExams(token).awaitResponse()
+            // 登陆过期，重新刷新一次登录
+            if(request.code() == StatusCode.UNAUTHORIZED.code) {
+                LogUtil.debug("合工大教务登陆过期")
+                val result = login()
+                if(result) {
+                    request = uniApp.getExams(token).awaitResponse()
+                }
+            }
             if(!request.isSuccessful) {
                 return
             }

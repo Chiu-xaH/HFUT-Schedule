@@ -71,8 +71,6 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         val uniAppJwt = DataStoreManager.uniAppJwt.first()
         // 刷新个人接口
         launch { vm.getMyApi() }
-        // 检查合工大教务
-        // TODO
         // 用于更新ifSaved
         launch {
             // 教务是否能够登录
@@ -110,14 +108,12 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
                     vm.getToday(communityToken)
                 }
         }
-        // 更新合工大教务课表
-        if(uniAppJwt.isNotEmpty() && uniAppJwt.isNotBlank()) {
-            launch {
-                UniAppRepository.updateCourses(uniAppJwt)
-            }
-            launch {
-                UniAppRepository.updateExams(uniAppJwt)
-            }
+        // 更新合工大教务课表与考试，并检查登录状态并刷新
+        launch {
+            UniAppRepository.updateCourses(uniAppJwt)
+        }
+        launch {
+            UniAppRepository.updateExams(uniAppJwt)
         }
         //检查更新
         launch {

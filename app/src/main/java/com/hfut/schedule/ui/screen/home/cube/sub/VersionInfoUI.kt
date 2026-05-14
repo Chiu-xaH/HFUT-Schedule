@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.screen.home.cube.sub
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +43,6 @@ import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
-import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.floating.util.LocalFloatingControllerSafely
@@ -62,15 +59,16 @@ private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination),listOf("Junpgle"))//
-//            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
-        UpdateItems("新增 校长信箱链接","位于 查询中心",To.Window(FeedbackWindow))//
+        UpdateItems("新增 校长信箱链接","位于 查询中心-校长信箱",To.Window(FeedbackWindow))//
+        UpdateItems("新增 支持新安学堂与敬亭学堂的所有楼层导向图","位于 查询中心-生活服务-楼层导向",To.Window(FeedbackWindow))//
+        UpdateItems("新增 实时通知(Android 16+)","位于 课程表-右上角多课表切换按钮-教务系统-上课提醒", developers = listOf("Junpgle"))//
         UpdateItems("新增 主界面底栏的图标动画效果", developers = listOf("Today1337"))//
         UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug",)//
         UpdateItems("优化 支持在刷新登录状态时捎带刷新合工大教务的登录")//
         UpdateItems("优化 支持在聚焦界面下拉刷新时自动检查并刷新合工大教务的登录")//
         UpdateItems("优化 在鸿蒙NEXT虚拟环境中跳转外部App的失败提示")//
-        UpdateItems("优化 部分场景下的转场动效")//
+        UpdateItems("优化 新增若干场景下不同的转场动效")//
+//            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
