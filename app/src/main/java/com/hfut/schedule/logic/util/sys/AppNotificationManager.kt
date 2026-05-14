@@ -171,7 +171,7 @@ object AppNotificationManager {
             )
         } else {
             NotificationCompat.Builder(context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-                .setSmallIcon(R.drawable.hfut_badge)
+                .setSmallIcon(R.drawable.hfut_badge_white)
                 .setContentTitle("上课提醒：$courseName")
                 .setContentText(contentText)
                 .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看课程详细信息"))
@@ -217,7 +217,7 @@ object AppNotificationManager {
             )
 
         return Notification.Builder(MyApplication.context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-            .setSmallIcon(R.drawable.hfut_badge)
+            .setSmallIcon(R.drawable.hfut_badge_white)
             .setLargeIcon(Icon.createWithResource(MyApplication.context, R.drawable.hfut_badge))
             .setContentTitle("上课提醒：$courseName")
             .setContentText(contentText)
