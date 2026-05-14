@@ -6,16 +6,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import androidx.core.content.ContextCompat
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.receiver.CourseLiveUpdateReceiver
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
-import com.xah.uicommon.util.LogUtil
+import com.hfut.schedule.ui.nav.destination.CourseLiveUpdateDetailDestination
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -64,7 +62,7 @@ object CourseLiveUpdateScheduler {
                     ),
                     alarmClockInfo = AlarmManager.AlarmClockInfo(
                         triggerMillis,
-                        buildOpenCourseIntent(context, course.courseName, startMillis)
+                        buildOpenCourseIntent(context, course.courseName, course.place, startMillis)
                     )
                 )
             }
@@ -119,7 +117,7 @@ object CourseLiveUpdateScheduler {
                 teacher = course.teacher,
                 startMillis = startMillis,
                 endMillis = endMillis,
-                contentIntent = buildOpenCourseIntent(context, course.courseName, startMillis)
+                contentIntent = buildOpenCourseIntent(context, course.courseName, course.place, startMillis)
             )
             shownCount++
         }
@@ -252,15 +250,15 @@ object CourseLiveUpdateScheduler {
     fun buildOpenCourseIntent(
         context: Context,
         courseName: String,
+        place: String?,
         startMillis: Long,
     ): PendingIntent {
-        val route = AppNavRoute.CourseDetail.withArgs(
-            Uri.encode(courseName),
-            Uri.encode("${CourseDetailOrigin.CALENDAR_JXGLSTU.t}@$startMillis")
-        )
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("route", route)
+            putExtra("route", CourseLiveUpdateDetailDestination::class.java.name)
+            putExtra(EXTRA_COURSE_NAME, courseName)
+            putExtra(EXTRA_PLACE, place)
+            putExtra(EXTRA_START_MILLIS, startMillis)
         }
         return PendingIntent.getActivity(
             context,

@@ -9,10 +9,13 @@ import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.Constant
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Collections
 
@@ -24,6 +27,10 @@ class MyApplication : Application() {
         LogUtil.init(APP_NAME)
         GlobalScope.launch {
             DateTimeManager.initCurrentWeekValue()
+            if (DataStoreManager.enableLiveCourseReminder.first()) {
+                CourseLiveUpdateScheduler.scheduleAll()
+                CourseLiveUpdateScheduler.showCurrentWindowCourses()
+            }
         }
         // 控制SharedNav库的日志
         com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",BuildConfig.DEBUG)
@@ -38,7 +45,13 @@ class MyApplication : Application() {
 
             override fun onActivityPaused(activity: Activity) {}
 
-            override fun onActivityResumed(activity: Activity) {}
+            override fun onActivityResumed(activity: Activity) {
+                GlobalScope.launch {
+                    if (DataStoreManager.enableLiveCourseReminder.first()) {
+                        CourseLiveUpdateScheduler.showCurrentWindowCourses()
+                    }
+                }
+            }
 
             override fun onActivitySaveInstanceState(
                 activity: Activity,
