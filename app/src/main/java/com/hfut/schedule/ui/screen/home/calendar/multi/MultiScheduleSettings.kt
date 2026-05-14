@@ -50,6 +50,8 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
+import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestNotificationPermission
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delAllCourseEvent
@@ -363,7 +365,8 @@ fun shareTextFile(fileName: String) {
 private fun EventUI() {
     val activity = LocalActivity.current
     val context = LocalContext.current
-    var time by remember { mutableIntStateOf(20) }
+    val time by DataStoreManager.liveCourseReminderMinutes.collectAsState(initial = 20)
+    val enableLiveCourseReminder by DataStoreManager.enableLiveCourseReminder.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
     if(loading) {
@@ -380,7 +383,13 @@ private fun EventUI() {
                 Row {
                     FilledTonalIconButton(
                         onClick = {
-                            time += 5
+                            scope.launch {
+                                DataStoreManager.saveLiveCourseReminderMinutes(time + 5)
+                                if (enableLiveCourseReminder) {
+                                    CourseLiveUpdateScheduler.cancelAll(context)
+                                    CourseLiveUpdateScheduler.scheduleAll(context)
+                                }
+                            }
                         }
                     ) {
                         Icon(painterResource(R.drawable.add),null)
@@ -389,7 +398,13 @@ private fun EventUI() {
                         if(it >= 5) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    time -= 5
+                                    scope.launch {
+                                        DataStoreManager.saveLiveCourseReminderMinutes(time - 5)
+                                        if (enableLiveCourseReminder) {
+                                            CourseLiveUpdateScheduler.cancelAll(context)
+                                            CourseLiveUpdateScheduler.scheduleAll(context)
+                                        }
+                                    }
                                 }
                             ) {
                                 Icon(painterResource(R.drawable.remove),null)
@@ -400,7 +415,57 @@ private fun EventUI() {
             },
             leadingContent = { Icon(painterResource(R.drawable.schedule),null) },
             modifier = Modifier.clickable {
-                time = 20
+                scope.launch {
+                    DataStoreManager.saveLiveCourseReminderMinutes(20)
+                    if (enableLiveCourseReminder) {
+                        CourseLiveUpdateScheduler.cancelAll(context)
+                        CourseLiveUpdateScheduler.scheduleAll(context)
+                    }
+                }
+            }
+        )
+        CardListItem(
+            headlineContent = {
+                Text(if (enableLiveCourseReminder) "Android 16 Live Activity 已开启" else "开启 Android 16 Live Activity 提醒")
+            },
+            overlineContent = {
+                Text("使用上方提醒时间，上课前${time}min弹出并显示教室；低版本降级为普通通知")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.notifications), null) },
+            modifier = Modifier.clickable {
+                activity?.let { checkAndRequestNotificationPermission(it) }
+                scope.launch {
+                    if (enableLiveCourseReminder) {
+                        CourseLiveUpdateScheduler.cancelAll(context)
+                        DataStoreManager.saveLiveCourseReminder(false)
+                        showToast("已关闭 Live Activity 提醒")
+                    } else if (CourseLiveUpdateScheduler.canPostNotification(context)) {
+                        val count = CourseLiveUpdateScheduler.scheduleAll(context)
+                        CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
+                        DataStoreManager.saveLiveCourseReminder(true)
+                        showToast("已开启 Live Activity 提醒，共调度${count}节课")
+                    } else {
+                        showToast("请先授予通知权限")
+                    }
+                }
+            }
+        )
+        CardListItem(
+            headlineContent = {
+                Text("刷新 Live Activity 提醒")
+            },
+            overlineContent = {
+                Text("课表或提醒时间变化后重新调度后台提醒")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
+            modifier = Modifier.clickable {
+                scope.launch {
+                    CourseLiveUpdateScheduler.cancelAll(context)
+                    val count = CourseLiveUpdateScheduler.scheduleAll(context)
+                    CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
+                    DataStoreManager.saveLiveCourseReminder(true)
+                    showToast("已刷新 Live Activity 提醒，共调度${count}节课")
+                }
             }
         )
         CardListItem(

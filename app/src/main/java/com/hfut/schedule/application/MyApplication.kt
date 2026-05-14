@@ -8,9 +8,12 @@ import android.os.Bundle
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Collections
 
@@ -194,6 +197,10 @@ class MyApplication : Application() {
         LogUtil.tag = APP_NAME
         GlobalScope.launch {
             DateTimeManager.initCurrentWeekValue()
+            if (DataStoreManager.enableLiveCourseReminder.first()) {
+                CourseLiveUpdateScheduler.scheduleAll()
+                CourseLiveUpdateScheduler.showCurrentWindowCourses()
+            }
         }
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(a: Activity, b: Bundle?) {
@@ -206,7 +213,13 @@ class MyApplication : Application() {
 
             override fun onActivityPaused(activity: Activity) {}
 
-            override fun onActivityResumed(activity: Activity) {}
+            override fun onActivityResumed(activity: Activity) {
+                GlobalScope.launch {
+                    if (DataStoreManager.enableLiveCourseReminder.first()) {
+                        CourseLiveUpdateScheduler.showCurrentWindowCourses()
+                    }
+                }
+            }
 
             override fun onActivitySaveInstanceState(
                 activity: Activity,

@@ -327,7 +327,12 @@ fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {
     return DateTimeBean(year,month,day,hour,minute)
 }
 
-data class JxglstuCourseSchedule(val time : DateTime, val place : String?, val courseName : String)
+data class JxglstuCourseSchedule(
+    val time : DateTime,
+    val place : String?,
+    val courseName : String,
+    val teacher : String? = null,
+)
 
 suspend fun getJxglstuCourseSchedule(
     jsonStr : String? = null,
@@ -375,7 +380,14 @@ suspend fun getJxglstuCourseSchedule(
                 DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),start[0].toInt(),start[1].toInt()),
                 DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),end[0].toInt(),end[1].toInt())
             )
-            list.add(JxglstuCourseSchedule(bean,room,courseId))
+            list.add(
+                JxglstuCourseSchedule(
+                    time = bean,
+                    place = room,
+                    courseName = courseId,
+                    teacher = item.personName.takeIf { it.isNotBlank() }
+                )
+            )
         }
     } catch (e : Exception) {
         LogUtil.error(e)

@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" /> <!-- 安装APK 用于下载更新后安装 -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- 发送通知 用于提示安装包已下载好 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <queries>
         <package android:name="com.wisedu.cpdaily" />
@@ -204,6 +207,14 @@
         <receiver
             android:name=".receiver.UpdateReceiver"
             android:exported="false" /> <!-- 小组件 -->
+        <receiver
+            android:name=".receiver.CourseLiveUpdateReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".receiver.widget.focus.FocusWidgetReceiver"
             android:exported="true"
