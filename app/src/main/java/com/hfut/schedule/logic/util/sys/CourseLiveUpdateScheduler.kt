@@ -12,6 +12,7 @@ import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.receiver.CourseLiveUpdateReceiver
+import com.hfut.schedule.service.CourseLiveUpdateService
 import com.hfut.schedule.ui.nav.destination.CourseLiveUpdateDetailDestination
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,6 @@ object CourseLiveUpdateScheduler {
     const val ACTION_SHOW = "com.hfut.schedule.action.SHOW_COURSE_LIVE_UPDATE"
     const val ACTION_FINISH = "com.hfut.schedule.action.FINISH_COURSE_LIVE_UPDATE"
     const val ACTION_RESCHEDULE = "com.hfut.schedule.action.RESCHEDULE_COURSE_LIVE_UPDATE"
-    const val ACTION_REFRESH = "com.hfut.schedule.action.REFRESH_COURSE_LIVE_UPDATE"
 
     const val EXTRA_COURSE_NAME = "course_name"
     const val EXTRA_PLACE = "place"
@@ -111,14 +111,11 @@ object CourseLiveUpdateScheduler {
             val remindStartMillis = startMillis - remindBeforeMinutes * 60_000L
             if (now !in remindStartMillis until endMillis) return@forEach
 
-            AppNotificationManager.showCourseLiveUpdate(
-                courseName = course.courseName,
-                place = course.place,
-                teacher = course.teacher,
-                startMillis = startMillis,
-                endMillis = endMillis,
-                contentIntent = buildOpenCourseIntent(context, course.courseName, course.place, startMillis)
-            )
+            val serviceIntent = Intent(context, CourseLiveUpdateService::class.java).apply {
+                action = ACTION_SHOW
+                putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
+            }
+            ContextCompat.startForegroundService(context, serviceIntent)
             shownCount++
         }
         shownCount
@@ -131,7 +128,7 @@ object CourseLiveUpdateScheduler {
             val startMillis = course.time.start.toMillis()
             val endMillis = course.time.end.toMillis()
             val remindStartMillis = startMillis - remindBeforeMinutes * 60_000L
-            listOf(ACTION_SHOW, ACTION_FINISH, ACTION_REFRESH).forEach { action ->
+            listOf(ACTION_SHOW, ACTION_FINISH).forEach { action ->
                 val intent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
                     this.action = action
                     putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
@@ -156,6 +153,7 @@ object CourseLiveUpdateScheduler {
             )
             AppNotificationManager.cancelCourseLiveUpdate(course.courseName, startMillis)
         }
+        CourseLiveUpdateService.stopService(context)
     }
 
     private fun scheduleWindowChecks(
@@ -216,35 +214,6 @@ object CourseLiveUpdateScheduler {
             alarmManager.cancel(pendingIntent)
             checkMillis += WINDOW_CHECK_INTERVAL_MILLIS
         }
-    }
-
-    fun scheduleNextRefresh(
-        context: Context,
-        courseName: String,
-        place: String?,
-        teacher: String?,
-        startMillis: Long,
-        endMillis: Long,
-    ) {
-        val now = System.currentTimeMillis()
-        val nextRefreshMillis = now + 60_000L
-        if (nextRefreshMillis >= endMillis) return
-
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
-            action = ACTION_REFRESH
-            putCourseExtras(courseName, place, teacher, startMillis, endMillis)
-        }
-        setCourseAlarm(
-            alarmManager = alarmManager,
-            triggerMillis = nextRefreshMillis,
-            pendingIntent = PendingIntent.getBroadcast(
-                context,
-                requestCode(courseName, startMillis, ACTION_REFRESH),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        )
     }
 
     fun buildOpenCourseIntent(
