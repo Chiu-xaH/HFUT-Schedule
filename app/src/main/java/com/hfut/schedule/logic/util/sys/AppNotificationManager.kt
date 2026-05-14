@@ -146,8 +146,9 @@ object AppNotificationManager {
         startMillis: Long,
         endMillis: Long,
         contentIntent: PendingIntent,
-    ) {
-        if (!canPostNotification()) return
+        asForeground: Boolean = false,
+    ): Notification? {
+        if (!canPostNotification()) return null
         createNotificationChannel(AppNotificationChannel.COURSE_LIVE_UPDATE)
 
         val context = MyApplication.context
@@ -170,7 +171,7 @@ object AppNotificationManager {
             )
         } else {
             NotificationCompat.Builder(context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-                .setSmallIcon(R.drawable.hfut_badge)
+                .setSmallIcon(R.drawable.hfut_badge_white)
                 .setContentTitle("上课提醒：$courseName")
                 .setContentText(contentText)
                 .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看课程详细信息"))
@@ -183,7 +184,10 @@ object AppNotificationManager {
                 .build()
         }
 
-        manager.notify(notificationId, notification)
+        if (!asForeground) {
+            manager.notify(notificationId, notification)
+        }
+        return notification
     }
 
     @RequiresApi(36)
@@ -213,7 +217,7 @@ object AppNotificationManager {
             )
 
         return Notification.Builder(MyApplication.context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-            .setSmallIcon(R.drawable.hfut_badge)
+            .setSmallIcon(R.drawable.hfut_badge_white)
             .setLargeIcon(Icon.createWithResource(MyApplication.context, R.drawable.hfut_badge))
             .setContentTitle("上课提醒：$courseName")
             .setContentText(contentText)
@@ -280,6 +284,6 @@ object AppNotificationManager {
         manager.cancel(courseLiveNotificationId(courseName, startMillis))
     }
 
-    private fun courseLiveNotificationId(courseName: String, startMillis: Long): Int =
+    internal fun courseLiveNotificationId(courseName: String, startMillis: Long): Int =
         COURSE_LIVE_ID_BASE + "$courseName@$startMillis".hashCode().let { if (it == Int.MIN_VALUE) 0 else kotlin.math.abs(it % 8000) }
 }
