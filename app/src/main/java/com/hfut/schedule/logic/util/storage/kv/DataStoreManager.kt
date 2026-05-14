@@ -148,6 +148,8 @@ object DataStoreManager : IDataStore {
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
     private val TERM_START_DATE = stringPreferencesKey("term_start_date")
     private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
+    private val LIVE_COURSE_REMINDER = booleanPreferencesKey("live_course_reminder")
+    private val LIVE_COURSE_REMINDER_MINUTES = intPreferencesKey("live_course_reminder_minutes")
     private val READ_NOTIFICATIONS = stringPreferencesKey("read_notifications")
     private val API_KEY = stringPreferencesKey("llm_api_key")
     private val LANGUAGE = intPreferencesKey("language")
@@ -205,6 +207,8 @@ object DataStoreManager : IDataStore {
     suspend fun saveCalendarSquareTextPadding(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_PADDING, value)
     suspend fun saveFocusWidgetTextSize(value: Float) = saveValue(FOCUS_WIDGET_TEXT_SIZE, value)
     suspend fun saveDefaultCalendar(value: CourseType) = saveValue(DEFAULT_CALENDAR, value.code)
+    suspend fun saveLiveCourseReminder(value: Boolean) = saveValue(LIVE_COURSE_REMINDER, value)
+    suspend fun saveLiveCourseReminderMinutes(value: Int) = saveValue(LIVE_COURSE_REMINDER_MINUTES, value)
     suspend fun saveLanguage(value: Language) = saveValue(LANGUAGE, value.code)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
@@ -282,6 +286,8 @@ object DataStoreManager : IDataStore {
     val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
     val apiKey = getFlow(API_KEY,  EMPTY_STRING)
     val defaultCalendar = getFlow(DEFAULT_CALENDAR, CourseType.JXGLSTU.code)
+    val enableLiveCourseReminder = getFlow(LIVE_COURSE_REMINDER, false)
+    val liveCourseReminderMinutes = getFlow(LIVE_COURSE_REMINDER_MINUTES, 20)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
