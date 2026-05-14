@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -8,19 +9,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.model.community.NodeV
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.UrlImageNoCrop
-
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.logic.enumeration.Campus
-import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
 
 @Composable
 fun SchoolMapScreen(vm : NetWorkViewModel) {
@@ -46,7 +46,6 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
     }
     val uiState by vm.mapsResponse.state.collectAsState()
 
-
     CustomTabRow(pagerState,titles)
     HorizontalPager(state = pagerState) { pager ->
         val campus = t[pager]
@@ -55,39 +54,14 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
             // 从list里取出符合条件的一项
             val bean = list.find { it.name.contains(campus.description) } ?: return@CommonNetworkScreen
             val cUrl = bean.currentMap
-            val name = bean.name
-            val nodes = bean.nodeVOList.toMutableList()
-            nodes.add(NodeV("..."))
             Column {
                 RowHorizontal {
-                    UrlImageNoCrop(cUrl)
+                    UrlImage(
+                        cUrl,
+                        modifier = Modifier.padding(APP_HORIZONTAL_DP),
+                        contentScale = ContentScale.Fit
+                    )
                 }
-//                for(j in nodes.indices step 2) {
-//                    val item1 = nodes[j]
-//                    Row(Modifier.padding(horizontal = 12.dp)) {
-//                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
-//                            TransplantListItem(
-//                                leadingContent = {
-//                                    Text((j+1).toString())
-//                                },
-//                                headlineContent = { ScrollText(item1.name) },
-//                            )
-//                        }
-//                        if(j + 1 < nodes.size) {
-//                            val item2 = nodes[j+1]
-//                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
-//                                TransplantListItem(
-//                                    leadingContent = {
-//                                        Text((j+1+1).toString())
-//                                    },
-//                                    headlineContent = { ScrollText(item2.name) },
-//                                )
-//                            }
-//                        } else {
-//                            Spacer(Modifier.width(1.dp).weight(.5f))
-//                        }
-//                    }
-//                }
             }
         }
     }

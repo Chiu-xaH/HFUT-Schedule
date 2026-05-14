@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -35,13 +36,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.library.BorrowedStatus
-import com.hfut.schedule.logic.util.network.getPageSize
+
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -51,40 +53,36 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
+
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.navigation.util.LocalNavController
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryBorrowedScreen(
-    vm: NetWorkViewModel,
-    navController : NavHostController
-) {
+fun LibraryBorrowedScreen(vm: NetWorkViewModel) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.LibraryBorrowed.route }
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.LibraryBorrowed.label)) },
+                title = { Text(LibraryBorrowedDestination.title.asString()) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.LibraryBorrowed.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },
@@ -133,7 +131,7 @@ private fun BorrowUI(
         val token = prefs.getString(LIBRARY_TOKEN,"") ?: return@m
         val pageSize = (vm.libraryStatusResp.state.value as? UiState.Success)?.data?.borrowCount
         vm.libraryBorrowedResp.clear()
-        vm.getBorrowed(token,1,null,pageSize ?: getPageSize())
+        vm.getBorrowed(token,1,null,pageSize ?: Constant.DEFAULT_PAGE_SIZE)
     }
     LaunchedEffect(Unit) {
         refreshNetwork()

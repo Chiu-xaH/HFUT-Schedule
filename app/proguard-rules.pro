@@ -41,6 +41,6 @@
 
 # 模块
 -keep class com.hfur.schedule.** { *; }
--keep class com.xah.shared.** { *; }
+-keep class com.xah.forecast.** { *; }
 -keep class com.xah.transition.** { *; }
--keep class com.xah.uicommon.** { *; }
+-keep class com.xah.common.** { *; }

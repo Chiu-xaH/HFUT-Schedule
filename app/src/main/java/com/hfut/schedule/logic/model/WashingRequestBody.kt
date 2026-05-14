@@ -2,28 +2,7 @@ package com.hfut.schedule.logic.model
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.util.network.getPageSize
-
-data class HaiLeNearPositionRequestBody(
-    val lng : Double,// 经度
-    val lat : Double,// 纬度
-    val categoryCode : String? = null, // 01洗衣机 ,02烘干机，03洗鞋机，不加或00全部
-    val page : Int,
-    val pageSize : Int = getPageSize(),
-)
-
-data class HaiLeDeviceDetailRequestBody(
-    val positionId : String,
-    val floorCode : String? = null,
-    val categoryCode : String? = null,
-    val page : Int,
-    val pageSize : Int = getPageSize(),
-)
-data class HaiLeTradeListRequestBody(
-    val newOrderState : String? = null,
-    val page : Int,
-    val pageSize : Int = getPageSize()
-)
+import com.hfut.schedule.network.model.HaiLeNearPositionRequest
 
 enum class HaiLeType(val typeCode : String,val description: String) {
     WASHING_MACHINE("00","洗衣"),
@@ -37,9 +16,9 @@ data class HaiLeNearPositionRequestDTO(
     val categoryCode : HaiLeType? = null,
     val page: Int
 ) {
-    fun toRequestBody() : HaiLeNearPositionRequestBody {
+    fun toRequestBody() : HaiLeNearPositionRequest {
         val location = MyApplication.campusLocations[campus]!!
-        return HaiLeNearPositionRequestBody(
+        return HaiLeNearPositionRequest(
             lng = location.lng,
             lat = location.lat,
             categoryCode = categoryCode?.typeCode,
@@ -55,7 +34,6 @@ data class HaiLeDeviceDetailResponse(val data : HaiLeDeviceDetailData)
 
 data class HaiLeNearPositionData(val items : List<HaiLeNearPositionBean>)
 data class HaiLeDeviceDetailData(val items : List<HaiLeDeviceDetailBean>)
-data class HaiLeTradeListData(val items : List<HaiLeTradeBean>)
 
 data class HaiLeNearPositionBean(
     val id : Long,
@@ -74,18 +52,4 @@ data class HaiLeDeviceDetailBean(
     val finishTime : String?,
     val enableReserve : Boolean,
     val reserveNum : Int, // 可预约
-)
-
-data class HaiLeTradeBean(
-    val createTime : String,
-    val realPrice : String,
-    val stateDesc : String,
-    val orderItemList : List<HaiLeTradeOrderBean>
-)
-data class HaiLeTradeOrderBean(
-    val realPrice : String?,
-    val goodsName : String?,
-    val goodsItemName : String?,
-    val categoryCode : String?,
-    val unit : String?
 )

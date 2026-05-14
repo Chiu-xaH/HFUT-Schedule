@@ -18,7 +18,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.tranamt
 import com.hfut.schedule.ui.screen.shower.login.getGuaGuaPersonInfo
 import com.hfut.schedule.ui.component.container.LargeCard
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -28,17 +28,12 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun GuaGuaPersonInfoUI(vm: NetWorkViewModel, hazeState: HazeState) {
 
-    val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-            autoShape = false
-//            sheetState = sheetState
-//            , shape = Round(sheetState)
         ) {
             ShowerUI(vm,true, hazeState = hazeState)
         }

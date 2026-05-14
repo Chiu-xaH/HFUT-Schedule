@@ -26,59 +26,55 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
-import com.hfut.schedule.logic.network.util.CasInHFUT
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
-import com.hfut.schedule.logic.network.util.isNotBadRequest
+import com.hfut.schedule.logic.network.interceptor.GoToInterceptorState
+import com.hfut.schedule.logic.network.repo.UniAppRepository
+import com.hfut.schedule.logic.util.network.CasInHFUT
+import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
+import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableData
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
-import com.xah.uicommon.util.LogUtil
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 // 去重
 fun <T>distinctUnit(list : List<SnapshotStateList<T>>) {
@@ -106,7 +102,7 @@ suspend fun loginHuiXin(vm: NetWorkViewModel) {
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
     if (isNotBadRequest(result)) {
-        CasGoToInterceptorState.toCommunityTicket
+        GoToInterceptorState.toCommunityTicket
             .filterNotNull()
             .collect { value ->
                 vm.loginCommunity(value)
@@ -118,7 +114,7 @@ private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
     vm.goToOne(cookies)
     vm.goToOne(cookies)
     // byd为啥发两次才给302
-    CasGoToInterceptorState.toOneCode
+    GoToInterceptorState.toOneCode
         .filterNotNull()
         .collect { value ->
             vm.loginOne(value)
@@ -138,45 +134,14 @@ fun JxglstuCourseTableUI(
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
-    navController: NavHostController,
     backGroundHaze : ShaderState?,
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit,
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
-    val context = LocalContext.current
+    val navController = LocalNavController.current
     val scrollState = rememberScrollState()
-    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
-    var courseName by remember { mutableStateOf("") }
-    var showBottomSheetDetail by remember { mutableStateOf(false) }
-    var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
-
-    if (showBottomSheetTotalCourse) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheetTotalCourse = false
-            },
-            showBottomSheet = showBottomSheetTotalCourse,
-            hazeState = hazeState
-        ) {
-            CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
-        }
-    }
-
-    if (showBottomSheetDetail) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheetDetail = false
-            },
-            autoShape = false,
-            showBottomSheet = showBottomSheetDetail,
-            hazeState = hazeState
-        ) {
-            bean?.let { TimeTableDetail(it) }
-        }
-    }
-
     var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
 
     val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
@@ -186,7 +151,7 @@ fun JxglstuCourseTableUI(
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
+            if(DateTimeManager.currentWeek !in 1..20) {
                 if(termStartDate == null) {
                     return
                 }
@@ -245,7 +210,6 @@ fun JxglstuCourseTableUI(
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
         val tgcCookie = prefs.getString("TGC", "")
-        val nextBoolean = remember { isNextOpen() }
 
        LaunchedEffect(Unit) {
            // 如果已经加载过 跳过
@@ -253,11 +217,8 @@ fun JxglstuCourseTableUI(
                loadingJxglstu = false
                return@LaunchedEffect
            }
-           launch {
-               if (nextBoolean) saveInt("FIRST", 1)
-           }
            // 等待读取本地Cookie
-           if(loadingJxglstu == false) return@LaunchedEffect
+           if(!loadingJxglstu) return@LaunchedEffect
            val cookie = getJxglstuCookie()
 
            launch {
@@ -268,21 +229,21 @@ fun JxglstuCourseTableUI(
                        return@async
                    }
                    val cookies =  "$casCookies;$tgcCookie"
-                   val useWebVpn = webVpn && !GlobalUIStateHolder.excludeJxglstu
+                   val useWebVpn = webVpn && !GlobalStateHolder.excludeJxglstu
                    // 智慧社区
                    launch community@ {
                        if(useWebVpn) {
                            return@community
                        }
                        val communityAuth = prefs.getString("TOKEN", "")
-                       if(communityAuth == null || communityAuth.isEmpty()) {
+                       if(communityAuth.isNullOrEmpty()) {
                            loginCommunity(cookies,vm)
                        } else {
                            // 检测智慧社区可用性
                            vm.checkCommunityLogin(communityAuth)
                            val result = (vm.checkCommunityResponse.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                                   showToast("无需刷新智慧社区")
+                               LogUtil.debug("无需刷新智慧社区")
                                return@community
                            } else {
                                // 登录community
@@ -294,16 +255,16 @@ fun JxglstuCourseTableUI(
                    launch huiXin@ {
                        //检测慧新易校可用性
                        val auth = prefs.getString("auth", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.goToHuiXin(cookies)
                        } else {
                            vm.checkHuiXinLogin(auth)
                            val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                                   showToast("无需刷新慧新易校")
+                               LogUtil.debug("无需刷新慧新易校")
                                return@huiXin
                            } else {
-                               if(useWebVpn || GlobalUIStateHolder.excludeJxglstu) {
+                               if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
                                    loginHuiXin(vm)
                                } else {
                                    vm.goToHuiXin(cookies)
@@ -317,13 +278,13 @@ fun JxglstuCourseTableUI(
                            return@one
                        }
                        val token = prefs.getString("bearer","")
-                       if(token == null|| token.isEmpty()) {
+                       if(token.isNullOrEmpty()) {
                            loginOne(cookies,vm)
                        } else {
                            vm.checkOneLogin(token)
                            val result = (vm.checkOneLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                                   showToast("无需刷新信息门户")
+                               LogUtil.debug("无需刷新信息门户")
                                return@one
                            } else {
                                loginOne(cookies,vm)
@@ -336,14 +297,14 @@ fun JxglstuCourseTableUI(
                            return@stu
                        }
                        val auth = prefs.getString("stu", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.goToStu(cookies)
                        } else {
                            // 检测学工系统可用性
                            vm.checkStuLogin(auth)
                            val result =  (vm.checkStuLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                               showToast("无需刷新学工平台")
+                               LogUtil.debug("无需刷新学工平台")
                                return@stu
                            } else {
                                // 登录
@@ -357,14 +318,14 @@ fun JxglstuCourseTableUI(
                            return@library
                        }
                        val auth = prefs.getString(LIBRARY_TOKEN, "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.gotoLibrary(cookies)
                        } else {
                            // 检测可用性
                            vm.checkLibraryLogin(auth)
                            val result =  (vm.checkLibraryLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                               showToast("无需刷新图书馆")
+                               LogUtil.debug("无需刷新图书馆")
                                return@library
                            } else {
                                // 登录
@@ -378,16 +339,16 @@ fun JxglstuCourseTableUI(
                            return@zhiJian
                        }
                        val auth = prefs.getString("ZhiJian", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.gotoZhiJian(cookies)
                        } else {
                            // 检测可用性
                            vm.zhiJianCheckLogin(auth)
                            val result = (vm.zhiJianCheckLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
+                               LogUtil.debug("无需刷新指间工大")
                                return@zhiJian
                            } else {
-//                                登录
                                vm.gotoZhiJian(cookies)
                            }
                        }
@@ -398,33 +359,70 @@ fun JxglstuCourseTableUI(
                            return@pe
                        }
                        val auth = prefs.getString("PE", "")
-                       if(auth == null || auth.isEmpty()) {
+                       if(auth.isNullOrEmpty()) {
                            vm.goToPe(cookies)
                        } else {
                            // 检测可用性
                            vm.checkPeLogin(auth)
                            val result = (vm.checkPeLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
+                               LogUtil.debug("无需刷新体测平台")
                                return@pe
                            } else {
-//                                登录
                                vm.goToPe(cookies)
                            }
                        }
                    }
+                   // 第二课堂
+                   launch second@ {
+                       if(useWebVpn) {
+                           return@second
+                       }
+                       val auth = prefs.getString(SharedPrefs.SECOND_CLASS_TOKEN, "")
+                       if(auth.isNullOrEmpty()) {
+                           vm.gotoSecondClass(cookies)
+                       } else {
+                           // 检测可用性
+                           vm.checkSecondClassLogin(auth)
+                           val result = (vm.checkSecondClassLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+                               LogUtil.debug("无需刷新第二课堂")
+                               return@second
+                           } else {
+                               vm.gotoSecondClass(cookies)
+                           }
+                       }
+                   }
+                   // 合工大教务
+                   launch uniapp@ {
+                       val auth = DataStoreManager.uniAppJwt.first()
+                       if(auth.isEmpty()) {
+                           vm.gotoSecondClass(cookies)
+                       } else {
+                           // 检测可用性
+                           val statusCode = UniAppRepository.checkLogin(auth)
+                           val result = statusCode != StatusCode.UNAUTHORIZED.code
+                           if(result) {
+                               LogUtil.debug("无需刷新合工大教务")
+                               return@uniapp
+                           } else {
+                               UniAppRepository.login()
+                           }
+                       }
+                   }
                }
-               // 超时10s
-               withTimeoutOrNull(10000) {
+               // fixme:最高等待时长15s，实测合工大教务接口有时比较慢
+               withTimeoutOrNull(Constant.UNI_APP_MAX_WAIT_TIME_SEC*1000) {
                    job.await()
                }
-               if(GlobalUIStateHolder.excludeJxglstu) {
+               if(GlobalStateHolder.excludeJxglstu) {
                    loadingJxglstu = false
                }
                onEnabled(true)
            }
            // 教务系统
            launch(Dispatchers.IO) jxglstu@ {
-               if(GlobalUIStateHolder.excludeJxglstu) {
+               if(GlobalStateHolder.excludeJxglstu) {
                    return@jxglstu
                }
                cookie?: return@jxglstu
@@ -459,22 +457,13 @@ fun JxglstuCourseTableUI(
                    }
                    loadingJxglstu = false
                }
-
-//               launch {
-//                   if(nextBoolean) {
-//                       vm.getLessonIdsNext(cookie, studentId = studentId, bizTypeId = bizTypeId)
-//                       val lessonResponse = (vm.lessonIdsNext.state.value as? UiState.Success)?.data ?: return@launch
-//                       vm.getLessonTimesNext(cookie,lessonResponse.timeTableLayoutId)
-//                       vm.getDatumNext(cookie,lessonResponse.lessonIds)
-//                   }
-//               }
            }
        }
     }
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-    var isExpand by remember { mutableStateOf(false) }
-
+    val floatingController = LocalFloatingController.current
+    val isExpand = floatingController.isRunning
 
     if(loadingJxglstu) {
         CenterScreen {
@@ -484,7 +473,6 @@ fun JxglstuCourseTableUI(
         val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
             value = allToTimeTableData()
         }
-
         LaunchedEffect(currentWeek,items) {
             if(currentWeek > items.size) {
                 Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
@@ -531,94 +519,68 @@ fun JxglstuCourseTableUI(
                 innerPadding = innerPadding,
                 shaderState = backGroundHaze,
                 onTapBlankRegion = {
-                    if(isExpand) {
-                        isExpand = false
-                    } else {
+                    if(!isExpand) {
                         onRestoreHeight()
-//                        showToast("空白区域双击添加日程,长按切换周")
                     }
                 },
                 onLongTapBlankRegion = {
-                    isExpand = !isExpand
+                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt() ) {
+                        weekSwap.goToWeek(it.toLong())
+                        floatingController.pop()
+                    })
                 },
                 onDoubleTapBlankRegion = {
-                    navController.navigateForTransition(
-                        AppNavRoute.AddEvent,
-                        AppNavRoute.AddEvent.withArgs()
+                    navController.push(
+                        AddEventDestination(
+                            null,
+                            AddEventOrigin.FOCUS_EDITED.name
+                        )
                     )
                 }
             ) { list ->
                 // 只有一节课
                 if (list.size == 1) {
                     val item = list[0]
+                    val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                     // 如果是考试
                     when(item.type) {
                         TimeTableType.COURSE -> {
-                            navController.navigateForTransition(AppNavRoute.CourseDetail, AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ))
+                            navController.push(CourseDetailApiDestination(item.name, origin, item.place))
                         }
                         TimeTableType.FOCUS -> {
-                            item.id?.let {
-                                navController.navigateForTransition(AppNavRoute.AddEvent, AppNavRoute.AddEvent.withArgs(it, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ))
+                            item.detail.eventId?.let {
+                                navController.push(AddEventDestination(it, CourseDetailOrigin.CALENDAR_JXGLSTU.t))
                             }
                         }
-                        TimeTableType.EXAM -> {
-                            navController.navigateForTransition(AppNavRoute.Exam, AppNavRoute.Exam.withArgs(CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"))
-                        }
+                        TimeTableType.EXAM -> navController.push(ExamDestination(origin))
                     }
                 } else if (list.size > 1) {
-                    bean = list
-                    showBottomSheetDetail = true
+                    floatingController.push(TimeTableSquareWindow(list))
                 }
             }
 
-            ShareTwoContainer2D(
+            DraggableWeekButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
                     .padding(APP_HORIZONTAL_DP),
-                show = !isExpand,
-                defaultContent = {
-                    TimeTablePreview(
-                        items = items, // 一周课程,
-                        currentWeek = currentWeek.toInt(),
-                        innerPadding = innerPadding,
-                    ) {
-                        weekSwap.goToWeek(it.toLong())
-                        isExpand = !isExpand
-                    }
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                expanded = shouldShowAddButton,
+                onClick = {
+                    weekSwap.backToCurrentWeek()
                 },
-                secondContent = {
-                    DraggableWeekButton(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                        expanded = shouldShowAddButton,
-                        onClick = {
-                            weekSwap.backToCurrentWeek()
-                        },
-                        shaderState = backGroundHaze,
-                        currentWeek = currentWeek,
-                        key = today,
-                        onNext = { weekSwap.nextWeek() },
-                        onPrevious = { weekSwap.previousWeek() },
-                        onLongClick = {
-                            isExpand = !isExpand
-                        }
-                    )
+                shaderState = backGroundHaze,
+                currentWeek = currentWeek,
+                key = today,
+                onNext = { weekSwap.nextWeek() },
+                onPrevious = { weekSwap.previousWeek() },
+                onLongClick = {
+                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                        weekSwap.goToWeek(it.toLong())
+                        floatingController.pop()
+                    })
                 }
             )
-            // 中间
         }
     }
 }
-
-//fun getNewWeek() : Long {
-//    return try {
-//        val jxglstuJson = prefs.getString("courses","")
-//        val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
-//        val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
-//        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.getToday()) + 1
-//        weeksBetweenJxglstu  //固定本周
-//    } catch (_ : Exception) {
-//        DateTimeManager.weeksBetweenJxglstu
-//    }
-//}
-

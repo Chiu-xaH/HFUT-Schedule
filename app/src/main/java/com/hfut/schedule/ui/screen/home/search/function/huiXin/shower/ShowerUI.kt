@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.shower
 
+
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -25,9 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -52,8 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.model.huixin.ShowerFeeResponse
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
@@ -62,23 +62,20 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.xah.uicommon.component.status.LoadingUI
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
-   
- 
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -89,7 +86,7 @@ import java.math.BigDecimal
 
 private fun getUrl(page : Int,) : String {
     val auth = prefs.getString("auth","")
-    return MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
+    return Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
 fun getInGuaGua(vm: NetWorkViewModel,context : Context,onResult : (Boolean) -> Unit) {
 
@@ -159,10 +156,6 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-            autoShape = false
-//            sheetState = sheetState,
-            //    shape = sheetState
         ) {
             Column(
             ) {
@@ -234,7 +227,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "description")
+                        Icon(painterResource(R.drawable.check), contentDescription = "description")
                     }
 
                     FilledTonalButton(
@@ -303,7 +296,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
+                                Starter.startWebUrlInner(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
                             }
                         }
                     ) {
@@ -326,7 +319,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                         getInGuaGua(vm,context) { loading = it }
                     },
                     trailingContent = {
-                        Icon(Icons.Default.ArrowForward,null)
+                        Icon(painterResource(R.drawable.arrow_forward),null)
                     },
                     color = MaterialTheme.colorScheme.secondaryContainer
                 )
@@ -342,11 +335,11 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
+                                    Starter.startWebUrlInner(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
                                 }
                             },
                             trailingContent = {
-                                Icon(Icons.Default.ArrowForward,null)
+                                Icon(painterResource(R.drawable.arrow_forward),null)
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.search),null)

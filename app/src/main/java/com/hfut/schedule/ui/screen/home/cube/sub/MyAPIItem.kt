@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.util.MyApiParse.getSettingInfo
+import com.hfut.schedule.logic.util.network.MyApiParse.getSettingInfo
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.ui.component.container.CustomCard

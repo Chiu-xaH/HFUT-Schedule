@@ -12,58 +12,55 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.navigation.NavHostController
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
+
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAppNavController
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -71,18 +68,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun Exam(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.Exam.withArgs() }
-
+fun Exam() {
+    val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Exam.label)) },
+        headlineContent = { ScrollText(text = ExamDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(ExamDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Exam,route)
+            navController.push(ExamDestination(null))
         }
     )
 }
@@ -90,39 +84,42 @@ fun Exam(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ExamScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
     origin : String?
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Exam.withArgs(origin) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Exam.label)) },
+                title = { Text(ExamDestination.TITLE.asString()) },
                 actions = {
-                    LiquidButton(
-                        modifier = Modifier
-                            .containerShare(AppNavRoute.ExamNews.route, MaterialTheme.shapes.extraLarge)
-                            .padding(horizontal = APP_HORIZONTAL_DP),
-                        backdrop = backdrop,
-                        onClick = {
-                            navController.navigateForTransition(AppNavRoute.ExamNews, AppNavRoute.ExamNews.route)
-                        },
+                    SharedContainer(
+                        key = ExamNewsDestination.key,
+                        shape = CircleShape,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
-                        Text("全校考试安排", maxLines = 1)
+                        NoPadding {
+                            LiquidButton(
+                                shape = NoneRoundShape,
+                                backdrop = backdrop,
+                                onClick = { navController.push(ExamNewsDestination) },
+                            ) {
+                                Text("全校考试安排", maxLines = 1)
+                            }
+                        }
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Exam.icon)
+                    TopBarNavigationIcon()
                 }
             )
         },
@@ -138,7 +135,7 @@ fun ExamScreen(
             }
             if(list.isEmpty()) {
                 CenterScreen {
-                    EmptyIcon()
+                    EmptyIcon("暂无考试安排")
                 }
             } else {
                 LazyColumn {
@@ -176,7 +173,7 @@ private fun ExamItems(item : Int,status : Boolean) {
                         leadingContent = {
                             if(status) Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
                             else if(examDate.toInt() >= todayDate.toInt()) Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
-                            else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
+                            else Icon(painterResource(R.drawable.check), contentDescription = "Localized description",)
                         },
                         trailingContent = {
                             if(examDate.toInt() < todayDate.toInt()) Text(text = "已结束")
@@ -228,13 +225,13 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
         val isFinished = examDateNum < newToday
 //            DateTimeUtils.compareTimeDate(endTime = endTime) == DateTimeUtils.TimeState.ENDED
         CardListItem(
-            headlineContent = {  Text(text = course.toString() + (item.type?.let { "-$it" } ?: ""), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+            headlineContent = {  Text(text = course + (item.type?.let { "-$it" } ?: ""), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
             leadingContent = {
                 if(!isFinished)
                     Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
-                else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
+                else Icon(painterResource(R.drawable.check), contentDescription = "Localized description",)
             },
             trailingContent = {
                 if(isFinished) Text(text = "已结束")
@@ -250,12 +247,12 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
         if(examDateNum >= newToday) {
             //如果是今天考试，那么判断考试结束后不显示 待做
             val scope = rememberCoroutineScope()
-            val navController = LocalAppNavController.current
+            val navController = LocalNavController.current
             //今天 && 已经考完
             if(
-                "$month-$day" == DateTimeManager.Date_MM_dd && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
-            } else {
-                val route = AppNavRoute.Exam.withArgs(CourseDetailOrigin.FOCUS_TODAY.t + "@${item.hashCode()}")
+                !("$month-$day" == DateTimeManager.Date_MM_dd && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED)
+            ) {
+                val dest = ExamDestination(CourseDetailOrigin.FOCUS_TODAY.t + "@${item.hashCode()}")
                 CardListItem(
                     headlineContent = {  Text(text = course) },
                     overlineContent = { Text(text = time.substringAfter("-")) },
@@ -268,9 +265,14 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
 //                                }
                         Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
                     },
-                    cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+                    shape = NoneRoundShape,
+                    cardModifier = Modifier.sharedContainer(
+                        dest.key,
+                        MaterialTheme.shapes.medium,
+                        MaterialTheme.colorScheme.errorContainer
+                    ),
                     modifier = Modifier.clickable {
-                        navController.navigateForTransition(AppNavRoute.Exam,route)
+                        navController.push(dest)
                     },
                     trailingContent = {
                         if("$month-$day" == DateTimeManager.Date_MM_dd) {

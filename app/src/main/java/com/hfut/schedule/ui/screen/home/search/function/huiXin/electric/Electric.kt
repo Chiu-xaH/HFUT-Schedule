@@ -23,7 +23,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.HefeiElectricStorage
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -60,8 +60,6 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
             EleUI(vm = vm,hazeState)

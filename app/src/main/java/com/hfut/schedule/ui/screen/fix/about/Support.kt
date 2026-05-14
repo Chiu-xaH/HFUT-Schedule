@@ -1,6 +1,6 @@
 package com.hfut.schedule.ui.screen.fix.about
 
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,42 +8,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
-import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-   
- 
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import dev.chrisbanes.haze.HazeState
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 private data class SupportItemBean(val title : String,val android : String,val url : String?,val list: List<Boolean?>,val remark : String? = null)
@@ -52,32 +39,33 @@ private data class SupportItemBean(val title : String,val android : String,val u
 fun Support(innerPadding : PaddingValues) {
     val items = listOf(
         // 华为 小米 oppo vivo 荣耀 三星 魅族 类原生
-        SupportItemBean("开屏页面","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("开屏页面","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             false,true,true,true,true,true,true,true
         )),
-        SupportItemBean("全局动态取色","Android 12+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
+        SupportItemBean("全局动态取色","Android 12+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,true,true,false,true,null,true
         )),
-        SupportItemBean("图标动态取色","Android 12+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
+        SupportItemBean("图标动态取色","Android 12+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,null,false,false,true,false,true
         )),
-        SupportItemBean("层级实时模糊","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
+        SupportItemBean("层级实时模糊","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
             true,true,true,true,true,true,true,true
         ),"Android 8-11 无顶栏、底栏模糊，且模糊渲染稍缓\nAndroid 12 无底栏模糊，且顶栏模糊渐变效果较差"),
-        SupportItemBean("预测式返回","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
+        SupportItemBean("预测式返回","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
             false,true,true,true,true,true,true,true
         )),
-        SupportItemBean("16KB页大小","Android 15+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#16kb%E9%A1%B5%E5%A4%A7%E5%B0%8F", listOf(
+        SupportItemBean("16KB页大小","Android 15+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#16kb%E9%A1%B5%E5%A4%A7%E5%B0%8F", listOf(
             false,null,null,null,null,null,null,true
         )),
-        SupportItemBean("运动模糊","Android 12+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("运动模糊","Android 12+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             true,true,true,true,true,true,true,true
         )),
-        SupportItemBean("着色器","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("着色器","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             false,true,true,true,true,true,true,true
         ))
     )
-    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+    LazyColumn(modifier = Modifier) {
+        item { InnerPaddingHeight(innerPadding,true) }
         item {
             CardListItem(
                 headlineContent = { Text("${MyApplication.APP_NAME}致力于为每个用户提供平等的服务，但由于不同手机厂商对Android系统的定制，以及Android版本的不同，导致最终效果往往不同，但以下的特性均不影响APP的功能") },
@@ -91,6 +79,8 @@ fun Support(innerPadding : PaddingValues) {
             val item = items[index]
             SupportItem(item)
         }
+        item { InnerPaddingHeight(innerPadding,false) }
+
     }
 }
 
@@ -100,8 +90,8 @@ private fun SupportChip(title: String,isSupported : Boolean?) = AssistChip(
     label = { Text(title) },
     leadingIcon = {
         when(isSupported) {
-            true -> Icon(Icons.Filled.Check,null)
-            false -> Icon(Icons.Filled.Close,null, tint = MaterialTheme.colorScheme.error)
+            true -> Icon(painterResource(R.drawable.check),null)
+            false -> Icon(painterResource(R.drawable.close),null, tint = MaterialTheme.colorScheme.error)
             null -> Text("未知")
         }
     }
@@ -150,12 +140,12 @@ private fun SupportItem(item : SupportItemBean) {
                     }
                 }
             )
-            CardBottomButtons(
+            BottomTextButtonGroup(
                 listOf(
                     CardBottomButton(item.android),
                     CardBottomButton("预览效果",item.url != null) {
                         scope.launch {
-                            item.url?.let { Starter.startWebView(context,it,"Github", icon = R.drawable.github) }
+                            item.url?.let { Starter.startWebUrlInner(context,it,"Github", icon = R.drawable.github) }
                         }
                     }
                 )

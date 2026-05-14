@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,21 +30,22 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.isSupabaseRegistering
+import com.hfut.schedule.ui.util.state.GlobalStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -70,9 +69,8 @@ fun Mail(
     if (showBottomSheet ) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            autoShape = false,
-            isFullExpand = true,
+//            isFullScreen = false,
+//            expandFully = true,
             showBottomSheet = showBottomSheet
         ) {
             Column{
@@ -113,7 +111,7 @@ fun MailUI(vm: NetWorkViewModel) {
                                 response.data.let {
                                     if(it != null) {
                                         used = !used
-                                        Starter.startWebView(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
+                                        Starter.startWebUrlInner(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
                                     } else {
                                         showToast( "错误 " + response.msg)
                                     }
@@ -129,7 +127,7 @@ fun MailUI(vm: NetWorkViewModel) {
                         onClick = {
                             response.data.let {
                                 if(it != null) {
-                                    Starter.startWebUrl(context,it)
+                                    Starter.startWebUrlOuter(context,it)
                                     used = !used
                                 } else {
                                     showToast( "错误 " + response.msg)
@@ -160,13 +158,13 @@ fun MailUI(vm: NetWorkViewModel) {
                 Text("若为首次使用，请前往信息门户(点击此项)进入邮箱，进行激活")
             },
             modifier = Modifier.clickable {
-                Starter.startWebUrl(context,MyApplication.ONE_URL)
+                Starter.startWebUrlOuter(context,Constant.ONE_URL)
             },
             leadingContent = {
-                Icon(Icons.Default.ArrowForward,null)
+                Icon(painterResource(R.drawable.arrow_forward),null)
             }
         )
-        if(isSupabaseRegistering.value) {
+        if(isSupabaseRegistering) {
             CardListItem(
                 headlineContent = {
                     Text("共建平台注册激活请选择在浏览器使用，并检查最新收件箱 来自Supabase Auth的邮件 点击链接并Confirm")

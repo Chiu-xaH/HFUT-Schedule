@@ -13,9 +13,9 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/baselineProfile" />
             <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/lite" />
+            <option value="$PROJECT_DIR$/forecast" />
+            <option value="$PROJECT_DIR$/network" />
             <option value="$PROJECT_DIR$/shared" />
-            <option value="$PROJECT_DIR$/transition" />
           </set>
         </option>
       </GradleProjectSettings>

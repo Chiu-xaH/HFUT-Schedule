@@ -26,9 +26,10 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.network.util.Constant
+
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -37,7 +38,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -58,7 +59,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         vm.getAcademicXCNews(AcademicXCType.entries[pagerState.currentPage],page)
     }
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -91,7 +92,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                         val link = if (isValidWebUrl(item.link)) {
                                             item.link
                                         } else {
-                                            MyApplication.XC_ACADEMIC_URL + item.link
+                                            Constant.XC_ACADEMIC_URL + item.link
                                         }
                                         autoWebVpnForNews(
                                             context,

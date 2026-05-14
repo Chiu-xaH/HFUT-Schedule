@@ -44,7 +44,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -56,11 +56,11 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
 import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.shared.model.BillRecordBean
-import com.xah.uicommon.style.align.CenterScreen
+import com.xah.forecast.model.network.BillRecordBean
+import com.xah.common.ui.style.align.CenterScreen
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -77,7 +77,7 @@ fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, page
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 when(page) {
-                    TAB_DAY -> TodayBillScreen(vm,innerPadding, hazeState)
+                    TAB_DAY -> TodayBillScreen(vm,innerPadding)
                     TAB_MONTH -> MonthBillNewScreen(vm,innerPadding)
                     TAB_TERM -> YearBillNewScreen(vm,innerPadding)
                     TAB_ALL -> PredictedScreen(vm,innerPadding,pagerState)
@@ -87,7 +87,7 @@ fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, page
     }
 
 @Composable
-private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,hazeState : HazeState) {
+private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
     CommonNetworkScreen(uiState, onReload = null) {
         var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
@@ -96,9 +96,8 @@ private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,haz
         if(showBottomSheet && infoNum != null) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
-                autoShape = false,
+//                isFullScreen = false,
                 showBottomSheet = showBottomSheet,
-                hazeState = hazeState
             ){
                 BillsInfo(infoNum!!)
             }

@@ -1,11 +1,11 @@
 package com.hfut.schedule.logic.util.parse
 
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.network.util.MyApiParse.getMy
+import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
 
 object SemesterParser {
@@ -37,6 +37,27 @@ object SemesterParser {
 
         return if(LanguageHelper.isChineseLanguage()) {
             "${years}~${years + 1}年第${upOrDown}学期"
+        } else {
+            "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
+        }
+    }
+    @JvmStatic
+    fun parseSemesterSimply(semester : Int) : String {
+        val codes = (semester - 4) / 10
+        val year = 2017
+        val code = 3
+
+        var upOrDown = 0
+        if(codes % 4 == 1) {
+            upOrDown = 2
+        } else if(codes % 4 == 3) {
+            upOrDown = 1
+        }
+
+        val years=( (year + (codes - code) / 4) + 1) % 100
+
+        return if(LanguageHelper.isChineseLanguage()) {
+            "${years}~${years + 1}学年${if(upOrDown == 1) "上" else "下"}学期"
         } else {
             "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
         }
@@ -98,17 +119,12 @@ object SemesterParser {
 
     @JvmStatic
     suspend fun getSemester() : Int {
-        try {
-            val autoTerm = DataStoreManager.enableAutoTerm.first()
-            if(autoTerm) {
-                return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
-            } else {
-                val autoTermValue = DataStoreManager.customTermValue.first()
-                return autoTermValue
-            }
-        } catch (e : Exception) {
-            LogUtil.error(e)
-            return getMy()!!.semesterId.toInt()
+        val autoTerm = DataStoreManager.enableAutoTerm.first()
+        if(autoTerm) {
+            return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+        } else {
+            val autoTermValue = DataStoreManager.customTermValue.first()
+            return autoTermValue
         }
     }
     @JvmStatic

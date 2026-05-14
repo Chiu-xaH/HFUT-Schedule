@@ -1,18 +1,26 @@
 package com.hfut.schedule.ui.component.network
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,10 +32,74 @@ import com.hfut.schedule.logic.util.other.rememberImageState
 import com.hfut.schedule.logic.util.ocr.preprocessCaptcha
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.model.ContainerFilledStrategy
+import com.xah.container.util.NoneRoundShape
+import com.xah.floating.util.LocalFloatingControllerSafely
 import kotlinx.coroutines.launch
 
 
+val DEFAULT_IMAGE_SIZE = 70.dp
+
+@Composable
+fun UrlImage(
+    url: String,
+    modifier: Modifier = Modifier,
+    cookie: String? = null,
+    enableClick : Boolean = true,
+    shape: CornerBasedShape = NoneRoundShape,
+    contentScale: ContentScale = ContentScale.Crop, // 决定是否裁剪
+    placeholder: Painter = painterResource(R.drawable.ic_launcher_background),
+) {
+    val floatingControllerSafely = LocalFloatingControllerSafely.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val imageState = rememberImageState(url, cookie = cookie)
+    val bitmap = imageState.value?.asImageBitmap()
+
+    if (bitmap != null) {
+        val window = remember(bitmap) { ImagePreviewWindow(bitmap) }
+        val interactionSource = remember { MutableInteractionSource() }
+
+        Image(
+            bitmap = bitmap,
+            contentDescription = null,
+            contentScale = contentScale,
+            modifier = modifier
+                .sharedContainer(
+                    window.key,
+                    containerFilledStrategy = ContainerFilledStrategy.Element,
+                    shape = shape
+                )
+                .let {
+                    if(enableClick) {
+                        it.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                        ) {
+                            floatingControllerSafely?.push(window)
+                                ?: scope.launch {
+                                    Starter.startWebUrlInner(context, url, "图片", cookie)
+                                }
+                        }
+                    } else {
+                        it
+                    }
+                }
+        )
+    } else {
+        Image(
+            painter = placeholder,
+            contentDescription = null,
+            contentScale = contentScale,
+            modifier = modifier.clip(shape)
+        )
+    }
+}
+/*
 @Composable
 fun UrlImage(
     url : String,
@@ -37,6 +109,7 @@ fun UrlImage(
     height : Dp = 70.dp,
     useCut : Boolean = true
 ) {
+    val floatingControllerSafely = LocalFloatingControllerSafely.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val modifierCut = if(useCut) {
@@ -53,18 +126,27 @@ fun UrlImage(
         modifierCut
             .clip(RoundedCornerShape(roundSize))
             .size(width = width,height= height)
-            .clickable {
-               scope.launch {
-                   Starter.startWebView(context,url,"图片",cookie)
-               }
-            }
     ) {
         val imageState = rememberImageState(url, cookie = cookie)
         imageState.value?.let { bitmap ->
+            val imageBitmap = bitmap.asImageBitmap()
+            val window = ImagePreviewWindow(imageBitmap)
             Image(
-                bitmap = bitmap.asImageBitmap(),
+                bitmap = imageBitmap,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .sharedContainer(window.key, containerFilledStrategy = ContainerFilledStrategy.Element, shape = RoundedCornerShape(roundSize))
+                    .clickable {
+                        if(floatingControllerSafely == null) {
+                            scope.launch {
+                                Starter.startWebView(context,url,"图片",cookie)
+                            }
+                        } else {
+                            floatingControllerSafely.push(ImagePreviewWindow(imageBitmap))
+                        }
+                    }
+                ,
                 contentScale = ContentScale.Crop
             )
         } ?:
@@ -80,36 +162,42 @@ fun UrlImage(
 @Composable
 fun UrlImageNoCrop(
     url : String,
+    modifier: Modifier = Modifier,
     cookie : String? = null,
-    modifier: Modifier = Modifier.padding(APP_HORIZONTAL_DP)
 ) {
+    val floatingControllerSafely = LocalFloatingControllerSafely.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val imageState = rememberImageState(url, cookie = cookie)
     imageState.value?.let { bitmap ->
+        val imageBitmap = bitmap.asImageBitmap()
+        val window = ImagePreviewWindow(imageBitmap)
         Image(
-            bitmap = bitmap.asImageBitmap(),
+            bitmap = imageBitmap,
             contentDescription = null,
-            modifier = modifier.clickable {
-                scope.launch {
-                    Starter.startWebView(context,url,"图片",cookie)
+            modifier = modifier
+                .sharedContainer(window.key, containerFilledStrategy = ContainerFilledStrategy.Element, shape = NoneRoundShape)
+                .clickable {
+                    if(floatingControllerSafely == null) {
+                        scope.launch {
+                            Starter.startWebView(context,url,"图片",cookie)
+                        }
+                    } else {
+                        floatingControllerSafely.push(window)
+                    }
                 }
-            },
+            ,
             contentScale = ContentScale.Fit
         )
     } ?:
     Image(
         painterResource(R.drawable.ic_launcher_background),
         contentDescription = null,
-        modifier = modifier.clickable {
-            scope.launch {
-                Starter.startWebView(context,url,"图片",cookie)
-            }
-        },
+        modifier = modifier,
         contentScale = ContentScale.Fit
     )
 }
-
+*/
 @Composable
 fun UrlImageWithAutoOcr(
     url : String,

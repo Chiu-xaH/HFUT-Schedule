@@ -29,8 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -79,6 +77,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -94,9 +93,9 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -108,13 +107,13 @@ private const val XUANCHENG_TAB = 1
 
 private fun getUrl(page : Int) : String {
     val auth = prefs.getString("auth","")
-    return  MyApplication.HUI_XIN_URL +
+    return  Constant.HUI_XIN_URL +
             "charge-app/?name=pays&appsourse=ydfwpt&id=${
                 if(page == XUANCHENG_TAB)
                     FeeType.ELECTRIC_XUANCHENG.code
                 else 
                     FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
-            }&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
+            }&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -162,8 +161,6 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            autoShape = false,
-            hazeState = hazeState
         ) {
                 Column(
 
@@ -260,7 +257,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "description")
+                        Icon(painterResource(R.drawable.check), contentDescription = "description")
                     }
 
                     FilledTonalButton(
@@ -417,7 +414,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,getUrl(pagerState.currentPage), title = "慧新易校")
+                                Starter.startWebUrlInner(context,getUrl(pagerState.currentPage), title = "慧新易校")
                             }
                         }
                     ) {

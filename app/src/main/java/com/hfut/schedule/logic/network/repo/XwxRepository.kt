@@ -4,26 +4,21 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import com.google.gson.Gson
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.xwx.XwxDocPreviewRequestBody
+import com.hfut.schedule.network.model.XwxDocPreviewRequest
 import com.hfut.schedule.logic.model.xwx.XwxDocPreviewResponseBody
 import com.hfut.schedule.logic.model.xwx.XwxFunction
-import com.hfut.schedule.logic.model.xwx.XwxFunctionsRequestBody
+import com.hfut.schedule.network.model.XwxFunctionsRequest
 import com.hfut.schedule.logic.model.xwx.XwxFunctionsResponseBody
-import com.hfut.schedule.logic.model.xwx.XwxLoginBean
-import com.hfut.schedule.logic.model.xwx.XwxLoginInfo
-import com.hfut.schedule.logic.model.xwx.XwxLoginRequestBody
+import com.hfut.schedule.network.model.XwxLoginRequest
 import com.hfut.schedule.logic.model.xwx.XwxLoginResponseBody
 import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
 import com.hfut.schedule.logic.model.xwx.XwxSchoolListResponseBody
-import com.hfut.schedule.logic.model.xwx.XwxUserInfo
 import com.hfut.schedule.logic.model.xwx.isXwxRequestSuccessful
-import com.hfut.schedule.logic.network.api.XwxService
-import com.hfut.schedule.logic.network.servicecreator.XwxServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestState
+import com.hfut.schedule.network.api.XwxService
+import com.hfut.schedule.network.impl.XwxServiceCreator
+import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,7 +50,7 @@ object XwxRepository {
         holder : StateHolder<Boolean>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.login(XwxLoginRequestBody(schoolCode = schoolCode, userId = username,password = password)) },
+        request = { xwx.login(XwxLoginRequest(schoolCode = schoolCode, userId = username,password = password)) },
         transformSuccess = { _,json -> parseLogin(json) }
     )
     @JvmStatic
@@ -82,7 +77,7 @@ object XwxRepository {
         holder : StateHolder<List<XwxFunction>>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.getFunctions(token,XwxFunctionsRequestBody(schoolCode = schoolCode,userId = username),) },
+        request = { xwx.getFunctions(token,XwxFunctionsRequest(schoolCode = schoolCode,userId = username),) },
         transformSuccess = { _,json -> parseFunctions(json) }
     )
     @JvmStatic
@@ -103,7 +98,7 @@ object XwxRepository {
         holder : StateHolder<Bitmap>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.getDocPreview(token,XwxDocPreviewRequestBody(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
+        request = { xwx.getDocPreview(token,XwxDocPreviewRequest(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
         transformSuccess = { _,json -> parseDocPreview(json) }
     )
     @JvmStatic

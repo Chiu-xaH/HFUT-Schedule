@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -41,19 +42,20 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.DormitoryDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -63,11 +65,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun DormitoryScoreScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Dormitory.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val dormitoryUiState by vm.dormitoryFromCommunityResp.state.collectAsState()
     val dormitoryInfoUiState by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
@@ -120,9 +120,7 @@ fun DormitoryScoreScreen(
             refreshNetwork()
         }
     }
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column {
@@ -130,9 +128,9 @@ fun DormitoryScoreScreen(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Dormitory.label)) },
+                    title = { Text(DormitoryDestination.title.asString()) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Dormitory.icon)
+                        TopBarNavigationIcon()
                     },
                 )
             }
@@ -205,15 +203,15 @@ fun DormitoryScoreScreen(
                                         val item = data[index]
                                         RowHorizontal {
                                             TransplantListItem(
-                                                headlineContent = { Text(item.title) },
-                                                supportingContent = { Text(item.value) },
+                                                overlineContent = { Text(item.title) },
+                                                headlineContent = { Text(item.value) },
                                                 modifier = Modifier.weight(.5f)
                                             )
                                             if(index + 1 < data.size) {
                                                 val item2 = data[index+1]
                                                 TransplantListItem(
-                                                    headlineContent = { Text(item2.title) },
-                                                    supportingContent = { Text(item2.value) },
+                                                    overlineContent = { Text(item2.title) },
+                                                    headlineContent = { Text(item2.value) },
                                                     modifier = Modifier.weight(.5f)
                                                 )
                                             }

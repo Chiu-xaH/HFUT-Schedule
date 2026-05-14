@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -29,17 +30,18 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.NotificationsDestination
+
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -90,7 +92,7 @@ fun NotificationItems() {
             val clickAction = {
                 scope.launch {
                     item.url?.let {
-                        Starter.startWebView(context,it,item.title, icon = AppNavRoute.Notifications.icon)
+                        Starter.startWebUrlInner(context,it,item.title, icon = NotificationsDestination.icon)
                     } ?: showToast("暂无点击操作")
                 }
             }
@@ -112,7 +114,7 @@ fun NotificationItems() {
                             clickAction()
                         }
                     )
-                    CardBottomButtons(
+                    BottomTextButtonGroup(
                         listOf(
                             CardBottomButton(item.remark, clickable = null),
                             CardBottomButton("含网页", show = item.url != null) {
@@ -144,25 +146,20 @@ fun NotificationItems() {
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Notifications.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Notifications.label)) },
+                title = { Text(NotificationsDestination.title.asString()) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Notifications.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

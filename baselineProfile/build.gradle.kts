@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.hfut.schedule.baselineprofile"
-    compileSdk = 36
+    compileSdk = Integer.parseInt(libs.versions.maxAndroidVersion.get())
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -18,8 +18,8 @@ android {
     }
 
     defaultConfig {
-        minSdk = 28
-        targetSdk = 36
+        minSdk = Integer.parseInt(libs.versions.minAndroidVersion.get())
+        targetSdk = Integer.parseInt(libs.versions.maxAndroidVersion.get())
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 @SuppressLint("SuspiciousIndentation")
@@ -90,7 +90,7 @@ fun AvgGrade(vm: NetWorkViewModel) {
                 TransplantListItem(
                     headlineContent = { Text("绩点 ${resultAvg.myAvgGpa}") },
                     supportingContent = { Text("排名 ${resultAvg.majorAvgGpaRanking}") },
-                    leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
@@ -114,7 +114,7 @@ fun AvgGrade(vm: NetWorkViewModel) {
                 TransplantListItem(
                     headlineContent = { Text("绩点") },
                     supportingContent = { Text("平均 ${resultAvg.majorAvgGpa}\n最高 (待开发)") },
-                    leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                     modifier = Modifier
 
                         .fillMaxWidth()
@@ -165,7 +165,7 @@ fun AllGrade(vm: NetWorkViewModel) {
                         Row {
                             TransplantListItem(
                                 headlineContent = { Text("绩点 ${item.myAvgGpa}") },
-                                leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                                leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(.5f),
@@ -187,7 +187,7 @@ fun AllGrade(vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { Text("绩点(GPA)") },
                                 supportingContent = { Text("平均 ${item.majorAvgGpa}\n最高 ${item.maxAvgGpa}") },
-                                leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
+                                leadingContent = { Icon(painterResource(R.drawable.kid_star), contentDescription = "Localized description",) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(.5f),

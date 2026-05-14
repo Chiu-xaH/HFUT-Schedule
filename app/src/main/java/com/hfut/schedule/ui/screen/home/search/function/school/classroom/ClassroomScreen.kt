@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -33,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
@@ -55,19 +57,17 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -79,65 +79,62 @@ import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
 import com.hfut.schedule.logic.model.uniapp.UniAppCampus
 import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
 import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomLesson
-import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
+import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ClassroomCourseTableDestination
+import com.hfut.schedule.ui.nav.destination.ClassroomDestination
+import com.hfut.schedule.ui.nav.window.ClassroomSquareWindow
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniApp
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.screen.home.smoothToOne
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.nav2Composable
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.containerShare
-import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.floating.util.LocalFloatingController
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -164,26 +161,16 @@ private val items = listOf(
 @Composable
 fun ClassroomScreen(
     vm : NetWorkViewModel,
-    navTopController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.Classroom.route }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         ClassroomBarItems.EMPTY_CLASSROOM.name -> ClassroomBarItems.EMPTY_CLASSROOM
         ClassroomBarItems.CLASSROOM_LESSONS.name -> ClassroomBarItems.CLASSROOM_LESSONS
         else -> ClassroomBarItems.EMPTY_CLASSROOM
     }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
 
@@ -191,8 +178,8 @@ fun ClassroomScreen(
 
     var date by remember { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
     var campus by remember { mutableStateOf<Campus?>(getCampus()) }
-    var selectedBuildings = remember { mutableStateListOf<UniAppBuildingBean>() }
-    var selectedFloors = remember { mutableStateListOf<Int>() }
+    val selectedBuildings = remember { mutableStateListOf<UniAppBuildingBean>() }
+    val selectedFloors = remember { mutableStateListOf<Int>() }
     var input by remember { mutableStateOf("") }
 
     val refreshNetworkSearch = suspend m@ {
@@ -212,10 +199,8 @@ fun ClassroomScreen(
     if(showSelectDateDialog)
         DateRangePickerModal(text = "",onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navTopController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -223,9 +208,9 @@ fun ClassroomScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Classroom.label)) },
+                    title = { Text(ClassroomDestination.TITLE.asString()) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Classroom.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
@@ -244,8 +229,8 @@ fun ClassroomScreen(
 
                 if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
                     CustomCard(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(.35f),
-                        modifier = Modifier.containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                        color = Color.Transparent,
+                        modifier = Modifier.containerBackDrop(backDrop, MaterialTheme.shapes.medium, surfaceColor = MaterialTheme.colorScheme.primaryContainer.copy(.35f))
                     ) {
                         // 校区选择 多个Chip
                         val campusList = Campus.entries
@@ -330,6 +315,7 @@ fun ClassroomScreen(
                     }
                 } else {
                     CustomTextField(
+                        colors = textFiledAllTransplant(),
                         input = input,
                         modifier = Modifier
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -355,22 +341,18 @@ fun ClassroomScreen(
             HazeBottomBar(hazeState, items,navController)
         }
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(
             navController = navController,
             startDestination = ClassroomBarItems.EMPTY_CLASSROOM.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
             modifier = Modifier
                 .backDropSource(backDrop)
                 .hazeSource(state = hazeState)
         ) {
-            composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
-                EmptyClassroomScreen(vm,innerPadding,navTopController,date,campus,selectedBuildings,selectedFloors,hazeState)
+            nav2Composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
+                EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors,hazeState)
             }
-            composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
-                SearchClassroomScreen(vm,navTopController,innerPadding) {
+            nav2Composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
+                SearchClassroomScreen(vm,innerPadding) {
                     scope.launch {
                         refreshNetworkSearch()
                     }
@@ -386,13 +368,14 @@ fun ClassroomScreen(
 private fun EmptyClassroomScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
     date : String,
     campus : Campus?,
     selectedBuildings: SnapshotStateList<UniAppBuildingBean>,
     selectedFloors: SnapshotStateList<Int>,
     hazeState: HazeState
 ) {
+    val navTopController = LocalNavController.current
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
     val refreshNetworkChips = suspend m@ {
         if(chipsUiState is UiState.Success) {
@@ -441,81 +424,19 @@ private fun EmptyClassroomScreen(
     }
     val isToday = DateTimeManager.Date_yyyy_MM_dd == date
 
-    val occupyList = remember { ClassroomOccupiedCause.entries }
-    var showDialog by remember { mutableStateOf(false) }
-    var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
-    var title by remember { mutableStateOf("占用详情") }
-    if(showDialog && info != null) {
-        HazeBottomSheet (
-            hazeState = hazeState,
-            showBottomSheet = showDialog,
-            isFullExpand = true,
-            autoShape = false,
-            onDismissRequest = { showDialog = false },
-        ) {
-            val cause = occupyList.find { it.activityType == info!!.activityType }
-
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
-                HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
-                CustomCard(color = cardNormalColor()) {
-                    info!!.teacherName?.let { teacherName ->
-                        TransplantListItem(
-                            headlineContent = {
-                                Text(teacherName)
-                            },
-                            overlineContent = {
-                                Text("教师")
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.person),null)
-                            }
-                        )
-                    }
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("${info!!.date} ${info!!.startTimeString}~${info!!.endTimeString}"  )
-                        },
-                        overlineContent = {
-                            Text("时间")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.schedule),null)
-                        }
-                    )
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(info!!.activityName)
-                        },
-                        overlineContent = {
-                            Text("类型: ${cause?.description ?: info!!.activityType}")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(
-                                when(cause) {
-                                    ClassroomOccupiedCause.BORROWED -> {
-                                        R.drawable.groups
-                                    }
-                                    ClassroomOccupiedCause.EXAM -> {
-                                        R.drawable.draw
-                                    }
-                                    ClassroomOccupiedCause.IN_LESSON -> {
-                                        R.drawable.calendar
-                                    }
-                                    null -> {
-                                        R.drawable.category
-                                    }
-                                }
-                            ),null)
-                        }
-                    )
-                }
-                Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
-            }
-        }
-    }
+//    val occupyList = remember { ClassroomOccupiedCause.entries }
+    val floatingController = LocalFloatingController.current
+//    var showDialog by remember { mutableStateOf(false) }
+//    var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
+//    var title by remember { mutableStateOf("占用详情") }
+//    if(showDialog && info != null) {
+//        HazeBottomSheet (
+//            showBottomSheet = showDialog,
+//            onDismissRequest = { showDialog = false },
+//        ) {
+//
+//        }
+//    }
 
     val listState = rememberLazyListState()
     val scheduleModifier =  Modifier
@@ -531,15 +452,22 @@ private fun EmptyClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size,key = { it }) { index ->
                         val item = list[index]
-                        val route = AppNavRoute.ClassroomCourseTable.withArgs(item.id,item.nameZh)
+                        val dest = ClassroomCourseTableDestination(
+                            item.id,
+                            item.nameZh
+                        )
                         val activities = item.roomOccupationInfoVms ?: emptyList()
                         val isAllDayFree = activities.isEmpty()
                         val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
+//                            shape = NoneRoundShape,
                             color = cardNormalColor(),
-                            modifier = Modifier.containerShare(route).clickable {
-                                navTopController.navigateForTransition(AppNavRoute.ClassroomCourseTable,route)
-                            }
+                            modifier = Modifier
+                                .clickable { navTopController.push(dest) }
+//                                .sharedContainer(
+//                                    dest.key,
+//                                    MaterialTheme.shapes.medium
+//                                )
                         ) {
                             TransplantListItem(
                                 headlineContent = { Text(item.nameZh) },
@@ -579,10 +507,11 @@ private fun EmptyClassroomScreen(
                             )
                             // 横向时间轴
                             if(!isAllDayFree) {
-                                ClassroomSchedule(activities, modifier = scheduleModifier) {
-                                    info = it
-                                    title = item.nameZh
-                                    showDialog = true
+                                ClassroomSchedule(activities, item.nameZh, modifier = scheduleModifier) {
+                                    floatingController.push(ClassroomSquareWindow(it,item.nameZh))
+//                                    info = it
+//                                    title = item.nameZh
+//                                    showDialog = true
                                 }
                             }
                         }
@@ -607,6 +536,7 @@ private fun EmptyClassroomScreen(
 @Composable
 private fun ClassroomSchedule(
     lessons: List<UniAppEmptyClassroomLesson>,
+    room : String,
     modifier: Modifier = Modifier,
     rangeMinutes :  Pair<Int,Int> = Pair(8 * 60,22 * 60),
     onClick : (UniAppEmptyClassroomLesson) -> Unit
@@ -621,34 +551,7 @@ private fun ClassroomSchedule(
 
         // 绘制课程时间块
         lessons.forEach { lesson ->
-            val containerColor = when(lesson.activityType) {
-                ClassroomOccupiedCause.BORROWED.activityType -> {
-                    MaterialTheme.colorScheme.primary
-                }
-                ClassroomOccupiedCause.IN_LESSON.activityType -> {
-                    MaterialTheme.colorScheme.inversePrimary
-                }
-                ClassroomOccupiedCause.EXAM.activityType -> {
-                    MaterialTheme.colorScheme.error
-                }
-                else -> {
-                    MaterialTheme.colorScheme.primary
-                }
-            }
-//            val contentColor = when(lesson.activityType) {
-//                ClassroomOccupiedCause.BORROWED.activityType -> {
-//                    MaterialTheme.colorScheme.onPrimary
-//                }
-//                ClassroomOccupiedCause.IN_LESSON.activityType -> {
-//                    MaterialTheme.colorScheme.onPrimaryContainer
-//                }
-//                ClassroomOccupiedCause.EXAM.activityType -> {
-//                    MaterialTheme.colorScheme.onError
-//                }
-//                else -> {
-//                    MaterialTheme.colorScheme.onPrimary
-//                }
-//            }
+            val containerColor = getClassroomSquareContainerColor(lesson)
             val contentColor = contentColorFor(containerColor)
             val startMinutes = convertTimeToMinutes(lesson.startTimeString)
             val endMinutes = convertTimeToMinutes(lesson.endTimeString)
@@ -666,12 +569,17 @@ private fun ClassroomSchedule(
                     .offset(x = offsetX.dp)
                     .width(width.dp)
                     .fillMaxHeight()
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .background(containerColor)
+//                    .clip(MaterialTheme.shapes.extraSmall)
                     .align(Alignment.TopStart)
                     .onGloballyPositioned { coordinates ->
                         parentHeight = coordinates.size.height.dp
                     }
+                    .sharedContainer(
+                        ClassroomSquareWindow(lesson,room).key,
+                        shape = MaterialTheme.shapes.extraSmall,
+                        containerColor = containerColor
+                    )
+                    .background(containerColor)
                     .clickable {
                         onClick(lesson)
                     }
@@ -704,6 +612,26 @@ private fun ClassroomSchedule(
     }
 }
 
+@Composable
+fun getClassroomSquareContainerColor(lesson : UniAppEmptyClassroomLesson) : Color {
+    val containerColor = when(lesson.activityType) {
+        ClassroomOccupiedCause.BORROWED.activityType -> {
+            MaterialTheme.colorScheme.primary
+        }
+        ClassroomOccupiedCause.IN_LESSON.activityType -> {
+            MaterialTheme.colorScheme.inversePrimary
+        }
+        ClassroomOccupiedCause.EXAM.activityType -> {
+            MaterialTheme.colorScheme.error
+        }
+        else -> {
+            MaterialTheme.colorScheme.primary
+        }
+    }
+    return containerColor
+}
+
+
 // 辅助函数：转换HH-MM格式的时间为分钟数
 private fun convertTimeToMinutes(time: String): Int {
     val (hour, minute) = time.split(':').map { it.toInt() }
@@ -714,10 +642,11 @@ private fun convertTimeToMinutes(time: String): Int {
 @Composable
 private fun SearchClassroomScreen(
     vm : NetWorkViewModel,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
     innerPadding : PaddingValues,
     refreshNetwork : () -> Unit
 ) {
+    val navTopController = LocalNavController.current
     val uiState by vm.uniAppSearchClassroomsResp.state.collectAsState()
     LaunchedEffect(Unit) {
         if(uiState is UiState.Loading) {
@@ -743,8 +672,12 @@ private fun SearchClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size, key = { list[it].id }) { index ->
                         val item = list[index]
-                        val route = AppNavRoute.ClassroomCourseTable.withArgs(item.id,item.nameZh)
+                        val dest = ClassroomCourseTableDestination(
+                            item.id,
+                            item.nameZh
+                        )
                         CardListItem(
+                            shape = NoneRoundShape,
                             leadingContent = {
                                 Icon(painterResource(R.drawable.meeting_room),null)
                             },
@@ -752,23 +685,17 @@ private fun SearchClassroomScreen(
                             overlineContent = { Text("${item.building.campus.nameZh} ${item.building.nameZh}")},
                             supportingContent = { Text("${item.floor}F | ${item.roomType.nameZh} | ${item.seatsForLesson}人") },
                             color = cardNormalColor(),
-                            cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+                            cardModifier = Modifier.sharedContainer(
+                                dest.key,
+                                MaterialTheme.shapes.medium
+                            ),
                             modifier = Modifier.clickable {
-                                navTopController.navigateForTransition(AppNavRoute.ClassroomCourseTable,route)
+                                navTopController.push(dest)
                             }
                         )
                     }
-//                    item { PaddingForPageControllerButton() }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
-//                PageController(
-//                    listState,
-//                    page,
-//                    nextPage = { page = it },
-//                    previousPage = { page = it },
-//                    paddingBottom = false,
-//                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-//                )
             }
         }
     }
@@ -778,14 +705,13 @@ private fun SearchClassroomScreen(
 @Composable
 fun ClassroomLessonsScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
     roomId : Int,
     name: String
 ) {
     var showAll by remember { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ClassroomCourseTable.withArgs(roomId,name) }
     val semester by produceState<Int?>(initialValue = null) {
         value = SemesterParser.getSemester()
     }
@@ -814,10 +740,8 @@ fun ClassroomLessonsScreen(
 
     var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 MediumTopAppBar(
@@ -859,9 +783,7 @@ fun ClassroomLessonsScreen(
                         onDismissRequest = {
                             showBottomSheetDetail = false
                         },
-                        autoShape = false,
                         showBottomSheet = showBottomSheetDetail,
-                        hazeState = hazeState
                     ) {
                         bean?.let { TimeTableDetail(it) }
                     }
@@ -930,7 +852,6 @@ fun ClassroomLessonsScreen(
 
                 var totalDragX by remember { mutableFloatStateOf(0f) }
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-                var isExpand by remember { mutableStateOf(false) }
 
                 val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
                     value = withContext(Dispatchers.Default) {
@@ -951,6 +872,8 @@ fun ClassroomLessonsScreen(
                         }
                     }
                 }
+                val floatingController = LocalFloatingController.current
+                val isExpand = floatingController.isRunning
                 // 课程表布局
                 Box(modifier = Modifier
                     .fillMaxSize()
@@ -982,96 +905,74 @@ fun ClassroomLessonsScreen(
                         ,
                         innerPadding = innerPadding,
                         onTapBlankRegion = {
-                            if(isExpand) {
-                                isExpand = false
-                            } else {
+                            if(!isExpand) {
                                 smoothToOne(scaleFactor)
-//                                showToast("长按切换周")
                             }
                         },
                         scaleFactor = scaleFactor.floatValue,
                         onLongTapBlankRegion = {
-                            isExpand = !isExpand
+                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                                weekSwap.goToWeek(it.toLong())
+                                floatingController.pop()
+                            })
                         },
-                    ) { list ->
-                        bean = list
-                        showBottomSheetDetail = true
-                    }
+                        onSquareClick = null
+                    )
 
-                    ShareTwoContainer2D(
+                    DraggableWeekButton(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(bottom = innerPadding.calculateBottomPadding())
                             .padding(APP_HORIZONTAL_DP),
-                        show = !isExpand,
-                        defaultContent = {
-                            TimeTablePreview(
-                                items = items, // 一周课程,
-                                currentWeek = currentWeek.toInt(),
-                                innerPadding = innerPadding,
-                            ) {
-                                weekSwap.goToWeek(it.toLong())
-                                isExpand = !isExpand
-                            }
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                        expanded = shouldShowAddButton,
+                        onClick = {
+                            weekSwap.backToCurrentWeek()
                         },
-                        secondContent = {
-                            DraggableWeekButton(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                                expanded = shouldShowAddButton,
-                                onClick = {
-                                    weekSwap.backToCurrentWeek()
-                                },
-                                shaderState = null,
-                                currentWeek = currentWeek,
-                                key = null,
-                                onNext = { weekSwap.nextWeek() },
-                                onPrevious = { weekSwap.previousWeek() },
-                                onLongClick = {
-                                    isExpand = !isExpand
-                                }
-                            )
+                        shaderState = null,
+                        currentWeek = currentWeek,
+                        key = null,
+                        onNext = { weekSwap.nextWeek() },
+                        onPrevious = { weekSwap.previousWeek() },
+                        onLongClick = {
+                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
+                                weekSwap.goToWeek(it.toLong())
+                                floatingController.pop()
+                            })
                         }
                     )
-                    // 中间
                 }
             }
         }
     }
 }
 
-private suspend fun uniAppToTimeTableData(targetPlace : String,list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
+private fun uniAppToTimeTableData(targetPlace : String, list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
-        val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
         for(item in list) {
             val courseName = item.course.nameZh
-            val multiTeacher = item.teacherAssignmentList.size > 1
             for(schedule in item.schedules) {
                 val place = schedule.room?.nameZh ?: continue
                 if(targetPlace != place) {
                     continue
                 }
                 val list = result[schedule.weekIndex-1]
-                val teacher = when(enableCalendarShowTeacher) {
-                    ShowTeacherConfig.ALL.code -> schedule.teacherName
-                    ShowTeacherConfig.ONLY_MULTI.code -> {
-                        if(multiTeacher) {
-                            schedule.teacherName
-                        } else {
-                            null
-                        }
-                    }
-                    else -> null
-                }
                 list.add(
                     TimeTableItem(
-                        teacher = teacher,
+                        teacher = schedule.teacherName,
                         type = TimeTableType.COURSE,
                         name = courseName,
                         dayOfWeek = schedule.weekday,
                         startTime = parseJxglstuIntTime(schedule.startTime),
                         endTime = parseJxglstuIntTime(schedule.endTime),
-                        place = item.className,
+                        place = null,
+                        detail = TimeTableDetail(
+                            date = schedule.date,
+                            teacher = schedule.teacherName,
+                            classes = item.className,
+                            code = item.code
+                        )
                     )
                 )
             }

@@ -17,9 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +66,7 @@ fun HazeBottomSheetTopBar(
     rightContent : (@Composable () -> Unit)? = null
 ) {
     Column {
-        Spacer(Modifier.Companion.height(APP_HORIZONTAL_DP * if(isPaddingStatusBar) 1.5f else 0f))
+        Spacer(Modifier.height(APP_HORIZONTAL_DP * if(isPaddingStatusBar) 1.5f else 0f))
         BottomSheetTopBar(
             title,
             singleLine,

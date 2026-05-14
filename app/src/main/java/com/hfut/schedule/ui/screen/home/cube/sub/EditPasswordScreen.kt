@@ -17,24 +17,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -45,22 +41,21 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.transition.util.TransitionBackHandler
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import dev.chrisbanes.haze.HazeState
+
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     var input by remember { mutableStateOf("") }
@@ -76,8 +71,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     if (showDialog) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-            autoShape = false,
-            hazeState = hazeState,
+//            isFullScreen = false,
             showBottomSheet = showDialog
         ) {
             Column {
@@ -129,7 +123,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
             showDialog = true
         }
     }
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
             headlineContent = { Text("初始密码为身份证后6位(若以X结尾则为X前6位)")},
@@ -147,7 +141,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                            Starter.startWebUrlInner(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
@@ -201,12 +195,12 @@ suspend fun getJxglstuPassword() : String? = withContext(Dispatchers.IO) {
 }
 
 @Composable
-fun EditJxglstuPasswordScreen(innerPadding : PaddingValues,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultJxglstuPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     val originPwd = remember { getJxglstuDefaultPassword() }
@@ -216,7 +210,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues,navController: NavHos
     val pwd by DataStoreManager.jxglstuPassword.collectAsState(initial = originPwd ?: "")
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
             headlineContent = { Text("初始密码为 ${originPwd}")},
@@ -234,7 +228,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues,navController: NavHos
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context, "","修改密码", icon = R.drawable.lock_reset)
+                            Starter.startWebUrlInner(context, "","修改密码", icon = R.drawable.lock_reset)
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },

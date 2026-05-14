@@ -27,7 +27,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.component.text.BottomTip
+import com.xah.common.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -37,7 +37,7 @@ import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -54,7 +54,6 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     if(showBottomSheet)
         HazeBottomSheet(
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
             onDismissRequest = { showBottomSheet = false }
         ) {
             Scaffold(

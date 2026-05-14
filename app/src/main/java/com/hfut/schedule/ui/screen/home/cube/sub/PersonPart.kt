@@ -37,8 +37,8 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.align.ColumnVertical
 
 /* 本kt文件已完成多语言文案适配 */
 @Composable
@@ -55,12 +55,6 @@ fun PersonPart() {
                     trailingContent = {
                         Row {
                             ColumnVertical {
-                                if(AppVersion.isInDebugRunning()) {
-                                    Text(stringResource(R.string.settings_person_info_tag_debug))
-                                }
-                                if(AppVersion.isPreview()) {
-                                    Text(stringResource(R.string.settings_person_info_tag_preview))
-                                }
                                 if(startDate != null && endDate != null && startDate != "" && endDate != "") {
                                     Text(text = stringResource(
                                         R.string.settings_person_info_tag_normal,

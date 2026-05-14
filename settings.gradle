@@ -2,7 +2,9 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://jitpack.io'
+        }
         gradlePluginPortal()
     }
 }
@@ -12,17 +14,24 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io'}
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public'
-            allowInsecureProtocol = true }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
-            allowInsecureProtocol = true }
+        maven {
+            url 'https://jitpack.io'
+        }
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public'
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+            allowInsecureProtocol = true
+        }
     }
 }
+
 rootProject.name = "肥工课程表"
 include ':app'
-include ':transition'
 include ':common'
-include ':shared'
-include ':lite'
+include ':forecast'
 include ':baselineProfile'
+include ':network'
+include ':shared'

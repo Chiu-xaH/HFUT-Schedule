@@ -50,8 +50,6 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
-import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestNotificationPermission
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delAllCourseEvent
@@ -65,16 +63,14 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.xah.uicommon.util.language.PlainText
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
-import com.xah.uicommon.util.language.text
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.util.language.BaseChoice
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.model.BaseChoice
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.res
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
@@ -103,21 +99,16 @@ fun MultiScheduleSettings(
     val scope = rememberCoroutineScope()
 
     if (showBottomSheet_add) {
-        CustomBottomSheet (onDismissRequest = { showBottomSheet_add = false },
+        HazeBottomSheet (onDismissRequest = { showBottomSheet_add = false },
             showBottomSheet = showBottomSheet_add,
-            isFullExpand = false
+//            expandFully = false,
+//            isFullScreen = false
         ) {
-            Scaffold(
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("添加课程表", isPaddingStatusBar = false)
-                }
-            ) {innerPadding->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    AddCourseUI(vm)
-                }
+            Column(modifier = Modifier) {
+                HazeBottomSheetTopBar("添加课程表", isPaddingStatusBar = false)
+                AddCourseUI(vm)
+                Spacer(modifier = Modifier.height(20.dp))
+
             }
         }
     }
@@ -126,10 +117,9 @@ fun MultiScheduleSettings(
     var showBottomSheet_settings by remember { mutableStateOf(false) }
 
     if (showBottomSheet_loading) {
-        CustomBottomSheet (
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_loading = false },
             showBottomSheet = showBottomSheet_loading,
-            autoShape = false
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
@@ -141,15 +131,14 @@ fun MultiScheduleSettings(
         }
     }
     if (showBottomSheet_settings) {
-        CustomBottomSheet (
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_settings = false },
             showBottomSheet = showBottomSheet_settings,
-            autoShape = false
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                HazeBottomSheetTopBar("课程表配置", isPaddingStatusBar = false)
+                HazeBottomSheetTopBar("学期切换", isPaddingStatusBar = false)
                 CalendarSettingsUI(true)
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -364,9 +353,7 @@ fun shareTextFile(fileName: String) {
 @Composable
 private fun EventUI() {
     val activity = LocalActivity.current
-    val context = LocalContext.current
-    val time by DataStoreManager.liveCourseReminderMinutes.collectAsState(initial = 20)
-    val enableLiveCourseReminder by DataStoreManager.enableLiveCourseReminder.collectAsState(initial = false)
+    var time by remember { mutableIntStateOf(20) }
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
     if(loading) {
@@ -383,13 +370,7 @@ private fun EventUI() {
                 Row {
                     FilledTonalIconButton(
                         onClick = {
-                            scope.launch {
-                                DataStoreManager.saveLiveCourseReminderMinutes(time + 5)
-                                if (enableLiveCourseReminder) {
-                                    CourseLiveUpdateScheduler.cancelAll(context)
-                                    CourseLiveUpdateScheduler.scheduleAll(context)
-                                }
-                            }
+                            time += 5
                         }
                     ) {
                         Icon(painterResource(R.drawable.add),null)
@@ -398,13 +379,7 @@ private fun EventUI() {
                         if(it >= 5) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    scope.launch {
-                                        DataStoreManager.saveLiveCourseReminderMinutes(time - 5)
-                                        if (enableLiveCourseReminder) {
-                                            CourseLiveUpdateScheduler.cancelAll(context)
-                                            CourseLiveUpdateScheduler.scheduleAll(context)
-                                        }
-                                    }
+                                    time -= 5
                                 }
                             ) {
                                 Icon(painterResource(R.drawable.remove),null)
@@ -415,57 +390,7 @@ private fun EventUI() {
             },
             leadingContent = { Icon(painterResource(R.drawable.schedule),null) },
             modifier = Modifier.clickable {
-                scope.launch {
-                    DataStoreManager.saveLiveCourseReminderMinutes(20)
-                    if (enableLiveCourseReminder) {
-                        CourseLiveUpdateScheduler.cancelAll(context)
-                        CourseLiveUpdateScheduler.scheduleAll(context)
-                    }
-                }
-            }
-        )
-        CardListItem(
-            headlineContent = {
-                Text(if (enableLiveCourseReminder) "Android 16 Live Activity 已开启" else "开启 Android 16 Live Activity 提醒")
-            },
-            overlineContent = {
-                Text("使用上方提醒时间，上课前${time}min弹出并显示教室；低版本降级为普通通知")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.notifications), null) },
-            modifier = Modifier.clickable {
-                activity?.let { checkAndRequestNotificationPermission(it) }
-                scope.launch {
-                    if (enableLiveCourseReminder) {
-                        CourseLiveUpdateScheduler.cancelAll(context)
-                        DataStoreManager.saveLiveCourseReminder(false)
-                        showToast("已关闭 Live Activity 提醒")
-                    } else if (CourseLiveUpdateScheduler.canPostNotification(context)) {
-                        val count = CourseLiveUpdateScheduler.scheduleAll(context)
-                        CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
-                        DataStoreManager.saveLiveCourseReminder(true)
-                        showToast("已开启 Live Activity 提醒，共调度${count}节课")
-                    } else {
-                        showToast("请先授予通知权限")
-                    }
-                }
-            }
-        )
-        CardListItem(
-            headlineContent = {
-                Text("刷新 Live Activity 提醒")
-            },
-            overlineContent = {
-                Text("课表或提醒时间变化后重新调度后台提醒")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
-            modifier = Modifier.clickable {
-                scope.launch {
-                    CourseLiveUpdateScheduler.cancelAll(context)
-                    val count = CourseLiveUpdateScheduler.scheduleAll(context)
-                    CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
-                    DataStoreManager.saveLiveCourseReminder(true)
-                    showToast("已刷新 Live Activity 提醒，共调度${count}节课")
-                }
+                time = 20
             }
         )
         CardListItem(

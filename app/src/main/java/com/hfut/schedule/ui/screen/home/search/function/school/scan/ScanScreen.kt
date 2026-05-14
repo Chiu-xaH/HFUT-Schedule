@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.scan
 
+
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -17,6 +18,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -29,50 +31,49 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.core.net.toUri
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.parseQRCode
 import com.hfut.schedule.logic.util.parse.isWifiContent
 import com.hfut.schedule.logic.util.parse.parseWifiQrCode
-import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.LiquidTopBarNavigateIcon
 import com.hfut.schedule.ui.component.camera.ScanQrCode
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
+    val navController = LocalNavController.current
     val color = MaterialTheme.colorScheme.surface
     var resultText by remember { mutableStateOf("") }
-    val route = remember { AppNavRoute.ScanQrCode.route }
     val context = LocalContext.current
     val activity = LocalActivity.current
     val showTip = resultText.isEmpty() || resultText.isBlank()
@@ -89,11 +90,15 @@ fun ScanScreen(
         }
     }
     val backdrop = rememberLayerBackdrop()
+    LaunchedEffect(resultText) {
+        if(resultText.isEmpty()) {
+            return@LaunchedEffect
+        }
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+    }
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         containerColor = Color.Black,
-        navHostController = navController,
         bottomBar = {
             val auth by produceState<String?>(initialValue = null) {
                 value = getWxAuth()
@@ -150,7 +155,11 @@ fun ScanScreen(
                                                     resultText = ""
                                                 } else {
                                                     showToast(confirmResult)
-                                                    navController.popBackStack()
+                                                    if(navController.canPop()) {
+                                                        navController.pop()
+                                                    } else {
+                                                        activity?.finish()
+                                                    }
                                                 }
                                             }
                                         } else {
@@ -208,14 +217,14 @@ fun ScanScreen(
                             if(isCas) {
 
                             } else if(isValidWebUrl(resultText)) {
-                                CardBottomButtons(
+                                BottomTextButtonGroup(
                                     listOf(
                                         CardBottomButton("复制") {
                                             ClipBoardHelper.copy(resultText)
                                         },
                                         CardBottomButton("打开链接",isValidWebUrl(resultText)) {
                                             scope.launch {
-                                                Starter.startWebView(context,resultText)
+                                                Starter.startWebUrlInner(context,resultText)
                                             }
                                         },
                                         CardBottomButton("隐藏") {
@@ -224,7 +233,7 @@ fun ScanScreen(
                                     )
                                 )
                             } else if(isWifiContent(resultText)) {
-                                CardBottomButtons(
+                                BottomTextButtonGroup(
                                     listOf(
                                         CardBottomButton("连接") {
                                             parseWifiQrCode(resultText)?.password?.let { ClipBoardHelper.copy(it) }
@@ -236,7 +245,7 @@ fun ScanScreen(
                                     )
                                 )
                             } else {
-                                CardBottomButtons(
+                                BottomTextButtonGroup(
                                     listOf(
                                         CardBottomButton("复制") {
                                             ClipBoardHelper.copy(resultText)
@@ -257,7 +266,7 @@ fun ScanScreen(
                 colors = topBarTransplantColor(),
                 title = { Text("") },
                 navigationIcon = {
-                    LiquidTopBarNavigateIcon(backdrop,navController,route, AppNavRoute.ScanQrCode.icon,)
+                    LiquidTopBarNavigateIcon(backdrop)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -274,9 +283,8 @@ fun ScanScreen(
                 }
             )
         },
-    ) { innerPadding ->
+    ) { _ ->
         LaunchedEffect(activity) {
-            AppShortcutManager.createScanShortcut(context)
             activity?.let { PermissionSet.checkAndRequestCameraPermission(it) }
         }
         Box(

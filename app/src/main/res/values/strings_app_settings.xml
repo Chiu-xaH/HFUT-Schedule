@@ -12,7 +12,7 @@
     <string name="app_settings_study_interaction_title">Study interaction</string>
     <string name="app_settings_study_interaction_description">Study the gesture interaction operations within the application.</string>
 
-    <string name="app_settings_calendar_half_title">Course schedule configuration</string>
+    <string name="app_settings_calendar_half_title">Course schedule</string>
 
     <string name="app_settings_preferences_half_title">Preferences and configurations</string>
 
@@ -83,5 +83,10 @@
     <string name="app_settings_default_calendar_choice_uni_app">Uni-App</string>
     <string name="app_settings_default_calendar_choice_zhi_jian">ZhiJian</string>
     <string name="app_settings_default_calendar_choice_jxglstu_2">Academic2</string>
+    <string name="app_settings_shortcut_title">Shortcut</string>
+    <string name="app_settings_shortcut_description">The shortcut menu triggered by long-pressing the desktop icon</string>
+    <string name="app_settings_live_update_title">Live Update</string>
+    <string name="app_settings_live_update_description_supported">Notifications that display real-time status in the notification bar</string>
+    <string name="app_settings_live_update_description_unsupported">Require Android 16+</string>
 
 </resources>

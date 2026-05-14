@@ -12,28 +12,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.AlumniDestination
 
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.xah.transition.component.iconElementShare
-import com.xah.uicommon.component.text.ScrollText
+
+
+import com.xah.navigation.util.LocalNavController
+
+import com.xah.common.ui.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun Alumni(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.Alumni.route }
+fun Alumni() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Alumni.label)) },
+        headlineContent = { ScrollText(text = AlumniDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Alumni.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AlumniDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Alumni,route)
+            navController.push(AlumniDestination)
         }
     )
 }

@@ -31,8 +31,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -103,7 +104,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
-                    onClick = { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
+                    onClick = { Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL) },
 //                    colors =  if(text!!.length <= 4) {
 //                        IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
 //                    } else IconButtonDefaults.filledTonalIconButtonColors()
@@ -156,7 +157,7 @@ fun TodayInfo(bean : TodayResult) {
                     headlineContent = { Text(text = it.toString()) },
                     supportingContent = { Text(text = "归还时间 $returnTime") },
                     overlineContent = { Text(text = "借阅于 $outTime\n应还于 $dueTime")},
-                    leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = "")},
                 )
             }
         }

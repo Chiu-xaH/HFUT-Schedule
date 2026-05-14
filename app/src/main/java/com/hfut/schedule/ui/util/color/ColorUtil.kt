@@ -16,11 +16,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.materialkolor.ktx.themeColors
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
+import java.io.File
 import kotlin.math.abs
 
 fun parseColor(input: String): Long? {
@@ -57,27 +59,49 @@ fun uriToImageBitmap(uri: Uri): ImageBitmap? {
     }
 }
 
-// 从URI图片取色
 suspend fun extractColor(uri: Uri): Long? {
     return withContext(Dispatchers.IO) {
-        val inputStream = MyApplication.context.contentResolver.openInputStream(uri) ?: return@withContext null
-        val bitmap = BitmapFactory.decodeStream(inputStream) ?: return@withContext null
-        inputStream.close()
-
-        val palette = Palette.from(bitmap).generate()
-        palette.getDominantColor(Color.Gray.toArgb()).toLong() // 提取主色（可设置默认值）
+        MyApplication.context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            val bitmap = BitmapFactory.decodeStream(inputStream) ?: return@withContext null
+            val color = extractColor(bitmap)
+            bitmap.recycle()
+            color
+        }
     }
 }
 
-suspend fun extractColor(context: Context,@DrawableRes resId: Int): Long? {
+suspend fun extractColor(context: Context, @DrawableRes resId: Int): Long? {
     return withContext(Dispatchers.IO) {
-        val bitmap = resToBitmap(context,resId)
-            ?: return@withContext null
-        val palette = Palette.from(bitmap).generate()
-        palette.getDominantColor(AColor.GRAY).toLong()
+        val bitmap = resToBitmap(context, resId) ?: return@withContext null
+        val color = extractColor(bitmap)
+        bitmap.recycle()
+        color
     }
 }
 
+suspend fun loadBitmap(file: File): Bitmap? {
+    return withContext(Dispatchers.IO) {
+        if (!file.exists()) return@withContext null
+        BitmapFactory.decodeFile(file.absolutePath)
+    }
+}
+suspend fun extractColor(file: File): Long? {
+    return withContext(Dispatchers.IO) {
+        val bitmap = loadBitmap(file) ?: return@withContext null
+        val color = extractColor(bitmap)
+        bitmap.recycle()
+        color
+    }
+}
+
+// 取色
+fun extractColor(bitmap: Bitmap): Long {
+    val palette = Palette.from(bitmap)
+        .maximumColorCount(16)
+        .generate()
+
+    return palette.getDominantColor(AColor.GRAY).toLong()
+}
 
 fun resToBitmap(context: Context,@DrawableRes resId: Int) : Bitmap? = try {
     BitmapFactory.decodeResource(context.resources, resId)

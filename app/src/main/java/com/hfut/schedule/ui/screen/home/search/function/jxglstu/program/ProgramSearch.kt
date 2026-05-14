@@ -46,28 +46,31 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.button.containerBackDrop
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
+
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.mirror.util.rememberShaderState
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -78,14 +81,13 @@ import kotlinx.coroutines.launch
 fun ProgramSearchScreen(
     vm : NetWorkViewModel,
     ifSaved: Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var input by remember { mutableStateOf("") }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.AllPrograms.receiveRoute() }
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork: suspend () -> Unit = m@ {
@@ -107,7 +109,6 @@ fun ProgramSearchScreen(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -127,10 +128,8 @@ fun ProgramSearchScreen(
         }
     }
     val scope = rememberCoroutineScope()
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -138,7 +137,7 @@ fun ProgramSearchScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.AllPrograms.label)) },
+                    title = { Text(AllProgramsDestination.TITLE.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -148,6 +147,7 @@ fun ProgramSearchScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
+                        colors = textFiledAllTransplant(),
                         modifier = Modifier
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
@@ -174,7 +174,7 @@ fun ProgramSearchScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant()
+//                        colors = textFiledTransplant()
                     )
                 }
             }
@@ -201,7 +201,7 @@ fun ProgramSearchScreen(
                                 var department = data.department.nameZh
                                 val name = data.nameZh
                                 department = department.substringBefore("（")
-                                AnimationCardListItem(
+                                CardListItem(
                                     headlineContent = { Text(name) },
                                     overlineContent = { Text(data.grade + "级 " + department + " " + data.major.nameZh) },
                                     leadingContent = { DepartmentIcons(department) },
@@ -210,7 +210,6 @@ fun ProgramSearchScreen(
                                         id = data.id
                                         showBottomSheet = true
                                     },
-                                    index = index
                                 )
                             }
                             item { InnerPaddingHeight(innerPadding,false) }
@@ -268,7 +267,6 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
             if (showBottomSheet_Program) {
                 HazeBottomSheet (
                     onDismissRequest = { showBottomSheet_Program = false },
-                    hazeState = hazeState,
                     showBottomSheet = showBottomSheet_Program
                 ) {
                     Scaffold(
@@ -294,14 +292,13 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
         LazyColumn {
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
                     supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
                         bean = dataItem
-                    },
-                    index = item
+                    }
                 )
             }
             entity.requireInfo?.let {
@@ -332,7 +329,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
         if(showInfo) {
             courseInfo?.let {
                 planCoursesTransform(it)?.let { b ->
-                    ProgramDetailInfo(courseInfo = b,vm, hazeState, ifSaved){ showInfo = false }
+                    ProgramDetailInfo(courseInfo = b, ifSaved){ showInfo = false }
                 }
             }
         }
@@ -382,7 +379,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
                 val name = course.nameZh
                 val department = listItem.openDepartment.nameZh.substringBefore("（")
                 val term = listItem.terms.let { if(it.isNotEmpty()) it[0] else null }?.substringAfter("_")?.toIntOrNull()
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = name) },
                     supportingContent = { Text(text = department) },
                     overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" })},
@@ -392,7 +389,6 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
                         courseInfo = listItem
                         showInfo = true
                     },
-                    index = item
                 )
             }
             entity.requireInfo?.let {

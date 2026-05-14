@@ -1,7 +1,7 @@
-# 聚在工大
+# 聚在工大（HFUT-Schedule）
 ![封面](/src/img/cover.png)
 
-## ⬇️ 下载
+## 下载
 <div align="center">
 
 [![GitHub](https://img.shields.io/github/v/release/Chiu-xaH/HFUT-Schedule?logo=github&label=GitHub&style=for-the-badge)](https://github.com/Chiu-xaH/HFUT-Schedule/releases/latest)
@@ -10,38 +10,60 @@
 
 </div>
 
-## ✨ 亮点
-界面: 使用现代化技术栈开发；将实时模糊元素与Material Design 3融合，既有统一的风格、规范，又有独特的设计
 
-动效：构建[全局转场动画体系](https://github.com/Chiu-xaH/Compose-Transition-Sample)，遵循一镜到底、收放自如的原则
+## 简介
+为合肥⼯业⼤学（HFUT）本科⽣开发的校园服务聚合类 Android 应⽤，覆盖了教学、⽣活、校内服务等 40+ 场景与功能，⽀持离⽹使⽤；使⽤现代的技术栈开发，提供全⾯、简洁、⾼效的使⽤体验。
 
-更新：200+版本迭代，平均每周都有新更新，带来新的功能、重构及优化
+界面展示（v4.20.1.3,实际以最新版本为准）：
 
-性能：冷启动迅速，开屏即展示关键信息(聚焦)；内存与存储占用适中
+![截图](/src/img/ui.jpg)
 
-## 🔶 简介
-适用于合肥工业大学(HFUT)本科生的校园服务聚合Android App，采用现代化技术栈开发，内含查询教务、校园卡、网电费等40+功能
+## 亮点
+界面: 使用着色器、实时模糊等特效，与 Material Design 3 融合，简约高效
 
-## 📱 界面
-v4.18.4.1,实际以最新版本为准
+动效：自研第二代全局转场动画体系，符合直觉的一镜到底动效
 
-![截图](/src/img/ui.jpg)·
+更新：250+版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
 
-## 📕 使用
-- 要求：**Android 8.0及以上，接入互联网**
-- 初次使用：保证接入互联网的环境下，填入学号与信息门户密码，登录，等待出现加载完成(底栏由暗变正常)，即可使用 
-- 刷新登陆：登陆后会获取所需的数据，自动缓存(例如课程表教务源、课程汇总等)，**由于平台限制，登陆一次教务系统有效期只有1小时且不支持多平台登录**，一共刷新9个平台，在登录时会将过期的平台选择性地刷新 
-- 软件升级：在启动时自动检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有下载提示，下载完成后点击安装，授权安装未知应用权限即可 
-- 不同系统上的差异：并未所有功能在机型上可用，因Android版本、厂商定制UI差异而不同，主要是在UI层面，不影响任何实用性功能，详情查看APP的 选项-维护关于-功能功能性支持 或 [这里](/docs/CONTRAST.md)
-- 校区本土化差异：由于开发者是宣城校区本科生，合肥校区也可使用，会缺失一小部分特定功能
+性能：冷启动迅速，开屏即展示关键信息；内存与存储占用适中
 
-## 💻 构建
-OpenJDK v17.0.0.1
+## 开始使用
+### 要求
+Android 8.0及以上，接入互联网
+### 初次使用
+保证接入互联网的环境下，填入学号与信息门户密码，登录，等待出现加载完成(底栏由暗变正常)，即可使用 
+### 刷新登陆
+登陆后会获取所需的数据，自动缓存(例如课程表教务源、课程汇总等)，由于平台限制，有些平台不支持持久登录，在登录时会将过期的平台选择性地刷新 
+### 软件升级
+在启动时自动检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有下载提示，下载完成后点击安装，授权安装未知应用权限即可
 
-SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
+## 文档库
+### [开发文档](docs/Developer.md) (正在完善)
 
-## 🫶 鸣谢
-### 第三方依赖
+- pull request 请向 dev 分支提交，stage分支仅用于已发行版本
+- pull request 如涉及较大改动，建议选几个关键节点的 SDK 版本，且在清除应用数据的情况下做验证。
+- 如需修改页面导航、转场动效以及容器共享等功能，请查看开发文档，原有 Navigation2 已不再使用，已解耦至[SharedNav](https://github.com/Chiu-xaH/SharedNav)库
+
+### [更新日志](docs/update)
+
+### [统计报表](/docs/CHART.md)
+
+用户量及日流量，通过Supabase平台托管，安全统计，无隐私数据，不定期更新
+
+## [联系方式](zsh0908@outlook.com) 
+开发者: zsh0908@outlook.com
+
+## [其他工具](/tools)
+[图片验证码训练模型](/tools/Captcha-Ocr)
+
+[校园网登录](/tools/Login-Web-Python)
+
+[WebVpn](tools/WebVpn)
+
+[PC版(集成WebVpn、校园网等工具)](/tools/Lite-For-PC) (待开发)
+
+## 鸣谢
+### 第三方库
 [OkHttp](https://github.com/square/okhttp) 网络请求
 
 [Retrofit](https://github.com/square/retrofit) 网络请求
@@ -72,11 +94,15 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) 液态玻璃
 
-[Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Android-Library) 增量更新(自己)
+[DeviceCompat](https://github.com/getActivity/DeviceCompat) 设备识别 (供判断鸿蒙NEXT环境)
 
-[Navigation-Transition-Share](https://github.com/Chiu-xaH/Compose-Transition-Sample) 转场动画(自己)
+### 从本App解耦的库
 
-[Mirror-Android](https://github.com/Chiu-xaH/Mirror-Android) 镜面效果(自己)
+[DiffUpdater](https://github.com/Chiu-xaH/DiffUpdater) 增量更新
+
+[SharedNav](https://github.com/Chiu-xaH/SharedNav) 页面管理、容器共享、浮窗体系
+
+[Mirror-Android](https://github.com/Chiu-xaH/Mirror-Android) 镜面效果（着色器）
 
 ### 开源项目
 [holiday-cn](https://github.com/NateScarlet/holiday-cn) 节假日数据源
@@ -85,40 +111,20 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [Tesseract](https://github.com/tesseract-ocr/tesseract) 用于训练OCR识别验证码的[基础模型](https://github.com/tesseract-ocr/tessdata)
 
+[Supabase](https://github.com/supabase/supabase) 托管供提供数据库
+
 ### 开源社区
-初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App，还有对一些操作系统的借鉴，在此不一一列举了
+初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App(例如 [师韵-SmartHNU](https://github.com/JiaLiFuNia/SmartHNU))，还有对一些移动操作系统的借鉴，在此不一一列举了
 
 感谢其他高校开发者对本项目的肯定与参考，在此不一一列举了
 
-linsui帮助上架F-Droid
-
-若干用户的帮助
-- James-Zhang2提供GPA评定数据源
-- tinyvan提交RR修复Bug
-- Today1337提交PR优化界面
-- 其他用户帮助推广、通过邮件、issue等提供反馈和建议等，在此不一一列举了
-
-## 📑 [更新日志](docs/update)
-
-## 📊 [统计报表](/docs/CHART.md)
-
-## 📧 [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
-
-## ⚙️ [一些工具](/tools)
-[图片验证码训练模型](/tools/Captcha-Ocr) [所有培养方案爬取](tools\All-Programs-Get-Python) [校园网登录](/tools/Login-Web-Python) [WebVpn](tools/WebVpn) [用户流量统计](/tools/SQL-Chart-Python) [PC版(集成WebVpn、校园网等工具)(待开发)](/tools/Lite-For-PC)
-
-## 🫥 未来适配
-
-开发者将在2027年毕业，App大部分功能都是端侧处理，可以独立运行，如果学校抽风了换接口，可以联系我，应该可以修，或者有能力者提交PR
-
-- **低于Android 8的设备**有使用需求可以**联系我**，可以向下适配
-- **鸿蒙NEXT**可以用**卓易通**运行本App
-- **iOS**，理解iOS用户的呼声，我自己主力机就是苹果，但是我没苹果本子，就为了开发一个App太贵了... iOS在大学某些方面不如安卓便利，建议**搞一台安卓**，日常很方便的
-- **桌面端**，电脑用学校的网页体验也很好了，非要用也是可以的，Windows 10+可以用**WSA**运行本App，后续可能会出PC版集成一些WebVpn、校园网功能
-- 唯一的跨平台适配可能性交给**Kotlin/Compose Multiplatform**，这是最低成本的方案了，可以将现有Android项目改造成跨平台项目，但是这其中需要完全重写网络层，由Retrofit&OkHttp换为Ktor，而且逻辑层很多内容都需要做分平台适配，好在这项技术可以让本App已有的Compose写的UI能够跨平台，UI层改动小一些
-
-
-
-
+若干开发者和用户的帮助：
+- linsui 帮助上架F-Droid
+- James-Zhang2 提供GPA评定数据源
+- tinyvan 提交RR修复Bug
+- Today1337 提交PR优化界面
+- zxbmmmmmmmmm 提交PR修复Bug
+- ...
+- 其他用户帮助推广、通过邮件、issue等提供功能建议与反馈等，在此不一一列举了
 
 

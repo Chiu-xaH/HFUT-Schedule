@@ -33,6 +33,8 @@ import com.hfut.schedule.logic.util.storage.file.restoreData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.isInGraduation
+import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -40,8 +42,9 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.util.picker.copyUriToCacheFile
-import com.xah.transition.util.TransitionBackHandler
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.component.text.BottomTip
+
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -50,19 +53,18 @@ private const val error = "发生逻辑错误"
 @Composable
 fun BackupScreen(
     innerPadding : PaddingValues,
-    navController: NavHostController
 ) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
     val activity = LocalActivity.current
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var file by remember { mutableStateOf<File?>(null) }
 
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
 
     LaunchedEffect(activity) {
         activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
@@ -103,9 +105,9 @@ fun BackupScreen(
     }
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("备份/导出") {
+        DividerTextExpandedWith("备份") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("备份数据至Download文件夹") },
@@ -113,7 +115,7 @@ fun BackupScreen(
                         Text("文件名将以'${MyApplication.APP_NAME}备份_时间戳.zip'写出")
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.save_clock),null)
+                        Icon(painterResource(R.drawable.save),null)
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
@@ -129,8 +131,11 @@ fun BackupScreen(
                     }
                 )
             }
+            if(isInGraduation()) {
+                BottomTip("即将毕业的用户可备份数据后，妥善保存，感谢您选择聚在工大，愿前程似锦！")
+            }
         }
-        DividerTextExpandedWith("恢复/导入") {
+        DividerTextExpandedWith("恢复") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("恢复数据") },
@@ -155,7 +160,7 @@ fun BackupScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebUrl(context,"https://gitee.com/chiu-xah/HFUT-Schedule/releases/download/Android/hfut_schedule_guest_data.zip")
+                            Starter.startWebUrlOuter(context,"https://gitee.com/chiu-xah/HFUT-Schedule/releases/download/Android/hfut_schedule_guest_data.zip")
                         }
                     }
                 )

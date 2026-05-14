@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_person_info_default_name">Guest</string>
-    <string name="settings_person_info_tag_debug">Running on AVD</string>
-    <string name="settings_person_info_tag_preview">Insider Preview</string>
+    <string name="settings_person_info_tag_debug">Debug version</string>
+    <string name="settings_person_info_tag_preview">Insider Development Version</string>
+    <string name="settings_person_info_tag_avd">Running on AVD</string>
+    <string name="settings_person_info_tag_wsa">Running on WSA</string>
     <string name="settings_person_info_tag_normal">Have past %1$s%%</string>
     <string name="settings_person_info_student_id_description">Student ID</string>
     <string name="settings_person_info_half_title">Me</string>
@@ -14,7 +16,7 @@
     <string name="settings_important_notice_half_title">Important notice</string>
     <string name="settings_version_info_description_preview">It\'s insider preview version</string>
     <string name="settings_version_info_description">It\'s latest version %1$s</string>
-    <string name="settings_about_update_by_github_description">There is no speed limit when downloading the latest version through the Github distribution.Please note to select the APK download with the suffix \'arm64-v8a \'(i.e., for ordinary Android mobile devices)</string>
+    <string name="settings_about_update_by_github_description">Download the latest version through the Github distribution</string>
     <string name="appearance_settings_title">Appearance</string>
     <string name="appearance_settings_description">Color,Animation,Blur</string>
     <string name="app_settings_title">Configurations</string>
@@ -40,4 +42,6 @@
     <string name="settings_update_patch_description">Developer provides incremental packages for past versions of ARM64 within a month (dynamically adjusted), which can save at least 40% of downloads for version updates.</string>
     <string name="settings_update_patch_button_download_to_version">Update to %1$s</string>
     <string name="settings_update_patch_button__download_to_latest">Download</string>
+    <string name="settings_person_info_tag_sign">Non-developer signature</string>
+    <string name="settings_person_info_tag_harmonry_next">Running on Harmony Next</string>
 </resources>

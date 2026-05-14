@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -42,6 +43,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -93,9 +95,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -110,8 +110,8 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
-import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
+import com.hfut.schedule.logic.model.NavigationBarItemDynamicIconModern
+import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
@@ -134,19 +134,22 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
+import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
+import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
+import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableTwo
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.uniapp.UniAppCoursesScreen
 import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
-import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.HomeSettingScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
@@ -159,29 +162,36 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Tota
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculatedReadNotificationCount
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.color.loadBitmap
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.hjq.device.compat.DeviceOs
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.TransparentSystemBars2
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
-import com.xah.mirror.util.shaderSource
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.util.LogUtil
+import com.xah.navigation.anim.effect.Direction
+import com.xah.navigation.anim.effect.JumpTransitionEffect
+import com.xah.navigation.anim.effect.SlideTransitionEffect
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -220,8 +230,8 @@ fun MainScreen(
     vmUI : UIViewModel,
     celebrationText : String?,
     isLogin : Boolean,
-    navHostTopController : NavHostController,
 ) {
+    val navHostTopController = LocalNavController.current
     val navController = rememberNavController()
     var isEnabled by rememberSaveable { mutableStateOf(!isLogin) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -234,12 +244,7 @@ fun MainScreen(
 
     //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(
-        if(isLogin) COURSES
-        else FOCUS
-//            when (prefs.getBoolean("SWITCHFOCUS",true)) {
-//            true -> FOCUS
-//            false -> COURSES
-//        }
+        if(isLogin) COURSES else FOCUS
     ) }
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         COURSES.name -> COURSES
@@ -263,8 +268,6 @@ fun MainScreen(
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-
     var showUiSettings by remember { mutableStateOf(false) }
     if (showUiSettings) {
         Dialog(
@@ -279,10 +282,10 @@ fun MainScreen(
         }
     }
     if (showBottomSheet_multi) {
-        CustomBottomSheet (
+        HazeBottomSheet (
             showBottomSheet = showBottomSheet_multi,
             onDismissRequest = { showBottomSheet_multi = false },
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 MultiScheduleSettings(
@@ -321,13 +324,7 @@ fun MainScreen(
         }
         // 等待加载完毕可切换标签
         if(isLogin) {
-            if(!GlobalUIStateHolder.webVpn) ifSaved = false
-        }
-    }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
+            if(!GlobalStateHolder.webVpn) ifSaved = false
         }
     }
 
@@ -350,7 +347,6 @@ fun MainScreen(
     val useCustomBackground = customBackground != ""
     val context = LocalContext.current
     var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
-
     // 捏合手势
     val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 
@@ -358,10 +354,7 @@ fun MainScreen(
         value = calculatedReadNotificationCount()
     }
 
-    CustomTransitionScaffold (
-        navHostController = navHostTopController,
-        route = AppNavRoute.Home.route,
-        roundShape = RoundedCornerShape(0.dp),
+    Scaffold (
         modifier = Modifier.let {
             if (targetPage != COURSES) {
                 it.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -370,31 +363,32 @@ fun MainScreen(
             }
         },
         floatingActionButton = {
-            val addRoute = remember { AppNavRoute.AddEvent.withArgs(origin = AddEventOrigin.FOCUS_ADD.name) }
+            val dest = AddEventDestination(
+                null,
+                AddEventOrigin.FOCUS_ADD.name
+            )
             AnimatedVisibility(
                 enter = scaleIn(),
                 exit = scaleOut(),
                 visible = isNavigationIconVisible && (targetPage == FOCUS)
             ) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .containerShare(
-                            addRoute,
-                            FloatingActionButtonDefaults.shape
-                        ),
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
-                    onClick = {
-                        navHostTopController.navigateForTransition(
-                            AppNavRoute.AddEvent,
-                            addRoute
-                        )
-                    },
+                SharedContainer(
+                    key = dest.key,
+                    shape = (FloatingActionButtonDefaults.shape as? CornerBasedShape) ?: MaterialTheme.shapes.large,
+                    containerColor = FloatingActionButtonDefaults.containerColor,
                 ) {
-                    Icon(
-                        painterResource(AppNavRoute.AddEvent.icon),
-                        "Add Button",
-                        modifier = Modifier.iconElementShare(addRoute)
-                    )
+                    FloatingActionButton(
+                        shape = NoneRoundShape,
+                        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+                        onClick = {
+                            navHostTopController.push(dest)
+                        },
+                    ) {
+                        Icon(
+                            painterResource(AddEventDestination.ICON),
+                            "Add Button",
+                        )
+                    }
                 }
             }
         },
@@ -429,21 +423,21 @@ fun MainScreen(
                         actions = {
                             when (targetPage) {
                                 SEARCH -> {
-                                    val route = remember { AppNavRoute.FunctionsSort.route }
-                                    IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(
-                                            AppNavRoute.FunctionsSort,
-                                            route,
-                                            transplantBackground = true
-                                        )
-                                    }) {
-                                        Icon(
-                                            painterResource(id = R.drawable.edit),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.iconElementShare(route = route)
-                                        )
-                                    }
+//                                    SharedContainer(
+//                                        key = FunctionsSortDestination.key,
+//                                        shape = CircleShape,
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+//                                    ) {
+                                        IconButton(onClick = {
+                                            navHostTopController.push(FunctionsSortDestination,effect = SlideTransitionEffect())
+                                        }) {
+                                            Icon(
+                                                painterResource(id = R.drawable.edit),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+//                                    }
                                     IconButton(onClick = { showSearch = !showSearch }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.search),
@@ -455,20 +449,25 @@ fun MainScreen(
 
                                 FOCUS -> {
                                     ApiToSupabase(vm)
-                                    val iconRoute = remember { AppNavRoute.NotificationBox.route }
-                                    IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
-                                    }) {
-                                        BadgedBox(badge = {
-                                            if (count != 0) {
-                                                Badge {
-                                                    Text(text = count.toString())
-                                                }
-                                            }
+//                                    SharedContainer(
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent),
+//                                        key = NotificationBoxDestination.key,
+//                                        shape = CircleShape
+//                                    ) {
+                                        IconButton(onClick = {
+                                            navHostTopController.push(NotificationBoxDestination, effect = SlideTransitionEffect(Direction.BOTTOM))
                                         }) {
-                                            Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = iconRoute))
+                                            BadgedBox(badge = {
+                                                if (count != 0) {
+                                                    Badge {
+                                                        Text(text = count.toString())
+                                                    }
+                                                }
+                                            }) {
+                                                Icon(painterResource(id = NotificationBoxDestination.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                            }
                                         }
-                                    }
+//                                    }
                                     if (ifSaved) {
                                         IconButton(onClick = { refreshLogin(context) }) {
                                             Icon(
@@ -480,11 +479,93 @@ fun MainScreen(
                                     } else {
                                         Spacer(modifier = Modifier.width(7.5.dp))
                                         Text(
-                                            text = if (GlobalUIStateHolder.webVpn) "WebVpn" else "已登录",
+                                            text = if (GlobalStateHolder.webVpn) "WebVpn" else "已登录",
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                     }
+                                }
+                                SETTINGS -> {
+                                   Row {
+                                       // DeviceOs.isHarmonyOsNextAndroidCompatible();
+                                       // AppVersion.getSplitType
+                                       if(AppVersion.isDebug) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_debug))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.build),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       } else if(!AppVersion.isSignatureValid) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_sign))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.signature),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                       if(AppVersion.isDev) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_preview))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.logo_dev),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                       if(AppVersion.isRunningOnAvd) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_avd))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.adb),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       } else if(AppVersion.isRunningOnWsa) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_wsa))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.desktop_windows),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                       if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+                                           IconButton(
+                                               onClick = {
+                                                   showToast(context.getString(R.string.settings_person_info_tag_harmonry_next))
+                                               }
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.circle),
+                                                   null,
+                                                   tint = MaterialTheme.colorScheme.primary
+                                               )
+                                           }
+                                       }
+                                   }
                                 }
                                 else -> {}
                             }
@@ -540,7 +621,6 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
                                     Surface(
                                         shape = CircleShape,
                                         modifier = Modifier
@@ -556,26 +636,24 @@ fun MainScreen(
                                                 enableLiquidGlass
                                             )
                                             .clickable {
-                                                navHostTopController.navigateForTransition(
-                                                    AppNavRoute.WorkAndRest,
-                                                    route,
-                                                    transplantBackground = true
+                                                navHostTopController.push(
+                                                    WorkAndRestDestination(
+                                                        swapUI.toString()
+                                                    ),
+                                                    effect = JumpTransitionEffect()
                                                 )
-                                            }
-                                        ,
+                                            },
                                         color = Color.Transparent
                                     ) {
                                         Icon(
                                             tint = iconColor,
-                                            painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
+                                            painter = painterResource(id = WorkAndRestDestination.ICON),
                                             contentDescription = "",
                                             modifier = Modifier
                                                 .padding(CARD_NORMAL_DP * 3)
-                                                .iconElementShare(route)
                                         )
                                     }
                                 } else {
-                                    val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
                                     Surface(
                                         shape = CircleShape,
                                         modifier = Modifier
@@ -591,10 +669,12 @@ fun MainScreen(
                                                 enableLiquidGlass
                                             )
                                             .clickable {
-                                                navHostTopController.navigateForTransition(
-                                                    AppNavRoute.TermCourses,
-                                                    route,
-                                                    transplantBackground = true
+                                                navHostTopController.push(
+                                                    TermCoursesDestination(
+                                                        ifSaved,
+                                                        COURSES.name,
+                                                    ),
+                                                    effect = JumpTransitionEffect()
                                                 )
                                             }
                                         ,
@@ -606,7 +686,6 @@ fun MainScreen(
                                             contentDescription = "",
                                             modifier = Modifier
                                                 .padding(CARD_NORMAL_DP * 3)
-                                                .iconElementShare(route)
                                         )
                                     }
                                 }
@@ -686,33 +765,45 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
-                                    IconButton(
-                                        onClick = {
-                                            navHostTopController.navigateForTransition(AppNavRoute.WorkAndRest, route,transplantBackground = true)
+                                    val dest = WorkAndRestDestination(swapUI.toString())
+//                                    SharedContainer(
+//                                        key = dest.key,
+//                                        shape = CircleShape,
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+//                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                navHostTopController.push(dest,effect = JumpTransitionEffect())
+                                            }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = WorkAndRestDestination.ICON),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
                                         }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.iconElementShare(route)
-                                        )
-                                    }
+//                                    }
                                 } else {
-                                    val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
-                                    IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(AppNavRoute.TermCourses, route,transplantBackground = true)
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(id = AppNavRoute.TermCourses.icon),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.iconElementShare(route)
-                                        )
-                                    }
+                                    val dest = TermCoursesDestination(
+                                        ifSaved,
+                                        COURSES.name
+                                    )
+//                                    SharedContainer(
+//                                        key = dest.key,
+//                                        shape = CircleShape,
+//                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+//                                    ) {
+                                        IconButton(onClick = {
+                                            navHostTopController.push(dest,effect = JumpTransitionEffect())
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(id = TermCoursesDestination.ICON),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+//                                    }
                                 }
-
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
@@ -730,13 +821,11 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            ZhiJianSearchBar(backGroundSource,1f,false,zhiJianStudentId,showAll) {
+                            ZhiJianSearchBar(null,1f,false,zhiJianStudentId,showAll) {
                                 zhiJianStudentId = it
                             }
                         }
-//                        if (swapUI != CourseType.NEXT.code) {
-                            ScheduleTopDate(showAll, today)
-//                        }
+                        ScheduleTopDate(showAll, today)
                     }
                 }
             }
@@ -746,38 +835,42 @@ fun MainScreen(
                 NavigationBarItemDataDynamic(
                     COURSES.name,
                     "课程表",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        R.drawable.calendar,
-                        R.drawable.calendar_month_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            R.drawable.avd_calendar
+                        )
+                    },
                 ),
                 NavigationBarItemDataDynamic(
                     FOCUS.name,
                     "聚焦",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        R.drawable.lightbulb,
-                        R.drawable.lightbulb_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            R.drawable.avd_lightbulb
+                        )
+                    },
                 ),
                 NavigationBarItemDataDynamic(
                     SEARCH.name,
                     "查询中心",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        R.drawable.category_search,
-                        R.drawable.category_search_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            R.drawable.avd_category_search,
+                        )
+                    },
                 ),
                 NavigationBarItemDataDynamic(
                     SETTINGS.name,
                     "选项",
-                    icon = { selected -> NavigationBarItemDynamicIcon(
-                        selected,
-                        if (!showBadge) R.drawable.deployed_code else R.drawable.deployed_code_update,
-                        if (!showBadge) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled
-                    ) },
+                    icon = { selected ->
+                        NavigationBarItemDynamicIconModern(
+                            selected,
+                            if (!showBadge) R.drawable.avd_deployed_code else R.drawable.avd_deployed_code_update,
+                        )
+                    },
                     badge = {
                         if (showBadge) Badge { Text("1") }
                     }
@@ -786,29 +879,42 @@ fun MainScreen(
             if(useCustomBackground && targetPage == COURSES) {
                 SpecialBottomBar(backGroundSource,items,navController,isEnabled)
             } else {
-                HazeBottomBarDynamic(hazeState,items,navController,isEnabled)
+                HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
             }
         },
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)
-
         NavHost(
             navController = navController,
             startDestination = first.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
-            composable(COURSES.name) {
+            nav2Composable(COURSES.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
                     if (useCustomBackground) {
+                        // 状态栏反色
+                        val file = remember(customBackground) { File(customBackground) }
+                        val color by produceState<Int?>(initialValue = null) {
+                            value = withContext(Dispatchers.IO) {
+                                val bitmap = loadBitmap(file) ?: return@withContext null
+                                val result = pickColorFromTop(bitmap)
+                                bitmap.recycle()
+                                result
+                            }
+                        }
+                        TransparentSystemBars2(color?.let { it1 -> Color(it1) })
                         GlideImage(
-                            model = File(customBackground),
+                            model = file,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .shaderSource(backGroundSource)
+                                .backDropSource(backGroundSource)
                                 .fillMaxSize()
                         )
                     }
@@ -826,30 +932,11 @@ fun MainScreen(
                                     scaleFactor.floatValue *= zoom
                                 }
                             }
-
-//                    modifier = Modifier.pointerInput(Unit) {
-//                            detectTransformGestures { _, _, zoom, _ ->
-//                                when {
-//                                    zoom > 1f -> showAll = false
-//                                    zoom < 1f -> showAll = true
-//                                }
-//                            }
-//                        }
                     ) {
                         val isFriend = CourseType.entries.all { swapUI > it.code }
                         if (!isFriend) {
                             // 非好友课表
                             when (swapUI) {
-                                // 下学期
-//                                CourseType.NEXT.code -> JxglstuCourseTableUINext(
-//                                    showAll,
-//                                    vm,
-//                                    hazeState,
-//                                    navHostTopController,
-//                                    innerPadding,
-//                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
-//                                    { showAll = it },
-//                                )
                                 // 社区
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(
                                     scaleFactor.floatValue,
@@ -860,7 +947,7 @@ fun MainScreen(
                                     hazeState = hazeState,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     onSwapShowAll = { showAll = it },
-                                    navController = navHostTopController,
+//                                    navController = navHostTopController,
                                     onRestoreHeight = { smoothToOne(scaleFactor) }
                                 )
                                 // 合工大教务
@@ -868,14 +955,9 @@ fun MainScreen(
                                     scaleFactor.floatValue,
                                     showAll,
                                     innerPadding,
-                                    { newDate ->
-//                                        LogUtil.info("newDate = " +newDate.format(DateTimeManager.formatter_YYYY_MM_DD))
-//                                        LogUtil.info("today = " + today.format(DateTimeManager.formatter_YYYY_MM_DD))
-                                        today = newDate
-                                    },
+                                    { newDate -> today = newDate },
                                     today,
                                     hazeState,
-                                    navHostTopController,
                                     if (useCustomBackground) backGroundSource else null,
                                     { showAll = it },
                                     { smoothToOne(scaleFactor) }
@@ -886,19 +968,18 @@ fun MainScreen(
                                     showAll,
                                     vm,
                                     innerPadding,
-                                    if (isLogin) GlobalUIStateHolder.webVpn else false,
+                                    if (isLogin) GlobalStateHolder.webVpn else false,
                                     isLogin,
                                     { newDate -> today = newDate },
                                     today,
                                     hazeState,
-                                    navHostTopController,
                                     if (useCustomBackground) backGroundSource else null,
                                     isEnabled,
                                     { isEnabled = it },
                                     { showAll = it },
                                     { smoothToOne(scaleFactor) }
                                 )
-//                                // 教务2
+                                // 教务2
                                 CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(
                                     showAll,
                                     vm,
@@ -936,13 +1017,12 @@ fun MainScreen(
                                 hazeState,
                                 backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                 onSwapShowAll = { showAll = it },
-                                navController = navHostTopController,
                                 onRestoreHeight = { smoothToOne(scaleFactor) }
                             )
                     }
                 }
             }
-            composable(FOCUS.name) {
+            nav2Composable(FOCUS.name) {
                 Scaffold {
                     TodayScreen(
                         vm,
@@ -951,11 +1031,10 @@ fun MainScreen(
                         ifSaved,
                         pagerState,
                         hazeState = hazeState,
-                        navHostTopController,
                     )
                 }
             }
-            composable(SEARCH.name) {
+            nav2Composable(SEARCH.name) {
                 Scaffold {
                     SearchScreen(
                         vm,
@@ -963,20 +1042,13 @@ fun MainScreen(
                         innerPadding,
                         vmUI,
                         searchText,
-                        navController = navHostTopController,
                         hazeState = hazeState,
                     )
                 }
             }
-            composable(SETTINGS.name) {
+            nav2Composable(SETTINGS.name) {
                 Scaffold {
-                    SettingsScreen(
-                        vm,
-                        ifSaved,
-                        innerPadding,
-                        hazeState,
-                        navHostTopController,
-                    )
+                    HomeSettingScreen(innerPadding,vm)
                 }
             }
         }
@@ -989,21 +1061,20 @@ fun topBarText(num : BottomBarItems,context: Context) : String = when(num) {
     SETTINGS -> context.getString(R.string.settings_title)
     else -> {
         val chineseNumber  =
-//            "周${numToChinese(DateTimeManager.dayWeek)}"
-        if(LanguageHelper.isChineseLanguage(context)) {
-            "周${numToChinese(DateTimeManager.dayWeek)}"
-        } else {
-            when(DateTimeManager.dayWeek) {
-                1 -> "Mon."
-                2 -> "Tue."
-                3 -> "Wed."
-                4 -> "Thur."
-                5 -> "Fri."
-                6 -> "Sat."
-                0,7 -> "Sun."
-                else -> ""
+            if(LanguageHelper.isChineseLanguage(context)) {
+                "周${numToChinese(DateTimeManager.dayWeek)}"
+            } else {
+                when(DateTimeManager.dayWeek) {
+                    1 -> "Mon."
+                    2 -> "Tue."
+                    3 -> "Wed."
+                    4 -> "Thur."
+                    5 -> "Fri."
+                    6 -> "Sat."
+                    0,7 -> "Sun."
+                    else -> ""
+                }
             }
-        }
         context.getString(R.string.focus_and_calendar_title, DateTimeManager.Date_MM_dd, DateTimeManager.currentWeek, chineseNumber)
     }
 }
@@ -1041,21 +1112,18 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
         reorderByIds(order)
     } catch (e: Exception) {
         LogUtil.error(e)
-        reorderByIds(GlobalUIStateHolder.funcDefault.map { it.id })
+        reorderByIds(GlobalStateHolder.funcDefault.map { it.id })
     }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchEditScreen(
-    navController : NavHostController,
-) {
+fun SearchEditScreen() {
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.FunctionsSort.route }
-    val funcMaps by produceState(initialValue = GlobalUIStateHolder.funcMaps, key1 = searchSort, key2 = GlobalUIStateHolder.funcMaps) {
+    val funcMaps by produceState(initialValue = GlobalStateHolder.funcMaps, key1 = searchSort, key2 = GlobalStateHolder.funcMaps) {
         if(searchSort.isNotEmpty() && searchSort.isNotBlank()) {
-            value = GlobalUIStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
+            value = GlobalStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
         }
     }
     val scope = rememberCoroutineScope()
@@ -1089,7 +1157,7 @@ fun SearchEditScreen(
             onDismissRequest = { showDialog = false },
             onConfirmation = {
                 scope.launch {
-                    DataStoreManager.saveSearchSort(GlobalUIStateHolder.funcDefault.map { it.id })
+                    DataStoreManager.saveSearchSort(GlobalStateHolder.funcDefault.map { it.id })
                     showDialog = false
                     showToast("已恢复")
                 }
@@ -1099,7 +1167,13 @@ fun SearchEditScreen(
         )
     }
     var show by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = inEdit) {
+        inEdit = false
+    }
+
     Column (modifier = Modifier
+        .background(MaterialTheme.colorScheme.surface)
         .fillMaxSize()
         .hazeSource(hazeState)) {
         MediumTopAppBar(
@@ -1115,9 +1189,9 @@ fun SearchEditScreen(
             },
             scrollBehavior = scrollBehavior,
             colors = topBarTransplantColor(),
-            title = { Text(stringResource(AppNavRoute.FunctionsSort.label)) },
+            title = { Text(FunctionsSortDestination.title.asString()) },
             navigationIcon = {
-                TopBarNavigationIcon(route, AppNavRoute.FunctionsSort.icon)
+                TopBarNavigationIcon()
             },
             actions = {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -1221,7 +1295,6 @@ fun SearchEditScreen(
                     .height(APP_HORIZONTAL_DP)) }
             }
         }
-
     }
 }
 
@@ -1390,15 +1463,10 @@ private fun ZhiJianSearchBar(
         }
     }
 
+
     Column {
         Row(modifier = Modifier.padding(horizontal =
-            APP_HORIZONTAL_DP - (
-                    if(shaderState == null) {
-                        (if (showAll) 1.75.dp else 2.5.dp)*3
-                    } else {
-                        if (showAll) 1.75.dp else 2.5.dp
-                    }
-            )
+            APP_HORIZONTAL_DP - (if (showAll) 1.75.dp else 2.5.dp)
         )) {
             TextField(
                 modifier = Modifier
@@ -1430,7 +1498,7 @@ private fun ZhiJianSearchBar(
                                 showSelectDialog = true
                             }
                         ) {
-                            Icon(painterResource(R.drawable.database),null)
+                            Icon(painterResource(R.drawable.swap_vert),null)
                         }
                     }
                 },
@@ -1457,9 +1525,10 @@ private fun ZhiJianSearchBar(
                 },
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
-                colors = textFiledTransplant(),
+                colors = textFiledTransplant()
             )
         }
         Spacer(Modifier.height(CARD_NORMAL_DP*2))
     }
 }
+

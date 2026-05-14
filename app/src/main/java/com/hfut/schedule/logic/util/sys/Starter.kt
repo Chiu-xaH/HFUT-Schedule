@@ -2,16 +2,20 @@ package com.hfut.schedule.logic.util.sys
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent
+import android.app.Service
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
-import androidx.compose.ui.graphics.Color
+import android.service.quicksettings.TileService
+import android.util.Log
 import androidx.core.net.toUri
-import androidx.navigation.NavController
-import com.hfut.schedule.application.MyApplication
+import androidx.core.service.quicksettings.TileServiceCompat.startActivityAndCollapse
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
@@ -24,28 +28,35 @@ import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.enumeration.XwxScreen
-import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.network.util.WebVpnConvertor
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.util.webview.getPureUrl
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hjq.device.compat.DeviceOs
+import com.xah.navigation.controller.NavigationController
+import com.xah.shared.LogUtil
+
 
 object Starter {
     enum class AppPackages(
         val packageName : String,
         val appName : String,
         val icon : Int,
-        val iconBackgroundColor : Color,
     ) {
-        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园",R.drawable.today_campus_icon, Color(0xFF3452E6)),
-        WECHAT("com.tencent.mm","微信",R.drawable.wechat_icon, Color(0xFF07C561)),
-        CHAO_XING("com.chaoxing.mobile","学习通",R.drawable.chao_xing_icon, Color(0xFFD00521)),
-        MOOC("com.netease.edu.ucmooc","中国大学MOOC",R.drawable.mooc_icon, Color(0xFFFFFFFF)),
-        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂",R.drawable.rain_classroom_icon, Color(0xFF5097F5)),
-        LE_PAO("com.yunzhi.tiyu","云运动",R.drawable.le_pao_icon, Color(0xFF4084FE)),
-        ANHUI_HALL("com.iflytek.oshall.ahzwfw","皖事通",R.drawable.anhui_hall_icon, Color(0xFFE20311)),
-        ALIPAY("com.eg.android.AlipayGphone","支付宝",R.drawable.alipay_icon, Color(0xFF1978FF))
+        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园",R.drawable.today_campus_icon),
+        WECHAT("com.tencent.mm","微信",R.drawable.wechat_icon),
+        CHAO_XING("com.chaoxing.mobile","学习通",R.drawable.chao_xing_icon),
+        MOOC("com.netease.edu.ucmooc","中国大学MOOC",R.drawable.mooc_icon),
+        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂",R.drawable.rain_classroom_icon),
+        LE_PAO("com.yunzhi.tiyu","云运动",R.drawable.le_pao_icon),
+        ANHUI_HALL("com.iflytek.oshall.ahzwfw","皖事通",R.drawable.anhui_hall_icon),
+        ALIPAY("com.eg.android.AlipayGphone","支付宝",R.drawable.alipay_icon),
+        PDD("com.xunmeng.pinduoduo","拼多多",R.drawable.pdd_icon),
+        TAO_BAO("com.taobao.taobao","淘宝",R.drawable.taobao_icon),
     }
     //通过包名启动第三方应用
     @JvmStatic
@@ -55,29 +66,73 @@ object Starter {
             val intent = context.packageManager.getLaunchIntentForPackage(app.packageName)
             if(intent == null) showToast("未安装${app.appName}")
             else context.startActivity(intent)
-        } catch (_: Exception) {
-            showToast("启动外部应用失败")
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+                showToast("检测到为鸿蒙NEXT，启动外部应用失败")
+            } else {
+                showToast("启动外部应用失败")
+            }
         }
     }
 
     @JvmStatic
     fun startWlanSettings(context: Context) {
-        val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-        if (context !is Activity) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+            if (context !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            showToast("打开WLAN设置失败")
         }
-        context.startActivity(intent)
     }
+
+    @JvmStatic
+    fun startPddExpress(context: Context) {
+        try {
+            val intent = Intent().apply {
+                component = ComponentName(
+                    AppPackages.PDD.packageName,
+                    "${AppPackages.PDD.packageName}.ui.activity.MainFrameActivity"
+                )
+                data = Constant.PDD_PACKAGE_URL.toUri()
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("打开${AppPackages.PDD.appName}失败")
+        }
+    }
+
+    @JvmStatic
+    fun startTaoBaoExpress(context: Context) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Constant.TAO_BAO_PACKAGE_ID_URL.toUri()
+                setPackage(AppPackages.TAO_BAO.packageName)
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("打开${AppPackages.TAO_BAO.appName}失败")
+        }
+    }
+
+
     //传入应用URL打开
     @JvmStatic
     fun startAppUrl(context: Context,url : String,appName : String? = null) {
         try {
             val intent = Intent(Intent.ACTION_DEFAULT, url.toUri())
-            if (context !is Activity) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         } catch (e : Exception) {
+            LogUtil.error(e)
             val name = if(appName == null) {
                 val scheme = url.substringBefore("://")
                  when(scheme) {
@@ -92,7 +147,7 @@ object Starter {
     }
     //传入网页URL打开
     @JvmStatic
-    fun startWebUrl(context: Context,url : String) {
+    fun startWebUrlOuter(context: Context, url : String) {
         try {
             val it = Intent(Intent.ACTION_VIEW, url.toUri())
             if (context !is Activity) {
@@ -100,6 +155,7 @@ object Starter {
             }
             context.startActivity(it)
         } catch (e : Exception) {
+            LogUtil.error(e)
             showToast("启动浏览器失败")
         }
     }
@@ -174,62 +230,58 @@ object Starter {
         context.startActivity(it)
     }
     @JvmStatic
-    suspend fun startWebView(
+    suspend fun startWebUrlInner(
         context: Context,
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
         icon : Int? = null
     ) {
-        if(GlobalUIStateHolder.globalWebVpn) {
+        if(GlobalStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
-            if(url.contains(MyApplication.WEBVPN_URL)) {
+            if(url.contains(Constant.WEBVPN_URL)) {
                 goToWebView(context, url, title, cookieWebVpn,icon)
             } else {
-                goToWebView(context, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon)
+                goToWebView(context, WebVpnConvertor.getWebVpnUrl(url), title, cookieWebVpn,icon)
             }
         } else {
             goToWebView(context,url, title, cookie,icon)
         }
     }
     @JvmStatic
-    suspend fun startWebView(
-        navController: NavController,
+    suspend fun startWebUrlInner(
+        navController: NavigationController,
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
         icon : Int = R.drawable.net,
-        transplantBackground: Boolean = false
     ) {
-        if(GlobalUIStateHolder.globalWebVpn) {
+        if(GlobalStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
-            if(url.contains(MyApplication.WEBVPN_URL)) {
-                goToWebViewNavigation(navController, url, title, cookieWebVpn,icon,transplantBackground)
+            if(url.contains(Constant.WEBVPN_URL)) {
+                goToWebViewNavigation(navController, url, title, cookieWebVpn,icon)
             } else {
-                goToWebViewNavigation(navController, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon,transplantBackground)
+                goToWebViewNavigation(navController, WebVpnConvertor.getWebVpnUrl(url), title, cookieWebVpn,icon)
             }
         } else {
-            goToWebViewNavigation(navController,url, title, cookie,icon,transplantBackground)
+            goToWebViewNavigation(navController,url, title, cookie,icon)
         }
     }
     @JvmStatic
     private fun goToWebViewNavigation(
-        navController: NavController,
+        navController: NavigationController,
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
         icon : Int = R.drawable.net,
-        transplantBackground: Boolean = false
     ) {
-        navController.navigateForTransition(
-            AppNavRoute.WebView,
-            AppNavRoute.WebView.withArgs(
+        navController.push(
+            WebViewDestination(
                 url = url,
-                title = title,
+                name = title,
                 cookies = cookie,
                 icon = icon,
-            ),
-            transplantBackground
+            )
         )
     }
     @JvmStatic
@@ -240,7 +292,6 @@ object Starter {
         cookies: String? = null,
         icon : Int? = null
     ) {
-        GlobalUIStateHolder.pushToFront(AppNavRoute.WebView.withArgs(url,title,cookies,icon ?: R.drawable.net), AppNavRoute.WebView)
         val it = Intent(context, WebViewActivity::class.java).apply {
             putExtra("url",url)
             putExtra("title",title)
@@ -272,11 +323,16 @@ object Starter {
     }
     @JvmStatic
     fun emailMe(context: Context) {
-        val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
-        if (context !is Activity) {
-            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
+            if (context !is Activity) {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(it)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("启动邮箱应用失败，请向zsh0908@outlook.com发送邮件")
         }
-        context.startActivity(it)
     }
     @JvmStatic
     fun loginSuccess(context: Context) {
@@ -297,14 +353,37 @@ object Starter {
     }
     @JvmStatic
     fun openDownloadFolder(activity: Activity) {
-        val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val uri = Uri.fromFile(downloads) // 或者用 buildTreeDocumentUri() Android 10+
+        try {
+            val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val uri = Uri.fromFile(downloads) // 或者用 buildTreeDocumentUri() Android 10+
 
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
+            }
+
+            activity.startActivityForResult(intent, 100)
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            showToast("启动下载管理失败")
         }
+    }
 
-        activity.startActivityForResult(intent, 100)
+    @JvmStatic
+    fun TileService.startActivitySafely(intent : Intent) {
+        if (AppVersion.sdkInt >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            startActivityAndCollapse(pendingIntent)
+
+        } else {
+            @Suppress("DEPRECATION")
+            startActivityAndCollapse(intent)
+        }
     }
 }
 

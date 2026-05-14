@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +14,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,17 +32,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavHostController
+import androidx.compose.ui.res.painterResource
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.network.util.MyApiParse.getCustomEvent
-import com.hfut.schedule.logic.network.util.MyApiParse.getNetCourse
-import com.hfut.schedule.logic.network.util.MyApiParse.getSchedule
-import com.hfut.schedule.logic.network.util.toTimestampWithOutT
+import com.hfut.schedule.logic.util.network.MyApiParse.getCustomEvent
+import com.hfut.schedule.logic.util.network.MyApiParse.getNetCourse
+import com.hfut.schedule.logic.util.network.MyApiParse.getSchedule
+import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
@@ -72,7 +73,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFrom
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.util.LocalSharedRegistry
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -82,6 +85,13 @@ import kotlinx.coroutines.withContext
 
 private const val TAB_LEFT = 0
 private const val TAB_RIGHT = 1
+
+/**
+ * TODO 按时间线顺序，获取今天的课程、考试、日程（DDL除外）
+ */
+suspend fun getTodayEvents() {
+
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
@@ -93,31 +103,31 @@ fun TodayScreen(
     ifSaved : Boolean,
     state: PagerState,
     hazeState: HazeState,
-    navController : NavHostController,
 ) {
-    val context = LocalContext.current
-    var scheduleList by remember { mutableStateOf(getSchedule()) }
-    var netCourseList by remember { mutableStateOf(getNetCourse()) }
-    var refreshing by rememberSaveable { mutableStateOf(true) }
-    var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
+
+    var refreshDB by remember { mutableStateOf(false) }
+    var refreshing by rememberSaveable { mutableStateOf(true) }
+    var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
+    var enableShowOutOfDateEvent by rememberSaveable { mutableStateOf(false) }
+    val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
+
+    var scheduleList by remember { mutableStateOf(getSchedule()) }
+    var netCourseList by remember { mutableStateOf(getNetCourse()) }
     val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             refreshing = true
             async {
                 launch { DateTimeManager.updateTime { timeNow = it } }
-                launch { initNetworkRefresh(vm, vmUI, ifSaved, context) }
+                launch { initNetworkRefresh(vm, vmUI, ifSaved) }
                 launch { netCourseList = getNetCourse() }
                 launch { scheduleList = getSchedule() }
             }.await()
             refreshing = false
         }
     })
-
-    var refreshDB by remember { mutableStateOf(false) }
-
-    val scrollState = rememberLazyListState()
     val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     var lastTime by remember { mutableStateOf("00:00") }
     var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
@@ -140,6 +150,7 @@ fun TodayScreen(
     val exams by produceState(initialValue = emptyList()) {
         value = getExamFromCache()
     }
+
     // 加载数据库
     LaunchedEffect(refreshDB) {
         launch {
@@ -191,15 +202,16 @@ fun TodayScreen(
             }
         }
     }
+
     LaunchedEffect(Unit) {
         // 冷启动
         launch {
             // 避免重复加载
-            if(refreshing == false) {
+            if(!refreshing) {
                 return@launch
             }
             async {
-                initNetworkRefresh(vm,vmUI,ifSaved,context)
+                initNetworkRefresh(vm,vmUI,ifSaved)
             }.await()
             refreshing = false
         }
@@ -211,9 +223,6 @@ fun TodayScreen(
             }
         }
     }
-    val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
-
-    val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -233,17 +242,17 @@ fun TodayScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
                         TAB_LEFT -> {
-                            item { FocusCard(vmUI,vm,hazeState, navController,) }
+                            item { FocusCard(vmUI,vm,hazeState) }
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
                                     if (showTomorrow) {
                                         if(!isHolidayTomorrow()) {
-                                            items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState) }
+                                            items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item]) }
                                         }
                                     } else {
                                         if(!isHoliday()) {
-                                            items(todayCourseList.size) { item -> CommunityTodayCourseItem(list = todayCourseList[item],vm, hazeState,timeNow) }
+                                            items(todayCourseList.size) { item -> CommunityTodayCourseItem(list = todayCourseList[item],timeNow) }
                                         }
                                     }
                                 }
@@ -252,7 +261,7 @@ fun TodayScreen(
                                         if(!isHolidayTomorrow()) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],navController,)
+                                                    JxglstuTomorrowCourseItem(item,list[item])
                                                 }
                                             }
                                         }
@@ -260,7 +269,7 @@ fun TodayScreen(
                                         if(!isHoliday()) {
                                             todayJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow,navController,)
+                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow)
                                                 }
                                             }
                                         }
@@ -271,7 +280,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow, navController = navController) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow,showOutOfDateItems = switchShowEnded) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
@@ -297,11 +306,42 @@ fun TodayScreen(
 
                         }
                         TAB_RIGHT -> {
+                            if(customScheduleList.isNotEmpty()) {
+                                item {
+                                    CardListItem(
+                                        headlineContent = { Text(
+                                            if(enableShowOutOfDateEvent) {
+                                                "收起"
+                                            } else {
+                                                "展开"
+                                            } + "已过期日程",
+                                            color = MaterialTheme.colorScheme.primary
+                                        ) },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(
+                                                    if(enableShowOutOfDateEvent) {
+                                                        R.drawable.visibility
+                                                    } else {
+                                                        R.drawable.visibility_off
+                                                    }
+                                                ),
+                                                null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        },
+                                        modifier = Modifier.clickable {
+                                            enableShowOutOfDateEvent = !enableShowOutOfDateEvent
+                                        }
+                                    )
+                                }
+                            }
+
                             //日程
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, navController = navController, showOutOfDateItems = enableShowOutOfDateEvent) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, showOutOfDateItems = enableShowOutOfDateEvent) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
@@ -330,7 +370,7 @@ fun TodayScreen(
                                     CourseType.COMMUNITY.code -> {
                                         if (DateTimeManager.compareTime(lastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             items(tomorrowCourseList.size) { item ->
-                                                CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState)
+                                                CommunityTomorrowCourseItem(list = tomorrowCourseList[item])
                                             }
                                         }
                                     }
@@ -338,7 +378,7 @@ fun TodayScreen(
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],navController,)
+                                                    JxglstuTomorrowCourseItem(item,list[item])
                                                 }
                                             }
                                         }

@@ -6,7 +6,7 @@ import android.os.Environment
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream

@@ -5,29 +5,36 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
 import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
+import com.hfut.schedule.logic.model.BuildingMapResponseBean
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.model.GithubIssueBean
+import com.hfut.schedule.logic.model.GithubIssueLabel
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
-import com.hfut.schedule.logic.network.api.GiteeService
-import com.hfut.schedule.logic.network.api.GithubRawService
-import com.hfut.schedule.logic.network.api.GithubService
-import com.hfut.schedule.logic.network.api.MyService
-import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestState
+import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.network.api.GiteeService
+import com.hfut.schedule.network.api.GithubRawService
+import com.hfut.schedule.network.api.GithubService
+import com.hfut.schedule.network.api.MyService
+import com.hfut.schedule.network.impl.GiteeServiceCreator
+import com.hfut.schedule.network.impl.GithubRawServiceCreator
+import com.hfut.schedule.network.impl.GithubServiceCreator
+import com.hfut.schedule.network.impl.MyServiceCreator
+import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
+import com.hfut.schedule.ui.screen.home.search.function.other.life.RoomRect
 import okhttp3.Headers
 import okhttp3.ResponseBody
+import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.awaitResponse
 
 object GithubRepository {
     private val github = GithubServiceCreator.create(GithubService::class.java)
@@ -109,7 +116,7 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
     fun downloadHoliday()  {
-        val call = githubRaw.getYearHoliday()
+        val call = githubRaw.getYearHoliday(DateTimeManager.Date_yyyy)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -150,5 +157,73 @@ object GithubRepository {
         }
         val versionName = data.name.replace("HFUT-Schedule ","")
         GiteeReleaseResponse(versionName,data.body,list)
+    } catch (e : Exception) { throw e }
+
+    suspend fun getIssues(page : Int,holder : StateHolder<List<GithubIssueBean>>) = launchRequestState(
+        request = { github.getIssues(page) },
+        holder = holder,
+        transformSuccess = { _, json -> parseGithubIssues(json) }
+    )
+    @JvmStatic
+    private fun parseGithubIssues(json : String) : List<GithubIssueBean> = try {
+        val listType = object : TypeToken<List<GithubIssueBean>>() {}.type
+        val issues : List<GithubIssueBean> = Gson().fromJson(json,listType)
+        val flowLabelIds = GithubIssueLabel.entries.map { it.id }.toSet()
+        val realIssues = issues.filter { issue ->
+            // 过滤 PR
+            issue.pr == null &&
+            // 过滤 F-DROID
+            !issue.title.contains("F-DROID", ignoreCase = true) &&
+            // 不包含任何GithubIssueLabel标签非事务
+            issue.labels.any { it.id in flowLabelIds }
+        }
+        realIssues
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun getBuildingMaps(holder : StateHolder<List<BuildingMapResponseBean>>) = launchRequestState(
+        request = { githubRaw.getBuildingMaps() },
+        holder = holder,
+        transformSuccess = { _, json -> parseBuildingMaps(json) }
+    )
+    @JvmStatic
+    private fun parseBuildingMaps(json : String) : List<BuildingMapResponseBean> = try {
+        val listType = object : TypeToken<List<BuildingMapResponseBean>>() {}.type
+        Gson().fromJson(json,listType) as List<BuildingMapResponseBean>
+    } catch (e : Exception) { throw e }
+
+    suspend fun getFloorXml(filename : String,holder : StateHolder<FloorMap>) = launchRequestState(
+        request = { githubRaw.getFloorXml(filename) },
+        holder = holder,
+        transformSuccess = { _, xml -> parseFloorXml(xml) }
+    )
+    @JvmStatic
+    private fun parseFloorXml(xml : String) : FloorMap = try {
+        val doc = Jsoup.parse(xml, "", Parser.xmlParser())
+
+        val width = doc.selectFirst("size > width")?.text()?.toFloatOrNull() ?: throw Exception("解析width失败")
+        val height = doc.selectFirst("size > height")?.text()?.toFloatOrNull() ?: throw Exception("解析height失败")
+
+        val rooms = mutableListOf<RoomRect>()
+
+        val objects = doc.select("object")
+        for (obj in objects) {
+            val id = obj.selectFirst("name")?.text() ?: continue
+
+            val xMin = obj.selectFirst("bndbox > xmin")?.text()?.toFloatOrNull() ?: continue
+            val yMin = obj.selectFirst("bndbox > ymin")?.text()?.toFloatOrNull() ?: continue
+            val xMax = obj.selectFirst("bndbox > xmax")?.text()?.toFloatOrNull() ?: continue
+            val yMax = obj.selectFirst("bndbox > ymax")?.text()?.toFloatOrNull() ?: continue
+
+            rooms += RoomRect(
+                id = id,
+                left = xMin / width,
+                top = yMin / height,
+                right = xMax / width,
+                bottom = yMax / height
+            )
+        }
+
+        FloorMap(width, height, rooms)
     } catch (e : Exception) { throw e }
 }

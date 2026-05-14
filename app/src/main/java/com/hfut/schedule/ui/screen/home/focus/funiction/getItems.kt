@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -58,28 +58,3 @@ fun transferNum(num : Int) : Float {
     val settle = num_float
     return settle
 }
-
-
-//@SuppressLint("Range")
-//fun getCustomItems() : List<AddFocus> {
-//    val list = mutableListOf<AddFocus>()
-//    try {
-//        val dbwritableDatabase =  dataBase.writableDatabase
-//        val cursor = dbwritableDatabase.query("Book",null,null,null,null,null,null)
-//        if(cursor.moveToFirst()){
-//            do{
-//                val titles = cursor.getString(cursor.getColumnIndex("title"))
-//                val infos = cursor.getString(cursor.getColumnIndex("info"))
-//                val remarks = cursor.getString(cursor.getColumnIndex("remark"))
-//                val ids = cursor.getString(cursor.getColumnIndex("id")).toInt()
-//                val AddFocu = AddFocus(titles,infos,remarks,ids)
-//                list.add(AddFocu)
-//            } while (cursor.moveToNext())
-//        }
-//        cursor.close()
-//        return list
-//    } catch (e : Exception) {
-//        return emptyList()
-//    }
-//}
-

@@ -1,5 +1,0 @@
-package com.hfut.schedule.logic.network.servicecreator
-
-import com.hfut.schedule.application.MyApplication
-
-object QWeatherServiceCreator : BaseServiceCreator(MyApplication.Q_WEATHER_URL)

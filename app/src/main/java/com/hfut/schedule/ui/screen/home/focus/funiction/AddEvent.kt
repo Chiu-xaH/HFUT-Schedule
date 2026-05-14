@@ -38,10 +38,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -93,6 +89,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
+import com.hfut.schedule.logic.enumeration.LocalEvent
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -102,11 +99,11 @@ import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -117,9 +114,9 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -133,15 +130,18 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.util.popBackStackForTransition
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.common.ui.component.status.CustomSingleChoiceRow
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.util.LocalNavController
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.common.ui.util.text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -232,12 +232,10 @@ enum class AddEventOrigin {
 @Composable
 fun AddEventScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
     eventId : Int = -1,
     origin : String
 ) {
-    val route = remember { AppNavRoute.AddEvent.withArgs(eventId,origin) }
-
+    val navController = LocalNavController.current
     val isSupabase = false
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
@@ -258,7 +256,7 @@ fun AddEventScreen(
                         async { DataBaseManager.customEventDao.del(eventId) }.await()
                         launch { showDialog = false }
                         launch(Dispatchers.Main) {
-                            navController.popBackStackForTransition()
+                            navController.pop()
                         }
                     }
                 } else {
@@ -269,14 +267,7 @@ fun AddEventScreen(
         )
     }
 
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
-        roundShape = when(origin) {
-            AddEventOrigin.FOCUS_EDITED.name -> MaterialTheme.shapes.medium
-            AddEventOrigin.FOCUS_ADD.name -> FloatingActionButtonDefaults.shape
-            else -> MaterialTheme.shapes.extraSmall
-        },
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -284,7 +275,7 @@ fun AddEventScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(if(eventId <= 0) "添加" else "修改") },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.AddEvent.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     if(eventId <= 0) {
@@ -340,13 +331,13 @@ fun AddEventScreen(
                 }
                 true -> {
                     AddEventUI(vm,isSupabase,eventId) {
-                        navController.popBackStack()
+                        navController.pop()
                     }
                 }
                 false -> {
                     CenterScreen {
                         ColumnVertical {
-                            StatusIcon(R.drawable.login,"未登录或状态失效")
+                            StatusIcon(R.drawable.login,text("未登录或状态失效"))
                             Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             Button(onClick = { Starter.loginSupabase(context)}) {
                                 Text("刷新登录状态")
@@ -384,7 +375,7 @@ private fun SharedTransitionScope.ButtonUI(
                 ),
             elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
             onClick = { showChange(true) },
-        ) { Icon(Icons.Filled.Add, "Add Button") }
+        ) { Icon(painterResource(R.drawable.add), "Add Button") }
     }
 }
 
@@ -477,7 +468,7 @@ private fun SharedTransitionScope.SurfaceUI(
                         IconButton(
                             onClick = { showChange(false) }
                         ) {
-                            Icon(Icons.Filled.ArrowBack,null,tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(R.drawable.arrow_back),null,tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )
@@ -511,7 +502,7 @@ private fun SharedTransitionScope.SurfaceUI(
                     false -> {
                         CenterScreen {
                             ColumnVertical {
-                                StatusIcon(R.drawable.login,"未登录或状态失效")
+                                StatusIcon(R.drawable.login,text("未登录或状态失效"))
                                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                 Button(onClick = { Starter.loginSupabase(context)}) {
                                     Text("刷新登录状态")
@@ -605,13 +596,13 @@ fun AddEventUI(
     val classList = remember { mutableStateListOf<String>() }
     var updateLoading by remember { mutableStateOf(false) }
     val typeIcon = @Composable {
-        Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.net),null)
+        Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.timer),null)
     }
 
     if(showSelectDateDialog)
         DateRangePickerModal(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
     if(showSelectTimeDialog)
-        TimeRangePickerDialog(isScheduleType,onSelected = { time = it }) { showSelectTimeDialog = false }
+        TimeRangePickerDialog(isScheduleType,onSelected = { time = it }, defaultValue = time) { showSelectTimeDialog = false }
 
 
     LaunchedEffect(updateLoading) {
@@ -691,7 +682,6 @@ fun AddEventUI(
                 .measureDpSize { _, h ->
                     bottomHeight = h
                 }
-//                .navigationBarsPadding()
                 .align(Alignment.BottomCenter)
                 .zIndex(2f)
                 .background(
@@ -775,35 +765,57 @@ fun AddEventUI(
         }
 
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//            DividerTextExpandedWith("配置") {
-                CardListItem(
-                    headlineContent = { Text("类型: " + if(isScheduleType) "日程" else "网课" ) },
-                    supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终;\n添加后，将同时显示在课程表方格中，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine);\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
-                    leadingContent = {
-                        FilledTonalIconButton(
-                            onClick = { isScheduleType = !isScheduleType },
-                            content = typeIcon
-                        )
-                    } ,
-                    modifier = Modifier.clickable {
-                        isScheduleType = !isScheduleType
-                        date = Pair("","")
-                        time = Pair("","")
-                    }
-                )
-                Spacer(Modifier.height(5.dp))
-                CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
-                Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
-                CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
-                Spacer(Modifier.height(5.dp ))
+            CustomSingleChoiceRow(
+                options = LocalEvent.entries,
+                selected = if(isScheduleType) LocalEvent.SCHEDULE else LocalEvent.DEADLINE,
+            ) {
+                isScheduleType = when(it) {
+                    LocalEvent.DEADLINE -> false
+                    LocalEvent.SCHEDULE -> true
+                }
+                date = Pair("","")
+                time = Pair("","")
+            }
+            CardListItem(
+                cardModifier = Modifier.padding(bottom = CARD_NORMAL_DP),
+                headlineContent = {
+                    Text(
+                        if(isScheduleType)
+                            "日程类型旨在用户自行添加额外的课程、实训、实验、班会等，强调线下活动、有始有终;添加后，将同时显示在课程表方格中，在进行期间会显示为重要事项，否则在其他事项中"
+                        else
+                            "DDL类型旨在用户自行添加需要在截止日期之前的作业、实验报告等，强调线上活动，相比日程类型只需注意结束时间;添加后，当剩余72h内时将会显示为重要事项，否则在其他事项中",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                },
+                modifier = Modifier.clickable {
+                    isScheduleType = !isScheduleType
+                    date = Pair("","")
+                    time = Pair("","")
+                },
+                leadingContent = {
+                    FilledTonalIconButton(
+                        onClick = {
+                            isScheduleType = !isScheduleType
+                            date = Pair("","")
+                            time = Pair("","")
+                        },
+                        content = typeIcon
+                    )
+                }
+            )
+            PaddingHorizontalDivider(isDashed = true)
+
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
+            CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
+            Spacer(Modifier.height(CARD_NORMAL_DP*3))
+            CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
             val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
                 value = dateToWeek(date.first)
             }
             val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
                 value = dateToWeek(date.second)
             }
-//            val weekInfoEnd = dateToWeek(date.second)
-
 
             CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
@@ -813,7 +825,7 @@ fun AddEventUI(
                         ) },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
-                    CardBottomButtons(
+                    BottomTextButtonGroup(
                         listOf(
                             CardBottomButton(if(isScheduleType)"选择日期范围" else "选择截止日期") {
                                 showSelectDateDialog = true
@@ -824,9 +836,9 @@ fun AddEventUI(
                         )
                     )
                 }
-                Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(CARD_NORMAL_DP*2))
                 CustomTextField(input = remark, label = { Text("自定义时间显示") }, singleLine = false) { remark = it }
-                Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*0f))
+                Spacer(Modifier.height(CARD_NORMAL_DP*2))
 
 
                 if(isSupabase) {
@@ -863,7 +875,6 @@ fun AddEventUI(
                                         TextField(
                                             modifier = Modifier
                                                 .weight(1f),
-//                                                .padding(horizontal = APP_HORIZONTAL_DP),
                                             value = input,
                                             onValueChange = { input = it },
                                             singleLine = true,
@@ -950,7 +961,7 @@ fun AddEventUI(
                                                         showDelDialog = true
                                                     },
                                                     label = { Text(classList[index]) },
-                                                    leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                    leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                 )
 
                                                 if(index+1 != classList.size) {
@@ -961,7 +972,7 @@ fun AddEventUI(
                                                             showDelDialog = true
                                                         },
                                                         label = { Text(classList[index+1]) },
-                                                        leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                        leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                     )
                                                 }
                                             }

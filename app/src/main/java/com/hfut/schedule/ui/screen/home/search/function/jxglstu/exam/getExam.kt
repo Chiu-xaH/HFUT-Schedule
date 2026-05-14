@@ -5,12 +5,12 @@ import com.google.gson.Gson
 import com.hfut.schedule.logic.model.community.ExamResponse
 import com.hfut.schedule.logic.model.community.examArrangementList
 import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
-import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuExam
+import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuExam
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext

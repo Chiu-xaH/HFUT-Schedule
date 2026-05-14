@@ -28,14 +28,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.util.CasInHFUT
+import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -43,18 +43,18 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionBackHandler
+
 
 @Composable
-fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navController : NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     var showEditDialog by remember { mutableStateOf(false) }
     val cookie by produceState(initialValue = "", key1 = showEditDialog) {
         getStorageJxglstuCookie(isWebVpn = false)?.let {
@@ -106,7 +106,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
         }
     }
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("Cookies & Authorization") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

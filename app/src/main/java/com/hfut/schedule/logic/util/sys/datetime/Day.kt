@@ -1,11 +1,11 @@
 package com.hfut.schedule.logic.util.sys.datetime
 
 import androidx.collection.LruCache
-import com.hfut.schedule.logic.network.util.MyApiParse.getAPICelebration
+import com.hfut.schedule.logic.util.network.MyApiParse.getAPICelebration
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import java.time.LocalDate
 import java.time.Period
 
@@ -69,7 +69,8 @@ fun isSpecificWorkDay() : Boolean = getHolidays().any { !it.isOffDay && it.date 
 // 明天调休
 fun isSpecificWorkDayTomorrow() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeManager.tomorrow_YYYY_MM_DD }
 
-fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name?.substringBefore("节")
+fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name
+//    ?.substringBefore("节")
 
 data class Celebration(val use : Boolean,val str : String?,val time : Long = 1L)
 

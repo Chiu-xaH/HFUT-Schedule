@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.home.calendar.common
 
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate

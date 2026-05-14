@@ -1,19 +1,21 @@
 package com.hfut.schedule.logic.util.other
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.annotation.RequiresApi
+import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import java.security.MessageDigest
-import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
 
 object AppVersion {
     enum class SplitType(val code : Int,val description: String) {
-        COMMON(0,"通用"),ARM64(2,"ARM 64位"),ARM32(1,"ARM 32位"),X86(3,"X86 32位"),X86_64(4,"X86 64位"),
+        COMMON(0,"通用"),
+        ARM64(2,"ARM 64位"),
+        ARM32(1,"ARM 32位"),
+        X86(3,"X86 32位"),
+        X86_64(4,"X86 64位"),
     }
+
     private val packageName = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0)
     val appPackageName = MyApplication.context.packageName
 
@@ -26,6 +28,7 @@ object AppVersion {
         }
         return versionCode
     }
+
     fun getVersionCode() : Int = getSplitVersionCode().let { if(it >= 1000) it/10 else it }
 
     fun getSplitType() : SplitType = if(getSplitVersionCode() < 1000) {
@@ -50,74 +53,58 @@ object AppVersion {
         }
         return versionName
     }
-    // 获取当前系统的API级别
+
+    // 获取当前系统的API
     val sdkInt = Build.VERSION.SDK_INT
-    // 获取当前系统的版本号
-    val release = Build.VERSION.RELEASE
+
+    val isDebug = BuildConfig.DEBUG
 
     val CAN_HAZE_BLUR_BAR = sdkInt >= 31
     val CAN_MOTION_BLUR = sdkInt >= 31
 
     // 华为、安卓12 单独对渐变模糊适配
     val HAZE_BLUR_FOR_S = sdkInt == 31 || sdkInt == 32
-
     val CAN_DYNAMIC_COLOR = sdkInt >= 31
+
+    val CAN_PREDICTIVE = sdkInt >= 33
+    val CAN_LIVE_UPDATE = sdkInt >= 36
+    val CAN_SHADER = sdkInt >= 33
 
     val deviceName: String = Build.MODEL
 
-    val CAN_PREDICTIVE = sdkInt >= 33
+    private const val SIGN_SHA_256 = "64:D1:58:37:3D:30:91:CA:A8:AD:70:AF:31:5F:EB:65:A6:A3:21:83:79:AD:E8:F6:CA:8D:FF:FF:7F:5C:52:09"
+    private const val SIGN_SHA_1 = "66:5C:5E:35:73:52:A4:10:41:58:14:FC:5A:AA:86:11:07:C7:2C:7A"
 
-    val CAN_SHADER = sdkInt >= 33
+    private fun getIsSignatureValid(): Boolean {
+        return try {
+            val pm = MyApplication.context.packageManager
 
-    fun isInDebugRunning() : Boolean = deviceName.startsWith("sdk_gphone") == true
-    fun isPreview() : Boolean = getVersionName().contains("Preview")
-
-    /*
-    * 安卓15 35
-    * 安卓14 34
-    * 安卓13 33
-    * 安卓12X 32
-    * 安卓12 31
-    * 安卓11 30
-    * 安卓10 29
-    * 安卓9 28
-    * 安卓8 27
-    * 安卓7 26
-     */
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    @JvmStatic
-    fun getAppSignInfo(): List<String> {
-        val pm = MyApplication.context.packageManager
-        val packageInfo = pm.getPackageInfo(
-            appPackageName,
-            PackageManager.GET_SIGNING_CERTIFICATES
-        )
-        val signingInfo = packageInfo.signingInfo
-        val signatures = signingInfo?.let {
-            if (it.hasMultipleSigners()) {
-                it.apkContentsSigners
+            @Suppress("DEPRECATION")
+            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val info = pm.getPackageInfo(appPackageName, PackageManager.GET_SIGNING_CERTIFICATES)
+                info.signingInfo?.run {
+                    if (hasMultipleSigners()) apkContentsSigners else signingCertificateHistory
+                }
             } else {
-                it.signingCertificateHistory
+                pm.getPackageInfo(appPackageName, PackageManager.GET_SIGNATURES).signatures
+            } ?: return false
+
+            val expected = SIGN_SHA_256.replace(":", "").uppercase()
+            val digest = MessageDigest.getInstance("SHA-256")
+
+            signatures.any { sig ->
+                digest.reset()
+                val actual = digest.digest(sig.toByteArray()).joinToString("") { "%02X".format(it) }
+                actual == expected
             }
-        } ?: return emptyList()
-
-        return signatures.map { sig ->
-            val certFactory = CertificateFactory.getInstance("X.509")
-            val cert = certFactory.generateCertificate(sig.toByteArray().inputStream()) as X509Certificate
-
-            buildString {
-                appendLine("SubjectDN: ${cert.subjectDN.name}")   // 证书持有人
-                appendLine("IssuerDN: ${cert.issuerDN.name}")     // 签发者
-                appendLine("Valid From: ${cert.notBefore}")       // 有效期开始
-                appendLine("Valid Until: ${cert.notAfter}")       // 有效期结束
-                appendLine("Serial Number: ${cert.serialNumber}") // 序列号
-
-                // SHA-256 指纹
-                val md = MessageDigest.getInstance("SHA-256")
-                val sha256 = md.digest(sig.toByteArray())
-                appendLine("SHA-256: ${sha256.joinToString(":") { "%02X".format(it) }}")
-            }
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            false
         }
     }
+
+    val isSignatureValid by lazy { getIsSignatureValid() }
+    val isRunningOnAvd = deviceName.startsWith("sdk_gphone") == true || deviceName.startsWith("Android SDK built for") == true
+    val isRunningOnWsa = deviceName.startsWith("Subsystem for Android")
+    val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
 }

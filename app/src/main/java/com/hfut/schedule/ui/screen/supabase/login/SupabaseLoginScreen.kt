@@ -50,13 +50,13 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.xah.uicommon.component.status.LoadingUI
+import com.xah.common.ui.component.status.LoadingUI
  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.isSupabaseRegistering
+import com.hfut.schedule.ui.util.state.GlobalStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -227,7 +227,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
                                 onClick = {
                                     scope.launch {
                                         if(isReg) {
-                                            isSupabaseRegistering.value = true
+                                            isSupabaseRegistering = true
                                             regSupabase(password,vm) { loading = it }
                                         } else {
                                             loading = true

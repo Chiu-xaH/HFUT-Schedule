@@ -20,6 +20,7 @@
     <string name="navigation_label_community_appointment">社区预约</string>
     <string name="navigation_label_work_and_rest">作息</string>
     <string name="navigation_label_washing">海乐生活</string>
+    <string name="navigation_label_washing_detail">海乐生活详情</string>
     <string name="navigation_label_fee">学费</string>
     <string name="navigation_label_stu">今日校园</string>
     <string name="navigation_label_teacher_search">教师检索</string>
@@ -35,6 +36,8 @@
     <string name="navigation_label_library">图书馆</string>
     <string name="navigation_label_all_programs">全校培养方案</string>
     <string name="navigation_label_transfer_major_detail">转专业详情</string>
+    <string name="navigation_label_transfer_major_applied_detail">申请详情</string>
+    <string name="navigation_label_transfer_major_applied">我的申请</string>
     <string name="navigation_label_select_courses_detail">选课入口</string>
     <string name="navigation_label_drop_courses">退课</string>
     <string name="navigation_label_program">培养方案</string>
@@ -57,16 +60,17 @@
     <string name="navigation_label_scan_qr_code">扫描二维码</string>
     <string name="navigation_label_exception">错误</string>
     <string name="navigation_label_library_borrowed">借阅图书</string>
-    <string name="navigation_label_settings_appearance">设置-外观与效果</string>
-    <string name="navigation_label_settings_configurations">设置-应用及配置</string>
-    <string name="navigation_label_settings_network">设置-网络</string>
-    <string name="navigation_label_settings_about">设置-维护与关于</string>
+    <string name="navigation_label_settings_appearance">外观设置</string>
+    <string name="navigation_label_settings_configurations">偏好与配置</string>
+    <string name="navigation_label_settings_network">网络设置</string>
+    <string name="navigation_label_settings_about">维护与关于</string>
     <string name="navigation_label_school_card">一卡通</string>
     <string name="navigation_label_dormitory_electricity_bill">寝室电费</string>
     <string name="navigation_label_school_net">校园网</string>
     <string name="navigation_label_school_email">教育邮箱</string>
     <string name="navigation_label_shower">洗浴</string>
     <string name="navigation_label_repair">报修</string>
+    <string name="navigation_label_feedback">校长信箱</string>
     <string name="navigation_label_hot_water">热水</string>
     <string name="navigation_label_chsi">学信网</string>
     <string name="navigation_label_ietp">大创系统</string>
@@ -81,4 +85,9 @@
     <string name="navigation_label_school_card_warn">余额不足</string>
     <string name="navigation_label_scan_qr_code_description">CAS扫码登录</string>
     <string name="navigation_label_track">提案板</string>
+    <string name="navigation_label_express">快递</string>
+    <string name="navigation_label_average_grade">平均成绩</string>
+    <string name="navigation_label_settings_corner">屏幕圆角校准</string>
+    <string name="navigation_label_shortcut">Shortcut</string>
+    <string name="navigation_label_live_update">实时通知</string>
 </resources>

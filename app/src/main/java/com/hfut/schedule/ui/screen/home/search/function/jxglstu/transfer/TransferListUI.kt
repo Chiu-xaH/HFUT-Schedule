@@ -1,11 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
-
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -26,17 +22,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,25 +49,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -85,30 +71,32 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+import com.hfut.schedule.ui.nav.destination.TransferMajorDestination
+import com.hfut.schedule.ui.nav.destination.TransferMajorDetailDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.logic.safeDiv
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.util.text
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -120,12 +108,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun TransferScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TransferMajor.route }
     val scope = rememberCoroutineScope()
     val backDrop = rememberLayerBackdrop()
     val uiState by vm.transferListData.state.collectAsState()
@@ -148,34 +135,37 @@ fun TransferScreen(
             refreshNetwork(false)
         }
     })
-    val toRoute = remember {
-        AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword)
-    }
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.TransferMajor.label)) },
+                title = { Text(TransferMajorDestination.title.asString()) },
                 actions = {
-                    LiquidButton(
-                        onClick = {
-                            navController.navigateForTransition(AppNavRoute.NewsApi, toRoute)
-                        },
-                        backdrop = backDrop,
-                        modifier = Modifier
-                            .containerShare(toRoute, MaterialTheme.shapes.large)
-                            .padding(horizontal = APP_HORIZONTAL_DP)
+                    val dest = NewsApiDestination(
+                        NewsApiDestination.Keyword.TRANSFER_MAJOR.keyword
+                    )
+                    SharedContainer(
+                        key = dest.key,
+                        shape = CircleShape,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
-                        Text("通知公告", maxLines = 1)
+                        LiquidButton(
+                            shape = NoneRoundShape,
+                            backdrop = backDrop,
+                            onClick = {
+                                navController.push(dest)
+                            },
+                        ) {
+                            Text("通知公告", maxLines = 1)
+                        }
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.TransferMajor.icon)
+                    TopBarNavigationIcon()
                 }
             )
         },
@@ -209,17 +199,23 @@ fun TransferScreen(
                             val data = transferList[index]
                             val batchId = data.batchId
                             val name = data.title
-                            val route = AppNavRoute.TransferMajorDetail.withArgs(false,batchId,name)
+                            val dest = TransferMajorDetailDestination(
+                                name,
+                                batchId,
+                                false,
+                            )
                             var expand by remember { mutableStateOf(false) }
                             CustomCard (
+                                shape = NoneRoundShape,
                                 modifier = Modifier
+                                    .sharedContainer(
+                                        dest.key,
+                                        MaterialTheme.shapes.medium,
+                                        cardNormalColor()
+                                    )
                                     .clickable {
-                                        navController.navigateForTransition(
-                                            AppNavRoute.TransferMajorDetail,
-                                            route
-                                        )
-                                    }
-                                    .containerShare(route),
+                                        navController.push(dest)
+                                    },
                                 color = cardNormalColor()
                             ) {
                                 TransplantListItem(
@@ -263,8 +259,7 @@ fun TransferScreen(
                             }
                         }
                         item {
-                            AnimationCardListItem(
-                                index = transferList.size,
+                            CardListItem(
                                 headlineContent = {
                                     Text("手动输入代号查看被隐藏掉的转专业入口")
                                 },
@@ -282,12 +277,18 @@ fun TransferScreen(
                                                 trailingIcon = {
                                                     IconButton(onClick = {
                                                         if(input.toIntOrNull() != null) {
-                                                            navController.navigateForTransition(AppNavRoute.TransferMajorDetail,AppNavRoute.TransferMajorDetail.withArgs(true,input,"入口$input"))
+                                                            navController.push(
+                                                                TransferMajorDetailDestination(
+                                                                    "入口$input",
+                                                                    input,
+                                                                    true,
+                                                                )
+                                                            )
                                                         } else {
                                                             showToast("必须为数字")
                                                         }
                                                     }) {
-                                                        Icon(Icons.Default.ArrowForward,null)
+                                                        Icon(painterResource(R.drawable.arrow_forward),null)
                                                     }
                                                 },
                                                 shape = MaterialTheme.shapes.medium,
@@ -304,7 +305,6 @@ fun TransferScreen(
             }
         }
     }
-//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -314,58 +314,35 @@ fun TransferDetailScreen(
     batchId: String,
     title : String,
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TransferMajorDetail.withArgs(isHidden,batchId,title) }
     var showBottomSheet_apply by remember { mutableStateOf(false) }
     val backDrop = rememberLayerBackdrop()
     if (showBottomSheet_apply) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },
-            hazeState = hazeState,
-            isFullExpand = false,
             showBottomSheet = showBottomSheet_apply
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    MyApplyListUI(vm,batchId,hazeState)
-                }
+            Column() {
+                HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = false)
+                MyApplyListUI(vm,batchId)
             }
         }
     }
     var input by remember { mutableStateOf("") }
 
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Column (
-                modifier = Modifier.topBarBlur(hazeState),
-
-                ){
+            Column (modifier = Modifier.topBarBlur(hazeState),){
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = { Text(title) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.TransferMajorDetail.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
@@ -385,6 +362,7 @@ fun TransferDetailScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
+                        colors = textFiledAllTransplant(),
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -406,7 +384,7 @@ fun TransferDetailScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+//                        colors = textFiledTransplant(),
                     )
                 }
                 Spacer(Modifier.height(CARD_NORMAL_DP))
@@ -455,29 +433,19 @@ private fun TransferUI(
     }
 
     if(showBottomSheet) {
-        countFunc = 0
         HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            isFullExpand = false
+//            expandFully = false
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    TransferStatusUI(vm,batchId,id,telephone)
-                }
+            Column(
+                modifier = Modifier
+            ) {
+                HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
+                TransferStatusUI(vm,batchId,id,telephone)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -487,95 +455,84 @@ private fun TransferUI(
             onDismissRequest = {
                 showBottomSheet_select = false
             },
-            hazeState = hazeState,
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet_select
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("手机号 (教务要求)", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    val personInfo = getPersonInfo()
+            Column {
+                HazeBottomSheetTopBar("手机号 (教务要求)", isPaddingStatusBar = false)
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = telephone,
-                            onValueChange = {
+                val personInfo = getPersonInfo()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP),
+                        value = telephone,
+                        onValueChange = {
+                            telephone = it
+                        },
+                        label = { Text("自行输入手机号" ) },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    showBottomSheet_select = false
+                                    showBottomSheet = true
+                                }
+                            ) {
+                                Icon(painterResource(R.drawable.check), null)
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
+                }
+                Spacer(Modifier.height(5.dp))
+                prefs.getString("PHONENUM","")?.let {
+                    if(it.isNotEmpty()) {
+                        CardListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("呱呱物联登录手机号") },
+                            modifier = Modifier.clickable {
                                 telephone = it
-                            },
-                            label = { Text("自行输入手机号" ) },
-                            singleLine = true,
-                            trailingIcon = {
-                               IconButton(
-                                   onClick = {
-                                       showBottomSheet_select = false
-                                       showBottomSheet = true
-                                   }
-                               ) {
-                                   Icon(Icons.Filled.Check, null)
-                               }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
+                                showBottomSheet_select = false
+                                showBottomSheet = true
+                            }
                         )
                     }
-                    Spacer(Modifier.height(5.dp))
-                    personInfo.mobile?.let {
-                        if(it.isNotEmpty()) {
-                            CardListItem(
-                                    headlineContent = { Text(it) },
-                                    overlineContent = { Text("教务系统预留手机号") },
-                                    modifier = Modifier.clickable {
-                                        telephone = it
-                                        showBottomSheet_select = false
-                                        showBottomSheet = true
-                                    }
-                                )
-                        }
-                    }
-                    personInfo.phone?.let {
-                        if(it.isNotEmpty()) {
-                                CardListItem(
-                                    headlineContent = { Text(it) },
-                                    overlineContent = { Text("教务系统预留电话号") },
-                                    modifier = Modifier.clickable {
-                                        telephone = it
-                                        showBottomSheet_select = false
-                                        showBottomSheet = true
-                                    }
-                                )
-                        }
-                    }
-                    prefs.getString("PHONENUM","")?.let {
-                        if(it.isNotEmpty()) {
-                                CardListItem(
-                                    headlineContent = { Text(it) },
-                                    overlineContent = { Text("呱呱物联登录手机号") },
-                                    modifier = Modifier.clickable {
-                                        telephone = it
-                                        showBottomSheet_select = false
-                                        showBottomSheet = true
-                                    }
-                                )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
                 }
+                personInfo.mobile?.let {
+                    if(it.isNotEmpty()) {
+                        CardListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("教务系统预留手机号") },
+                            modifier = Modifier.clickable {
+                                telephone = it
+                                showBottomSheet_select = false
+                                showBottomSheet = true
+                            }
+                        )
+                    }
+                }
+                personInfo.phone?.let {
+                    if(it.isNotEmpty()) {
+                        CardListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("教务系统预留电话号") },
+                            modifier = Modifier.clickable {
+                                telephone = it
+                                showBottomSheet_select = false
+                                showBottomSheet = true
+                            }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -589,15 +546,14 @@ private fun TransferUI(
                     item.department.nameZh.contains(input) || item.major.nameZh.contains(input)
                 }
             }
-        }
+        }.sortedBy { it.department.nameZh }
 
         LazyColumn() {
             item { InnerPaddingHeight(innerPadding,true) }
             if(response.data.isNotEmpty()) {
                 item {
                     val item = list[0].changeMajorBatch ?: return@item
-                    AnimationCardListItem(
-                        index = 0,
+                    CardListItem(
                         headlineContent = {
                             Text(if(isHidden) item.nameZh else "申请提示")
                         },
@@ -621,25 +577,54 @@ private fun TransferUI(
                 if(department.contains("(")) department = department.substringBefore("(")
                 val count = dataItem.applyStdCount
                 val limit = dataItem.preparedStdCount
-                val isFull = count > limit
-                AnimationCardListItem(
-                    headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
-                    supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
-                    overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
-                    leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
-                    trailingContent = {  FilledTonalIconButton(onClick = {
-                        id = dataItem.id
-                        showBottomSheet_select = true
-                    },
-                        colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                    ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
+                val isFull = count >= limit
+                var successRate = limit.toDouble() safeDiv count.toDouble()
+
+                // 已申请 $count / $limit
+                CustomCard(
                     color = if(isFull) {
                         MaterialTheme.colorScheme.errorContainer
                     } else {
-                        null
-                    },
-                    index = item+1
-                )
+                        cardNormalColor()
+                    }
+                ) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = dataItem.major.nameZh) },
+                        overlineContent = { ScrollText(text = department) },
+                        leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
+                        trailingContent = {
+                            Column(
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        id = dataItem.id
+                                        showBottomSheet_select = true
+                                    },
+                                    colors =
+                                        if(!isFull)
+                                            IconButtonDefaults.filledTonalIconButtonColors()
+                                        else
+                                            IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "")
+                                }
+                                Text("$count/$limit (${
+                                    if(successRate == 1.0) "满" 
+                                    else if(successRate == 0.0 || successRate >= 1.0) "稳" 
+                                    else "前${formatDecimal(successRate*100,0)}%"
+                                })")
+                            }
+                        },
+                    )
+                    dataItem.registrationConditions?.let {
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(text = "申请要求",) },
+                            supportingContent = { Text(text = it) },
+                        )
+                    }
+                }
             }
             item { InnerPaddingHeight(innerPadding,false) }
         }
@@ -666,6 +651,6 @@ private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, ph
 
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
         val msg = (uiState as UiState.Success).data
-        StatusIcon(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
+        StatusIcon(if(msg == "成功" ) R.drawable.check else R.drawable.close,text(msg))
     }
 }

@@ -1,11 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse
 
+
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -31,12 +30,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,62 +70,62 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
-import com.hfut.schedule.logic.network.util.StatusCode
+import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
-
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.DropCoursesDestination
+import com.hfut.schedule.ui.nav.destination.FailRateDestination
+import com.hfut.schedule.ui.nav.destination.SelectCoursesDestination
+import com.hfut.schedule.ui.nav.destination.SelectCoursesDetailDestination
+
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.screen.home.updateCourses
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.SharedContainer
+import com.xah.navigation.util.LocalNavController
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -141,12 +138,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectCourseScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.SelectCourses.route }
     val scope = rememberCoroutineScope()
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie() ?: ""
@@ -173,31 +168,26 @@ fun SelectCourseScreen(
             refreshNetwork(false)
         }
     })
-    val toRoute = remember {
-        AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword)
-    }
     val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
-    CustomTransitionScaffold (
-        route = route,
+    val url = if(GlobalStateHolder.webVpn) Constant.JXGLSTU_WEBVPN_URL else Constant.JXGLSTU_URL + "for-std/course-table"
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.SelectCourses.label)) },
+                title = { Text(SelectCoursesDestination.title.asString()) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.SelectCourses.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                         LiquidButton (
                             onClick = {
                                 scope.launch{
-                                    updateCourses(vm, context)
+                                    updateCourses(vm)
                                     showToast("已刷新课表与课程汇总")
                                 }
                             },
@@ -210,15 +200,14 @@ fun SelectCourseScreen(
                         LiquidButton (
                             onClick = {
                                 scope.launch {
-                                    Starter.startWebView(
-                                        navController,
+                                    Starter.startWebUrlInner(
+                                        context,
                                         url = url,
                                         title = "教务系统",
                                         cookie = cookie
                                     )
                                 }
                             },
-                            modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url)),
                             backdrop = backDrop
                         ) {
                             Text(text = "冲突预览")
@@ -251,7 +240,7 @@ fun SelectCourseScreen(
             Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
                 RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                    SelectCourseList(vm,innerPadding,navController)
+                    SelectCourseList(vm,innerPadding)
                 }
             }
         }
@@ -265,11 +254,10 @@ fun SelectCourseDetailScreen(
     vm: NetWorkViewModel,
     courseId : Int,
     title : String,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.SelectCoursesDetail.withArgs(courseId,title) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
     var input by rememberSaveable { mutableStateOf("") }
@@ -282,10 +270,8 @@ fun SelectCourseDetailScreen(
     }
     var refreshCount by remember { mutableIntStateOf(0) }
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -295,12 +281,13 @@ fun SelectCourseDetailScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(title) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.SelectCoursesDetail.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                     actions = {
+                        val dest = DropCoursesDestination(
+                            courseId,
+                            title
+                        )
                         Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                             LiquidButton(
                                 onClick = {
@@ -312,14 +299,21 @@ fun SelectCourseDetailScreen(
                             ) {
                                 Icon(painterResource(R.drawable.rotate_right), null)
                             }
-                            LiquidButton(
-                                onClick = {
-                                    navController.navigateForTransition(AppNavRoute.DropCourses, AppNavRoute.DropCourses.withArgs(courseId,title))
-                                },
-                                modifier = Modifier.containerShare(AppNavRoute.DropCourses.route),
-                                backdrop = backDrop
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            SharedContainer(
+                                key = dest.key,
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
-                                Text(text = "退课", maxLines = 1)
+                                LiquidButton(
+                                    shape = NoneRoundShape,
+                                    backdrop = backDrop,
+                                    onClick = {
+                                        navController.push(dest)
+                                    },
+                                ) {
+                                    Text(text = "退课", maxLines = 1)
+                                }
                             }
                         }
                     }
@@ -329,6 +323,7 @@ fun SelectCourseDetailScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
+                        colors = textFiledAllTransplant(),
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -350,7 +345,7 @@ fun SelectCourseDetailScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+//                        colors = textFiledTransplant(),
                     )
                 }
                 Spacer(Modifier.height(CARD_NORMAL_DP))
@@ -383,18 +378,13 @@ fun DropCourseScreen(
     vm: NetWorkViewModel,
     courseId : Int,
     title : String,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.DropCourses.route }
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -406,10 +396,7 @@ fun DropCourseScreen(
                         Text("$title : 退课")
                     },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.DropCourses.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                 )
             }
@@ -431,15 +418,15 @@ fun DropCourseScreen(
 private fun SelectCourseList(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-    navController : NavHostController,
+//    navController : NavHostController,
  ) {
+    val navController = LocalNavController.current
     val uiState by vm.selectCourseData.state.collectAsState()
     val list = (uiState as UiState.Success).data
     var input by remember { mutableStateOf("") }
 
     val ui = @Composable {
-        AnimationCardListItem(
-            index = list.size,
+        CardListItem(
             headlineContent = {
                 Text("手动输入代号查看被隐藏掉的选课入口")
             },
@@ -457,10 +444,15 @@ private fun SelectCourseList(
                             trailingIcon = {
                                 IconButton(onClick = {
                                     input.toIntOrNull()?.let { i ->
-                                        navController.navigateForTransition(AppNavRoute.SelectCoursesDetail, AppNavRoute.SelectCoursesDetail.withArgs(i,"入口$i"))
+                                        navController.push(
+                                            SelectCoursesDetailDestination(
+                                                i,
+                                                "入口$i"
+                                            )
+                                        )
                                     } ?: showToast("必须为数字")
                                 }) {
-                                    Icon(Icons.Default.ArrowForward,null)
+                                    Icon(painterResource(R.drawable.arrow_forward),null)
                                 }
                             },
                             shape = MaterialTheme.shapes.medium,
@@ -479,18 +471,27 @@ private fun SelectCourseList(
                 val data = list[item]
                 var expand by remember { mutableStateOf(false) }
                 with(data) {
-                    val route = AppNavRoute.SelectCoursesDetail.withArgs(id,name)
-                    AnimationCustomCard (
+                    val dest = SelectCoursesDetailDestination(
+                        id,
+                        name
+                    )
+                    CustomCard (
                         modifier = Modifier
-                            .containerShare( route)
                             .clickable {
-                                navController.navigateForTransition(
-                                    AppNavRoute.SelectCoursesDetail,
-                                    route
+                                navController.push(
+                                    SelectCoursesDetailDestination(
+                                        id,
+                                        name
+                                    )
                                 )
-                            },
-                        index = item,
-                        containerColor = cardNormalColor()
+                            }
+                            .sharedContainer(
+                                dest.key,
+                                MaterialTheme.shapes.medium,
+                                cardNormalColor()
+                            ),
+                        shape = NoneRoundShape,
+                        color = cardNormalColor()
                     ) {
                         TransplantListItem(
                             headlineContent = { Text(text = name) },
@@ -587,9 +588,6 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
-            isFullExpand = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
             Column() {
@@ -604,8 +602,6 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_info = false },
             showBottomSheet = showBottomSheet_info,
-            hazeState = hazeState,
-            autoShape = false
         ) {
             Column {
                 HazeBottomSheetTopBar(name, isPaddingStatusBar = false) {
@@ -712,7 +708,7 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
         CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
             val data = (uiState as UiState.Success).data
             ColumnVertical(modifier = Modifier.fillMaxWidth()) {
-                Icon( if(data.first) Icons.Filled.Check else Icons.Filled.Close, contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
+                Icon( if(data.first) painterResource(R.drawable.check) else painterResource(R.drawable.close), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
                 Text(text = data.second, color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -730,7 +726,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
     if (showBottomSheet_FailRate) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_FailRate = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_FailRate
         ) {
 
@@ -745,7 +740,7 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(data.course.nameZh,vm, hazeState = hazeState,innerPadding)
+                    ApiToFailRate(data.course.nameZh,vm,innerPadding,data.code)
                 }
             }
         }
@@ -758,7 +753,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
     if (showBottomSheet_Teacher) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Teacher = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Teacher,
         ) {
 
@@ -802,11 +796,10 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             modifier = Modifier.weight(.5f)
         )
         TransplantListItem(
-            headlineContent = { Text(text = stringResource(AppNavRoute.FailRate.label)) },
-            leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
+            headlineContent = { Text(text = FailRateDestination.title.asString()) },
+            leadingContent = { Icon(painterResource(FailRateDestination.icon), contentDescription = "Localized description",) },
             modifier = Modifier
                 .clickable {
-                    permit = 1
                     showBottomSheet_FailRate = true
                 }
                 .weight(.5f),
@@ -897,8 +890,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
     if (showBottomSheet) {
         HazeBottomSheet (
             showBottomSheet = showBottomSheet,
-            autoShape = false,
-            hazeState = hazeState,
+//            isFullScreen = false,
             onDismissRequest = { showBottomSheet = false },
         ) {
             Column(modifier = Modifier) {
@@ -930,8 +922,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
         if (showBottomSheet_info) {
             HazeBottomSheet (
                 showBottomSheet = showBottomSheet_info,
-                autoShape = false,
-                hazeState = hazeState,
+//                isFullScreen = false,
                 onDismissRequest = { showBottomSheet_info = false },
             ) {
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -960,7 +951,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
                         name = names
                         showDialog = true
                     }) {
-                        Icon(Icons.Filled.Close, contentDescription = "")
+                        Icon(painterResource(R.drawable.close), contentDescription = "")
                     }},
                     modifier = Modifier.clickable {
                         showBottomSheet_info = true

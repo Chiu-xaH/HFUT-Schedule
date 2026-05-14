@@ -28,8 +28,10 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.hfut.schedule.network.util.Constant
+
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -38,7 +40,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -49,7 +51,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val titles = AcademicType.entries.map { it.title }
     val pagerState = rememberPagerState(pageCount = { titles.size })
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
 
     var page by remember { mutableIntStateOf(1) }
@@ -99,7 +101,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         items(list.size, key = { it }) { index ->
                             val item = list[index]
 //                    MyCustomCard {
-                            AnimationCardListItem(
+                            CardListItem(
                                 headlineContent = { Text(item.title) },
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
@@ -108,7 +110,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                         val link = if (isValidWebUrl(item.link)) {
                                             item.link
                                         } else {
-                                            MyApplication.ACADEMIC_URL + if (item.link.startsWith("..")) {
+                                            Constant.ACADEMIC_URL + if (item.link.startsWith("..")) {
                                                 item.link.substringAfter("..")
                                             } else {
                                                 item.link
@@ -123,7 +125,6 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                         )
                                     }
                                 },
-                                index = index
                             )
 //                    }
                         }

@@ -1,13 +1,8 @@
 package com.hfut.schedule.ui.util.navigation
 
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.hfut.schedule.logic.util.development.getKeyStackTrace
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.transition.util.navigateAndSaveForTransition
-import com.xah.transition.util.navigateWithSave
-import com.xah.uicommon.util.LogUtil
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 // 导航后 上一级永远是firstRoute
 fun NavController.navigateForBottomBar(route: String) {
@@ -28,18 +23,30 @@ fun NavController.navigateAndClear(route: String) {
     }
 }
 
-// 导航后 上一级永远是上个界面
-fun NavController.navigateForTransition(app : AppNavRoute,route: String,transplantBackground : Boolean = false) = try {
-    GlobalUIStateHolder.pushToFront(route,app)
-    navigateAndSaveForTransition(route,transplantBackground)
-} catch (e : Exception) {
-    LogUtil.error(e)
-    showToast(getKeyStackTrace(e))
+// 所有
+fun NavController.allRouteStack() : List<String> = this.currentBackStack.value.mapNotNull { it.destination.route }
+
+// 所有
+fun NavController.canPopBack(lastIndex : Int = 2) = this.allRouteStack().size >= lastIndex
+
+fun NavController.popBackSafely() {
+    if(this.canPopBack()) {
+        this.popBackStack()
+    }
 }
 
-fun NavController.navigateForTransition(route: String,transplantBackground : Boolean = false) = try {
-    navigateAndSaveForTransition(route,transplantBackground)
-} catch (e : Exception) {
-    LogUtil.error(e)
-    showToast(getKeyStackTrace(e))
-}
+// 得到上一级
+fun NavController.previousRouteWithArgWithoutValues(): String? = this.previousBackStackEntry?.destination?.route
+
+@Composable
+fun NavController.previousRouteWithoutArgs() : String? =  previousRouteWithArgWithoutValues()?.substringBefore("?")
+
+@Composable
+fun NavController.currentRouteWithArgWithoutValues() : String? = this.currentBackStackEntryAsState().value?.destination?.route
+
+@Composable
+fun NavController.currentRouteWithoutArgs() : String? =  currentRouteWithArgWithoutValues()?.substringBefore("?")
+
+@Composable
+fun NavController.isCurrentRouteWithoutArgs(route: String) : Boolean = currentRouteWithoutArgs() == route.substringBefore("?")
+

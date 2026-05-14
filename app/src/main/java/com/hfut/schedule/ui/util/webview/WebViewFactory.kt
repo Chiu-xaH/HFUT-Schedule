@@ -1,12 +1,11 @@
 package com.hfut.schedule.ui.util.webview
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
@@ -27,9 +26,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -41,7 +37,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,7 +57,6 @@ import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
@@ -71,21 +65,19 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.DefaultTransitionStyle
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
 
 fun getWebView(
     context : Context,
@@ -154,10 +146,10 @@ fun WebViewTools(
                 }
                 click = !click
             }
-            CustomBottomSheet (
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
-                autoShape = false
+//                isFullScreen = false
             ) {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
@@ -198,10 +190,10 @@ fun WebViewTools(
             if(currentUrl == url) {
                 on(url)
             } else {
-                CustomBottomSheet (
+                HazeBottomSheet (
                     onDismissRequest = { showBottomSheet = false },
                     showBottomSheet = showBottomSheet,
-                    autoShape = false
+//                    isFullScreen = false
                 ) {
                     Column {
                         HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
@@ -233,16 +225,16 @@ fun WebViewTools(
     if(webView?.canGoBack() == true) {
         IconButton(onClick = {
             webView.goBack()
-        }) { Icon(Icons.Default.ArrowBack, contentDescription = "") }
+        }) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
     } else {
-        IconButton(onClick = onExit) { Icon(Icons.Default.Close, contentDescription = "") }
+        IconButton(onClick = onExit) { Icon(painterResource(R.drawable.close), contentDescription = "") }
     }
 
     IconButton(onClick = { webView?.reload() }) { Icon(
         painterResource(id = R.drawable.rotate_right), contentDescription = "") }
 
     IconButton(onClick = {
-        on = { Starter.startWebUrl(context,it) }
+        on = { Starter.startWebUrlOuter(context,it) }
         showBottomSheet = true
     }) { Icon(
         painterResource(id = R.drawable.net), contentDescription = "") }
@@ -293,8 +285,7 @@ fun WebViewTopBar(
                     containerColor = topColor ?: MaterialTheme.colorScheme.surface,
                     titleContentColor = topBarTitleColor,
                     scrolledContainerColor = Color.Transparent,
-
-                    ),
+                ),
                 actions = {
                     Row {
                         if (!visible) {
@@ -401,6 +392,7 @@ fun WebViewContent(
     }
 }
 
+@Language("css")
 private const val FORCE_DARK_CSS = """
                                 html, body {
                                     background-color: #121212 !important;
@@ -414,6 +406,7 @@ private const val FORCE_DARK_CSS = """
                                 a { color: #8ab4f8 !important; }
                             """
 
+@Language("javascript")
 const val FORCE_DARK_JS = """
                                 (function() {
                                     let style = document.createElement('style');
@@ -423,6 +416,7 @@ const val FORCE_DARK_JS = """
                                 })();
                             """
 
+@Language("javascript")
 fun getPaddingPxJs(top : Int?,bottom : Int?) : String = """
         (function() {
             ${top?.let { "document.body.style.paddingTop = '${it}px';" }}
@@ -433,33 +427,46 @@ fun getPaddingPxJs(top : Int?,bottom : Int?) : String = """
 
 
 // 从左取到右，传入step一定间距，最后选择取色中最多同色的那个
-fun selectColor(view : WebView?,step : Int = 3,onColor : (Color?) -> Unit) {
+fun selectColor(
+    view: WebView?,
+    step: Int = 3,
+    onColor: (Color?) -> Unit
+) {
     view?.postDelayed({
         try {
             val bitmap = createBitmap(view.width, view.height)
             val canvas = Canvas(bitmap)
             view.draw(canvas)
 
-            // 读取顶部某个位置的像素颜色，比如(10, 10)
-            // 取色从最左侧、最右侧、中间
-            val width = bitmap.width
-            val height = bitmap.height
-            // 从左取到右，传入step一定间距，最后选择取色中最多同色的那个
-            val y = 0
-            val colorMap = mutableMapOf<Int, Int>()
-            for (i in 0..step) {
-                val x = (i * width) / step
-                val color = bitmap[x.coerceAtMost(width - 1), y]
-                colorMap[color] = colorMap.getOrDefault(color, 0) + 1
-            }
+            val colorInt = pickColorFromTop(bitmap, step)
 
-            val mostFrequentColor = colorMap.maxByOrNull { it.value }?.key
-            onColor(mostFrequentColor?.let { Color(it) })
+            bitmap.recycle()
+
+            onColor(colorInt?.let { Color(it) })
         } catch (e: Exception) {
             LogUtil.error(e)
             onColor(null)
         }
     }, 100)
+}
+
+fun pickColorFromTop(
+    bitmap: Bitmap,
+    step: Int = 3,
+): Int? {
+    if (bitmap.width == 0 || bitmap.height == 0) return null
+
+    val width = bitmap.width
+
+    val colorMap = mutableMapOf<Int, Int>()
+
+    for (i in 0..step) {
+        val x = ((i * width) / step).coerceAtMost(width - 1)
+        val color = bitmap[x, 0]
+        colorMap[color] = colorMap.getOrDefault(color, 0) + 1
+    }
+
+    return colorMap.maxByOrNull { it.value }?.key
 }
 
 @Composable
@@ -491,9 +498,7 @@ fun getPureUrl(url : String): String {
 @Composable
 fun WebViewBackIcon(
     webView: WebView?,
-    icon : Int? = null,
     color : Color,
-    route : String?,
     onExit : () -> Unit
 ) {
     val back : () -> Unit = {
@@ -504,9 +509,9 @@ fun WebViewBackIcon(
         }
     }
     val cIcon = if(webView?.canGoBack() == true) {
-        Icons.Default.ArrowBack
+        painterResource(R.drawable.arrow_back)
     } else {
-        Icons.Default.Close
+        painterResource(R.drawable.close)
     }
     val button = @Composable { content  : @Composable () -> Unit ->
         Box(
@@ -519,43 +524,8 @@ fun WebViewBackIcon(
             content()
         }
     }
-    if(icon == null) {
-        button {
-            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-        }
-    } else {
-        var show by remember { mutableStateOf(true) }
-        LaunchedEffect(Unit) {
-            show = true
-            delay(TransitionConfig.curveStyle.speedMs*1L)
-            delay(1500L)
-            show = false
-            if(route != null) {
-                val enablePredictive = DataStoreManager.enablePredictive.first()
-                if(!enablePredictive || TransitionConfig.transplantBackground) {
-                    delay(3000L)
-                    show = true
-                }
-            }
-        }
-        button {
-            Box() {
-                AnimatedVisibility(
-                    visible = show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-                AnimatedVisibility(
-                    visible = !show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-            }
-        }
+    button {
+        Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
     }
 }
 
@@ -597,7 +567,7 @@ fun WebView.setInitial(
     cookies : String?,
     url: String
 ) {
-    if(url.startsWith(MyApplication.UNI_APP_URL) && cookies != null) {
+    if(url.startsWith(Constant.UNI_APP_URL) && cookies != null) {
         val additionalHttpHeaders = HashMap<String, String>()
         additionalHttpHeaders["Authorization"] = cookies
         loadUrl(url,additionalHttpHeaders)
@@ -634,7 +604,7 @@ fun sharedOverrideUrlLoading(
     val url = request?.url.toString()
 
     if (url.contains("download")) { // 识别下载链接
-        Starter.startWebUrl(context,url)
+        Starter.startWebUrlOuter(context,url)
         return true // 拦截 WebView 处理
     }
 
@@ -652,9 +622,9 @@ fun sharedInterceptRequest(
         val c = req.requestHeaders["Cookie"]
         if(
             // 适配区
-            currentUrl.startsWith(MyApplication.JXGLSTU_URL) ||
-            currentUrl.startsWith(MyApplication.JXGLSTU_WEBVPN_URL) ||
-            currentUrl.startsWith(MyApplication.PE_URL)
+            currentUrl.startsWith(Constant.JXGLSTU_URL) ||
+            currentUrl.startsWith(Constant.JXGLSTU_WEBVPN_URL) ||
+            currentUrl.startsWith(Constant.PE_URL)
         ) {
             cookieManager.setCookie(req.url.toString(), cookies)
             cookieManager.flush()

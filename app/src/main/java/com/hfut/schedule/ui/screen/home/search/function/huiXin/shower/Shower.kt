@@ -23,7 +23,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIconNew
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,9 +35,8 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }

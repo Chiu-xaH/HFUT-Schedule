@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -38,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,6 +64,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -67,6 +73,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getXwxPsk
@@ -74,9 +81,11 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.XwxViewModel
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -189,9 +198,7 @@ fun XwxLoginScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
-    val context = LocalContext.current
     var selectSchoolUi by remember { mutableStateOf(false) }
-
     var hidden by rememberSaveable { mutableStateOf(true) }
     var password by remember { mutableStateOf("") }
     var username by remember { mutableStateOf(prefs.getString("Username", "") ?: "") }
@@ -261,21 +268,27 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                 }
                 items(list.size) { index ->
                     val item = list[index]
-                    CardListItem(
-                        headlineContent = { Text(item.schoolName) },
-                        trailingContent = {
-                            if (schoolCode == item.schoolCode) {
-                                Icon(painterResource(R.drawable.check), null)
+                    CustomCard(
+                        color = cardNormalColor(),
+                        modifier = Modifier
+                            .clickable {
+                                schoolCode = item.schoolCode
+                                selectSchoolUi = false
                             }
-                        },
-                        leadingContent = {
-                            UrlImage(MyApplication.XWX_PICTURE_URL + item.iconUrl, useCut = false, width = 50.dp, height = 50.dp)
-                        },
-                        modifier = Modifier.clickable {
-                            schoolCode = item.schoolCode
-                            selectSchoolUi = false
+                    ) {
+                        ColumnVertical(modifier = Modifier.fillMaxWidth()) {
+                            UrlImage(
+                                Constant.XWX_PICTURE_URL + item.iconUrl,
+                                contentScale = ContentScale.Fit,
+                                enableClick = false,
+                                modifier = Modifier
+                                    .padding(CARD_NORMAL_DP*2)
+                                    .height(DEFAULT_IMAGE_SIZE)
+                                    .wrapContentWidth()
+                            )
+                            Text(item.schoolName, modifier = Modifier.padding(bottom = CARD_NORMAL_DP*2))
                         }
-                    )
+                    }
                 }
             }
         }

@@ -13,9 +13,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- 发送通知 用于提示安装包已下载好 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
+    
     <queries>
         <package android:name="com.wisedu.cpdaily" />
         <package android:name="com.xuetangx.ykt" />
@@ -27,6 +25,7 @@
         <package android:name="com.hfut.schedule" />
         <package android:name="com.eg.android.AlipayGphone" />
         <package android:name="com.hfut.schedule.lite" />
+        <package android:name="com.xunmeng.pinduoduo" />
     </queries>
 
     <application
@@ -132,7 +131,7 @@
             android:name=".service.tile.LoginHefeiSchoolNetTileService"
             android:exported="true"
             android:icon="@drawable/net"
-            android:label="@string/login_web_hefei"
+            android:label="@string/qs_label_login_web_hefei"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
@@ -146,7 +145,7 @@
             android:name=".service.tile.LoginXuanChengSchoolNetTileService"
             android:exported="true"
             android:icon="@drawable/net"
-            android:label="@string/login_web_xuancheng"
+            android:label="@string/qs_label_login_web_xuancheng"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
@@ -157,10 +156,10 @@
             </intent-filter>
         </service>
         <service
-            android:name=".service.tile.RechargeTileService"
+            android:name=".service.tile.starter.RechargeTileService"
             android:exported="true"
             android:icon="@drawable/add_card"
-            android:label="@string/recharge"
+            android:label="@string/qs_label_recharge"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
@@ -171,10 +170,66 @@
             </intent-filter>
         </service>
         <service
-            android:name=".service.tile.ScanTileService"
+            android:name=".service.tile.starter.ScanQrCodeTileService"
             android:exported="true"
-            android:icon="@drawable/qr_code_scanner_shortcut"
-            android:label="@string/scan"
+            android:icon="@drawable/qr_code_scanner"
+            android:label="@string/qs_label_scan"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.tile.starter.CardTileService"
+            android:exported="true"
+            android:icon="@drawable/credit_card"
+            android:label="@string/title_activity_card"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.tile.starter.HotWaterTileService"
+            android:exported="true"
+            android:icon="@drawable/water_voc"
+            android:label="@string/qs_label_hot_water"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.tile.starter.ExpressPddTileService"
+            android:exported="true"
+            android:icon="@drawable/package_2"
+            android:label="@string/qs_label_pdd"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".service.tile.starter.ExpressTaoBaoTileService"
+            android:exported="true"
+            android:icon="@drawable/package_2"
+            android:label="@string/qs_label_taobao"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
@@ -207,14 +262,6 @@
         <receiver
             android:name=".receiver.UpdateReceiver"
             android:exported="false" /> <!-- 小组件 -->
-        <receiver
-            android:name=".receiver.CourseLiveUpdateReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
         <receiver
             android:name=".receiver.widget.focus.FocusWidgetReceiver"
             android:exported="true"

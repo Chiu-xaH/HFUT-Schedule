@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.ui.screen.fix.Fix
 
+/**
+ * 独立的修读Activity，不要和主App耦合！
+ */
 class FixActivity : BaseActivity() {
     @Composable
     override fun UI() {

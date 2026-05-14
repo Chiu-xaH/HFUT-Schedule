@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -26,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.util.MyApiParse.getMy
+import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
@@ -40,19 +41,23 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
+
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+
+import com.xah.mirror.util.rememberShaderState
+
+import com.xah.navigation.util.LocalNavController
+
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -167,18 +172,16 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun WorkAndRest(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.WorkAndRest.withArgs() }
+fun WorkAndRest() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.WorkAndRest.label)) },
+        headlineContent = { ScrollText(text = WorkAndRestDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(WorkAndRestDestination.ICON), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.WorkAndRest,route)
+            navController.push(WorkAndRestDestination(null))
         }
     )
 }
@@ -186,7 +189,7 @@ fun WorkAndRest(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TimeTableScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
     friendId : String?
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -201,21 +204,18 @@ fun TimeTableScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.WorkAndRest.withArgs(friendId) }
     val backdrop = rememberLayerBackdrop()
 
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.WorkAndRest.label)) },
+                title = { Text(WorkAndRestDestination.TITLE.asString()) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route,AppNavRoute.WorkAndRest.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(
@@ -224,7 +224,7 @@ fun TimeTableScreen(
                                 if(url == null) {
                                     showToast("正在从云端获取数据")
                                 } else {
-                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
+                                    Starter.startWebUrlInner(context,url!!,"校历", icon = R.drawable.schedule)
                                     showToast("即将打开网页链接,可自行下载或保存图片")
                                 }
                             }

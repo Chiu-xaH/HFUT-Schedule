@@ -3,9 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.person
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.util.Base64
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -22,10 +21,10 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,59 +35,53 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
+import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
+
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.uicommon.component.status.LoadingScreen
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.util.LogUtil
+import com.xah.container.component.base.SharedContainer
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.util.LocalNavController
+import com.xah.common.ui.component.status.LoadingScreen
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 
@@ -97,11 +90,9 @@ import org.jsoup.Jsoup
 @Composable
 fun PersonScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.PersonInfo.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -122,18 +113,16 @@ fun PersonScreen(
     }
 
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.PersonInfo.label)) },
+                title = { Text(PersonInfoDestination.title.asString()) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.PersonInfo.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(
@@ -161,7 +150,7 @@ fun PersonScreen(
                     .fillMaxSize()
             ) {
                 InnerPaddingHeight(innerPadding,true)
-                PersonItems(vm,navController)
+                PersonItems()
                 InnerPaddingHeight(innerPadding,false)
             }
         }
@@ -174,9 +163,10 @@ fun PersonScreen(
 )
 @Composable
 private fun PersonItems(
-    vm : NetWorkViewModel,
-    navController : NavHostController,
+//    vm : NetWorkViewModel,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val photo by produceState<String?>(initialValue = null) {
         value = LargeStringDataManager.read( LargeStringDataManager.PHOTO)
     }
@@ -266,13 +256,14 @@ private fun PersonItems(
 
         }
 
-        val route = remember { AppNavRoute.Classmates.route }
         DividerTextExpandedWith(text = "就读信息") {
             CustomCard(
+                shape = NoneRoundShape,
                 color = cardNormalColor(),
-                modifier = Modifier.containerShare(
-                    route = route,
-                    roundShape = MaterialTheme.shapes.medium
+                modifier = Modifier.sharedContainer(
+                    ClassmatesDestination.key,
+                    MaterialTheme.shapes.medium,
+                    cardNormalColor()
                 )
             ) {
                 TransplantListItem(
@@ -329,10 +320,10 @@ private fun PersonItems(
                     trailingContent = {
                         FilledTonalButton(
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.Classmates,route)
+                                navController.push(ClassmatesDestination)
                             }
                         ) {
-                            Text(stringResource(AppNavRoute.Classmates.label))
+                            Text(ClassmatesDestination.title.asString())
                         }
                     },
                 )
@@ -592,7 +583,7 @@ private fun PersonItems(
                             headlineContent = {  Text(it) },
                             overlineContent = { Text("手机") },
                             leadingContent = {
-                                Icon(painterResource(R.drawable.smartphone),null)
+                                Icon(painterResource(R.drawable.call),null)
                             },
                             modifier = Modifier.clickable {
                                 ClipBoardHelper.copy(it)

@@ -1,29 +1,24 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -31,21 +26,24 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
+import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
+import com.hfut.schedule.ui.style.special.calendarSquareGlass
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
-import com.xah.transition.component.containerShare
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithScale
 
-private const val timeTextFactor = 0.85
-private const val placeTextFactor = 0.9
+const val timeTextFactor = 0.85
+const val placeTextFactor = 0.9
 
 @Composable
 fun TimeTable(
@@ -60,14 +58,16 @@ fun TimeTable(
     onTapBlankRegion : ((Offset) -> Unit)? = null,
     onLongTapBlankRegion : ((Offset) -> Unit)? = null,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
-    onSquareClick : (List<TimeTableItem>) -> Unit,
+    onSquareClick : ((List<TimeTableItem>) -> Unit)?,
 ) {
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    val floatingController = LocalFloatingController.current
+
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
-    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
+
+    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
 
     val list = if(week > items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -78,10 +78,10 @@ fun TimeTable(
 
     val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
     val lineHeight = textSize * calendarSquareTextPadding
-    val timeTextLineHeight = lineHeight*timeTextFactor
-    val timeTextSize = textSize*timeTextFactor
-    val placeTextLineHeight = lineHeight*placeTextFactor
-    val placeTextSize = textSize*placeTextFactor
+    val timeTextLineHeight = lineHeight * timeTextFactor
+    val timeTextSize = textSize * timeTextFactor
+    val placeTextLineHeight = lineHeight * placeTextFactor
+    val placeTextSize = textSize * placeTextFactor
 
     val hasBackground = shaderState != null
 
@@ -115,15 +115,32 @@ fun TimeTable(
             onTapBlankRegion = onTapBlankRegion
         ) { list ->
             val color: Pair<Color, Color> = if (!hasBackground) {
-                when {
-                    list.size > 1 -> Pair(
-                        MaterialTheme.colorScheme.errorContainer,
-                        MaterialTheme.colorScheme.onErrorContainer.copy(.6f)
-                    )
+                if(list.size == 1) {
+                    when (list[0].type) {
+                        TimeTableType.FOCUS -> Pair(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.onPrimary.copy(.6f)
+                        )
 
-                    else -> Pair(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f)
+                        TimeTableType.COURSE -> Pair(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f)
+                        )
+
+                        TimeTableType.EXAM -> Pair(
+                            MaterialTheme.colorScheme.errorContainer,
+                            MaterialTheme.colorScheme.onErrorContainer.copy(.6f)
+                        )
+                    }
+                } else if(list.size > 1) {
+                    Pair(
+                        MaterialTheme.colorScheme.error,
+                        MaterialTheme.colorScheme.onError.copy(.6f)
+                    )
+                } else {
+                    Pair(
+                        MaterialTheme.colorScheme.surfaceContainer,
+                        MaterialTheme.colorScheme.onSurface.copy(.6f)
                     )
                 }
             } else {
@@ -132,59 +149,56 @@ fun TimeTable(
                     MaterialTheme.colorScheme.onSurface.copy(.6f)
                 )
             }
+
+            val containerColor = if (!hasBackground) color.first else Color.Transparent
+
             Surface(
-                color = if (!hasBackground) color.first else Color.Transparent,
-                shape = round,
+                color = containerColor,
+                shape = if(list.size == 1) { NoneRoundShape } else { round },
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
                             it
                                 .clip(round)
-                                .let {
+                                .let { i ->
                                     if (AppVersion.CAN_SHADER) {
-                                        it.calendarSquareGlass(
+                                        i.calendarSquareGlass(
                                             shaderState,
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
-                                            enableLiquidGlass,
                                         )
                                     } else {
-                                        it
+                                        i
                                     }
                                 }
                         } else {
                             it
                         }
                     }
-                    .let {
-                        if (!hasBackground) {
-                            it.clickableWithScale(ClickScale.SMALL.scale) {
-                                onSquareClick(list)
-                            }
-                        } else {
-                            it.clickable {
-                                onSquareClick(list)
-                            }
+                    .combinedClickable(
+                        onLongClick = {
+                            floatingController.push(TimeTableSquareWindow(list))
+                        },
+                        onClick = {
+                            onSquareClick?.let { it(list) } ?: floatingController.push(TimeTableSquareWindow(list))
                         }
-                    }
+                    )
                     .let {
                         if (!hasBackground && list.size == 1) {
                             val item = list[0]
-                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.containerShare(
-                                        AppNavRoute.CourseDetail.withArgs(item.name, origin), MaterialTheme.shapes.extraSmall
-                                    )
+                                    it.sharedContainer(CourseDetailApiDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
-                                    item.id?.let { id ->
-                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, origin), MaterialTheme.shapes.extraSmall)
+                                    item.detail.eventId?.let { id ->
+                                        it.sharedContainer(AddEventDestination(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
-                                    it.containerShare(AppNavRoute.Exam.withArgs(origin), MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                             }
                         } else {
@@ -226,7 +240,7 @@ fun TimeTable(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                        item.place?.let {
+                        item.getSimplyPlace()?.let {
                             Text(
                                 text = it,
                                 fontSize = placeTextSize,
@@ -333,9 +347,10 @@ fun TimeTable(
                     MaterialTheme.colorScheme.onSurface.copy(.6f)
                 )
             }
+            val containerColor = if (!hasBackground) color.first else Color.Transparent
             Surface(
-                color = if (!hasBackground) color.first else Color.Transparent,
-                shape = round,
+                color = containerColor,
+                shape = NoneRoundShape,
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
@@ -348,7 +363,6 @@ fun TimeTable(
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
-                                            enableLiquidGlass,
                                         )
                                     } else {
                                         it
@@ -358,33 +372,28 @@ fun TimeTable(
                             it
                         }
                     }
-                    .let {
-                        if (!hasBackground) {
-                            it.clickableWithScale(ClickScale.SMALL.scale) {
-                                onSquareClick(listOf(item))
-                            }
-                        } else {
-                            it.clickable {
-                                onSquareClick(listOf(item))
-                            }
+                    .combinedClickable(
+                        onLongClick = {
+                            floatingController.push(TimeTableSquareWindow(listOf(item)))
+                        },
+                        onClick = {
+                            onSquareClick?.let { it(listOf(item)) } ?: floatingController.push(TimeTableSquareWindow(listOf(item)))
                         }
-                    }
+                    )
                     .let {
                         if (!hasBackground) {
-                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.containerShare(
-                                        AppNavRoute.CourseDetail.withArgs(item.name, origin), MaterialTheme.shapes.extraSmall
-                                    )
+                                    it.sharedContainer(CourseDetailApiDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
-                                    item.id?.let { id ->
-                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, origin), MaterialTheme.shapes.extraSmall)
+                                    item.detail.eventId?.let { id ->
+                                        it.sharedContainer(AddEventDestination(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
-                                    it.containerShare(AppNavRoute.Exam.withArgs(origin), MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                             }
                         } else {
@@ -426,7 +435,7 @@ fun TimeTable(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        item.place?.let {
+                        item.getSimplyPlace()?.let {
                             Text(
                                 text = it,
                                 fontSize = placeTextSize,

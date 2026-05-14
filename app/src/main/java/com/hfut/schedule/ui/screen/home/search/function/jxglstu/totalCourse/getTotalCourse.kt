@@ -9,13 +9,13 @@ import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.network.util.MyApiParse
+import com.hfut.schedule.logic.util.network.MyApiParse
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.network.util.MyApiParse.getMy
+import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -29,7 +29,7 @@ private fun parseDatumCourse(result: String) : List<lessons> = try {
     emptyList<lessons>()
 }
 
-fun getDefaultStartTerm() =  MyApiParse.getMy()?.startDay ?: getStartWeekFromCommunity()
+fun getDefaultStartTerm() =  getMy()?.startDay ?: getStartWeekFromCommunity()
 
 
 

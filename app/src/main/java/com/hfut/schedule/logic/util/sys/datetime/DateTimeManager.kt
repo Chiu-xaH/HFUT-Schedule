@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
-import com.xah.uicommon.util.safeDiv
+import com.xah.common.logic.safeDiv
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
@@ -56,8 +56,10 @@ object DateTimeManager {
 
     // 日期
     private var today: LocalDate = LocalDate.now()
-    private var currentTime = LocalDateTime.now()
+    var currentTime = LocalDateTime.now()
+        private set
     private var date = Date()
+
 
     val Date_yyyy_MM: String = simpleFormatter_YYYY_MM.format(date)
     val Date_MM_dd: String = simpleFormatter_MM_DD.format(date)

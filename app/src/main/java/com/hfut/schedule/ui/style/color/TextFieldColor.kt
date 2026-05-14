@@ -18,3 +18,15 @@ fun textFiledTransplant(isColorCopy : Boolean = true) : TextFieldColors {
     )
 }
 
+
+@Composable
+fun textFiledAllTransplant() : TextFieldColors {
+    return TextFieldDefaults.colors(
+        errorIndicatorColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+    )
+}

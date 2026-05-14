@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
@@ -54,14 +52,14 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
+import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
@@ -71,6 +69,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
@@ -86,13 +85,13 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -174,9 +173,9 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
     val auth = remember { prefs.getString("auth","") }
-    val url by remember { mutableStateOf(MyApplication.HUI_XIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
+    val url by remember { mutableStateOf(Constant.HUI_XIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
 
-    val urlHuixin = remember { MyApplication.HUI_XIN_URL + "plat" + "?synjones-auth=" + auth }
+    val urlHuixin = remember { Constant.HUI_XIN_URL + "plat" + "?synjones-auth=" + auth }
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
@@ -190,9 +189,8 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Fee = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Fee,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column(
             ) {
@@ -231,18 +229,18 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                         Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
                     },
                     modifier = Modifier.clickable {
-                        showBottomSheet_Washing = true
+                        showToast("前往查询中心")
                     }
                 )
 
                 CardListItem(
                     headlineContent = { Text("慧新易校平台") },
                     leadingContent = {
-                        Icon(Icons.Default.ArrowForward, contentDescription = "")
+                        Icon(painterResource(R.drawable.arrow_forward), contentDescription = "")
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,urlHuixin,"慧新易校")
+                            Starter.startWebUrlInner(context,urlHuixin,"慧新易校")
                         }
                     }
                 )
@@ -257,55 +255,49 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 showBottomSheet_ELectric = false
             },
             showBottomSheet = showBottomSheet_ELectric,
-            hazeState = hazeState,
-            autoShape = false
-//            sheetState = sheetState_ELectric,
-//            shape = Round(sheetState_ELectric)
         ) {
             EleUI(vm = vm,hazeState)
         }
     }
 
     if (showBottomSheet_Web) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Web = false
             },
-            sheetState = sheetState_Web,
-//            shape = Round(sheetState_Web)
+            showBottomSheet = showBottomSheet_Web
         ) {
             LoginWebScaUI(vmUI, vm,hazeState)
         }
     }
 
     if (showBottomSheet_Shower) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_Shower = false
             },
-            sheetState = sheetState_Shower,
+            showBottomSheet = showBottomSheet_Web,
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }
     }
+
     if (showBottomSheet_Washing) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_Web,
             onDismissRequest = {
                 showBottomSheet_Washing = false
             },
-            sheetState = sheetState_Washing,
         ) {
-            WashingUI(vm,hazeState)
+            WashingUI()
         }
     }
-
 
     if(showBottomSheet_Range) {
         HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Range = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Range
 //            sheetState = sheetState_Range,
 //            shape = bottomSheetRound(sheetState_Range)
@@ -317,7 +309,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Search = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Search
         ) { SearchBillsUI(vm,hazeState) }
     }
@@ -327,9 +318,8 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Settings = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Settings,
-            isFullExpand = false
+//            expandFully = false
 //            sheetState = sheetState_Settings,
 //            shape = bottomSheetRound(sheetState_Settings)
         ) { CardLimit(vm,vmUI) }
@@ -340,18 +330,16 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = { showBottomSheet_Toady = false },
 //            sheetState = sheetState_Today,
 //            shape = bottomSheetRound(sheetState_Today),
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet_Toady,
-            hazeState = hazeState
         ){
-            TodayBills(vm,hazeState)
+            TodayBills(vm)
         }
     }
     if(showBottomSheet_Lost) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Lost = false },
             showBottomSheet = showBottomSheet_Lost,
-            hazeState = hazeState
         ){
             CardLostScreen(vm)
         }
@@ -421,7 +409,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                                             if (text != null) {
                                                 //余额不足//未登录//正常
                                                 if (text != "00" && text!!.toDouble() < 10) {
-                                                    Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL)
+                                                    Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL)
                                                 } else if (text == "00") {
                                                     refreshLogin(context)
                                                 } else {
@@ -475,7 +463,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             headlineContent = { Text(text = "充值") },
                             supportingContent = { Text(text = "跳转至支付宝校园卡页面")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) }
+                            modifier = Modifier.clickable { Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -491,7 +479,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart)
+                                    Starter.startWebUrlInner(context,"${Constant.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart)
                                 }
                             }
                         )
@@ -502,7 +490,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,url,"付款码", icon = R.drawable.barcode)
+                                    Starter.startWebUrlInner(context,url,"付款码", icon = R.drawable.barcode)
                                 }
                             }
                         )
@@ -522,7 +510,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.lock_reset), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                                    Starter.startWebUrlInner(context,"${Constant.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                                 }
                             }
                         )
@@ -533,7 +521,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebView(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare)
+                                    Starter.startWebUrlInner(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare)
                                 }
                             }
                         )
@@ -548,7 +536,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                         TransplantListItem(
                             headlineContent = { Text(text = "范围支出(接口废弃)") },
                             supportingContent = { Text(text = "手动点选范围查询总消费")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.arrow_range), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Range = true }
                         )
                     }

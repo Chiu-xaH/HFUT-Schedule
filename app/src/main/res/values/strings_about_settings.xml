@@ -18,9 +18,7 @@
     <string name="about_settings_fix_half_title">Fix</string>
     <string name="about_setting_fix_title">Fix</string>
     <string name="about_setting_fix_description">When the crash or failure is not updated, the table can be used to fix the desktop icon.</string>
-    <string name="about_settings_develop_half_title">Develop</string>
     <string name="about_settings_developer_title">Developer options</string>
     <string name="about_settings_developer_description">Some options available for experienced users.</string>
-    <string name="about_settings_test_title">Test page</string>
 
 </resources>

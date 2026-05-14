@@ -17,19 +17,19 @@ import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
-import com.xah.uicommon.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.transition.style.TransitionLevel
-import com.xah.uicommon.util.language.BaseChoice
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.xah.common.ui.model.BaseChoice
+import com.xah.common.ui.model.text.UiText
+import com.xah.common.ui.util.res
+import com.xah.navigation.model.anim.EffectLevel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -48,9 +48,10 @@ object DataStoreManager : IDataStore {
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
-    private val dataStore = MyApplication.Companion.context.dataStore
+    private val dataStore = MyApplication.context.dataStore
 
-    val SEARCH_DEFAULT_STR = GlobalUIStateHolder.funcDefault.map { it.id }.joinToString(",")
+    val SEARCH_DEFAULT_STR = GlobalStateHolder.funcDefault.map { it.id }.joinToString(",")
+    val SHORTCUT_DEFAULT_STR = AppShortcutManager.getStorageStr()
 
     private const val EMPTY_STRING = ""
 
@@ -93,12 +94,11 @@ object DataStoreManager : IDataStore {
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
     private val HAZE_BLUR = booleanPreferencesKey("haze_blur_4")
-    private val TRANSITION = intPreferencesKey("transitions_2")
+    private val TRANSITION = intPreferencesKey("transitions_3")
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
     private val SUPABASE_AUTO_CHECK = booleanPreferencesKey("supabase_auto_check")
-    private val FOCUS_SHOW_SHOWER = booleanPreferencesKey("focus_show_shower")
     private val FOCUS_SHOW_WEATHER_WARN = booleanPreferencesKey("focus_show_weather_warn")
     private val CARD_PASSWORD = stringPreferencesKey("card_password")
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
@@ -111,6 +111,7 @@ object DataStoreManager : IDataStore {
     private val COURSE_BOOK = stringPreferencesKey("course_book")
     private val WEB_VIEW_DARK = booleanPreferencesKey("web_view_dark")
     private val PREDICTIVE = booleanPreferencesKey("predictive")
+    private val INFINITE_WHEEL_PICKER = booleanPreferencesKey("infinite")
     private val CONTROL_CENTER = booleanPreferencesKey("control_center")
     private val WX_AUTH = stringPreferencesKey("wx_auth")
     private val CUSTOM_COLOR = longPreferencesKey("custom_color")
@@ -118,8 +119,10 @@ object DataStoreManager : IDataStore {
     private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style_2")
     private val CUSTOM_CALENDAR_SQUARE_ALPHA = floatPreferencesKey("custom_calendar_square_alpha")
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
+    private val SHORTCUT_SORT = stringPreferencesKey("shortcut_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
     private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
+//    private val KEEP_PREVIOUS_PAGE = booleanPreferencesKey("keep_previous_page")
     private val HEFEI_ROOM_NUMBER = stringPreferencesKey("hefei_room_number")
     private val HEFEI_BUILDING_NUMBER = stringPreferencesKey("hefei_building_number")
     private val HEFEI_ELECTRIC = stringPreferencesKey("hefei_electric")
@@ -127,14 +130,19 @@ object DataStoreManager : IDataStore {
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
-    private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
+    private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
+    private val CONTAINER_TILT = booleanPreferencesKey("container_tilt")
+    private val CONTAINER_SHEAR = booleanPreferencesKey("container_share")
+    private val NAV_SPLASH_SCREEN = booleanPreferencesKey("nav_splash_screen")
+//    private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
     private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
-    private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
+//    private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
     private val CALENDAR_SQUARE_HEIGHT_NEW = floatPreferencesKey("calendar_square_height_new")
     private val MERGE_SQUARE = booleanPreferencesKey("merge_square")
     private val CALENDAR_SQUARE_TEXT_SIZE = floatPreferencesKey("calendar_square_test_size")
     private val CALENDAR_SQUARE_TEXT_PADDING = floatPreferencesKey("calendar_square_test_padding_2")
     private val FOCUS_WIDGET_TEXT_SIZE = floatPreferencesKey("focus_widget_test_size")
+    private val SCREEN_CORNER = floatPreferencesKey("screen_corner")
     private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
     private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
@@ -148,18 +156,20 @@ object DataStoreManager : IDataStore {
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
+    suspend fun saveNavSplashScreen(value: Boolean) = saveValue(NAV_SPLASH_SCREEN,value)
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
     suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR, value)
-    suspend fun saveTransition(value: TransitionLevel) = saveValue(TRANSITION,value.code)
+    suspend fun saveTransition(value: EffectLevel) = saveValue(TRANSITION,value.levelNum)
     suspend fun saveSupabaseJwt(value: String) = saveValue(SUPABASE_JWT,value)
     suspend fun saveSupabaseRefreshToken(value: String) = saveValue(SUPABASE_REFRESH_TOKEN,value)
     suspend fun saveSupabaseFilterEvent(value: Boolean) = saveValue(SUPABASE_FILTER_EVENT,value)
-    suspend fun saveSupabaseAutoCheck(value: Boolean) = saveValue(SUPABASE_AUTO_CHECK,value)
+//    suspend fun saveSupabaseAutoCheck(value: Boolean) = saveValue(SUPABASE_AUTO_CHECK,value)
     suspend fun saveFocusShowWeatherWarn(value: Boolean) = saveValue(FOCUS_SHOW_WEATHER_WARN,value)
     suspend fun saveCardPassword(value: String) = saveValue(CARD_PASSWORD,value)
     suspend fun saveUseDefaultCardPassword(value: Boolean) = saveValue(USE_DEFAULT_CARD_PASSWORD,value)
     suspend fun saveUseDefaultJxglstuPassword(value: Boolean) = saveValue(USE_DEFAULT_JXGLSTU_PASSWORD,value)
+//    suspend fun saveInfiniteWheelPicker(value: Boolean) = saveValue(INFINITE_WHEEL_PICKER,value)
     suspend fun saveDefaultCalendarAccount(value: Long) = saveValue(DEFAULT_CALENDAR_ACCOUNT,value)
     suspend fun saveCourseTable(value: String) = saveValue(COURSE_TABLE_TIME,value)
     suspend fun saveWebVpnCookie(value: String) = saveValue(WEBVPN_COOKIE,value)
@@ -174,7 +184,9 @@ object DataStoreManager : IDataStore {
     suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
     suspend fun saveCustomBackground(value: String?) = saveValue(CUSTOM_BACKGROUND, value ?: EMPTY_STRING)
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
+    suspend fun saveScreenCorner(value: Float) = saveValue(SCREEN_CORNER,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
+    suspend fun saveShortcutSort(value: List<String>?) = saveValue(SHORTCUT_SORT, value?.joinToString(",") ?: DataStoreManager.SHORTCUT_DEFAULT_STR)
     suspend fun saveReadNotifications(value: List<Int>) = saveValue(READ_NOTIFICATIONS, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
@@ -187,8 +199,9 @@ object DataStoreManager : IDataStore {
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
     suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
-    suspend fun saveShowOutOdDateEvent(value: Boolean) = saveValue(SHOW_OUT_OF_DATE_EVENT, value)
-    suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
+//    suspend fun saveShowOutOdDateEvent(value: Boolean) = saveValue(SHOW_OUT_OF_DATE_EVENT, value)
+//    suspend fun saveEnableKeepPreviousPage(value: Boolean) = saveValue(KEEP_PREVIOUS_PAGE, value)
+//    suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
     suspend fun saveCalendarSquareHeightNew(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT_NEW, value)
     suspend fun saveCalendarSquareTextSize(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_SIZE, value)
     suspend fun saveCalendarSquareTextPadding(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_PADDING, value)
@@ -205,6 +218,9 @@ object DataStoreManager : IDataStore {
         }
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
+    suspend fun saveContainerTilt(value: Boolean) = saveValue(CONTAINER_TILT,value)
+    suspend fun saveContainerShare(value: Boolean) = saveValue(CONTAINER_SHEAR,value)
+    suspend fun saveUseDoubleExtension(value: Boolean) = saveValue(USE_DOUBLE_EXTENSION,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
     suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
     suspend fun saveTermStartDate(value: String)  {
@@ -219,43 +235,50 @@ object DataStoreManager : IDataStore {
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, true)
-    val transitionLevel = getFlow(TRANSITION, TransitionLevel.MEDIUM.code)
+    val transitionLevel = getFlow(TRANSITION, EffectLevel.NO_SCALE.levelNum)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,false)
+    val enableInfiniteWheelPicker = getFlow(INFINITE_WHEEL_PICKER,true)
     val enableSupabaseAutoCheck = getFlow(SUPABASE_AUTO_CHECK,true)
-    val enableShowFocusShower = getFlow(FOCUS_SHOW_SHOWER,true)
     val enableShowFocusWeatherWarn = getFlow(FOCUS_SHOW_WEATHER_WARN,false)
     val customCardPassword = getFlow(CARD_PASSWORD,EMPTY_STRING)
     val enableUseDefaultCardPassword = getFlow(USE_DEFAULT_CARD_PASSWORD,true)
     val enableUseDefaultJxglstuPassword = getFlow(USE_DEFAULT_JXGLSTU_PASSWORD,true)
+//    val enableKeepPreviousPage = getFlow(KEEP_PREVIOUS_PAGE,false)
     val defaultCalendarAccountId = getFlow(DEFAULT_CALENDAR_ACCOUNT,1)
     val webVpnCookies = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val enableAutoTerm = getFlow(AUTO_TERM,true)
+    val enableNavSplashScreen = getFlow(NAV_SPLASH_SCREEN,false)
     val enablePredictive = getFlow(PREDICTIVE, AppVersion.CAN_PREDICTIVE)
     val enableForceWebViewDark = getFlow(WEB_VIEW_DARK,true)
     val enableControlCenterGesture = getFlow(CONTROL_CENTER,false)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
     val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)
+    val shortcutSort = getFlow(SHORTCUT_SORT, SHORTCUT_DEFAULT_STR)
     val readNotifications = getFlow(READ_NOTIFICATIONS, EMPTY_STRING)
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,MyApplication.CALENDAR_SQUARE_ALPHA)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemesterParser.getSemester() }
-    val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)
+    val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
+    val useDoubleExtension = getFlow(USE_DOUBLE_EXTENSION,false)
+    val enableContainerTilt = getFlow(CONTAINER_TILT,true)
+    val enableContainerShare = getFlow(CONTAINER_SHEAR,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
-    val enableShowOutOfDateEvent = getFlow(SHOW_OUT_OF_DATE_EVENT, false)
-    val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
+//    val enableShowOutOfDateEvent = getFlow(SHOW_OUT_OF_DATE_EVENT, false)
+//    val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
+    val screenCorner = getFlow(SCREEN_CORNER, -1f)
     val language = getFlow(LANGUAGE, Language.AUTO.code)
     val calendarSquareTextPadding = getFlow(CALENDAR_SQUARE_TEXT_PADDING, MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)

@@ -5,13 +5,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Language
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 object LanguageHelper {
     private fun getCurrentAppLanguageTag(context: Context): String? {
         val config = context.resources.configuration
         val currentLanguage: String? = config.locale.language
-        LogUtil.debug(currentLanguage ?: "null")
         return currentLanguage
     }
 

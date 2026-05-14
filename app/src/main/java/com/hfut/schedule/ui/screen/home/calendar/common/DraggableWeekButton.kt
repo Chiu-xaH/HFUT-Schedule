@@ -23,10 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -46,14 +44,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
+import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.util.NoneRoundShape
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
@@ -144,15 +147,39 @@ fun DraggableWeekButton(
                 )
             }
     ) {
+        val shape = if(expanded) {
+//            FloatingActionButtonDefaults.extendedFabShape
+            (FloatingActionButtonDefaults.shape as? CornerBasedShape) ?: MaterialTheme.shapes.large
+        } else {
+            MaterialTheme.shapes.small
+        }
+
         ShareTwoContainer2D(
             modifier = Modifier
+                .let {
+                    if(!hasBackground) {
+                        it.sharedContainer(
+                            key = TimeTablePreviewWindow.KEY,
+                            shape = shape,
+                            containerColor = containerColor
+                        )
+                    } else {
+                        it
+                    }
+                }
                 .align(Alignment.Center)
                 .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
-                .clip(if(expanded) FloatingActionButtonDefaults.extendedFabShape else MaterialTheme.shapes.small),
+                .let {
+                    if(!hasBackground) {
+                        it
+                    } else {
+                        it.clip(shape)
+                    }
+                },
             show = !expanded,
             defaultContent = {
                 Surface(
-                    shape = FloatingActionButtonDefaults.extendedFabShape,
+                    shape = NoneRoundShape,
                     color = if(hasBackground) Color.Transparent else containerColor,
                     modifier = Modifier
                         .height(56.dp)
@@ -194,7 +221,7 @@ fun DraggableWeekButton(
 
                         // 左箭头（展开时显示）
                         Icon(
-                            Icons.Filled.ArrowBack,
+                            painterResource(R.drawable.arrow_back),
                             contentDescription = null,
                             tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
                             modifier = Modifier
@@ -210,7 +237,7 @@ fun DraggableWeekButton(
 
                         // 右箭头（展开时显示）
                         Icon(
-                            Icons.Filled.ArrowForward,
+                            painterResource(R.drawable.arrow_forward),
                             contentDescription = null,
                             tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
                             modifier = Modifier
@@ -249,7 +276,7 @@ fun DraggableWeekButton(
             secondContent = {
                 Surface(
                     color = if(hasBackground) Color.Transparent else containerColor,
-                    shape = MaterialTheme.shapes.small,
+                    shape = NoneRoundShape,
                     modifier = Modifier
                         .let {
                             if(hasBackground) {

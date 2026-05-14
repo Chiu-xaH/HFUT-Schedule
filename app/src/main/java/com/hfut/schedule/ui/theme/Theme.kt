@@ -7,8 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -23,35 +21,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
-import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.deepen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.rememberDynamicColorScheme
-import com.xah.uicommon.style.color.TransparentSystemBars
+import com.xah.common.ui.style.color.TransparentSystemBars
 
 private val list = ColorStyle.entries
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AppTheme(
     content: @Composable () -> Unit
 ) {
-//    val language by DataStoreManager.language.collectAsState(Language.AUTO.code)
-//
-//    LaunchedEffect(language) {
-//        LanguageHelper.changeAppLanguage(language)
-//    }
-
     val context = LocalContext.current
 
     // 自主取色
@@ -289,12 +276,11 @@ fun DefaultAppTheme(
     TransparentSystemBars(darkTheme)
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 fun setNightMode(
     context: Context,
     mode: ColorMode
 ) {
-    if (AppVersion.sdkInt >= Build.VERSION_CODES.S) {
+    if (AppVersion.CAN_DYNAMIC_COLOR) {
         // Android 12+
         val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
         uiModeManager.setApplicationNightMode(

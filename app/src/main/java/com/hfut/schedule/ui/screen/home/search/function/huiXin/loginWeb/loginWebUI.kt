@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
+
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
@@ -20,12 +21,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,8 +44,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
@@ -55,32 +55,28 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.BottomButton
+import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.button.LargeButton
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.xah.uicommon.component.status.LoadingUI
-import com.hfut.schedule.ui.component.container.TransplantListItem
-   
- 
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.util.LogUtil
-import com.xah.uicommon.util.safeDiv
+import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.shared.LogUtil
+import com.xah.common.logic.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -109,7 +105,7 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeStat
 @Composable
 fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val auth = remember { prefs.getString("auth", "") }
-    val zjgdUrl = remember { MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth }
+    val zjgdUrl = remember { Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
     // 支付用的变量
@@ -271,7 +267,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "description")
+                        Icon(painterResource(R.drawable.check), contentDescription = "description")
                     }
 
                     FilledTonalButton(
@@ -292,11 +288,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState,
-            //    shape = sheetState
         ) {
             Column(
             ) {
@@ -359,7 +351,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
                         scope.launch {
-                            Starter.startWebView(context,"https://www.bing.cn/")
+                            Starter.startWebUrlInner(context,"https://www.bing.cn/")
                         }
                     }
                 ) {
@@ -367,14 +359,6 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                 }
             }
             Spacer(Modifier.height(APP_HORIZONTAL_DP/2- CARD_NORMAL_DP*(if(textLogin == "已登录")2 else 1)))
-            CardListItem(
-                headlineContent = {
-                    Text("一键校园网登录已支持磁贴，可在系统控制中心添加")
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.keyboard_command_key),null)
-                }
-            )
         }
     }
 //////////////////////////////布局区///////////////////////////////////
@@ -392,7 +376,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,url = zjgdUrl, title = "慧新易校")
+                                Starter.startWebUrlInner(context,url = zjgdUrl, title = "慧新易校")
                             }
                         },
                     ) {

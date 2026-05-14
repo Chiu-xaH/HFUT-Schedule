@@ -10,8 +10,9 @@ import androidx.core.content.edit
 object SharedPrefs {
     private const val PREFS = "com.hfut.schedule_preferences"
     const val LIBRARY_TOKEN = "LibraryToken"
-    val prefs: SharedPreferences = MyApplication.Companion.context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-    private val saved: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.Companion.context)
+    const val SECOND_CLASS_TOKEN = "second_class_token"
+    val prefs: SharedPreferences = MyApplication.context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val saved: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
 
     fun saveString(title : String, info : String?) {
         if (saved.getString(title, "") != info) { saved.edit { putString(title, info) } }

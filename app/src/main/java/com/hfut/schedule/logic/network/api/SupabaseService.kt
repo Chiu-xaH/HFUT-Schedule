@@ -6,8 +6,8 @@ import com.hfut.schedule.logic.model.SupabaseEventForkCount
 import com.hfut.schedule.logic.model.SupabaseEventForkEntity
 import com.hfut.schedule.logic.model.SupabaseUsageEntity
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
-import com.hfut.schedule.logic.util.network.Crypto.getSupabasePublicKey
-import com.hfut.schedule.logic.network.util.toDateTimeBeanForSupabase
+import com.hfut.schedule.network.util.CryptoUtil.getSupabasePublicKey
+import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import okhttp3.ResponseBody
@@ -31,9 +31,9 @@ interface SupabaseService {
     // 登录
     @POST("auth/v1/token")
     fun login(
+//        @Header("Authorization") authorization : String? = null,
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Query("grant_type") loginType : String,
-//        @Header("Authorization") authorization : String? = null,
         @Body user : Any
     ) : Call<ResponseBody>
 

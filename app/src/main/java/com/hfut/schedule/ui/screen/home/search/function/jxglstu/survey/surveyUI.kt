@@ -10,16 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +26,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,25 +36,24 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.icon.DepartmentIcons
-import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
- 
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
-import com.xah.uicommon.style.align.CenterScreen
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
+import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -134,10 +126,7 @@ private fun CourseSurveyListUI(
         with(data!!) {
             HazeBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                hazeState = hazeState,
                 showBottomSheet = showBottomSheet,
-                isFullExpand = true,
-                autoShape = false
             ) {
                 Column {
                     HazeBottomSheetTopBar(course.nameZh, isPaddingStatusBar = false)
@@ -160,10 +149,7 @@ private fun CourseSurveyListUI(
     if (showBottomSheet_start) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_start = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_start,
-            isFullExpand = true,
-            autoShape = false
         ) {
             Column {
                 HazeBottomSheetTopBar("评教 $name", isPaddingStatusBar = false)
@@ -185,9 +171,8 @@ private fun CourseSurveyListUI(
                 val submittedMap = teachers.map { it.submitted }
                 val submittedCount = submittedMap.filter { it == true }.size
                 val allSubmitted = submittedCount == submittedMap.size
-                AnimationCustomCard(
-                    containerColor = cardNormalColor(),
-                    index = item
+                CustomCard(
+                    color = cardNormalColor(),
                 ) {
                     Column {
                         TransplantListItem(
@@ -270,10 +255,7 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            isFullExpand = true,
-            autoShape = false
         ) {
             Column {
                 HazeBottomSheetTopBar("评教 $name", isPaddingStatusBar = false)
@@ -292,10 +274,10 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
                 val listItem = list[item]
                 val isSubmitted = listItem.submitted
                 val tName = listItem.teacher.person?.nameZh
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { tName?.let { Text(text = it) } },
                     leadingContent = { Icon(painterResource(R.drawable.person),null) },
-                    trailingContent = { if(!isSubmitted) Icon(Icons.Filled.ArrowForward, contentDescription = "") else Text(text = "已评") },
+                    trailingContent = { if(!isSubmitted) Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") else Text(text = "已评") },
                     modifier = Modifier.clickable {
                         if(!isSubmitted) {
                             name = tName ?: ""
@@ -304,7 +286,6 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
                             showBottomSheet = true
                         } else showToast("已评教")
                     },
-                    index = item
                 )
             }
             item {

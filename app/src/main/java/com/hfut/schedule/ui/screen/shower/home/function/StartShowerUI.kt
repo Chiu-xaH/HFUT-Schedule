@@ -13,13 +13,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
@@ -31,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -46,7 +43,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -55,23 +51,24 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.xah.uicommon.component.text.BottomTip
-import com.hfut.schedule.ui.component.camera.ScanQrCodeView
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.dialog.LittleDialog
- 
+import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.camera.ScanQrCodeView
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.xah.uicommon.style.align.RowHorizontal
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.util.text
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -98,7 +95,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as UiState.Success).data
-        StatusIcon(painter = if(response.contains("成功")) Icons.Filled.Check else Icons.Filled.Close, text = response)
+        StatusIcon(if(response.contains("成功")) R.drawable.check else R.drawable.close,text(response))
     }
 }
 
@@ -163,7 +160,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
                     colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .7f)),
                     modifier = Modifier.align(Alignment.BottomEnd).padding(APP_HORIZONTAL_DP).size(60.dp),
                 ) {
-                    Icon(Icons.Filled.Close,null, modifier = Modifier.size(30.dp))
+                    Icon(painterResource(R.drawable.close),null, modifier = Modifier.size(30.dp))
                 }
                 FilledTonalIconButton (
                     onClick = { isFull = !isFull },
@@ -247,28 +244,16 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
     }
 
     if (showBottomSheet) {
-
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+            showBottomSheet = showBottomSheet,
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("结果")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    ShowerStatusUI(vm,input)
-                }
+            Column {
+                HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
+                ShowerStatusUI(vm,input)
+                Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
             }
         }
     }
@@ -295,7 +280,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
                             show = true
                         }
                     }) {
-                    Icon(painter = painterResource(R.drawable.qr_code_scanner_shortcut), contentDescription = "description")
+                    Icon(painter = painterResource(R.drawable.qr_code_scanner), contentDescription = "description")
                 }
             },
             shape = MaterialTheme.shapes.medium,

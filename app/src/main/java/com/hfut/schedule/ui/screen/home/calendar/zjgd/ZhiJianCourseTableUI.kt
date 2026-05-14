@@ -23,9 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,10 +32,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -59,6 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
@@ -79,29 +74,29 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
+import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
+import com.hfut.schedule.ui.nav.destination.FailRateDestination
+import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
-import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.placeTextFactor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
-import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.style.CalendarStyle
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.ClickScale
+import com.xah.common.ui.style.clickableWithScale
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.mirror.util.ShaderState
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithScale
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
-import com.xah.uicommon.util.LogUtil
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -121,10 +116,7 @@ fun ZhiJianCourseTableUI(
     val table = remember { List(30) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val tableAll = remember { List(42) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val refreshNetwork = suspend m@ {
-        val token = prefs.getString("ZhiJian","")
-        if(token == null) {
-            return@m
-        }
+        val token = prefs.getString("ZhiJian", "") ?: return@m
         val date = getMondayOfWeek(today).format(DateTimeManager.formatter_YYYY_MM_DD)
         vm.zhiJianCourseResp.clear()
         vm.getZhiJianCourses(studentId,date,token)
@@ -209,10 +201,9 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-            autoShape = false,
-            hazeState = hazeState
+//            isFullScreen = false,
         ) {
-            MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
+            MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm)
         }
     }
     var showBottomSheetCourse by remember { mutableStateOf(false) }
@@ -222,18 +213,25 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetCourse = false
             },
-            autoShape = false,
-            hazeState = hazeState
+//            isFullScreen = false,
         ) {
-            CourseDetail(vm,hazeState,selectedItem[0])
+            CourseDetail(selectedItem[0])
         }
     }
 
     var findNewCourse by remember { mutableStateOf(false) }
 
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
+    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val calendarSquareHeight = height * 2
+    val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
+
+    val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
+    val lineHeight = textSize * calendarSquareTextPadding
+    val placeTextLineHeight = lineHeight * placeTextFactor
+    val placeTextSize = textSize * placeTextFactor
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -485,7 +483,9 @@ fun ZhiJianCourseTableUI(
         val style = CalendarStyle(showAll)
         val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+//        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+//        val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+//        val calendarSquareHeight = height * 2
         val squareColor =  containerColor.copy(customBackgroundAlpha)
         Box {
             LazyVerticalGrid(
@@ -518,15 +518,14 @@ fun ZhiJianCourseTableUI(
                                     if(backGroundHaze != null) {
                                         it
                                             .clip(style.containerCorner)
-                                            .let {
+                                            .let { i ->
                                                 if(AppVersion.CAN_SHADER) {
-                                                    it.calendarSquareGlass(
+                                                    i.calendarSquareGlass(
                                                         backGroundHaze,
                                                         squareColor,
-                                                        enableLiquidGlass,
                                                     )
                                                 } else {
-                                                    it
+                                                    i
                                                 }
                                             }
                                     } else {
@@ -546,7 +545,6 @@ fun ZhiJianCourseTableUI(
                                     }
                                 }
                         ) {
-
                             if (itemList.size == 1) {
                                 val l = itemList[0]
                                 Column(
@@ -558,30 +556,44 @@ fun ZhiJianCourseTableUI(
                                 ) {
                                     Text(
                                         text = "${l.startPeriod}-${l.endPeriod}节",
-                                        fontSize = style.textSize,
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+                                        overflow = TextOverflow.Clip,
+                                        maxLines = 1,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = CARD_NORMAL_DP)
                                     )
                                     Box(
                                         modifier = Modifier
                                             .weight(1f) // 占据中间剩余的全部空间
                                             .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = l.courseName,
-                                            fontSize = style.textSize,
+                                            fontSize = textSize,
+                                            lineHeight = lineHeight,
+//                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                             modifier = Modifier.fillMaxWidth()
                                         )
                                     }
-                                    Text(
-                                        text = l.place,
-                                        fontSize = style.textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
+                                    l.place?.let {
+                                        Text(
+                                            text = it,
+                                            fontSize = placeTextSize,
+                                            lineHeight = placeTextLineHeight,
+//                                            fontSize = style.textSize,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = CARD_NORMAL_DP)
+                                        )
+                                    }
                                 }
                             } else if (itemList.size > 1) {
                                 val name = itemList.map {
@@ -597,19 +609,27 @@ fun ZhiJianCourseTableUI(
                                 ) {
                                     Text(
                                         text = "${l.startPeriod}-${l.endPeriod}节",
-                                        fontSize = style.textSize,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth(),
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+                                        overflow = TextOverflow.Clip,
+                                        maxLines = 1,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = CARD_NORMAL_DP),
                                     )
                                     Box(
                                         modifier = Modifier
                                             .weight(1f) // 占据中间剩余的全部空间
                                             .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = "${itemList.size}节课冲突",
-                                            fontSize = style.textSize,
+                                            fontSize = textSize,
+                                            lineHeight = lineHeight,
+//                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                             modifier = Modifier.fillMaxWidth(),
@@ -617,9 +637,13 @@ fun ZhiJianCourseTableUI(
                                     }
                                     Text(
                                         text = name,
-                                        fontSize = style.textSize,
+                                        fontSize = placeTextSize,
+                                        lineHeight = placeTextLineHeight,
+//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = CARD_NORMAL_DP)
                                     )
                                 }
                             }
@@ -648,7 +672,7 @@ fun ZhiJianCourseTableUI(
                     onClick = {
                         weekSwap.previousWeek()
                     },
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                ) { Icon(painterResource(R.drawable.arrow_back), "Add Button") }
             }
             // 中间
             AnimatedVisibility(
@@ -693,7 +717,7 @@ fun ZhiJianCourseTableUI(
                     onClick = {
                         weekSwap.nextWeek()
                     },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                ) { Icon(painterResource(R.drawable.arrow_forward), "Add Button") }
             }
         }
     }
@@ -701,7 +725,7 @@ fun ZhiJianCourseTableUI(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJianCourseItemDto>, vm: NetWorkViewModel, hazeState: HazeState) {
+fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJianCourseItemDto>, vm: NetWorkViewModel) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
     if (showBottomSheetTotalCourse) {
@@ -709,11 +733,10 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
             onDismissRequest = {
                 showBottomSheetTotalCourse = false
             },
-            hazeState = hazeState,
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheetTotalCourse
         ) {
-            CourseDetail(vm,hazeState,courses[selectedIndex])
+            CourseDetail(courses[selectedIndex])
         }
     }
     Column {
@@ -747,89 +770,31 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CourseDetail(
-    vm: NetWorkViewModel,
-    hazeState : HazeState,
     course : ZhiJianCourseItemDto
 ) {
-
-    var showBottomSheet_Teacher by remember { mutableStateOf(false) }
-    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    if (showBottomSheet_Teacher) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_Teacher = false },
-            sheetState = sheetState_Teacher,
-            shape = bottomSheetRound(sheetState_Teacher)
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("教师检索 ${course.teacher}")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    ApiToTeacherSearch(course.teacher,vm,innerPadding)
-                }
-            }
-        }
-    }
-
-    val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_FailRate by remember { mutableStateOf(false) }
-
-    if (showBottomSheet_FailRate) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_FailRate = false },
-            sheetState = sheetState_FailRate,
-            shape = bottomSheetRound(sheetState_FailRate)
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("挂科率 ${course.courseName}")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    ApiToFailRate(course.courseName,vm, hazeState =hazeState ,innerPadding)
-                }
-            }
-        }
-    }
-
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
-
-    var searchAll by remember { mutableStateOf(false) }
-    ApiForCourseSearch(vm,null, course.code.let { if(searchAll) it.substringBefore("--") else it },showBottomSheet_Search, hazeState = hazeState) {
-        showBottomSheet_Search = false
-    }
+    val navController = LocalNavController.current
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar(course.courseName, isPaddingStatusBar = false)
         CustomCard (color = cardNormalColor()){
-            TransplantListItem(
-                headlineContent = {
-                    Text(course.place)
-                },
-                overlineContent = { Text("地点") },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.near_me),null)
-                }
-            )
+            course.place?.let {
+                TransplantListItem(
+                    headlineContent = {
+                        Text(it)
+                    },
+                    overlineContent = { Text("地点") },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.near_me),null)
+                    }
+                )
+            }
             TransplantListItem(
                 headlineContent = {
                     Text(course.teacher)
                 },
                 overlineContent = { Text("教师") },
                 modifier = Modifier.clickable {
-                    showBottomSheet_Teacher = true
+                    navController.push(TeacherSearchApiDestination(course.teacher))
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.person),null)
@@ -855,8 +820,7 @@ private fun CourseDetail(
                 trailingContent = {
                     FilledTonalButton(
                         onClick = {
-                            searchAll = true
-                            showBottomSheet_Search = true
+                            navController.push(CourseSearchApiDestination(null,course.code.substringBefore("--")))
                         }
                     ) {
                         Text("开课查询")
@@ -903,10 +867,10 @@ private fun CourseDetail(
                     Text("挂科率")
                 },
                 leadingContent = {
-                    Icon(painterResource(AppNavRoute.FailRate.icon),null)
+                    Icon(painterResource(FailRateDestination.icon),null)
                 },
                 modifier = Modifier.clickable {
-                    showBottomSheet_FailRate = true
+                    navController.push(FailRateApiDestination(course.courseName,course.code))
                 }
             )
         }
@@ -915,11 +879,10 @@ private fun CourseDetail(
                 Text("在开课查询中查看详情")
             },
             modifier = Modifier.clickable {
-                searchAll = false
-                showBottomSheet_Search = true
+                navController.push(CourseSearchApiDestination(null,course.code))
             },
             trailingContent = {
-                Icon(Icons.Default.ArrowForward,null)
+                Icon(painterResource(R.drawable.arrow_forward),null)
             }
         )
         Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())

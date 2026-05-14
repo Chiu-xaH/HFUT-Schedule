@@ -1,9 +1,7 @@
 
 buildscript {
-    ext {
-    }
-    dependencies {
-    }
+    ext {}
+    dependencies {}
     repositories {
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
@@ -26,6 +24,5 @@ plugins {
     alias(libs.plugins.androidKotlinMultiplatformLibrary) apply false
     alias(libs.plugins.testAndroid) apply false
     alias(libs.plugins.baselineProfile) apply false
-
 //    alias(libs.plugins.testAndroid) apply false
 }

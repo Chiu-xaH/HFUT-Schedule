@@ -29,10 +29,11 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
-import com.xah.uicommon.style.align.CenterScreen
+import com.xah.common.ui.style.align.CenterScreen
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -44,8 +45,8 @@ import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.shared.model.BillRecordBean
-import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.forecast.model.network.BillRecordBean
+import com.xah.common.ui.style.align.RowHorizontal
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -119,9 +120,8 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
             if(showBottomSheet && infoNum != null) {
                 HazeBottomSheet (
                     onDismissRequest = { showBottomSheet = false },
-                    autoShape = false,
+//                    isFullScreen = false,
                     showBottomSheet = showBottomSheet,
-                    hazeState = hazeState
                 ){
                     BillsInfo(infoNum!!)
                 }
@@ -143,12 +143,11 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
                                     val item = list[index]
                                     var name = item.resume
                                     if (name.contains("有限公司")) name = name.replace("有限公司","")
-                                    AnimationCardListItem(
+                                    CardListItem(
                                         headlineContent = { Text(text = name) },
                                         supportingContent = { Text(text = processTranamt(item))},
                                         overlineContent = { Text(text = "交易 " + item.jndatetimeStr + "\n入账 " + item.effectdateStr)},
                                         leadingContent = { BillsIcons(name) },
-                                        index = index,
                                         modifier = Modifier.clickable {
                                             infoNum = item
                                             showBottomSheet = true

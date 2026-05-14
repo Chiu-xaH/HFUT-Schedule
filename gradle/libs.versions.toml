@@ -1,6 +1,7 @@
 [versions]
 baseline = "1.4.1"
-androidliquidglass = "1.0.0-alpha15"
+androidliquidglass = "1.0.0"
+devicecompat = "2.6"
 glance = "1.1.1"
 leakcanaryAndroid = "2.14"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
@@ -8,7 +9,6 @@ maxAndroidVersion = "36"
 minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
-adaptive = "1.2.0"
 animation = "1.7.0-beta06" # 1.7.0-beta06
 animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
@@ -17,9 +17,9 @@ biometric = "1.1.0"
 bsdiffLib = "1.0.3"
 cameraCamera2 = "1.4.2"
 glideCompose = "1.0.0-alpha.1"
-composeBom = "2023.03.00"  # 别动版本
+composeBom = "2026.02.01"  # 别动版本
 converterGson = "2.9.0"
-coreKtx = "1.16.0"
+coreKtx = "1.17.0"
 coreSplashscreen = "1.0.1"
 coreVersion = "3.5.1"
 datastorePreferences = "1.1.4"
@@ -34,20 +34,20 @@ lifecycleExtensions = "2.2.0"
 lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
-material3 = "1.4.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
+material3 = "1.5.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
 mirror = "0.1-alpha08"
-navigationCompose = "2.7.5" # 2.9.1 2.7.5
+#navigationCompose = "2.7.5" # 2.9.1 2.7.5
 navigationComposeVersion = "2.7.0-alpha07" # 2.9.0-beta04
 okhttp = "4.9.0"
 palette = "1.0.0"
 profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
-tesseract4android = "4.8.0"
+sharednav = "1.0.0-dev05132256"
+tesseract4android = "4.9.0"
 uiautomator = "2.3.0"
 kotlin = "2.1.21"
 agp = "8.9.3"
-kotlinTest = "2.1.21"
 runner = "1.7.0"
 core = "1.5.0"
 ksp = "2.1.20-1.0.32"
@@ -55,20 +55,19 @@ test = "8.9.3"
 webkit = "1.14.0"
 accompanistPermissions = "0.34.0"
 composeMultiplatform = "1.8.0"
-jetbrainsKotlinJvm = "2.1.21"
 androidx-testExt = "1.3.0"
 workRuntimeKtx = "2.11.0"
+materialVersion = "1.13.0"
+vectordrawable = "1.2.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
-liquid-glass = { module = "com.github.Kyant0:AndroidLiquidGlass", version.ref = "androidliquidglass" }
+devicecompat = { module = "com.github.getActivity:DeviceCompat", version.ref = "devicecompat" }
+liquid-glass = { module = "io.github.kyant0:backdrop", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
-androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
-androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
-androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android", version.ref = "animationGraphicsAndroid" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -90,7 +89,6 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 #androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 mirror = { module = "com.github.Chiu-xaH:Mirror-Android", version.ref = "mirror" }
@@ -112,6 +110,7 @@ bsdiff = { module = "com.github.Chiu-xaH:Bsdiff-Android-Library", version.ref = 
 glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }
+sharednav = { module = "com.github.Chiu-xaH:SharedNav", version.ref = "sharednav" }
 zxing = { module = "com.google.zxing:core", version.ref = "coreVersion" }
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
@@ -125,11 +124,13 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 tesseract = { module = "cz.adaptech.tesseract4android:tesseract4android", version.ref = "tesseract4android" }
-kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
+androidx-vectordrawable = { group = "androidx.vectordrawable", name = "vectordrawable", version.ref = "vectordrawable" }
 
 [plugins]
 kotlinParcelize = { id = "kotlin-parcelize" }
@@ -140,7 +141,7 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleKsp = { id = "com.google.devtools.ksp" ,version.ref = "ksp" }
 testAndroid = {id = "com.android.test", version.ref = "test"}
-jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }

@@ -16,6 +16,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,6 +76,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -80,7 +86,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -89,15 +95,16 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
+import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
@@ -108,15 +115,19 @@ import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.TransitionLevel
-import com.xah.transition.util.TransitionBackHandler
-import com.xah.uicommon.component.slider.CustomSlider
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.navigation.controller.NavigationController
+import com.xah.navigation.util.LocalNavController
+import com.xah.common.ui.component.slider.CustomSlider
+import com.xah.common.ui.component.status.CustomSingleChoiceRow
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.LocalSharedRegistry
+import com.xah.container.util.pixelExtension
+import com.xah.navigation.model.anim.EffectLevel
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -128,19 +139,13 @@ import java.io.FileOutputStream
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun AppearanceSettingsScreen(innerPaddings : PaddingValues, navController : NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun AppearanceSettingsScreen(innerPaddings : PaddingValues,) {
+    val navController = LocalNavController.current
     SharedAppearanceSettingsScreen(
-        Modifier
-            .verticalScroll(rememberScrollState())
-            .scale(scale),
+        Modifier.verticalScroll(rememberScrollState()),
         innerPaddings,
-        false
+        false,
+        navController
     )
 }
 
@@ -181,7 +186,12 @@ private suspend fun deleteCustomBackground(context: Context) = withContext(Dispa
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValues, isControlCenter : Boolean ) {
+fun SharedAppearanceSettingsScreen(
+    modifier : Modifier = Modifier,
+    innerPaddings: PaddingValues,
+    isControlCenter : Boolean,
+    navController: NavigationController,
+) {
     val backgroundColor =  if(isControlCenter) {
         MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     } else {
@@ -203,20 +213,21 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-        val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
+        val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
+        val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
+        val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+        val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
+        val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
+//        val enableKeepPreviousPage by DataStoreManager.enableKeepPreviousPage.collectAsState(initial = false)
 
-        LaunchedEffect(enableLiquidGlass) {
-            TransitionConfig.enableMirror = enableLiquidGlass
-        }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
-
 
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
@@ -229,13 +240,11 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
-        val transitionLevels = remember { TransitionLevel.entries }
 
-        LaunchedEffect(transition) {
-            TransitionConfig.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
-        }
+        val transitionLevels = remember { EffectLevel.entries }
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
+
         LaunchedEffect(customColor) {
             hue = customColor.let {
                 if(useDynamicColor) {
@@ -245,6 +254,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
+
         var showColorDialog by remember { mutableStateOf(false) }
         if(showColorDialog) {
             Dialog(
@@ -301,9 +311,10 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         }
 
         if(!isControlCenter) {
+            val registry = LocalSharedRegistry.current
             val video by produceState<String?>(initialValue = null) {
                 scope.launch {
-                    delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                    delay(registry.animationTime*1L)
                     value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
                 }
             }
@@ -593,8 +604,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                         Column {
                             Text(text = stringResource(
                                 R.string.appearance_settings_transition_level_title,
-                                transition,
-                                transitionLevels.find { it.code == transition }?.title ?: ""
+                                transition+1,
                             ))
                         }
                     },
@@ -606,23 +616,108 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 CustomSlider(
                     value = transition.toFloat(),
                     onValueChange = { value ->
-                        val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
-                        scope.launch { DataStoreManager.saveTransition(level) }
+                        scope.launch {
+                            val target = transitionLevels.find { it.levelNum == formatDecimal(value.toDouble(),0).toInt() }
+                                ?: return@launch
+                            DataStoreManager.saveTransition(target)
+                        }
                     },
                     steps = transitionLevels.size-2,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_bottom_bar_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.appearance_settings_transition_bottom_bar_description))
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
-                )
-                AnimationSetting()
-                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+                if(transition != EffectLevel.NONE.levelNum) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "容器共享") },
+                        supportingContent = {
+                            Text("过渡时容器带有共享效果")
+                        },
+                        trailingContent = {
+                            Switch(checked = enableContainerShare, onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveContainerShare(!enableContainerShare)
+                                }
+                            })
+                        },
+                        leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                    )
+                    PaddingHorizontalDivider()
+
+
+                    if(enableContainerShare) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "视差效果") },
+                            supportingContent = {
+                                Text("过渡时容器带有倾斜的视差效果")
+                            },
+                            trailingContent = {
+                                Switch(checked = enableContainerTilt, onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveContainerTilt(!enableContainerTilt)
+                                    }
+                                })
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.ic_360), contentDescription = "Localized description") },
+                        )
+                        PaddingHorizontalDivider()
+
+                        TransplantListItem(
+                            headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_extension_title)) },
+                            supportingContent = {
+                                Text(stringResource(R.string.appearance_settings_transition_extension_description))
+                            },
+                            trailingContent = {
+                                Switch(checked = useDoubleExtension, onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
+                                    }
+                                })
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                        )
+                        ExtensionSample()
+                        PaddingHorizontalDivider()
+                    }
+
+
+                    TransplantListItem(
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_splash_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.appearance_settings_transition_splash_description))
+                        },
+                        trailingContent = {
+                            Switch(checked = enableNavSplashScreen, onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveNavSplashScreen(!enableNavSplashScreen)
+                                }
+                            })
+                        },
+                        leadingContent = { Icon(painterResource(R.drawable.resize), contentDescription = "Localized description") },
+                    )
+
+                    PaddingHorizontalDivider()
+                }
+                SharedContainer(
+                    key = CornerSettingsDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topEnd = CornerSize(0.dp),
+                        topStart = CornerSize(0.dp),
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
+                        },
+                        modifier = Modifier.clickable {
+                            navController.push(CornerSettingsDestination)
+                        },
+                        leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
+                    )
+                }
             }
         }
         DividerTextExpandedWith(stringResource(R.string.appearance_settings_calendar_half_title),contentColor=contentColor) {
@@ -657,18 +752,130 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         }
     }
 }
+@Composable
+private fun ExtensionSample() {
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
+
+    if(enableLiquidGlass) {
+        val graphicsLayer = rememberGraphicsLayer()
+        var rect by remember { mutableStateOf<Rect?>(null) }
+//        var index by remember { mutableStateOf(0) }
+//        val icons = remember { listOf(
+//            R.drawable.wechat_icon,
+//            R.drawable.amap_icon,
+//            R.drawable.chao_xing_icon,
+//            R.drawable.alipay_icon,
+//            R.drawable.anhui_hall_icon,
+//            R.drawable.hfut_schedule_icon,
+//            R.drawable.le_pao_icon,
+//            R.drawable.today_campus_icon,
+//            R.drawable.mooc_icon,
+//            R.drawable.rain_classroom_icon
+//        ) }
+//
+//        LaunchedEffect(Unit) {
+//            while(true) {
+//                delay(5000L)
+//                index = (index + 1) % icons.size
+//            }
+//        }
+
+        val ui = @Composable {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP)
+                    .height(100.dp)
+                    .padding(bottom = APP_HORIZONTAL_DP)
+                    .clip(MaterialTheme.shapes.large)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(
+                            if(useDoubleExtension) {
+                                Alignment.Center
+                            } else {
+                                Alignment.CenterStart
+                            }
+                        )
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInRoot()
+                            val size = coordinates.size
+
+                            rect = Rect(
+                                left = position.x,
+                                top = position.y,
+                                right = position.x + size.width,
+                                bottom = position.y + size.height
+                            )
+                        }
+                        .drawWithContent {
+                            drawContent()
+                            graphicsLayer.record {
+                                this@drawWithContent.drawContent()
+                            }
+                        }
+                ) {
+                    Image(painterResource(R.drawable.alipay_icon),null)
+                }
+                Box(
+                    modifier = Modifier
+                        .zIndex(-1f)
+                        .pixelExtension(graphicsLayer,rect,true,useDoubleExtension)
+                )
+            }
+        }
+        if(useDoubleExtension) {
+            ui()
+        } else {
+            ui()
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = APP_HORIZONTAL_DP)
+                .padding(bottom = APP_HORIZONTAL_DP)
+        ) {
+            Surface(
+                modifier = Modifier.align(Alignment.Center).size(150.dp,150.dp),
+                color = cardNormalColor(),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    TransplantListItem(
+                        modifier = Modifier.align(
+                            if(useDoubleExtension) {
+                                Alignment.Center
+                            } else {
+                                Alignment.TopCenter
+                            }
+                        ),
+                        headlineContent = {
+                            Text("图书馆")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.book_5),null)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun CalendarUISettings(
     tiny : Boolean  = false
 ) {
-    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+//    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
-    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
-    val enableCalendarShowTeacher by DataStoreManager.enableCalendarShowTeacher.collectAsState(initial = ShowTeacherConfig.ONLY_MULTI.code)
-    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+   val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -693,52 +900,6 @@ fun CalendarUISettings(
 
 
     Column {
-        if(!tiny){
-            TransplantListItem(
-                headlineContent = {
-                    Text(stringResource(R.string.appearance_settings_display_teachers_title))
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.group), null)
-                },
-            )
-            CustomSingleChoiceRow<ShowTeacherConfig>(
-                selected = enableCalendarShowTeacher,
-                modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-            ) {
-                scope.launch {
-                    DataStoreManager.saveCalendarShowTeacher(it)
-                }
-            }
-
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = {
-                    Text(stringResource(R.string.appearance_settings_merge_conflict_calendar_squares_title))
-                },
-                supportingContent = {
-                    if (!tiny)
-                        Text(stringResource(R.string.appearance_settings_merge_conflict_calendar_square_description))
-                },
-                modifier = Modifier.clickable {
-                    scope.launch {
-                        DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                    }
-                },
-                trailingContent = {
-                    Switch(checked = enableMergeSquare, onCheckedChange = {
-                        scope.launch {
-                            DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                        }
-                    })
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.arrow_split), null)
-                },
-            )
-        }
-        if(!tiny)
-            PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
                 Text(stringResource(R.string.appearance_settings_calendar_background_title))
@@ -767,9 +928,7 @@ fun CalendarUISettings(
                 }
             }
         )
-
         if(useCustomBackground) {
-//            var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
             if(!tiny)
                 PaddingHorizontalDivider()
             TransplantListItem(
@@ -793,8 +952,6 @@ fun CalendarUISettings(
                 onValueChange = {
                     scope.launch { DataStoreManager.saveCustomSquareAlpha(it) }
                 },
-//                onValueChangeFinished =  {
-//                },
                 modifier = Modifier.let {
                     if(tiny) it
                     else it.padding(bottom = APP_HORIZONTAL_DP)
@@ -803,41 +960,8 @@ fun CalendarUISettings(
                 showProcessText = true
             )
         }
-        if(!tiny) {
+        if(!tiny)
             PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = {
-                    Text(
-                        stringResource(
-                            R.string.appearance_settings_old_calendar_square_height_title,
-                            formatDecimal(calendarSquareHeight.toDouble(), 0)
-                        ))
-                },
-                supportingContent = {
-                    if(!tiny)
-                        Text(stringResource(R.string.appearance_settings_old_calendar_square_height_description))
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.height),null)
-                },
-            )
-
-            CustomSlider(
-                value = calendarSquareHeight,
-                onValueChange = {
-                    scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
-                },
-                modifier = Modifier.let {
-                    if(tiny) it
-                    else it.padding(bottom = APP_HORIZONTAL_DP)
-                },
-                valueRange = 50f..200f,
-                showProcessText = true,
-                steps = 149,
-                processText = formatDecimal(calendarSquareHeight.toDouble(),0)
-            )
-            PaddingHorizontalDivider()
-        }
 
         TransplantListItem(
             headlineContent = {

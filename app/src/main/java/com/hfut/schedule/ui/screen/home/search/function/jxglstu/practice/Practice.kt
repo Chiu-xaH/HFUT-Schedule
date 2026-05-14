@@ -22,14 +22,11 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Practice(ifSaved : Boolean){
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-
     TransplantListItem(
         headlineContent = { ScrollText(text = "实习") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.work), contentDescription = "") },
@@ -39,26 +36,4 @@ fun Practice(ifSaved : Boolean){
             showToast("暂未开发")
         }
     )
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("实习")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-
-                }
-            }
-        }
-    }
 }

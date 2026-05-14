@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -42,18 +43,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibrarySearchPositionBean
@@ -66,12 +65,13 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -80,7 +80,6 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -88,25 +87,23 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
+import com.hfut.schedule.ui.nav.destination.LibraryDestination
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import dev.chrisbanes.haze.HazeState
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -137,30 +134,21 @@ private const val TAB_PAGE_LIBRARY = 1
 @Composable
 fun LibraryScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val libraryNavController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Library.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(libraryNavController.currentRouteWithoutArgs()) {
         LibraryBarItems.SEARCH.name ->LibraryBarItems.SEARCH
-//        LibraryBarItems.SEARCH_BOOK.name -> LibraryBarItems.SEARCH_BOOK
         else -> LibraryBarItems.MINE
     }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
+
     var inputKeyword by remember { mutableStateOf("") }
     val backDrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
-    var pageState = rememberPagerState { 2 }
+    val pageState = rememberPagerState { 2 }
     val titles = remember { listOf("智慧社区","斛兵知搜") }
     val refreshNetworkCommunity : suspend (Int) -> Unit = { page ->
         prefs.getString("TOKEN","")?.let {
@@ -172,25 +160,31 @@ fun LibraryScreen(
         vm.librarySearchResp.clear()
         vm.searchLibrary(inputKeyword,page)
     }
-    CustomTransitionScaffold (
+
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
         topBar = {
             Column(
-                modifier = Modifier.topBarBlur(hazeState),
+                modifier = Modifier.topBarBlur(
+                    hazeState,
+                    when(targetPage) {
+                        LibraryBarItems.SEARCH -> MaterialTheme.colorScheme.surface
+                        LibraryBarItems.MINE -> MaterialTheme.colorScheme.surfaceContainer
+                    }
+                ),
             ) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Library.label)) },
+                    title = { Text(LibraryDestination.title.asString()) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Library.icon)
+                        TopBarNavigationIcon()
                     },
                 )
                 if(targetPage != LibraryBarItems.MINE) {
                     CustomTabRow(pageState,titles)
                     CustomTextField(
+                        colors = textFiledAllTransplant(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -231,62 +225,72 @@ fun LibraryScreen(
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState, items,libraryNavController)
+            HazeBottomBar(
+                hazeState,
+                items,
+                libraryNavController,
+                color = when(targetPage) {
+                    LibraryBarItems.SEARCH -> MaterialTheme.colorScheme.surface
+                    LibraryBarItems.MINE -> MaterialTheme.colorScheme.surfaceContainer
+                }
+            )
         }
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
-        NavHost(navController = libraryNavController,
+        NavHost(
+            navController = libraryNavController,
             startDestination = LibraryBarItems.MINE.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .hazeSource(state = hazeState)
                 .backDropSource(backDrop)
         ) {
-            composable(LibraryBarItems.SEARCH.name) {
+            nav2Composable(LibraryBarItems.SEARCH.name) {
                 Column (modifier = Modifier.fillMaxSize()) {
                     HorizontalPager(pageState) { pager ->
                         when(pager) {
-                            TAB_PAGE_COMMUNITY -> SearchScreenCommunity(vm,hazeState,innerPadding,refreshNetworkCommunity)
-                            TAB_PAGE_LIBRARY -> SearchScreenLibrary(vm,innerPadding,hazeState,refreshNetworkLibrary)
+                            TAB_PAGE_COMMUNITY -> SearchScreenCommunity(vm,innerPadding,refreshNetworkCommunity)
+                            TAB_PAGE_LIBRARY -> SearchScreenLibrary(vm,innerPadding,refreshNetworkLibrary)
                         }
                     }
                 }
             }
-            composable(LibraryBarItems.MINE.name) {
+            nav2Composable(LibraryBarItems.MINE.name) {
                 Column (modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainer)) {
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                ) {
                     LibraryMineUI(
                         vm,
                         innerPadding,
                         libraryNavController,
-                        navController
                     )
                 }
             }
         }
     }
 }
-private const val seatUrl = MyApplication.LIBRARY_SEAT + "home/web/f_second"
+private const val seatUrl = Constant.LIBRARY_SEAT + "home/web/f_second"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchScreenCommunity(
     vm: NetWorkViewModel,
-    hazeState: HazeState,
     innerPadding : PaddingValues,
     refreshNetwork : suspend (Int) -> Unit
 ) {
     var startUse by rememberSaveable { mutableStateOf(false) }
     var title by remember { mutableStateOf("地点") }
-    var callNum by remember { mutableStateOf<String>("") }
+    var callNum by remember { mutableStateOf("") }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.libraryData.state.collectAsState()
 
     LaunchedEffect(page) {
-        if(startUse == false) {
+        if(!startUse) {
             vm.libraryData.emitPrepare()
             startUse = true
         } else if(uiState !is UiState.Success) {
@@ -298,9 +302,7 @@ private fun SearchScreenCommunity(
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            autoShape = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
@@ -320,9 +322,8 @@ private fun SearchScreenCommunity(
                     val item = books[index]
                     val name = item.name
                     val callNo = item.callNumber
-                    AnimationCustomCard(
-                        containerColor = cardNormalColor(),
-                        index = index,
+                    CustomCard(
+                        color = cardNormalColor(),
                         modifier = Modifier.clickable {
                             title = name
                             callNum = callNo
@@ -334,7 +335,7 @@ private fun SearchScreenCommunity(
                             supportingContent = { Text(text = "索书号 $callNo") },
                             leadingContent = {
                                 Icon(
-                                    painterResource(AppNavRoute.Library.icon),
+                                    painterResource(LibraryDestination.icon),
                                     contentDescription = "Localized description",
                                 )
                             }
@@ -405,8 +406,10 @@ fun LibraryMineUI(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
     libraryNavController : NavHostController,
-    navController: NavHostController,
+//    navController: NavHostController,
 ) {
+    val context = LocalContext.current
+    val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     var libraryStatusCode by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -484,22 +487,18 @@ fun LibraryMineUI(
                         latestReturnedData?.returnTime?.substringBefore(" ")?.let { Text("${DateTimeManager.daysBetween(it)}天后") }
                     }
                 ) {
-                    Row() {
+                    Row {
                         TransplantListItem(
                             overlineContent = { Text("借阅") },
                             headlineContent = { Text("${response.borrowCount}本") },
                             leadingContent = {
-                                Icon(painterResource(R.drawable.book_5),null, modifier = Modifier.iconElementShare(AppNavRoute.LibraryBorrowed.route))
+                                Icon(painterResource(R.drawable.book_5),null)
                             },
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
                                     if (!loading) {
-                                        navController.navigateForTransition(
-                                            AppNavRoute.LibraryBorrowed,
-                                            AppNavRoute.LibraryBorrowed.route,
-                                            transplantBackground = true
-                                        )
+                                        navController.push(LibraryBorrowedDestination)
                                     }
                                 }
                         )
@@ -514,11 +513,7 @@ fun LibraryMineUI(
                                     .weight(0.5f)
                                     .clickable {
                                         if (!loading) {
-                                            navController.navigateForTransition(
-                                                AppNavRoute.LibraryBorrowed,
-                                                AppNavRoute.LibraryBorrowed.route,
-                                                transplantBackground = true
-                                            )
+                                            navController.push(LibraryBorrowedDestination)
                                         }
                                     }
                             )
@@ -588,21 +583,6 @@ fun LibraryMineUI(
                             libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH.name)
                         }
                     )
-//                    PaddingHorizontalDivider()
-//                    TransplantListItem(
-//                        headlineContent = {
-//                            Text("斛兵知搜")
-//                        },
-//                        supportingContent = {
-//                            Text("搜索电子图书馆中的所有资料")
-//                        },
-//                        leadingContent = {
-//                            Icon(painterResource(R.drawable.search),null)
-//                        },
-//                        modifier = Modifier.clickable {
-//                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH_ALL.name)
-//                        }
-//                    )
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
@@ -613,20 +593,19 @@ fun LibraryMineUI(
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         leadingContent = {
-                            Icon(painterResource(R.drawable.globe_book),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL)))
+                            Icon(painterResource(R.drawable.globe_book),null)
                         },
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
-                                        navController,
-                                        url = MyApplication.NEW_LIBRARY_URL,
+                                    Starter.startWebUrlInner(
+                                        context,
+                                        url = Constant.NEW_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.globe_book,
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -637,21 +616,20 @@ fun LibraryMineUI(
                             Text("旧图书馆官网(需校园网)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.net),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.OLD_LIBRARY_URL)))
+                            Icon(painterResource(R.drawable.net),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
-                                        navController,
-                                        url = MyApplication.OLD_LIBRARY_URL,
+                                    Starter.startWebUrlInner(
+                                        context,
+                                        url = Constant.OLD_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.net,
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.OLD_LIBRARY_URL))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -662,21 +640,20 @@ fun LibraryMineUI(
                             Text("合肥校区(需校园网)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.table_restaurant),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(seatUrl)))
+                            Icon(painterResource(R.drawable.table_restaurant),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
-                                        navController,
+                                    Starter.startWebUrlInner(
+                                        context,
                                         url = seatUrl,
                                         title = "座位预约",
                                         icon = R.drawable.table_restaurant
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(seatUrl))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -687,21 +664,20 @@ fun LibraryMineUI(
                             Text("合肥&宣城校区(需校园网)(应前往图书馆线下预约)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.meeting_room),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL)))
+                            Icon(painterResource(R.drawable.meeting_room),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
-                                    Starter.startWebView(
-                                        navController,
-                                        url = MyApplication.MEETING_ROOM_URL,
+                                    Starter.startWebUrlInner(
+                                        context,
+                                        url = Constant.MEETING_ROOM_URL,
                                         title = "研讨间预约",
                                         icon = R.drawable.meeting_room
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL))
                     )
                 }
             }
@@ -715,7 +691,6 @@ fun LibraryMineUI(
 private fun SearchScreenLibrary(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
-    hazeState: HazeState,
     refreshNetwork : suspend (Int) -> Unit
 ) {
     var startUse by remember { mutableStateOf(false) }
@@ -723,7 +698,7 @@ private fun SearchScreenLibrary(
     val uiState by vm.librarySearchResp.state.collectAsState()
 
     LaunchedEffect(page) {
-        if(startUse == false) {
+        if(!startUse) {
             vm.librarySearchResp.emitPrepare()
             startUse = true
         } else if(uiState !is UiState.Success) {
@@ -737,9 +712,8 @@ private fun SearchScreenLibrary(
     if (showBottomSheet && detailBean != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
@@ -824,7 +798,7 @@ private fun SearchScreenLibrary(
                                     Icon(painterResource(R.drawable.info),null)
                                 }
                             )
-                            CardBottomButtons(listOf(
+                            BottomTextButtonGroup(listOf(
                                 CardBottomButton(
                                     show = true,
                                     text = "加入书架",

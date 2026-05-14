@@ -1,20 +1,17 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import android.util.Log
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.encodeUrl
+import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
-import kotlin.text.substringAfter
 
 class RedirectTicketInterceptor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -24,7 +21,7 @@ class RedirectTicketInterceptor() : Interceptor {
             val location = response.header("Location").toString()
             val ticket = location.substringAfter("ticket=")
             when {
-                location.contains(MyApplication.STU_URL) -> {
+                location.contains(Constant.STU_URL) -> {
                     // 学工系统的登录
                     // 向前重定向一次
                     val newRequest = request
@@ -35,11 +32,11 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginStu(nextResponse.headers,nextResponse.body?.string())
                     nextResponse.close()
                 }
-                location.contains(MyApplication.COMMUNITY_URL) -> {
+                location.contains(Constant.COMMUNITY_URL) -> {
                     // 智慧社区的登录
-                    CasGoToInterceptorState.toCommunityTicket.value = ticket
+                    GoToInterceptorState.toCommunityTicket.value = ticket
                 }
-                location.contains(MyApplication.ZHI_JIAN_URL) -> {
+                location.contains(Constant.ZHI_JIAN_URL) -> {
                     // 指间工大登录
                     // 向前重定向一次
                     val newRequest = request
@@ -57,15 +54,11 @@ class RedirectTicketInterceptor() : Interceptor {
                             .header("Cookie", cookie)
                             .url(
                                 homeLocation ?: (
-                                        MyApplication.ZHI_JIAN_URL +
+                                        Constant.ZHI_JIAN_URL +
                                                 "wui/cas-entrance.jsp;jsessionid=${
                                                     it.substringAfter("=")
                                                 }?path=${
-                                                    encodeUrl(
-                                                        encodeUrl(
-                                                            MyApplication.ZHI_JIAN_URL + "wui/index.html#/main"
-                                                        )
-                                                    )
+                                                    encodeUrl(encodeUrl(Constant.ZHI_JIAN_URL + "wui/index.html#/main"))
                                                 }&ssoType=CAS"
                                         )
                             )
@@ -80,7 +73,7 @@ class RedirectTicketInterceptor() : Interceptor {
                         checkResponse.close()
                     }
                 }
-                location.contains(MyApplication.JXGLSTU_URL) -> {
+                location.contains(Constant.JXGLSTU_URL) -> {
                     // 教务系统的登录
                     // 向前重定向一次
                     val newRequest = request
@@ -91,7 +84,7 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginJxglstu(nextResponse.headers)
                     nextResponse.close()
                 }
-                location.contains(MyApplication.NEW_LIBRARY_URL) -> {
+                location.contains(Constant.NEW_LIBRARY_URL) -> {
                     // 图书馆登录
                     // 向前重定向一次
                     val newRequest = request
@@ -102,7 +95,7 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginLibrary(nextResponse.headers)
                     nextResponse.close()
                 }
-                location.contains(MyApplication.PE_URL) -> {
+                location.contains(Constant.PE_URL) -> {
                     // 体测平台
                     val token = "PHPSESSID=$ticket"
                     saveString("PE", token)
@@ -126,6 +119,36 @@ class RedirectTicketInterceptor() : Interceptor {
                         showToast("体测平台登陆成功")
                     } else {
                         showToast("体测平台登录失败")
+                    }
+                }
+                location.contains(Constant.SECOND_CLASS_URL) -> {
+                    // 二课登录
+                    // 向前重定向一次
+                    val newRequest = request
+                        .newBuilder()
+                        .url(location)
+                        .build()
+                    val nextResponse = chain.proceed(newRequest)
+                    val cookie = parseLoginSecondClass(nextResponse.headers)
+                    val homeLocation = nextResponse.header("Location")
+                    nextResponse.close()
+                    cookie?.let {
+                        // 向主页发送一个请求 使cookie生效
+                        val checkRequest = request
+                            .newBuilder()
+                            .header("Cookie", cookie)
+                            .url(
+                                homeLocation ?: (Constant.SECOND_CLASS_URL + "scReports/uccp_index")
+                            )
+                            .build()
+                        val checkResponse = chain.proceed(checkRequest)
+                        LogUtil.debug("CAS 第二课堂登录 ${checkResponse.code}")
+                        if(isNotBadRequest(checkResponse.code)) {
+                            showToast("第二课堂登陆成功")
+                        } else {
+                            showToast("第二课堂登陆失败 ${checkResponse.code}")
+                        }
+                        checkResponse.close()
                     }
                 }
             }
@@ -186,3 +209,20 @@ private fun parseLoginLibrary(headers: Headers)  = try {
     LogUtil.error(e)
 }
 
+
+private fun parseLoginSecondClass(headers: Headers) : String? = try {
+    val cookie = headers["Set-Cookie"] ?: throw Exception("解析失败")
+    val token = cookie.substringBefore(";")
+    LogUtil.debug("登录第二课堂 ${token}")
+
+    if (token.contains("SESSION=")) {
+        saveString(SharedPrefs.SECOND_CLASS_TOKEN, token)
+        token
+    } else {
+        showToast("第二课堂登陆失败")
+        null
+    }
+} catch (e : Exception) {
+    LogUtil.error(e)
+    null
+}

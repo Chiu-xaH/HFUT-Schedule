@@ -26,16 +26,17 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.WebFolderDestination
+import com.xah.common.ui.component.text.ScrollText
+
 
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -112,7 +113,7 @@ fun StorageWeb(hazeState : HazeState) {
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
                                         scope.launch {
-                                            Starter.startWebView(context,url,name, icon = AppNavRoute.WebFolder.icon)
+                                            Starter.startWebUrlInner(context,url,name, icon = WebFolderDestination.icon)
                                         }
                                     },
                                     onDoubleClick = {},
@@ -123,7 +124,7 @@ fun StorageWeb(hazeState : HazeState) {
                                     }
                                 )
                             )
-                            CardBottomButtons(
+                            BottomTextButtonGroup(
                                 listOf(
                                     CardBottomButton(
                                         "来源: " + when(t) {

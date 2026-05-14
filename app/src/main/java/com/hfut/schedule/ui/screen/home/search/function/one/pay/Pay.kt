@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.one.pay
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -17,9 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,59 +34,51 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.nav.destination.FeeDestination
 
+import com.hfut.schedule.ui.screen.home.cube.screen.createQRCodeBitmap
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.navigation.util.LocalNavController
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Pay(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.Fee.route }
+fun Pay() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Fee.label)) },
+        headlineContent = { ScrollText(text = FeeDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(FeeDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Fee,route)
+            navController.push(FeeDestination)
         }
     )
 }
@@ -97,32 +87,28 @@ fun Pay(
 @Composable
 fun FeeScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.Fee.route }
     val backDrop = rememberLayerBackdrop()
 
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.Fee.label)) },
+                title = { Text(FeeDestination.title.asString()) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route,AppNavRoute.Fee.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(
-                        onClick = { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) },
+                        onClick = { Starter.startWebUrlOuter(context,Constant.PAY_FEE_URL) },
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                         backdrop = backDrop
                     ) {
@@ -158,14 +144,12 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheetQRCode = false },
             showBottomSheet = showBottomSheetQRCode,
-            hazeState = hazeState,
-            autoShape = false
         ) {
             Column {
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-                    val qrPainter = createQRCodeBitmap(MyApplication.PAY_FEE_URL,1000,1000)
+                    val qrPainter = createQRCodeBitmap(Constant.PAY_FEE_URL,1000,1000)
                     qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                 }
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
@@ -227,40 +211,16 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             )
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text(text = "点击右上角打开链接登录后可调用支付") },
-                leadingContent = {Icon(
+                headlineContent = { Text(text = "点击复制链接，在微信或支付宝打开链接后即可支付") },
+                leadingContent = { Icon(
                     painter = painterResource(id = R.drawable.net),
                     contentDescription = ""
-                ) },
-                modifier = Modifier.clickable { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) }
-            )
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = { Text(text = "点击展示二维码，长按复制链接，在微信/支付宝等扫码或打开链接后，即可支付") },
-                leadingContent = { Icon(
-                    painter = painterResource(id = R.drawable.barcode),
-                    contentDescription = ""
                 )},
-                modifier= Modifier.combinedClickable(
-                    onClick = {
-                        showBottomSheetQRCode = true
-                    },
-                    onDoubleClick = {},
-                    onLongClick = {
-                        ClipBoardHelper.copy(MyApplication.PAY_FEE_URL)
-                    }
-                )
+                modifier= Modifier.clickable {
+                    ClipBoardHelper.copy(Constant.PAY_FEE_URL)
+                }
             )
         }
-
-    }
-    DividerTextExpandedWith(text = "防骗警告") {
-        CardListItem(
-            headlineContent = { Text(text = "电子支付只能通过学校缴费平台官方链接(右上角按钮提供)发起,其余线上途径均需谨慎甄别!") },
-            leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.error), contentDescription = "")
-            },
-        )
     }
 }
 

@@ -39,7 +39,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -51,7 +51,8 @@ import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
+import com.xah.common.ui.util.text
 import dev.chrisbanes.haze.HazeState
 import kotlin.collections.iterator
 
@@ -95,8 +96,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
                     showBottomSheet_pin = false
                 },
                 showBottomSheet = showBottomSheet_pin,
-                hazeState = hazeState,
-                autoShape = false
             ) {
                 Column {
                     Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
@@ -132,27 +131,15 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
     if (showBottomSheet) {
 
         HazeBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-                               },
+            onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-            isFullExpand = false
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("支付结果", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    PayStatusUI(vm,payNumber,json,type)
-                }
+            Column(
+                modifier = Modifier
+            ) {
+                HazeBottomSheetTopBar("支付结果", isPaddingStatusBar = false)
+                PayStatusUI(vm,payNumber,json,type)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -221,7 +208,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = { showToast("禁止刷新") }) {
         val msg = (uiState as UiState.Success).data
-        StatusIcon(iconId = R.drawable.send_money, text = msg)
+        StatusIcon(R.drawable.send_money, text(msg))
     }
 }
 

@@ -7,6 +7,7 @@ data class GiteeReleaseResponse(
     val body : String,
     val assets : List<GiteeReleaseBean>
 )
+
 data class GiteeReleaseBean(
     val name : String,
     @SerializedName("browser_download_url")

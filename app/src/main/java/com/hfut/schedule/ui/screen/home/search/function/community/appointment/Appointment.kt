@@ -11,24 +11,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.xah.transition.component.iconElementShare
-import com.xah.uicommon.component.text.ScrollText
+import com.hfut.schedule.ui.nav.destination.CommunityAppointmentDestination
+
+
+import com.xah.navigation.util.LocalNavController
+
+import com.xah.common.ui.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Appointment(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.CommunityAppointment.route }
+fun Appointment() {
+    val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.CommunityAppointment.label)) },
+        headlineContent = { ScrollText(text = CommunityAppointmentDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.CommunityAppointment.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(CommunityAppointmentDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.CommunityAppointment, route)
+            navController.push(CommunityAppointmentDestination)
         }
     )
 }

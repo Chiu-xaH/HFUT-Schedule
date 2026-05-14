@@ -27,7 +27,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.xah.uicommon.style.align.CenterScreen
+import com.xah.common.ui.style.align.CenterScreen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -95,8 +95,8 @@ fun LoadingIconNew() {
 
 
 
-@Composable
-fun WindmillIcon() = RotatingIcon(R.drawable.toys_fan)
+//@Composable
+//fun WindmillIcon() = RotatingIcon(R.drawable.toys_fan)
 
 
 //@Composable

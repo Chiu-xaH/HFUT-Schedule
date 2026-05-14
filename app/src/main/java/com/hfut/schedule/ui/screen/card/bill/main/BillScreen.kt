@@ -32,14 +32,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.xah.shared.model.BillRecordBean
+import com.xah.forecast.model.network.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
-import com.xah.uicommon.component.text.BottomTip
+import com.xah.common.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -47,14 +48,14 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -90,9 +91,8 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
     if(showBottomSheet && infoNum != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ){
             BillsInfo(infoNum!!)
         }
@@ -125,7 +125,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                     val paidDate = paidTime.substringBefore(" ")
                     val delay = finalDate != paidDate
                     Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
-                        AnimationCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
                             overlineContent = { Text(text = (if(sorted) paidTime else finalTime )  + (if(delay) " (延迟入账)" else "")) },
@@ -137,8 +137,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                             modifier = Modifier.clickable {
                                 infoNum = bills
                                 showBottomSheet = true
-                            },
-                            index = item
+                            }
                         )
                     }
                 }

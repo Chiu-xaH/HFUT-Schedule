@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -72,11 +71,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.util.development.getKeyStackTrace
-import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -86,6 +82,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -105,17 +102,16 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.BottomTip
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.util.LogUtil
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
@@ -137,8 +133,8 @@ private fun loginClick(
     onResult : (String) -> Unit,
     scope: CoroutineScope
 ) {
-    val cookie = prefs.getString(if(!GlobalUIStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
-    val outputAES = cookie?.let { it1 -> Crypto.encryptAES(inputAES, it1) }
+    val cookie = prefs.getString(if(!GlobalStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
+    val outputAES = cookie?.let { it1 -> CryptoUtil.encryptAES(inputAES, it1) }
     val loginFlavoring = "LOGIN_FLAVORING=$cookie"
 
 
@@ -173,10 +169,10 @@ private fun loginClick(
                                     refresh(vm)
                                 }
                                 StatusCode.OK.code.toString() -> {
-                                    if(GlobalUIStateHolder.excludeJxglstu) {
+                                    if(GlobalStateHolder.excludeJxglstu) {
                                         onResult("登陆成功")
                                         Starter.loginSuccess(context)
-                                    } else if(!GlobalUIStateHolder.webVpn) {
+                                    } else if(!GlobalStateHolder.webVpn) {
                                         onResult("请输入正确的账号")
                                         refresh(vm)
                                     } else {
@@ -214,7 +210,7 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
 
     val w by vm.webVpnTicket.state.collectAsState()
 
-    val refresh = if(GlobalUIStateHolder.webVpn) {
+    val refresh = if(GlobalStateHolder.webVpn) {
         w is UiState.Loading
     } else {
         jSessionId is UiState.Loading
@@ -223,17 +219,17 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
         CircularProgressIndicator()
     } else  {
         val url = (
-                if(!GlobalUIStateHolder.webVpn) MyApplication.CAS_LOGIN_URL
-                else MyApplication.WEBVPN_URL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
+                if(!GlobalStateHolder.webVpn) Constant.CAS_LOGIN_URL
+                else Constant.WEBVPN_URL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
                 ) + "cas/vercode"
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
-        val cookies = if(GlobalUIStateHolder.webVpn) MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie else {
+        val cookies = if(GlobalStateHolder.webVpn) Constant.WEBVPN_COOKIE_HEADER + webVpnCookie else {
             (jSessionId as? UiState.Success)?.data?.jSession
         }
 
         // webVpn开关变化时重载
-        LaunchedEffect(GlobalUIStateHolder.webVpn, GlobalUIStateHolder.refreshImageCode,cookies) {
+        LaunchedEffect(GlobalStateHolder.webVpn, GlobalStateHolder.refreshImageCode,cookies) {
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
         }
         // 请求图片
@@ -285,7 +281,7 @@ fun LoginScreen(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = {
-                    ScrollText(text = "CAS登录" + if(GlobalUIStateHolder.webVpn) " (WebVpn)" else "")
+                    ScrollText(text = "CAS登录" + if(GlobalStateHolder.webVpn) " (WebVpn)" else "")
                         },
                 actions = {
                     Row {
@@ -473,7 +469,7 @@ fun LoginScreen(
                                         )
                                     },
                                     modifier = Modifier.clickable {
-                                        Starter.startWebUrl(context,MyApplication.CAS_LOGIN_URL)
+                                        Starter.startWebUrlOuter(context,Constant.CAS_LOGIN_URL)
                                     },
                                 )
                             }
@@ -510,13 +506,13 @@ fun LoginScreen(
 //                                },
 //                            )
 //                            PaddingHorizontalDivider()
-                            if(!GlobalUIStateHolder.webVpn) {
+                            if(!GlobalStateHolder.webVpn) {
                                 TransplantListItem(
                                     supportingContent = { Text("打开开关后,将跳过教务系统而登录,用于离校且教务封网的情况下需刷新其他平台") },
                                     headlineContent = { Text("跳过教务系统") },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            GlobalUIStateHolder.excludeJxglstu = !GlobalUIStateHolder.excludeJxglstu
+                                            GlobalStateHolder.excludeJxglstu = !GlobalStateHolder.excludeJxglstu
                                             refresh(vm)
                                         }
                                     },
@@ -524,9 +520,9 @@ fun LoginScreen(
                                         Icon(painterResource(R.drawable.arrow_split),null)
                                     },
                                     trailingContent = {
-                                        Switch(checked = GlobalUIStateHolder.excludeJxglstu,onCheckedChange = { ch ->
+                                        Switch(checked = GlobalStateHolder.excludeJxglstu,onCheckedChange = { ch ->
                                             scope.launch {
-                                                GlobalUIStateHolder.excludeJxglstu = !GlobalUIStateHolder.excludeJxglstu
+                                                GlobalStateHolder.excludeJxglstu = !GlobalStateHolder.excludeJxglstu
                                                 refresh(vm)
                                             }
                                         })
@@ -540,9 +536,9 @@ fun LoginScreen(
                                 supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
                                 leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
                                 trailingContent = {
-                                    Switch(checked = GlobalUIStateHolder.webVpn,onCheckedChange = { ch -> GlobalUIStateHolder.webVpn = !GlobalUIStateHolder.webVpn })
+                                    Switch(checked = GlobalStateHolder.webVpn,onCheckedChange = { ch -> GlobalStateHolder.webVpn = !GlobalStateHolder.webVpn })
                                 },
-                                modifier = Modifier.clickable { GlobalUIStateHolder.webVpn = !GlobalUIStateHolder.webVpn },
+                                modifier = Modifier.clickable { GlobalStateHolder.webVpn = !GlobalStateHolder.webVpn },
                             )
                             PaddingHorizontalDivider()
                             TransplantListItem(
@@ -551,7 +547,7 @@ fun LoginScreen(
                                 leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
+                                        Starter.startWebUrlInner(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
                                     }
                                 },
                             )
@@ -583,9 +579,9 @@ fun LoginScreen(
                                 items(list.size) { index ->
                                     val item = list[index]
                                     val enabled =
-                                        if(GlobalUIStateHolder.webVpn) {
+                                        if(GlobalStateHolder.webVpn) {
                                             item.canWebVpn
-                                        } else if(GlobalUIStateHolder.excludeJxglstu) {
+                                        } else if(GlobalStateHolder.excludeJxglstu) {
                                             item.canWithoutJxglstu
                                         } else {
                                             item.canWithJxglstu
@@ -626,7 +622,7 @@ private suspend fun refresh(vm: LoginViewModel) = withContext(Dispatchers.IO) {
         vm.executionAndSession.clear()
         vm.getCookie()
     }
-    launch { GlobalUIStateHolder.refreshImageCode++ }
+    launch { GlobalStateHolder.refreshImageCode++ }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -660,7 +656,7 @@ private fun TwoTextField(
                 topBar = {
                     BottomSheetTopBar("图片验证码自动填充")
                 },) {innerPadding ->
-                DownloadMLUI(innerPadding,null)
+                DownloadMLUI(innerPadding)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }

@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -38,44 +39,47 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
+
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
-import com.xah.transition.component.iconElementShare
-import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.navigation.util.LocalNavController
+
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun TeacherSearch(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.TeacherSearch.route }
+fun TeacherSearch() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = stringResource(AppNavRoute.TeacherSearch.label)) },
+        headlineContent = { ScrollText(text = TeacherSearchDestination.title.asString()) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TeacherSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(TeacherSearchDestination.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TeacherSearch,route)
+            navController.push(TeacherSearchDestination)
         }
     )
 }
@@ -84,11 +88,9 @@ fun TeacherSearch(
 @Composable
 fun TeacherSearchScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.TeacherSearch.route }
 
     var name by remember { mutableStateOf("") }
     var direction by remember { mutableStateOf("") }
@@ -103,13 +105,10 @@ fun TeacherSearchScreen(
     LaunchedEffect(Unit) {
         vm.teacherSearchData.emitPrepare()
     }
-    val shaderState = rememberShaderState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
@@ -118,9 +117,9 @@ fun TeacherSearchScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.TeacherSearch.label)) },
+                    title = { Text(TeacherSearchDestination.title.asString()) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.TeacherSearch.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         LiquidButton(
@@ -133,7 +132,6 @@ fun TeacherSearchScreen(
                         }
                     }
                 )
-                val s = MaterialTheme.shapes.medium
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -151,7 +149,7 @@ fun TeacherSearchScreen(
                         label = { Text("姓名" ) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+                        colors = textFiledAllTransplant(),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     TextField(
@@ -165,7 +163,8 @@ fun TeacherSearchScreen(
                         label = { Text("研究方向" ) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+                        colors = textFiledAllTransplant(),
+                        
                     )
                 }
             }
@@ -174,7 +173,6 @@ fun TeacherSearchScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .shaderSource(shaderState)
                 .backDropSource(backDrop)
                 .hazeSource(hazeState)
                 .fillMaxSize()
@@ -184,7 +182,6 @@ fun TeacherSearchScreen(
             }
         }
     }
-//    }
 }
 
 @Composable
@@ -199,6 +196,6 @@ fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel,innerPadding : Paddin
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        TeacherListUI(vm, innerPadding)
+        TeacherListUI(vm, innerPadding,input)
     }
 }

@@ -52,31 +52,87 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.util.safeDiv
+import com.xah.common.logic.safeDiv
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.navigation.util.LocalNavController
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+suspend fun createProgramRemarkMap() : Map<Long, String?> {
+    try {
+        val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
+        val bean = with(Dispatchers.Default) {
+            Gson().fromJson(content, ProgramResponse::class.java)
+        }
+        // 将所有的PlanCourses汇总成哈希表
+        val typeRemarkMap = mutableMapOf<Long, String?>()
 
+        fun collect(node: ProgramResponse) {
+            typeRemarkMap[node.id] = node.remark
+            // 递归子节点
+            node.children.forEach { child ->
+                collect(child)
+            }
+        }
+        // 从根开始
+        collect(bean)
+        return typeRemarkMap
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return emptyMap()
+    }
+}
+
+suspend fun createProgramMap() : Map<String, PlanCourses> {
+    try {
+        val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
+        val bean = with(Dispatchers.Default) {
+            Gson().fromJson(content, ProgramResponse::class.java)
+        }
+        // 将所有的PlanCourses汇总成哈希表
+        val courseMap = mutableMapOf<String, PlanCourses>()
+
+        fun collect(node: ProgramResponse) {
+            node.planCourses.forEach { course ->
+                courseMap[course.course.code] = course
+            }
+            // 递归子节点
+            node.children.forEach { child ->
+                collect(child)
+            }
+        }
+        // 从根开始
+        collect(bean)
+        return courseMap
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return emptyMap()
+    }
+}
 
 @Composable
 fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
@@ -88,11 +144,11 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
         } else {
             value = try {
                 val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
-                if(content == null) {
-                    null
+                with(Dispatchers.Default) {
+                    Gson().fromJson(content, ProgramResponse::class.java)
                 }
-                Gson().fromJson(content, ProgramResponse::class.java)
             } catch (e : Exception) {
+                LogUtil.error(e)
                 null
             }
         }
@@ -154,6 +210,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                 val data : List<ProgramCompletionResponse> = Gson().fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
                 data[0]
             } catch (e : Exception) {
+                LogUtil.error(e)
                 emptyData
             }
         }
@@ -229,7 +286,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
     if(entity == null) return
 
     val children = entity.children
-    val planCourses = entity.planCourses.sortedBy { it.readableTerms.let { if(it.isNotEmpty()) it[0] else null } }
+    val planCourses = entity.planCourses.sortedBy { item -> item.readableTerms.let { terms -> if(terms.isNotEmpty()) terms[0] else null } }
 
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
@@ -240,7 +297,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
             if (showBottomSheet_Program) {
                 HazeBottomSheet (
                     onDismissRequest = { showBottomSheet_Program = false },
-                    hazeState = hazeState,
                     showBottomSheet = showBottomSheet_Program
                 ) {
                     Scaffold(
@@ -266,18 +322,17 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         LazyColumn() {
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
                     supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
                         bean = dataItem
                     },
-                    index = item
                 )
             }
             entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
+                if(it.requiredCredits == 0.0) {
                     return@let
                 }
                 item {
@@ -285,10 +340,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                         "要求 " +
                                 it.requiredCredits.let { num ->
                                     if(num == 0.0) "" else "" + num + "学分"
-                                }
-                                +
-                                it.requiredCourseNum.let { num ->
-                                    if(num == 0) "" else " " + num + "门"
                                 }
                     )
                 }
@@ -308,7 +359,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         if(showInfo) {
             courseInfo?.let {
                 planCoursesTransform(it)?.let { b ->
-                    ProgramDetailInfo(courseInfo = b,vm, hazeState, ifSaved){ showInfo = false }
+                    ProgramDetailInfo(courseInfo = b, ifSaved){ showInfo = false }
                 }
             }
         }
@@ -357,21 +408,33 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 val name = course.nameZh
                 val department = listItem.openDepartment.nameZh.substringBefore("（")
                 val term = listItem.readableTerms.let { if(it.isNotEmpty()) it[0] else null }
-                AnimationCardListItem(
-                    headlineContent = { Text(text = name) },
-                    supportingContent = { Text(text = department) },
-                    overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" } )},
-                    leadingContent = { DepartmentIcons(name = department) },
-                    trailingContent = if(!listItem.compulsory){{ Text("选修") }} else null,
+                CustomCard(
+                    color = cardNormalColor(),
                     modifier = Modifier.clickable {
                         courseInfo = listItem
                         showInfo = true
                     },
-                    index = item
-                )
+                ) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = name) },
+                        supportingContent = { Text(text = department) },
+                        overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" } )},
+                        leadingContent = { DepartmentIcons(name = department) },
+                        trailingContent = if(!listItem.compulsory){{ Text("选修") }} else null,
+                    )
+                    listItem.remark?.let { remark ->
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(remark) },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.info),null)
+                            }
+                        )
+                    }
+                }
             }
             entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
+                if(it.requiredCredits == 0.0) {
                     return@let
                 }
                 item {
@@ -379,10 +442,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                         "要求 " +
                                 it.requiredCredits.let { num ->
                                     if(num == 0.0) "" else "" + num + "学分"
-                                }
-                                +
-                                it.requiredCourseNum.let { num ->
-                                    if(num == 0) "" else " " + num + "门"
                                 }
                     )
                 }
@@ -393,18 +452,12 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
 }
 
 @Composable
-fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeState: HazeState, ifSaved: Boolean, onDismissRequest : () -> Unit) {
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
+fun ProgramDetailInfo(courseInfo : ProgramPartThree,ifSaved: Boolean, onDismissRequest : () -> Unit) {
     val context = LocalContext.current
+    val navController = LocalNavController.current
 
-    ApiForCourseSearch(vm,null, courseInfo.code,showBottomSheet_Search, hazeState = hazeState) {
-        showBottomSheet_Search = false
-    }
     HazeBottomSheet(
         showBottomSheet = true,
-        isFullExpand = true,
-        autoShape = false,
-        hazeState = hazeState,
         onDismissRequest = onDismissRequest
     ){
         Column(modifier = Modifier.navigationBarsPadding()) {
@@ -412,7 +465,7 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                 FilledTonalButton(
                     onClick = {
                         if(!ifSaved) {
-                            showBottomSheet_Search = true
+                            navController.push(CourseSearchApiDestination(null,courseInfo.code))
                         } else {
                             showToast("登录教务后可查询开课")
                             refreshLogin(context)

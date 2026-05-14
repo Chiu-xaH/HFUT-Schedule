@@ -4,7 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import com.hfut.schedule.application.MyApplication
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 object ClipBoardHelper {
     private const val DEFAULT_TIPS = "已复制到剪切板"

@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -52,22 +53,26 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.button.containerBackDrop
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+import com.hfut.schedule.ui.nav.destination.NewsDestination
+
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -75,19 +80,24 @@ import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
 import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.mirror.util.rememberShaderState
+
+import com.xah.navigation.util.LocalNavController
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -109,40 +119,28 @@ private val items = listOf(
 @Composable
 fun NewsScreen(
     vm: NetWorkViewModel,
-    navTopController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.News.route }
 
     val navController = rememberNavController()
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         NewsBarItems.News.name -> NewsBarItems.News
         NewsBarItems.Academic.name -> NewsBarItems.Academic
         NewsBarItems.School.name -> NewsBarItems.School
         else -> NewsBarItems.News
     }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val newsTitles = listOf("总","宣城校区")
     val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
     var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet ) {
+    if (showBottomSheet) {
         val cookies by produceState<String?>(initialValue = null) {
-            value = getWebVpnCookie(vm)
+            value = getWebVpnCookie()
         }
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            isFullExpand = true,
-            autoShape = false,
             showBottomSheet = showBottomSheet
         ) {
             Column(){
@@ -154,7 +152,7 @@ fun NewsScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            autoWebVpnForNews(context,MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
+                            autoWebVpnForNews(context,Constant.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
                         }
                     }
                 )
@@ -164,7 +162,7 @@ fun NewsScreen(
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
+                            Starter.startWebUrlInner(context,Constant.ACADEMIC_URL, title = "总教务处", cookie = cookies)
                         }
                     }
                 )
@@ -174,11 +172,9 @@ fun NewsScreen(
     }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var input by remember { mutableStateOf(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
+    var input by remember { mutableStateOf(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword) }
 
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navTopController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
@@ -187,12 +183,9 @@ fun NewsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.News.label)) },
+                    title = { Text(NewsDestination.title.asString()) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.News.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -220,6 +213,7 @@ fun NewsScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         TextField(
+                            colors = textFiledAllTransplant(),
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(horizontal = APP_HORIZONTAL_DP)
@@ -229,7 +223,7 @@ fun NewsScreen(
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("搜索通知公告：${AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword},${AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword},${AppNavRoute.NewsApi.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword}") },
+                            label = { Text("搜索通知公告：${NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword},${NewsApiDestination.Keyword.TRANSFER_MAJOR.keyword},${NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${NewsApiDestination.Keyword.SELECT_COURSE.keyword}") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(
@@ -241,7 +235,7 @@ fun NewsScreen(
                                 }
                             },
                             shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
+//                            colors = textFiledTransplant(),
                         )
                     }
                     Spacer(Modifier.height(CARD_NORMAL_DP))
@@ -252,23 +246,25 @@ fun NewsScreen(
             HazeBottomBar(hazeState,items,navController)
         }
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(navController = navController,
             startDestination = NewsBarItems.News.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .backDropSource(backdrop)
                 .hazeSource(state = hazeState)
         ) {
-            composable(NewsBarItems.News.name) {
+            nav2Composable(NewsBarItems.News.name) {
                 NewsScreenMini(innerPadding,vm,newsPagerState,input)
             }
-            composable(NewsBarItems.Academic.name) {
+            nav2Composable(NewsBarItems.Academic.name) {
                 AcademicScreen(innerPadding,vm,newsPagerState)
             }
-            composable(NewsBarItems.School.name) {
+            nav2Composable(NewsBarItems.School.name) {
                 SchoolsUI(innerPadding)
             }
         }
@@ -304,7 +300,7 @@ fun TotalNewsScreen(
     paddingBottom : Boolean = true
 ) {
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -327,7 +323,7 @@ fun TotalNewsScreen(
                 item { innerPadding?.let { InnerPaddingHeight(it,true) } }
                 items(list.size, key = { it }){ item ->
                     val listItem = list[item]
-                    AnimationCardListItem(
+                    CardListItem(
                         overlineContent = { Text(text = listItem.date) },
                         headlineContent = { Text(listItem.title) },
                         leadingContent = { Text(text = (item + 1).toString()) },
@@ -336,13 +332,12 @@ fun TotalNewsScreen(
                                 val links = if(isValidWebUrl(listItem.link)) {
                                     listItem.link
                                 } else {
-                                    MyApplication.NEWS_URL + listItem.link
+                                    Constant.NEWS_URL + listItem.link
                                 }
 
                                 autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
                             }
                         },
-                        index = item
                     )
                 }
                 item { innerPadding?.let { InnerPaddingHeight(it,false) } }
@@ -395,6 +390,6 @@ fun transferToPostData(text : String, page : Int = 1)  : String {
 
     // 转换为字符串
     val updatedJsonString = jsonArray.toString()
-    return Crypto.encodeToBase64(updatedJsonString)
+    return CryptoUtil.encodeToBase64(updatedJsonString)
 }
 

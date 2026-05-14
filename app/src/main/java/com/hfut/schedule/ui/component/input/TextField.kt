@@ -4,10 +4,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @Composable
@@ -21,6 +22,7 @@ fun CustomTextField(
     isError: Boolean = false,
     singleLine: Boolean = true,
     shape: Shape = MaterialTheme.shapes.medium,
+    colors: TextFieldColors = textFiledTransplant(),
     modifier: Modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
     onValueChange : (String) -> Unit
 ) {
@@ -38,7 +40,7 @@ fun CustomTextField(
             singleLine = singleLine,
             enabled = enabled,
             shape = shape,
-            colors = textFiledTransplant(),
+            colors = colors,
         )
     }
 }

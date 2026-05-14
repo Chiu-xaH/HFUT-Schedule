@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.model
 
 import com.google.gson.annotations.SerializedName
+import com.hfut.schedule.network.model.ChatMsg
 
 data class ChatResponse(
     val usage : ChatUsageBean,
@@ -22,10 +23,5 @@ data class ChatChoice(
     val index : Int,
     @SerializedName("finish_reason")
     val finishReason : String
-)
-
-data class ChatMsg(
-    val role : String,
-    val content : String
 )
 

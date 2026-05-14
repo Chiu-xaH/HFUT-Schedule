@@ -1,8 +1,5 @@
 package com.hfut.schedule.ui.screen.card
 
-//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
-//import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
@@ -11,8 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,7 +31,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
@@ -52,13 +46,12 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
@@ -131,18 +124,11 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             onDismissRequest = {
                 showBottomSheet_Search = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Search
         ) { SearchBillsUI(vm,hazeState) }
     }
 
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-// 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(bottomBarItems) {
-            currentPage = bottomBarItems.page
-        }
-    }
+
     var sorted by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
@@ -151,7 +137,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 //        modifier = Modifier.fillMaxSize(),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState)) {
+            Column(modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer)) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
@@ -160,7 +146,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(R.drawable.arrow_back), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                         }
                     },
                     actions = {
@@ -196,15 +182,17 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState,items,navController)
+            HazeBottomBar(hazeState,items,navController, color = MaterialTheme.colorScheme.surfaceContainer)
         }
     ) {innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
-
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .backDropSource(backdrop)
                 .hazeSource(

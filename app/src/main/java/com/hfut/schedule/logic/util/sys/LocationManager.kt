@@ -7,7 +7,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.annotation.RequiresPermission
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 
 @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])

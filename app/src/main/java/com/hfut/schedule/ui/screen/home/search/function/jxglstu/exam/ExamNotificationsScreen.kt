@@ -12,6 +12,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,14 +37,17 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -52,8 +56,10 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.mirror.util.rememberShaderState
+
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -62,12 +68,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExamNotificationsScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
     vm : NetWorkViewModel,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ExamNews.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     val campusList = remember { CampusRegion.entries }
@@ -79,16 +84,13 @@ fun ExamNotificationsScreen(
         }
     ) { campusList.size }
     val cookies by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
+        value = getWebVpnCookie()
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    CustomTransitionScaffold (
-        route = route,
-        roundShape = MaterialTheme.shapes.extraLarge,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -96,9 +98,9 @@ fun ExamNotificationsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.ExamNews.label)) },
+                    title = { Text(ExamNewsDestination.title.asString()) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.ExamNews.icon)
+                        TopBarNavigationIcon()
                     }
                 )
                 CustomTabRow(pagerState,titles)
@@ -116,7 +118,7 @@ fun ExamNotificationsScreen(
                 val campus = campusList[page]
                 when(campus) {
                     HEFEI -> {
-                        TotalNewsScreen(vm, AppNavRoute.NewsApi.Keyword.EXAM_SCHEDULE_HEFEI.keyword,innerPadding)
+                        TotalNewsScreen(vm, NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword,innerPadding)
                     }
                     XUANCHENG -> {
                         var page by remember { mutableIntStateOf(1) }
@@ -147,7 +149,7 @@ fun ExamNotificationsScreen(
                                                     val link = if (isValidWebUrl(item.link)) {
                                                         item.link
                                                     } else {
-                                                        MyApplication.XC_ACADEMIC_URL + item.link
+                                                        Constant.XC_ACADEMIC_URL + item.link
                                                     }
                                                     autoWebVpnForNews(
                                                         context,

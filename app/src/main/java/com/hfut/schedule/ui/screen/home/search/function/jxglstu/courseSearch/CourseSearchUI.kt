@@ -3,9 +3,11 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -20,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,9 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
@@ -48,28 +51,29 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
+import com.hfut.schedule.ui.nav.destination.CourseSearchDestination
+import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
-import dev.chrisbanes.haze.HazeState
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.NoneRoundShape
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -78,122 +82,139 @@ import kotlinx.coroutines.launch
 @Composable
 fun CourseSearchScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.CourseSearch.route }
 
     var showSearch by rememberSaveable() { mutableStateOf(true) }
     var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: "") }
     var courseName by rememberSaveable { mutableStateOf("") }
     var courseId by rememberSaveable { mutableStateOf("") }
 
-
-    var semester by remember { mutableStateOf<Int?>(null) }
-    LaunchedEffect(Unit) {
-        semester = getSemester()
-    }
-    var firstSearch by remember { mutableStateOf(true) }
-
-    val refreshNetwork : suspend () -> Unit = {
-        if(semester != null) {
-            val cookie = getJxglstuCookie()
-            cookie?.let {
-                vm.courseSearchResponse.clear()
-                if(firstSearch) firstSearch = false
-                vm.searchCourse(it, className, courseName, semester!!,courseId)
-            }
-        }
-    }
-    val scope = rememberCoroutineScope()
     val uiState by vm.courseSearchResponse.state.collectAsState()
+    var semester by rememberSaveable { mutableStateOf<Int?>(null) }
+
     LaunchedEffect(Unit) {
         if(uiState is UiState.Success) {
+            val data = (uiState as UiState.Success).data
+            if(data.isEmpty()) {
+                return@LaunchedEffect
+            }
+            semester = data[0].semester.id
             return@LaunchedEffect
-        }
-        vm.courseSearchResponse.emitPrepare()
-    }
-    if(!firstSearch) {
-        LaunchedEffect(semester) {
-            if(semester != null)
-                refreshNetwork()
+        } else {
+            semester = getSemester()
+            vm.courseSearchResponse.emitPrepare()
         }
     }
 
-    val loading = uiState is UiState.Loading
-    if(!firstSearch) {
-        LaunchedEffect(loading) {
-            if(!loading) {
-                showSearch = false
-            }
+    val refreshNetwork : suspend (Boolean) -> Unit = m@ { skip ->
+        if(uiState is UiState.Success && skip) return@m
+        if(semester == null) return@m
+        val cookie = getJxglstuCookie() ?: return@m
+
+        vm.courseSearchResponse.clear()
+        vm.searchCourse(cookie, className, courseName, semester!!,courseId)
+    }
+
+    val scope = rememberCoroutineScope()
+
+//    LaunchedEffect(semester) {
+//        refreshNetwork(true)
+//    }
+
+    LaunchedEffect(uiState) {
+        showSearch = when(uiState) {
+            is UiState.Loading -> false
+            is UiState.Error -> true
+            is UiState.Prepare -> true
+            is UiState.Success -> false
         }
     }
+
     val listState = rememberLazyListState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
-            MediumTopAppBar(
-                scrollBehavior = scrollBehavior,
-                colors = topBarTransplantColor(),
-                title = { Text(stringResource(AppNavRoute.CourseSearch.label)) },
-                navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.CourseSearch.icon)
-                },
-                actions = {
-                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {
-                        val classNameNil = className.let { if(it.isEmpty()) null else it }
-                        val courseCodeNil = courseId.let { if(it.isEmpty()) null else it }
-                        val courseNameNil = courseName.let { if(it.isEmpty()) null else it }
-                        val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
-                        LiquidButton(
-                            onClick = {
-                                navController.navigateForTransition(AppNavRoute.CourseSearchTable,AppNavRoute.CourseSearchTable.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
-                            },
-                            isCircle = true,
-                            enabled = uiState is UiState.Success && !canNotUse,
-                            backdrop = backdrop,
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.calendar),
-                                null,
-                                modifier = Modifier.iconElementShare( route = AppNavRoute.CourseSearchTable.route)
-                            )
-                        }
+            Column(
+                modifier = Modifier.topBarBlur(hazeState)
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(CourseSearchDestination.title.asString()) },
+                    navigationIcon = {
+                        TopBarNavigationIcon()
+                    },
+                    actions = {
+                        Row(modifier = Modifier
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .animateContentSize()) {
+                            val classNameNil = className.let { it.ifEmpty { null } }
+                            val courseCodeNil = courseId.let { it.ifEmpty { null } }
+                            val courseNameNil = courseName.let { it.ifEmpty { null } }
+                            val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
+                            val enabled = uiState is UiState.Success && !canNotUse
 
-                        AnimatedVisibility(
-                            visible = !showSearch,
-                            enter = AppAnimationManager.upDownAnimation.enter,
-                            exit = AppAnimationManager.upDownAnimation.exit,
-                        ) {
-                            LiquidButton(
-                                modifier = Modifier.padding(start = BUTTON_PADDING),
-                                onClick = {
-                                    showSearch = !showSearch
-                                },
-                                isCircle = false,
-                                enabled = uiState is UiState.Success && !canNotUse,
-                                backdrop = backdrop
+                            val dest = remember(enabled) {
+                                if(enabled) {
+                                    CourseSearchTableDestination(
+                                        semester,
+                                        classNameNil,
+                                        courseCodeNil,
+                                        courseNameNil,
+                                        (uiState as UiState.Success).data
+                                    )
+                                } else {
+                                    null
+                                }
+                            }
+                            SharedContainer(
+                                key = dest?.key,
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
-                                Text("显示搜索框")
+                                LiquidButton(
+                                    onClick = {
+                                        navController.push(dest!!)
+                                    },
+                                    shape = NoneRoundShape,
+                                    isCircle = true,
+                                    enabled = enabled,
+                                    backdrop = backdrop,
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.calendar),
+                                        null,
+                                    )
+                                }
+                            }
+
+                            AnimatedVisibility(
+                                visible = !showSearch,
+                                enter = AppAnimationManager.upDownAnimation.enter,
+                                exit = AppAnimationManager.upDownAnimation.exit,
+                            ) {
+                                LiquidButton(
+                                    modifier = Modifier.padding(start = BUTTON_PADDING),
+                                    onClick = {
+                                        showSearch = !showSearch
+                                    },
+                                    shape = CircleShape,
+                                    isCircle = false,
+                                    enabled = uiState is UiState.Success && !canNotUse,
+                                    backdrop = backdrop
+                                ) {
+                                    Text("显示搜索框")
+                                }
                             }
                         }
                     }
-                }
-            )
-        },
-    ) { innerPadding ->
-        Box(
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            Column(modifier = Modifier.hazeSource(hazeState)) {
+                )
                 AnimatedVisibility(
                     visible = showSearch,
                     enter = AppAnimationManager.downUpAnimation.enter,
@@ -208,8 +229,9 @@ fun CourseSearchScreen(
                         ) {
                             TextField(
                                 modifier = Modifier
-                                    .weight(.5f)
-                                    .padding(horizontal = 3.dp),
+                                    .padding(horizontal = 3.dp)
+                                    .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                    .weight(.5f),
                                 value = courseId,
                                 onValueChange = {
                                     courseId = it
@@ -221,8 +243,9 @@ fun CourseSearchScreen(
                             )
                             TextField(
                                 modifier = Modifier
-                                    .weight(.5f)
-                                    .padding(horizontal = 3.dp),
+                                    .padding(horizontal = 3.dp)
+                                    .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                    .weight(.5f),
                                 value = courseName,
                                 onValueChange = {
                                     courseName = it
@@ -245,8 +268,9 @@ fun CourseSearchScreen(
                             val myClass = getPersonInfo().className
                             TextField(
                                 modifier = Modifier
-                                    .weight(.5f)
-                                    .padding(horizontal = 3.dp),
+                                    .padding(horizontal = 3.dp)
+                                    .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                    .weight(.5f),
                                 value = className,
                                 onValueChange = {
                                     className = it
@@ -275,38 +299,63 @@ fun CourseSearchScreen(
                                     }
                                 }
                             )
-                            FilledTonalIconButton(
-                                onClick = {
-                                    scope.launch{ refreshNetwork() }
-                                },
+                            Surface(
+                                color = Color.Transparent,
                                 modifier = Modifier
+                                    .padding(horizontal = 3.dp)
+                                    .containerBackDrop(backdrop, MaterialTheme.shapes.medium, surfaceColor = MaterialTheme.colorScheme.secondaryContainer.copy(.75f))
                                     .weight(.5f)
                                     .height(56.dp)
-                                    .padding(horizontal = 3.dp),
-                                shape = MaterialTheme.shapes.medium
+                                    .clickable {
+                                        scope.launch { refreshNetwork(false) }
+                                    },
+                                shape = MaterialTheme.shapes.medium,
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "description"
-                                )
+                                CenterScreen {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
                             }
+//                            FilledTonalIconButton(
+//                                onClick = {
+//                                    scope.launch{ refreshNetwork(false) }
+//                                },
+//                                modifier = Modifier
+//                                    .weight(.5f)
+//                                    .height(56.dp)
+//                                    .padding(horizontal = 3.dp),
+//                                shape = MaterialTheme.shapes.medium
+//                            ) {
+//                                Icon(
+//                                    painter = painterResource(R.drawable.search),
+//                                    contentDescription = "description"
+//                                )
+//                            }
                         }
 
                         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                     }
                 }
-
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-                    CourseTotalUI(
-                        dataSource = TotalCourseDataSource.SEARCH,
-                        sortType = true,
-                        vm,
-                        hazeState = hazeState,
-                        false,
-                        listState
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dp))
+            }
+        },
+    ) { innerPadding ->
+        Box(
+            Modifier
+                .hazeSource(hazeState)
+                .backDropSource(backdrop)
+                .fillMaxSize()
+        ) {
+            CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }, prepareContent = { PrepareSearchIcon() }) {
+                CourseTotalUI(
+                    dataSource = TotalCourseDataSource.SEARCH,
+                    sortType = true,
+                    vm,
+                    false,
+                    listState,
+                    innerPadding = innerPadding
+                )
             }
 
             semester?.let { page ->
@@ -314,10 +363,17 @@ fun CourseSearchScreen(
                     value = getSemester()
                 }
                 PageController(
+                    modifier = Modifier.padding(innerPadding),
                     listState = listState,
                     currentPage = page,
-                    onNextPage = { semester = it },
-                    onPreviousPage = { semester = it },
+                    onNextPage = {
+                        semester = it
+                        scope.launch { refreshNetwork(false) }
+                    },
+                    onPreviousPage = {
+                        semester = it
+                        scope.launch { refreshNetwork(false) }
+                    },
                     gap = 20,
                     text = parseSemester(page),
                     range = Pair(null,null),
@@ -332,127 +388,75 @@ fun CourseSearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, hazeState: HazeState, onDismissRequest :  () -> Unit) {
-    if(showBottomSheet) {
+fun ApiForCourseSearch(
+    vm: NetWorkViewModel,
+    courseName : String?,
+    code : String?,
+    term : Int?,
+    innerPadding : PaddingValues
+) {
+    var semester by rememberSaveable { mutableStateOf<Int?>(null) }
+    val uiState by vm.courseSearchResponse.state.collectAsState()
+    val scope = rememberCoroutineScope()
 
-        var semester by remember { mutableStateOf<Int?>(null) }
-        LaunchedEffect(Unit) {
-            semester = getSemester()
-        }
-        val refreshNetwork : suspend () -> Unit = {
-            if(semester != null) {
-                val cookie = getJxglstuCookie()
-                cookie?.let {
-                    vm.courseSearchResponse.clear()
-                    vm.searchCourse(it, null, courseName, semester!!,courseId)
-                }
-            }
-
-        }
-        val uiState by vm.courseSearchResponse.state.collectAsState()
-        LaunchedEffect(semester) {
-            if(semester != null)
-                refreshNetwork()
-        }
-
-        var showBottomSheetSchedule by remember { mutableStateOf(false) }
-
-        if(showBottomSheetSchedule) {
-            HazeBottomSheet (
-                onDismissRequest = { showBottomSheetSchedule = false },
-                showBottomSheet = showBottomSheetSchedule,
-                hazeState = hazeState
-            ) {
-                val t = (courseName ?: "") + (courseId.let { if(it == null)"" else " $it" })
-                var showAll by remember { mutableStateOf(false) }
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar("开课课程表 $t") {
-                            FilledTonalIconButton (onClick = { showAll = !showAll }) {
-                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                            }
-                        }
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                            val list = (uiState as UiState.Success).data
-                            JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,list) {
-                                showAll = it
-                            }
-                        }
-                    }
-                }
+    val refreshNetwork : suspend () -> Unit = m@ {
+        if(semester != null) {
+            val cookie = getJxglstuCookie()
+            cookie?.let {
+                vm.courseSearchResponse.clear()
+                vm.searchCourse(it, null, courseName, semester!!,code)
             }
         }
-        HazeBottomSheet (
-            onDismissRequest = onDismissRequest,
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("开课查询 ${courseName ?: courseId}") {
-                        val canNotUse = courseName == null && courseId == null
-                        FilledTonalIconButton(
-                            onClick = {
-                                showBottomSheetSchedule = true
-                            },
-                            enabled = uiState is UiState.Success && !canNotUse
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.calendar),
-                                null,
-                            )
-                        }
-                    }
+    }
+
+    LaunchedEffect(term) {
+        if(semester == null) {
+            semester = term ?: getSemester()
+            refreshNetwork()
+        }
+    }
+
+    val listState = rememberLazyListState()
+
+    Box(
+        modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+    ) {
+        Column {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                CourseTotalUI(
+                    dataSource = TotalCourseDataSource.SEARCH,
+                    sortType = true,
+                    vm,
+                    false,
+                    listState
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
+        semester?.let { page ->
+            val currentSemester by produceState<Int?>(initialValue = null) {
+                value = getSemester()
+            }
+            PageController(
+                listState = listState,
+                currentPage = page,
+                onNextPage = {
+                    semester = it
+                    scope.launch { refreshNetwork() }
                 },
-            ) { innerPadding ->
-                val listState = rememberLazyListState()
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    Column {
-                        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                            CourseTotalUI(
-                                dataSource = TotalCourseDataSource.SEARCH,
-                                sortType = true,
-                                vm,
-                                hazeState = hazeState,
-                                false,
-                                listState
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
-
-                    semester?.let { page ->
-                        val currentSemester by produceState<Int?>(initialValue = null) {
-                            value = getSemester()
-                        }
-                        PageController(
-                            listState = listState,
-                            currentPage = page,
-                            onNextPage = { semester = it },
-                            onPreviousPage = { semester = it },
-                            gap = 20,
-                            text = parseSemester(page),
-                            range = Pair(null,null),
-                            paddingSafely = false,
-                            resetPage = currentSemester ?: -1
-                        )
-                    }
-                }
-            }
+                onPreviousPage = {
+                    semester = it
+                    scope.launch { refreshNetwork() }
+                },
+                gap = 20,
+                text = parseSemester(page),
+                range = Pair(null,null),
+                paddingSafely = false,
+                resetPage = currentSemester ?: -1
+            )
         }
     }
 }

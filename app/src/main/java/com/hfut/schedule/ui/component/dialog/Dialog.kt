@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -29,7 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.special.dialogBlur
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.util.NoneRoundShape
 import dev.chrisbanes.haze.HazeDialog
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.rememberHazeState
@@ -111,7 +113,7 @@ fun FakeButton(
     height: Dp = 48.dp
 ) {
     Card(
-        shape = RoundedCornerShape(0.dp),
+        shape = NoneRoundShape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
             contentColor = contentColor

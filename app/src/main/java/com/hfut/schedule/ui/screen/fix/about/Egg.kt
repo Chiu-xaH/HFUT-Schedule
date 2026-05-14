@@ -38,12 +38,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 
-import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.common.ui.style.align.RowHorizontal
 import kotlin.math.roundToInt
 
 @Composable
@@ -139,18 +139,18 @@ fun Egg() {
                 InnerPaddingHeight(innerPadding,true)
                 for(i in 0 until num) {
                     RowHorizontal {
-                        DraggableImage(R.drawable.hfut,dampingRatio, stiffness)
+                        DraggableImage(R.drawable.hfut_badge,dampingRatio, stiffness)
                         Spacer(Modifier.width(10.dp))
-                        DraggableImage(R.drawable.hfut_dynamic,dampingRatio, stiffness)
+//                        DraggableImage(R.drawable.hfut_dynamic,dampingRatio, stiffness)
                     }
                     Spacer(Modifier.height(10.dp))
                 }
                 for(i in 0 until num) {
                     RowHorizontal {
-                        DraggableImage(R.drawable.buliding,dampingRatio, stiffness)
+                        DraggableImage(R.drawable.hfut_building,dampingRatio, stiffness)
                     }
                     RowHorizontal {
-                        DraggableImage(R.drawable.buliding_dynamic,dampingRatio, stiffness)
+//                        DraggableImage(R.drawable.buliding_dynamic,dampingRatio, stiffness)
                     }
                 }
                 InnerPaddingHeight(innerPadding,false)

@@ -1,19 +1,16 @@
 package com.hfut.schedule.ui.component.button
 
-import android.graphics.drawable.shapes.Shape
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -23,11 +20,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.kyant.backdrop.Backdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.mirror.util.ShaderState
 
 
 @Composable
@@ -73,34 +68,24 @@ fun StartAppIcon(
     )
 }
 
-
-
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun StartAppIconShare(
-    app : Starter.AppPackages,
+fun StartAppIcon(
+    icon : Int,
     size : Dp = 33.dp,
     shadow : Dp = 10.dp,
     shape :  RoundedCornerShape = RoundedCornerShape(7.5.dp)
 ) {
-    val animating = LocalSharedTransitionScope.current.isTransitionActive
-    val e by animateDpAsState(
-        if(animating) 0.dp else shadow
-    )
-    Box(
-        modifier = Modifier
-            .containerShare(AppNavRoute.ToOuterApplication.withArgs(app),shape)
-
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        shape = shape,
+        shadowElevation = shadow,
+        modifier = Modifier.size(size)
     ) {
-        Image(
-            painterResource(app.icon),
+        Icon(
+            painterResource(icon),
             null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .shadow(e, shape = shape)
-                .size(size)
-                .clip(shape)
+            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.fillMaxSize().padding(CARD_NORMAL_DP),
         )
     }
-
 }

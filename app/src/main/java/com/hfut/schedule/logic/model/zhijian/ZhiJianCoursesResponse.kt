@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.model.zhijian
 import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
-import com.xah.uicommon.util.LogUtil
+import com.xah.shared.LogUtil
 
 data class ZhiJianCoursesResponse(
     val data : ZhiJianCoursesBean
@@ -49,7 +49,7 @@ data class ZhiJianCourseItem(
                 courseName = courseName,
                 startPeriod = start,
                 endPeriod = end,
-                place = place?.substringAfter(",")?.simplifyPlace() ?: "",
+                place = if(place == "暂无数据") null else place?.substringAfter(",")?.simplifyPlace(),
                 teacher = teacher,
                 department = department.substringBefore("（"),
                 classes = classes,
@@ -68,7 +68,7 @@ data class ZhiJianCourseItemDto(
     val courseName : String,
     val startPeriod : Int,
     val endPeriod : Int,
-    val place : String,
+    val place : String?,
     val teacher : String,
     val department : String,
     val classes : String,

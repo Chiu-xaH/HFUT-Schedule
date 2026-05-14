@@ -9,11 +9,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.xah.uicommon.component.text.ScrollText
+
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
-import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,15 +55,15 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
             val url = m.key
             val icon = departmentIcon(title)
 //            MyCustomCard {
-            AnimationCardListItem(
+            CardListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebView(context,url, icon = icon )
+                            Starter.startWebUrlInner(context,url, icon = icon )
                         }
-                    }, index = index
+                    }
                 )
 //            }
         }

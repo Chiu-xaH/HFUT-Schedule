@@ -1,11 +1,11 @@
 # 统计报表
 
 ## 总代码量
-不包括增量更新、镜面效果两个模块(已发布至JitPack)，以 Static 插件统计以下文件的总行数减去空行数，截止2026-01-24T18:08为**73856**，其中Kotlin占比约**98.77%**
+不包括增量更新、镜面效果、导航&容器共享库三个模块(已发布至JitPack)，以 Static 插件统计以下文件的总行数减去空行数，截止2026-03-15T22:57为**73747**，其中Kotlin占比约**98.91%**
 
-| aidl | html | java | kt    | py  | sql |
-|------|------|------|-------|-----|-----|
-| 22   | 42   | 51   | 72944 | 609 | 188 |
+| java | kt    | py  | sql |
+|------|-------|-----|-----|
+| 290  | 72944 | 325 | 188 |
 
 ## Star
 [![Star history chart](https://api.star-history.com/svg?repos=Chiu-xaH/HFUT-SChedule&type=Date)](https://www.star-history.com/#Chiu-xaH/HFUT-Schedule&Date)

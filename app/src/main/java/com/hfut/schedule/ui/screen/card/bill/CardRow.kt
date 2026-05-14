@@ -28,16 +28,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.xah.shared.model.BillRecordBean
+import com.xah.forecast.model.network.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.xah.uicommon.component.text.ScrollText
+import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
@@ -62,25 +63,24 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
     if(showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ){
-           TodayBills(vm,hazeState)
+           TodayBills(vm)
         }
     }
 
     //添加间距
 //    Spacer(modifier = Modifier.height(5.dp))
 
-    AnimationCustomCard(containerColor = cardNormalColor()) {
+    CustomCard(color = cardNormalColor()) {
         Row {
             TransplantListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${cardValue?.now ?: now}") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f)
-                    .clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
+                    .clickable { Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL) },
                 overlineContent = { ScrollText(text = "待圈存 ￥${cardValue?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
             )
@@ -98,7 +98,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayBills(vm: NetWorkViewModel,hazeState : HazeState) {
+fun TodayBills(vm: NetWorkViewModel) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
     var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -106,9 +106,8 @@ fun TodayBills(vm: NetWorkViewModel,hazeState : HazeState) {
     if(showBottomSheet && infoNum != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ){
             BillsInfo(infoNum!!)
         }

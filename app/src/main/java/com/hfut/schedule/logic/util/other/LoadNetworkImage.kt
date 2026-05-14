@@ -74,6 +74,9 @@ fun rememberImageState(
 ): MutableState<Bitmap?> {
     val context = LocalContext.current
     val bitmapState = remember { mutableStateOf<Bitmap?>(null) }
+    val requestManager = remember(context) {
+        Glide.with(context.applicationContext)
+    }
 
     DisposableEffect(url, cookie) {
         val headers = LazyHeaders.Builder().apply {
@@ -95,7 +98,7 @@ fun rememberImageState(
             .into(target)
 
         onDispose {
-            Glide.with(context).clear(target)
+            requestManager.clear(target)
         }
     }
 

@@ -3,7 +3,7 @@ package com.hfut.schedule.service.aidl
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.hfut.schedule.logic.network.util.toTimestamp
+import com.hfut.schedule.logic.util.network.toTimestamp
 import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
 import com.xah.shared.Course
 import com.xah.shared.IJxglstuAidlInterface
