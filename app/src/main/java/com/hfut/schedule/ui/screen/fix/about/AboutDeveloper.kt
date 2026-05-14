@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.fix.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -183,10 +182,10 @@ fun About(vm : NetWorkViewModel) {
                     RowHorizontal  (
                         modifier = Modifier.padding(APP_HORIZONTAL_DP)
                     ) {
-                        OverlappingAvatars(
+                        DevelopersAvatars(
                             MyApplication.contributors.map {
-                                Constant.GITHUB_USER_IMAGE_URL + it.value
-                            },
+                               it.value
+                            }
                         )
                     }
                 }
@@ -390,7 +389,24 @@ fun About(vm : NetWorkViewModel) {
 }
 
 @Composable
-private fun OverlappingAvatars(
+fun DevelopersAvatars(
+    developerIds : List<Int>,
+    modifier: Modifier = Modifier,
+    avatarSize: Dp = 45.dp,
+    overlapFraction: Float = 0.35f,
+) {
+    OverlappingAvatars(
+        developerIds.map {
+            Constant.GITHUB_USER_IMAGE_URL + it
+        },
+        modifier,
+        avatarSize,
+        overlapFraction
+    )
+}
+
+@Composable
+fun OverlappingAvatars(
     imageUrls: List<String>,
     modifier: Modifier = Modifier,
     avatarSize: Dp = 45.dp,
@@ -413,6 +429,7 @@ private fun OverlappingAvatars(
 
         imageUrls.forEachIndexed { index, url ->
             UrlImage(
+                enableClick = false,
                 url = url,
                 shape = CircleShape,
                 modifier = Modifier

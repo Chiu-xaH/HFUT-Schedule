@@ -31,12 +31,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -44,7 +45,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -61,19 +61,14 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.TrackDestination
-
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -105,13 +100,13 @@ fun Track() {
 
 
 @Composable
-private fun Buttons() {
+private fun ContributeButtons() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
         LargeButton(
             modifier = Modifier.fillMaxWidth().weight(.5f),
-            text = "新建事务",
+            text = "开发者反馈通道",
             icon = R.drawable.github,
             containerColor = Color.Black,
             contentColor = Color.White,
@@ -127,7 +122,7 @@ private fun Buttons() {
         Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
         LargeButton(
             modifier = Modifier.fillMaxWidth().weight(.5f),
-            text = "提出事务",
+            text = "普通用户反馈通道",
             icon = R.drawable.mail,
             onClick = {
                 Starter.emailMe(context)
@@ -159,6 +154,8 @@ fun TrackScreen(
         refreshNetwork()
     }
 
+    var showCompeted by rememberSaveable() { mutableStateOf(false) }
+
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -172,9 +169,25 @@ fun TrackScreen(
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
+                    actions = {
+                        if(uiState !is UiState.Error) {
+                            LiquidButton(
+                                backdrop = backdrop,
+                                isCircle = false,
+                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                                onClick = {
+                                    showCompeted = !showCompeted
+                                }
+                            ) {
+                                Text(
+                                    if(showCompeted) "隐藏已完成事务" else "显示所有事务"
+                                )
+                            }
+                        }
+                    }
                 )
                 if(uiState is UiState.Error) {
-                    Buttons()
+                    ContributeButtons()
                 }
             }
         },
@@ -187,9 +200,19 @@ fun TrackScreen(
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
                 val list = (uiState as UiState.Success).data
+                    .sortedByDescending { it.updatedTime }
+                    .filter {
+                        if(showCompeted) it.getStateOpen() else true
+                    }
                 Box(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(state = listState) {
                         item { InnerPaddingHeight(innerPadding,true) }
+                        item {
+                            ContributeButtons()
+                        }
+                        item {
+                            BottomTip("事务推进有快有慢为正常现象, 以开发者的闲暇情况以及影响用户体验的严重性为准, 任何开发者和用户可贡献代码、想法或资料等")
+                        }
                         items(list.size, key = { list[it].number }) { index ->
                             val item = list[index]
                             val tag = "#${item.number}"
@@ -220,14 +243,6 @@ fun TrackScreen(
                                 )
                                 IssueFlowChart(item)
                             }
-                        }
-                        item {
-                            Box(modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP/2)) {
-                                Buttons()
-                            }
-                        }
-                        item {
-                            BottomTip("事务推进有快有慢为正常现象，以开发者的闲暇情况以及影响用户体验的严重性为准")
                         }
                         item { PaddingForPageControllerButton() }
                         item { InnerPaddingHeight(innerPadding,false) }

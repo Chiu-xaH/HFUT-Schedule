@@ -1,62 +1,86 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.CARD_BOTTOM_BUTTON_SIZE
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.LifeDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
+import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.anim.effect.JumpTransitionEffect
+import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
+import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-05-11"
+private const val RELEASE_DATE = "2026-05-14"
+private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        CustomCard (color = cardNormalColor()) {
-//            UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination))//
+        UpdateItems("新增 实时通知(Android 16+)","位于 选项-偏好与配置-实时通知",To.Screen(SettingsLiveUpdateDestination),listOf("Junpgle"))//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
-            UpdateItems("新增 主界面底栏的图标动画效果")//
-            UpdateItems("优化 支持在刷新登录状态时捎带刷新合工大教务的登录")//
-            UpdateItems("新增 校长信箱链接","位于 查询中心",To.Window(FeedbackWindow))//
-            UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug")//
-            UpdateItems("优化 在鸿蒙NEXT虚拟环境中跳转外部App的失败提示")//
-            UpdateItems("优化 部分场景下的转场动效")//
+        UpdateItems("新增 校长信箱链接","位于 查询中心",To.Window(FeedbackWindow))//
+        UpdateItems("新增 主界面底栏的图标动画效果", developers = listOf("Today1337"))//
+        UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug",)//
+        UpdateItems("优化 支持在刷新登录状态时捎带刷新合工大教务的登录")//
+        UpdateItems("优化 支持在聚焦界面下拉刷新时自动检查并刷新合工大教务的登录")//
+        UpdateItems("优化 在鸿蒙NEXT虚拟环境中跳转外部App的失败提示")//
+        UpdateItems("优化 部分场景下的转场动效")//
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
-            // TODO 一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
-            // TODO WebView适配新库 [P2]
-            // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
-            // TODO Drawer重做  [P2]
+        // TODO 一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
+        // TODO WebView适配新库 [P2]
+        // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
+        // TODO Drawer重做  [P2]
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
@@ -72,7 +96,7 @@ fun VersionInfo() {
 //            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
 //            UpdateItems("新增 合肥校区电费的快速充值")
 
-            // TODO 远期规划
+        // TODO 远期规划
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
@@ -89,7 +113,21 @@ fun VersionInfo() {
 //            UpdateItems("新增 本地聚焦卡片快速转化为云端卡片", null, UpdateType.ADD)
 //            UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //            UpdateItems("新增 智慧后勤的登录")
-        }
+//        CustomCard (color = cardNormalColor()) {
+//
+//        }
+    }
+    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP), horizontalArrangement = Arrangement.Center) {
+        val navController = LocalNavController.current
+        Text(
+            text = "想成为下个版本的贡献者或建言献策?",
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.clickable {
+                navController.push(TrackDestination)
+            }
+        )
     }
 }
 
@@ -159,6 +197,7 @@ private fun UpdateItems(
     title : String,
     info : String? = null,
     to: To? = null,
+    developers: List<String> = XAH,
     type : UpdateType = when(title.substringBefore(" ")) {
         "新增" -> UpdateType.ADD
         "重构" -> UpdateType.RENEW
@@ -178,25 +217,71 @@ private fun UpdateItems(
 ) {
     val navController = LocalNavControllerSafely.current
     val floatingController = LocalFloatingControllerSafely.current
-    TransplantListItem(
-        headlineContent = { Text(text = title) },
-        supportingContent = { info?.let { Text(text = it) } },
-        trailingContent = {
-            to?.let {
-                if(navController != null && floatingController != null) {
-                    FilledTonalIconButton(
-                        onClick = {
-                            when(it) {
-                                is To.Screen -> navController.push(it.destination, effect = JumpTransitionEffect())
-                                is To.Window -> floatingController.push(it.window)
-                            }
-                        }
-                    ) {
-                        Icon(painterResource(R.drawable.arrow_forward),null)
+
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    CustomCard(
+        color = cardNormalColor()
+    ) {
+        Column {
+            TransplantListItem(
+                headlineContent = { Text(text = title) },
+                supportingContent = { info?.let { Text(text = it) } },
+                leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") },
+            )
+            PaddingHorizontalDivider()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LazyRow (modifier = Modifier.weight(1f).padding(horizontal = APP_HORIZONTAL_DP)) {
+                    items(developers.size,key = { it }) { index ->
+                        val item = developers[index]
+                        UrlImage(
+                            Constant.GITHUB_USER_IMAGE_URL + MyApplication.contributors[item],
+                            shape = CircleShape,
+                            enableClick = false,
+                            modifier = Modifier
+                                .padding(vertical = APP_HORIZONTAL_DP/2)
+                                .size(30.dp)
+                                .clickable {
+                                    scope.launch {
+                                        Starter.startWebUrlInner(context, Constant.GITHUB_URL + item)
+                                    }
+                                }
+                        )
                     }
                 }
+                if(to != null && navController != null && floatingController != null) {
+                    Text(
+                        text = "立即体验",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = CARD_BOTTOM_BUTTON_SIZE,
+                        modifier = Modifier
+                            .padding(vertical = APP_HORIZONTAL_DP - 5.dp,horizontal = APP_HORIZONTAL_DP)
+                            .clickable {
+                                when(to) {
+                                    is To.Screen -> navController.push(to.destination, effect = JumpTransitionEffect())
+                                    is To.Window -> floatingController.push(to.window)
+                                }
+                            }
+                    )
+                }
             }
-        },
-        leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
-    )
+//            if(to != null && navController != null && floatingController != null) {
+//                BottomTextButtonGroup(
+//                    listOf(
+//                        CardBottomButton(
+//                            "立即体验",
+//                            show = true,
+//                            clickable = {
+//
+//                            }
+//                        )
+//                    )
+//                )
+//            }
+        }
+    }
 }

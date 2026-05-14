@@ -22,7 +22,7 @@ data class CardBottomButton(
     val clickable :  (() -> Unit)? = null
 )
 
-private val CARD_BOTTOM_BUTTON_SIZE = 14.sp
+val CARD_BOTTOM_BUTTON_SIZE = 14.sp
 
 @Composable
 fun ColumnScope.BottomTextButtonGroup(buttons : List<CardBottomButton>) {
