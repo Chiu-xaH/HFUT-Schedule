@@ -53,7 +53,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-05-16"
+private const val RELEASE_DATE = "2026-05-17"
 private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 
 @SuppressLint("SuspiciousIndentation")
@@ -61,17 +61,7 @@ private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 校长信箱链接","位于 查询中心-校长信箱",To.Window(FeedbackWindow))//
-        UpdateItems("新增 支持自定义容器共享时的填充方案","位于 选项-外观",To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("新增 支持新安学堂与敬亭学堂的所有楼层导向图","位于 查询中心-生活服务-楼层导向",To.Screen(LifeDestination))//
-        UpdateItems("新增 实时通知(Android 16+)","位于 课程表-右上角多课表切换按钮-教务系统-上课提醒", developers = listOf("Junpgle"))//
-        UpdateItems("新增 主界面底栏的图标动画效果", developers = listOf("Today1337"))//
-        UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug",)//
-        UpdateItems("优化 支持在刷新登录状态时捎带刷新合工大教务的登录")//
-        UpdateItems("优化 支持在聚焦界面下拉刷新时自动检查并刷新合工大教务的登录")//
-        UpdateItems("优化 在鸿蒙NEXT虚拟环境中跳转外部App的失败提示")//
-        UpdateItems("优化 新增若干场景下不同的转场动效")//
-//            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
+        //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
