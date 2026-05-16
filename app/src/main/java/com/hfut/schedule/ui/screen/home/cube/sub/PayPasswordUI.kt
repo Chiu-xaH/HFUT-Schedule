@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 
 import dev.chrisbanes.haze.HazeState
 

@@ -124,7 +124,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource

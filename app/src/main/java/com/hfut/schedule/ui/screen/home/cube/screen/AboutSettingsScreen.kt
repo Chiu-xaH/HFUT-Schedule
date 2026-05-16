@@ -68,6 +68,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Hashtable
 import androidx.core.graphics.createBitmap
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAvailableDestination
@@ -80,7 +81,7 @@ import com.hfut.schedule.ui.screen.fix.about.Support
 import com.hfut.schedule.ui.screen.fix.fix.BugShare
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.LocalSharedRegistry
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */
@@ -218,7 +219,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         headlineContent = { Text(text = stringResource(R.string.about_settings_tips_title)) },
                         supportingContent = { Text(text = stringResource(
                             R.string.about_settings_tips_description,
-                            stringResource(R.string.app_name)
+                            MyApplication.APP_NAME
                         ))},
                         leadingContent = {
                             Icon(

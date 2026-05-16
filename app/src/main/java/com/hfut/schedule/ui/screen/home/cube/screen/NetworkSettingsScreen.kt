@@ -49,7 +49,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.LocalSharedRegistry
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

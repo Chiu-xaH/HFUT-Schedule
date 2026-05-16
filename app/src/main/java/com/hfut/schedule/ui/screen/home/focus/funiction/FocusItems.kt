@@ -85,7 +85,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async

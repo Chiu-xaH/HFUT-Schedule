@@ -66,6 +66,7 @@ androidx-glance-material3 = { module = "androidx.glance:glance-material3", versi
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 devicecompat = { module = "com.github.getActivity:DeviceCompat", version.ref = "devicecompat" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 liquid-glass = { module = "io.github.kyant0:backdrop", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }

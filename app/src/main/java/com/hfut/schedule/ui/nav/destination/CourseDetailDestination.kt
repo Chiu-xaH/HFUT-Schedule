@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -18,11 +17,9 @@ import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.hazeSource

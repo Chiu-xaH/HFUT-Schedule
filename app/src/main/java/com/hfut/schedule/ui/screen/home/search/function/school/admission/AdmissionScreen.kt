@@ -68,7 +68,7 @@ import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.sharedContainer
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

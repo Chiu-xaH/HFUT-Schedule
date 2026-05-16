@@ -1,24 +1,18 @@
 package com.hfut.schedule.ui.component.network
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -28,15 +22,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
-import com.hfut.schedule.logic.util.other.rememberImageState
 import com.hfut.schedule.logic.util.ocr.preprocessCaptcha
+import com.hfut.schedule.logic.util.other.rememberImageState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
-import com.xah.container.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingControllerSafely
 import kotlinx.coroutines.launch
 

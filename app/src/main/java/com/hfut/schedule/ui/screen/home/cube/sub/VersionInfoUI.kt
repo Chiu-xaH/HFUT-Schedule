@@ -38,6 +38,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.LifeDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
@@ -51,7 +53,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-05-14"
+private const val RELEASE_DATE = "2026-05-16"
 private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 
 @SuppressLint("SuspiciousIndentation")
@@ -60,7 +62,8 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         UpdateItems("新增 校长信箱链接","位于 查询中心-校长信箱",To.Window(FeedbackWindow))//
-        UpdateItems("新增 支持新安学堂与敬亭学堂的所有楼层导向图","位于 查询中心-生活服务-楼层导向",To.Window(FeedbackWindow))//
+        UpdateItems("新增 支持自定义容器共享时的填充方案","位于 选项-外观",To.Screen(SettingsAppearanceDestination))//
+        UpdateItems("新增 支持新安学堂与敬亭学堂的所有楼层导向图","位于 查询中心-生活服务-楼层导向",To.Screen(LifeDestination))//
         UpdateItems("新增 实时通知(Android 16+)","位于 课程表-右上角多课表切换按钮-教务系统-上课提醒", developers = listOf("Junpgle"))//
         UpdateItems("新增 主界面底栏的图标动画效果", developers = listOf("Today1337"))//
         UpdateItems("修复 聚焦考试卡片容器共享动效边角缺失的Bug",)//

@@ -37,7 +37,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

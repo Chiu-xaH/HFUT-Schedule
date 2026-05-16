@@ -181,7 +181,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.TransparentSystemBars2
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle

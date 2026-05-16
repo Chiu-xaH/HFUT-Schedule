@@ -113,6 +113,7 @@ import com.hfut.schedule.ui.util.color.longToHexColor
 import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.controller.NavigationController
@@ -215,6 +216,7 @@ fun SharedAppearanceSettingsScreen(
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
+        val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
@@ -646,6 +648,19 @@ fun SharedAppearanceSettingsScreen(
 
 
                     if(enableContainerShare) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "容器填充方案") },
+                            leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                        )
+                        CustomSingleChoiceRow<SharedContainerFilledStrategy>(
+                            selected = currentContainerFilledModeIndex,
+                            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                        ) {
+                            scope.launch {
+                                DataStoreManager.saveContainerFilledStrategy(it)
+                            }
+                        }
+                        PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "视差效果") },
                             supportingContent = {

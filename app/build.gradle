@@ -30,7 +30,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 262
-        versionName "4.20.5 Preview"
+        versionName "4.20.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -72,6 +72,13 @@ android {
 
 
     buildTypes {
+        debug {
+            def useDebugPackageSuffix = project.findProperty("USE_DEBUG_PACKAGE_SUFFIX")?.toBoolean() ?: false
+            if (useDebugPackageSuffix) {
+                applicationIdSuffix = ".debug"
+            }
+        }
+
         release {
             // R8混淆
             // 开启前 需要制定proguard-rules.pro规则文件，否则会有些功能被误删
@@ -220,16 +227,18 @@ dependencies {
     implementation(libs.mirror)
     // 设备识别
     implementation(libs.devicecompat)
+    // 反射
+//    implementation(libs.kotlin.reflect)
     /** 导航&容器共享&浮窗体系模块
      * 如需修改模块，可编译成AAR之后放在app/libs中，然后注释掉implementation(libs.sharednav)，取消注释下面的五行
      * SharedNav管理整个应用绝大部分页面与部分浮窗，是核心模块，修改后务必详细测试，并在jitpack发布最新的Release，再注释掉导入的aar，换回implementation(libs.sharednav)
      */
-//    implementation(libs.sharednav)
-    def tag = "release"
-    implementation(files("libs/common-${tag}.aar"))
-    implementation(files("libs/navigation-${tag}.aar"))
-    implementation(files("libs/shared-container-${tag}.aar"))
-    implementation(files("libs/floating-window-${tag}.aar"))
+    implementation(libs.sharednav)
+//    def tag = "release"
+//    implementation(files("libs/common-${tag}.aar"))
+//    implementation(files("libs/navigation-${tag}.aar"))
+//    implementation(files("libs/shared-container-${tag}.aar"))
+//    implementation(files("libs/floating-window-${tag}.aar"))
     // 通用UI模块
     implementation implementation(project(':common'))
     // 共用模块

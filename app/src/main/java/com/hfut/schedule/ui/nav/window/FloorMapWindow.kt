@@ -40,7 +40,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
-import com.xah.container.util.NoneRoundShape
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 
 data class FloorMapWindow(

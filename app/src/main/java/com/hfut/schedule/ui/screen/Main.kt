@@ -36,6 +36,7 @@ import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.UpdateSuccessfullyDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
+import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -115,6 +116,7 @@ fun MainHost(
     val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
+    val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
 
     // 动态ShortCut添加（长按图标菜单）
     LaunchedEffect(shortcutSort) {
@@ -147,6 +149,12 @@ fun MainHost(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface)
         ) {
             val registry = LocalSharedRegistry.current
+
+            LaunchedEffect(currentContainerFilledModeIndex) {
+                registry.enforceContainerFilledStrategy = SharedContainerFilledStrategy.entries.find {
+                    it.code == currentContainerFilledModeIndex
+                }?.strategy
+            }
 
             LaunchedEffect(useDoubleExtension) {
                 registry.extensionDouble = useDoubleExtension

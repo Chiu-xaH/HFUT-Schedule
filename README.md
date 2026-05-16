@@ -40,10 +40,6 @@ Android 8.0及以上，接入互联网
 ## 文档库
 ### [开发文档](docs/Developer.md) (正在完善)
 
-- pull request 请向 dev 分支提交，stage分支仅用于已发行版本
-- pull request 如涉及较大改动，建议选几个关键节点的 SDK 版本，且在清除应用数据的情况下做验证。
-- 如需修改页面导航、转场动效以及容器共享等功能，请查看开发文档，原有 Navigation2 已不再使用，已解耦至[SharedNav](https://github.com/Chiu-xaH/SharedNav)库
-
 ### [更新日志](docs/update)
 
 ### [统计报表](/docs/CHART.md)
@@ -121,10 +117,17 @@ Android 8.0及以上，接入互联网
 若干开发者和用户的帮助：
 - linsui 帮助上架F-Droid
 - James-Zhang2 提供GPA评定数据源
-- tinyvan 提交RR修复Bug
-- Today1337 提交PR优化界面
-- zxbmmmmmmmmm 提交PR修复Bug
-- ...
+- tinyvan,Today1337,zxbmmmmmmmmm,Junpgle提交RR助力开发
 - 其他用户帮助推广、通过邮件、issue等提供功能建议与反馈等，在此不一一列举了
 
+#### Pull Request 须知（参与本项目）
+- 提交：经过自测后，可向 dev 分支提交，stage 分支仅用于已发行版本；
+- 自测：若涉及较大范围的改动，建议选几个关键节点的 SDK 版本，且在正常升级、升级清除应用数据的情况下做验证。若改动较小以及改动集中在一处，可酌情简单测试即可。
+- 基础能力修改：如需修改页面导航、转场动效以及容器共享等功能，请转到[SharedNav](https://github.com/Chiu-xaH/SharedNav)库。
 
+规范：
+- 代码风格无特殊规范，按自己的习惯就行，但必须对可能发生Crash的区块使用 `try { } catch { e : Exception -> LogUtil.error(e) }`,防止应用轻易发生Crash。
+- 代码文件的放置位置无要求，后面会不定期整理。
+- 对于新引入资源，string文案直接在代码中硬编码即可，方便开发。开发者会做不定期迁移到`string.xml`中；drawable素材参考其余规范，放置即可。
+- （本条建议但不强制）commit 的标题建议与其他提交风格一致，时间相近、功能相同的追加 commit 建议使用 `git commit --amend`。
+- （本条建议但不强制）如涉及 UI&UX，建议与本应用内部风格契合，尽量减少割裂感。
