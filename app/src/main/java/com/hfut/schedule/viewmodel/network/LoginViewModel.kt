@@ -51,7 +51,7 @@ class LoginViewModel : ViewModel() {
                 if(GlobalStateHolder.webVpn) {
                     onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
                         val call = loginWebVpn.loginWebVpn(
-                            cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",
+                            cookie ="${Constant.WEBVPN_COOKIE_HEADER}${ticket}",
                             username =username,
                             password =password,
                             execution= execution,
@@ -109,7 +109,7 @@ class LoginViewModel : ViewModel() {
 
     val webVpnTicket = StateHolder<String>()
     suspend fun getKeyWebVpn() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
-        val call = loginWebVpn.getKeyWebVpn("show_vpn=1; show_fast=0; heartbeat=1; show_faq=0; wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}; refresh=1")
+        val call = loginWebVpn.getKeyWebVpn("${Constant.WEBVPN_COOKIE_HEADER}${ticket}")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
@@ -140,18 +140,16 @@ class LoginViewModel : ViewModel() {
     )
     private suspend fun parseWebVpnCookie(headers: Headers) : String {
         try {
-            val ticket = headers.toString().substringAfter(Constant.WEBVPN_COOKIE_HEADER)
-                .substringBefore(";")
+            val ticket = headers.toString().substringAfter(Constant.WEBVPN_COOKIE_HEADER).substringBefore(";")
             // 保存cookie
             DataStoreManager.saveWebVpnCookie(ticket)
             return ticket
-//            saveString("webVpnTicket",ticket)
         } catch (e : Exception) { throw e }
     }
 
     suspend fun loginJxglstu() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
         LogUtil.debug(ticket)
-        val call = loginWebVpn.loginJxglstu("wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}")
+        val call = loginWebVpn.loginJxglstu("${Constant.WEBVPN_COOKIE_HEADER}${ticket}")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

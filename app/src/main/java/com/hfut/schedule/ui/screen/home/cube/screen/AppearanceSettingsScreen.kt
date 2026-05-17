@@ -1,8 +1,10 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,7 +39,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +53,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -73,10 +75,12 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
@@ -92,8 +96,9 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
+import com.hfut.schedule.logic.util.sys.PermissionSet
+import com.hfut.schedule.logic.util.sys.getWallpaper
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -104,11 +109,11 @@ import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
 import com.hfut.schedule.ui.util.color.hsvToLong
+import com.hfut.schedule.ui.util.color.loadBitmap
 import com.hfut.schedule.ui.util.color.longToHexColor
 import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
@@ -168,6 +173,34 @@ private suspend fun persistImage(context: Context, uri: Uri): String? {
     }
 }
 
+// by ChatGPT
+private suspend fun persistImage(
+    context: Context,
+    bitmap: Bitmap,
+): String? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val file = File(
+                context.filesDir,
+                "custom_background_${System.currentTimeMillis()}.jpg"
+            )
+
+            FileOutputStream(file).use { output ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    95,
+                    output
+                )
+            }
+
+            file.absolutePath
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            null
+        }
+    }
+}
+
 private suspend fun deleteCustomBackground(context: Context) = withContext(Dispatchers.IO) {
     try {
         // 清空 DataStore 记录
@@ -204,6 +237,7 @@ fun SharedAppearanceSettingsScreen(
         MaterialTheme.colorScheme.primary
     }
     val styleList = remember { ColorStyle.entries }
+
     Column(modifier = modifier) {
         if(!isControlCenter) {
             InnerPaddingHeight(innerPaddings,true)
@@ -230,22 +264,38 @@ fun SharedAppearanceSettingsScreen(
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
+        val activity = LocalActivity.current
+
+        var wallpaper by remember { mutableStateOf<Bitmap?>(null) }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                wallpaper?.recycle()
+            }
+        }
+
+        LaunchedEffect(wallpaper) {
+            // 修改颜色
+            if(wallpaper == null) {
+                return@LaunchedEffect
+            }
+            extractColor(wallpaper!!).let {
+                DataStoreManager.saveCustomColor(it)
+            }
+        }
 
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) { uri ->
-            uri?.let { imageUri ->
-                scope.launch {
-                    extractColor(imageUri)?.let {
-                        DataStoreManager.saveCustomColor(it)
-                    }
-                }
+            scope.launch {
+                wallpaper = uri?.let { loadBitmap(it) }
             }
         }
 
         val transitionLevels = remember { EffectLevel.entries }
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
+
 
         LaunchedEffect(customColor) {
             hue = customColor.let {
@@ -431,19 +481,47 @@ fun SharedAppearanceSettingsScreen(
                             showProcessText = true,
                             processText = d
                         )
+                        if(wallpaper == null)
+                            PaddingHorizontalDivider()
+                    }
+
+                    Box {
+                        wallpaper?.let {
+                            Image(
+                                bitmap = it.asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .mask(MaterialTheme.colorScheme.surface.copy(.75f)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        TransplantListItem(
+                            headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_photo_title)) },
+                            leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description") },
+                            supportingContent = {
+                                Text("选择图片或以壁纸取色")
+                            },
+                            trailingContent = {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                                        wallpaper = getWallpaper()
+                                    }
+                                ) {
+                                    Icon(painterResource(R.drawable.wallpaper),null)
+                                }
+                            },
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    pickMultipleMediaForColor.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                }
+                            }
+                        )
+                    }
+                    if(wallpaper == null) {
                         PaddingHorizontalDivider()
                     }
-                    TransplantListItem(
-                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_photo_title)) },
-                        leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description") },
-
-                        modifier = Modifier.clickable {
-                            scope.launch {
-                                pickMultipleMediaForColor.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                            }
-                        }
-                    )
-                    PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_hue_band_title)) },
                         leadingContent = { Icon(painterResource(R.drawable.colorize), contentDescription = "Localized description") },
@@ -884,13 +962,13 @@ private fun ExtensionSample() {
 
 @Composable
 fun CalendarUISettings(
-    tiny : Boolean  = false
+    isTiny : Boolean  = false
 ) {
 //    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
-   val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -913,38 +991,95 @@ fun CalendarUISettings(
         }
     }
 
+    var wallpaper by remember { mutableStateOf<Bitmap?>(null) }
+
+
+    DisposableEffect(Unit) {
+        onDispose {
+            wallpaper?.recycle()
+        }
+    }
+    // 更新壁纸
+    LaunchedEffect(customBackground) {
+        wallpaper = if(isTiny) {
+            null
+        } else {
+            withContext(Dispatchers.IO) {
+                loadBitmap(File(customBackground))
+            }
+        }
+    }
+
+
+    val activity = LocalActivity.current
 
     Column {
-        TransplantListItem(
-            headlineContent = {
-                Text(stringResource(R.string.appearance_settings_calendar_background_title))
-            },
-            supportingContent = {
-                if(!tiny)
-                    Text(stringResource(R.string.appearance_settings_calendar_background_description))
-            },
-            modifier = Modifier.clickable {
-                pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.image),null)
-            },
-            trailingContent = {
-                if(useCustomBackground) {
-                    FilledTonalIconButton(
-                        onClick = {
-                            scope.launch {
-                                deleteCustomBackground(context)
+        Box {
+            wallpaper?.let {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .mask(MaterialTheme.colorScheme.surface.copy(customSquareAlpha)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            TransplantListItem(
+                headlineContent = {
+                    Text(stringResource(R.string.appearance_settings_calendar_background_title))
+                },
+                supportingContent = {
+                    if(!isTiny)
+                        Text(stringResource(R.string.appearance_settings_calendar_background_description))
+                },
+                modifier = Modifier.clickable {
+                    pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.image),null)
+                },
+                trailingContent = {
+                    if(useCustomBackground) {
+                        FilledTonalIconButton(
+                            onClick = {
+                                scope.launch {
+                                    deleteCustomBackground(context)
+                                }
                             }
+                        ) {
+                            Icon(painterResource(R.drawable.delete),null)
                         }
-                    ) {
-                        Icon(painterResource(R.drawable.delete),null)
+                    } else {
+                        FilledTonalIconButton(
+                            onClick = {
+                                scope.launch {
+                                    activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                                    wallpaper = getWallpaper()
+                                    if(wallpaper == null) {
+                                        return@launch
+                                    }
+                                    deleteCustomBackground(context)
+                                    val savedPath = persistImage(context, wallpaper!!)
+                                    savedPath?.let {
+                                        DataStoreManager.saveCustomBackground(it)
+                                        showToast(context.getString(R.string.appearance_settings_toast_set_calendar_background))
+                                        extractColor(wallpaper!!).let { color ->
+                                            DataStoreManager.saveCustomColor(color)
+                                        }
+                                    }
+                                }
+                            },
+                        ) {
+                            Icon(painterResource(R.drawable.wallpaper),null)
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
+
         if(useCustomBackground) {
-            if(!tiny)
+            if(!isTiny && wallpaper == null)
                 PaddingHorizontalDivider()
             TransplantListItem(
                 headlineContent = {
@@ -958,7 +1093,7 @@ fun CalendarUISettings(
                     Icon(painterResource(R.drawable.visibility),null)
                 },
                 supportingContent = {
-                    if(!tiny)
+                    if(!isTiny)
                         Text(stringResource(R.string.appearance_settings_calendar_square_alpha_description))
                 }
             )
@@ -968,14 +1103,14 @@ fun CalendarUISettings(
                     scope.launch { DataStoreManager.saveCustomSquareAlpha(it) }
                 },
                 modifier = Modifier.let {
-                    if(tiny) it
+                    if(isTiny) it
                     else it.padding(bottom = APP_HORIZONTAL_DP)
                 },
                 valueRange = 0f..1f,
                 showProcessText = true
             )
         }
-        if(!tiny)
+        if(!isTiny)
             PaddingHorizontalDivider()
 
         TransplantListItem(
@@ -987,7 +1122,7 @@ fun CalendarUISettings(
                     ))
             },
             supportingContent = {
-                if(!tiny)
+                if(!isTiny)
                     Text(
                         stringResource(
                             R.string.appearance_settings_calendar_square_height_description,
@@ -1005,7 +1140,7 @@ fun CalendarUISettings(
                 scope.launch { DataStoreManager.saveCalendarSquareHeightNew(it) }
             },
             modifier = Modifier.let {
-                if(tiny) it
+                if(isTiny) it
                 else it.padding(bottom = APP_HORIZONTAL_DP)
             },
             valueRange = 25f..125f,
@@ -1013,7 +1148,7 @@ fun CalendarUISettings(
             steps = 99,
             processText = formatDecimal(calendarSquareHeightNew.toDouble(),1)
         )
-        if(!tiny)
+        if(!isTiny)
             PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
@@ -1024,7 +1159,7 @@ fun CalendarUISettings(
                     ))
             },
             supportingContent = {
-                if(!tiny)
+                if(!isTiny)
                     Text(stringResource(R.string.appearance_settings_calendar_square_text_size_description))
             },
             leadingContent = {
@@ -1038,14 +1173,14 @@ fun CalendarUISettings(
                 scope.launch { DataStoreManager.saveCalendarSquareTextSize(it) }
             },
             modifier = Modifier.let {
-                if(tiny) it
+                if(isTiny) it
                 else it.padding(bottom = APP_HORIZONTAL_DP)
             },
             valueRange = 0.25f..2f,
             showProcessText = true,
             processText = formatDecimal(calendarSquareTextSize.toDouble()*100,0)
         )
-        if(!tiny)
+        if(!isTiny)
             PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
@@ -1056,7 +1191,7 @@ fun CalendarUISettings(
                     ))
             },
             supportingContent = {
-                if(!tiny)
+                if(!isTiny)
                     Text(stringResource(R.string.appearance_settings_calendar_square_text_line_padding_description))
             },
             leadingContent = {

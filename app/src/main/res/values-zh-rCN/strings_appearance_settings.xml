@@ -14,7 +14,7 @@
     <string name="appearance_settings_dynamic_color_title">原生取色</string>
     <string name="appearance_settings_pick_color_half_title">自定义取色</string>
     <string name="appearance_settings_color_bright_title">鲜艳度 | %1$s</string>
-    <string name="appearance_settings_pick_color_by_photo_title">选择图片取色</string>
+    <string name="appearance_settings_pick_color_by_photo_title">图片取色</string>
     <string name="appearance_settings_pick_color_by_hue_band_title">色相带取色</string>
     <string name="appearance_settings_pick_color_by_hue_band_description">点击手动输入颜色值</string>
     <string name="appearance_settings_choice_theme_light">浅色</string>

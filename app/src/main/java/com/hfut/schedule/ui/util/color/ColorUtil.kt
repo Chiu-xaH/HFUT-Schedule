@@ -59,6 +59,8 @@ fun uriToImageBitmap(uri: Uri): ImageBitmap? {
     }
 }
 
+
+
 suspend fun extractColor(uri: Uri): Long? {
     return withContext(Dispatchers.IO) {
         MyApplication.context.contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -76,6 +78,14 @@ suspend fun extractColor(context: Context, @DrawableRes resId: Int): Long? {
         val color = extractColor(bitmap)
         bitmap.recycle()
         color
+    }
+}
+
+suspend fun loadBitmap(uri: Uri): Bitmap? {
+    return withContext(Dispatchers.IO) {
+        MyApplication.context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            return@use BitmapFactory.decodeStream(inputStream) ?: return@withContext null
+        }
     }
 }
 

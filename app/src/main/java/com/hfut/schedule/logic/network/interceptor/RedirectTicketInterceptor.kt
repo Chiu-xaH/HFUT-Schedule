@@ -7,22 +7,25 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.LogUtil
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class RedirectTicketInterceptor() : Interceptor {
+class RedirectTicketInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val response = chain.proceed(request)
         if (response.isRedirect) {
             val location = response.header("Location").toString()
             val ticket = location.substringAfter("ticket=")
+            LogUtil.debug("ticket=$ticket")
             when {
-                location.contains(Constant.STU_URL) -> {
+                hit(location,Constant.STU_URL) -> {
                     // 学工系统的登录
+                    LogUtil.debug("登录学工系统")
                     // 向前重定向一次
                     val newRequest = request
                         .newBuilder()
@@ -32,12 +35,14 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginStu(nextResponse.headers,nextResponse.body?.string())
                     nextResponse.close()
                 }
-                location.contains(Constant.COMMUNITY_URL) -> {
+                hit(location,Constant.COMMUNITY_URL) -> {
                     // 智慧社区的登录
+                    LogUtil.debug("登录智慧社区")
                     GoToInterceptorState.toCommunityTicket.value = ticket
                 }
-                location.contains(Constant.ZHI_JIAN_URL) -> {
+                hit(location,Constant.ZHI_JIAN_URL) -> {
                     // 指间工大登录
+                    LogUtil.debug("登录指间工大")
                     // 向前重定向一次
                     val newRequest = request
                         .newBuilder()
@@ -73,8 +78,9 @@ class RedirectTicketInterceptor() : Interceptor {
                         checkResponse.close()
                     }
                 }
-                location.contains(Constant.JXGLSTU_URL) -> {
+                hit(location,Constant.JXGLSTU_URL) -> {
                     // 教务系统的登录
+                    LogUtil.debug("登录教务系统")
                     // 向前重定向一次
                     val newRequest = request
                         .newBuilder()
@@ -84,8 +90,9 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginJxglstu(nextResponse.headers)
                     nextResponse.close()
                 }
-                location.contains(Constant.NEW_LIBRARY_URL) -> {
+                hit(location,Constant.NEW_LIBRARY_URL) -> {
                     // 图书馆登录
+                    LogUtil.debug("登录图书馆")
                     // 向前重定向一次
                     val newRequest = request
                         .newBuilder()
@@ -95,8 +102,9 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginLibrary(nextResponse.headers)
                     nextResponse.close()
                 }
-                location.contains(Constant.PE_URL) -> {
+                hit(location,Constant.PE_URL) -> {
                     // 体测平台
+                    LogUtil.debug("登录体测平台")
                     val token = "PHPSESSID=$ticket"
                     saveString("PE", token)
                     // 向前重定向一次
@@ -121,8 +129,9 @@ class RedirectTicketInterceptor() : Interceptor {
                         showToast("体测平台登录失败")
                     }
                 }
-                location.contains(Constant.SECOND_CLASS_URL) -> {
+                hit(location,Constant.SECOND_CLASS_URL) -> {
                     // 二课登录
+                    LogUtil.debug("登录第二课堂")
                     // 向前重定向一次
                     val newRequest = request
                         .newBuilder()
@@ -156,6 +165,8 @@ class RedirectTicketInterceptor() : Interceptor {
         return response
     }
 }
+
+private fun hit(current : String,target : String) : Boolean = current.contains(target)  || current.contains(WebVpnConvertor.getWebVpnUrl(target))
 
 private fun parseLoginStu(headers: Headers,json: String?) =  try {
     if(json == null) throw Exception("无内容")
