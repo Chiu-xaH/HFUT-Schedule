@@ -75,9 +75,18 @@ object PermissionSet {
     @JvmStatic
     fun checkAndRequestNotificationPermission(activity: Activity) {
         Handler(Looper.getMainLooper()).post {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 (API 33) 需要通知权限
+            if (activity.isFinishing || activity.isDestroyed) return@post
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+                    try {
+                        ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+                    } catch (_: Exception) {
+                        // ColorOS 等定制系统直接调用 requestPermissions 可能导致崩溃
+                        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+                        }
+                        activity.startActivity(intent)
+                    }
                 }
             }
         }
