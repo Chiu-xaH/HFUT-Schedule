@@ -14,6 +14,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 
 object PermissionSet {
+
+    private const val REQUEST_CODE_STORAGE = 1001
+    private const val REQUEST_CODE_STORAGE_MANAGER = 1002
+    private const val REQUEST_CODE_CALENDAR = 1003
+    private const val REQUEST_CODE_CAMERA = 1004
+    private const val REQUEST_CODE_NOTIFICATION = 1005
+
     @JvmStatic
     fun checkAndRequestStoragePermission(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -74,12 +81,98 @@ object PermissionSet {
     }
     @JvmStatic
     fun checkAndRequestNotificationPermission(activity: Activity) {
-        Handler(Looper.getMainLooper()).post {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 (API 33) 需要通知权限
-                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        runOnMain(activity) {
+            if (activity.isInvalid()) return@runOnMain
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    safeRequestPermissions(
+                        activity = activity,
+                        permissions = arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        requestCode = REQUEST_CODE_NOTIFICATION,
+                        fallback = {
+                            openNotificationSettings(activity)
+                        }
+                    )
                 }
             }
         }
+    }
+
+    private fun safeRequestPermissions(
+        activity: Activity,
+        permissions: Array<String>,
+        requestCode: Int,
+        fallback: (() -> Unit)? = null
+    ) {
+        if (activity.isInvalid()) return
+
+        try {
+            ActivityCompat.requestPermissions(activity, permissions, requestCode)
+        } catch (_: Exception) {
+            // 部分定制 ROM / 精简系统 / 权限管理组件异常时，
+            // requestPermissions 底层启动系统权限组件可能失败。
+            fallback?.invoke()
+        }
+    }
+
+    private fun openManageAllFilesSettings(activity: Activity) {
+        if (activity.isInvalid()) return
+
+        try {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                data = "package:${activity.packageName}".toUri()
+            }
+            activity.startActivityForResult(intent, REQUEST_CODE_STORAGE_MANAGER)
+        } catch (_: Exception) {
+            try {
+                val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                activity.startActivityForResult(intent, REQUEST_CODE_STORAGE_MANAGER)
+            } catch (_: Exception) {
+                openAppDetailsSettings(activity)
+            }
+        }
+    }
+
+    private fun openNotificationSettings(activity: Activity) {
+        if (activity.isInvalid()) return
+
+        try {
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+            }
+            activity.startActivity(intent)
+        } catch (_: Exception) {
+            openAppDetailsSettings(activity)
+        }
+    }
+
+    private fun openAppDetailsSettings(activity: Activity) {
+        if (activity.isInvalid()) return
+
+        try {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = "package:${activity.packageName}".toUri()
+            }
+            activity.startActivity(intent)
+        } catch (_: Exception) {
+            // 最后兜底：不再继续处理，避免权限逻辑导致应用崩溃。
+        }
+    }
+
+    private fun runOnMain(activity: Activity, block: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            if (!activity.isInvalid()) block()
+        } else {
+            Handler(Looper.getMainLooper()).post {
+                if (!activity.isInvalid()) block()
+            }
+        }
+    }
+
+    private fun Activity.isInvalid(): Boolean {
+        return isFinishing || isDestroyed
     }
 }
