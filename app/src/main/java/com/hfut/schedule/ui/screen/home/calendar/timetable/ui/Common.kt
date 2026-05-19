@@ -13,7 +13,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
+import kotlin.math.abs
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
@@ -68,6 +71,9 @@ fun TimeTable(
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
 
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
+    val enableAutoFit by remember {
+        derivedStateOf { kotlin.math.abs(calendarSquareHeight - MyApplication.CALENDAR_SQUARE_HEIGHT_NEW) < 0.5f }
+    }
 
     val list = if(week > items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -110,6 +116,7 @@ fun TimeTable(
             hourHeight = calendarSquareHeight.dp*scaleFactor,
             startTime = startTime,
             endTime = endTime,
+            enableAutoFit = enableAutoFit,
             onDoubleTapBlankRegion = onDoubleTapBlankRegion,
             onLongTapBlankRegion = onLongTapBlankRegion,
             onTapBlankRegion = onTapBlankRegion
@@ -320,6 +327,7 @@ fun TimeTable(
             hourHeight = calendarSquareHeight.dp*scaleFactor,
             startTime = startTime,
             endTime = endTime,
+            enableAutoFit = enableAutoFit,
             onDoubleTapBlankRegion = onDoubleTapBlankRegion,
             onLongTapBlankRegion = onLongTapBlankRegion,
             onTapBlankRegion = onTapBlankRegion

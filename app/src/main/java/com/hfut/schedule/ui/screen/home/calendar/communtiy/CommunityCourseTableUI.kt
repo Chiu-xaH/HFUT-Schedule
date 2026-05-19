@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -198,10 +198,9 @@ fun CommunityCourseTableUI(
             items,
             currentWeek.toInt(),
             showAll,
-            modifier = Modifier
-                .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)-1.dp)
-                .verticalScroll(scrollState)
-            ,
+                modifier = Modifier
+                    .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)-1.dp)
+                ,
             scaleFactor = scaleFactor,
             innerPadding = innerPaddings,
             shaderState = backGroundHaze,
