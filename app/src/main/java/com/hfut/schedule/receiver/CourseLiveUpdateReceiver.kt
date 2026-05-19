@@ -3,11 +3,9 @@ package com.hfut.schedule.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.ContextCompat
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
-import com.hfut.schedule.service.CourseLiveUpdateService
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,16 +45,24 @@ class CourseLiveUpdateReceiver : BroadcastReceiver() {
             AppNotificationManager.cancelCourseLiveUpdate(courseName, startMillis)
             return
         }
+        val eventType = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_EVENT_TYPE) ?: "上课"
+        val place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE)
 
-        val serviceIntent = Intent(context, CourseLiveUpdateService::class.java).apply {
-            action = CourseLiveUpdateScheduler.ACTION_SHOW
-            putExtra(CourseLiveUpdateScheduler.EXTRA_COURSE_NAME, courseName)
-            putExtra(CourseLiveUpdateScheduler.EXTRA_PLACE, intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE))
-            putExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER, intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER))
-            putExtra(CourseLiveUpdateScheduler.EXTRA_START_MILLIS, startMillis)
-            putExtra(CourseLiveUpdateScheduler.EXTRA_END_MILLIS, endMillis)
-        }
-        ContextCompat.startForegroundService(context, serviceIntent)
+        AppNotificationManager.showCourseLiveUpdate(
+            courseName = courseName,
+            place = place,
+            teacher = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER),
+            startMillis = startMillis,
+            endMillis = endMillis,
+            eventType = eventType,
+            contentIntent = CourseLiveUpdateScheduler.buildOpenLiveReminderIntent(
+                context = context,
+                eventType = eventType,
+                title = courseName,
+                place = place,
+                startMillis = startMillis,
+            ),
+        )
     }
 
     private fun finishCourseLiveUpdate(intent: Intent) {

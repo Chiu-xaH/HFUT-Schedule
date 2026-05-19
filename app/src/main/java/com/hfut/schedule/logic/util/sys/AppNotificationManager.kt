@@ -19,9 +19,10 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange
-import java.time.Duration
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 object AppNotificationManager {
 
@@ -146,6 +147,7 @@ object AppNotificationManager {
         startMillis: Long,
         endMillis: Long,
         contentIntent: PendingIntent,
+        eventType: String = "上课",
         asForeground: Boolean = false,
     ): Notification? {
         if (!canPostNotification()) return null
@@ -154,33 +156,44 @@ object AppNotificationManager {
         val context = MyApplication.context
         val notificationId = courseLiveNotificationId(courseName, startMillis)
         val placeText = place?.takeIf { it.isNotBlank() } ?: "教室待确认"
-        val teacherText = teacher?.takeIf { it.isNotBlank() } ?: "待确认"
-        val contentText = "老师:$teacherText | 地点:$placeText"
+        val teacherText = teacher?.takeIf { it.isNotBlank() }
+        val contentText = if (eventType == "考试") {
+            listOfNotNull(
+                teacherText?.let { "$it" },
+                "$placeText",
+            ).joinToString(" | ")
+        } else {
+            "${teacherText ?: "老师待确认"} | $placeText"
+        }
         val subText = buildCourseLiveSubText(startMillis, endMillis)
         val shortPlaceText = buildShortPlaceText(placeText)
+        val smallIconRes = buildCourseLiveSmallIconRes(eventType)
 
         val notification = if (AppVersion.sdkInt >= 36) {
             buildAndroid16CourseLiveNotification(
+                eventType = eventType,
                 courseName = courseName,
                 contentText = contentText,
                 subText = subText,
                 shortText = shortPlaceText,
                 startMillis = startMillis,
                 endMillis = endMillis,
-                contentIntent = contentIntent
+                contentIntent = contentIntent,
+                smallIconRes = smallIconRes,
             )
         } else {
             NotificationCompat.Builder(context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-                .setSmallIcon(R.drawable.hfut_badge_white)
-                .setContentTitle("上课提醒：$courseName")
+                .setSmallIcon(smallIconRes)
+                .setContentTitle("${eventType}提醒：$courseName")
                 .setContentText(contentText)
-                .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看课程详细信息"))
+                .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看详情"))
                 .setContentIntent(contentIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
-                .setShowWhen(false)
+                .setWhen(startMillis)
+                .setShowWhen(true)
                 .build()
         }
 
@@ -192,6 +205,7 @@ object AppNotificationManager {
 
     @RequiresApi(36)
     private fun buildAndroid16CourseLiveNotification(
+        eventType: String,
         courseName: String,
         contentText: String,
         subText: String,
@@ -199,53 +213,37 @@ object AppNotificationManager {
         startMillis: Long,
         endMillis: Long,
         contentIntent: PendingIntent,
+        smallIconRes: Int,
     ): Notification {
-        val now = System.currentTimeMillis()
-        val totalMinutes = Duration.ofMillis((endMillis - startMillis).coerceAtLeast(1)).toMinutes().toInt().coerceAtLeast(1)
-        val passedMinutes = Duration.ofMillis((now - startMillis).coerceAtLeast(0)).toMinutes().toInt()
-        val progress = ((passedMinutes.toFloat() / totalMinutes) * 1000).roundToInt().coerceIn(0, 1000)
-        val passedSegment = progress.coerceIn(1, 999)
-
-        val style = Notification.ProgressStyle()
-            .setStyledByProgress(false)
-            .setProgress(progress)
-            .setProgressSegments(
-                listOf(
-                    Notification.ProgressStyle.Segment(passedSegment).setColor(Color.GREEN),
-                    Notification.ProgressStyle.Segment(1000 - passedSegment).setColor(Color.LTGRAY),
-                )
-            )
-
         return Notification.Builder(MyApplication.context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-            .setSmallIcon(R.drawable.hfut_badge_white)
+            .setSmallIcon(smallIconRes)
             .setLargeIcon(Icon.createWithResource(MyApplication.context, R.drawable.hfut_badge))
-            .setContentTitle("上课提醒：$courseName")
+            .setContentTitle("${eventType}提醒：$courseName")
             .setContentText(contentText)
+            .setStyle(Notification.BigTextStyle().bigText("$contentText\n$subText"))
             .setSubText(subText)
             .setShortCriticalText(shortText)
             .setContentIntent(contentIntent)
-            .setShowWhen(false)
+            .setWhen(startMillis)
+            .setShowWhen(true)
             .setOngoing(true)
+            .setAutoCancel(false)
             .setOnlyAlertOnce(true)
             .setPriority(Notification.PRIORITY_HIGH)
             .setCategory(Notification.CATEGORY_EVENT)
             .addExtras(Bundle().apply {
                 putBoolean(EXTRA_REQUEST_PROMOTED_ONGOING, true)
             })
-            .setStyle(style)
             .build()
     }
 
     private fun buildCourseLiveSubText(startMillis: Long, endMillis: Long): String {
-        val now = System.currentTimeMillis()
-        return if (now < startMillis) {
-            val minutes = ceil((startMillis - now) / 60_000.0).toInt().coerceAtLeast(1)
-            "${minutes}分钟后上课"
-        } else {
-            val minutes = ceil((endMillis - now) / 60_000.0).toInt().coerceAtLeast(1)
-            "${minutes}分钟后下课"
-        }
+        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return "${formatter.format(Date(startMillis))}-${formatter.format(Date(endMillis))}"
     }
+
+    private fun buildCourseLiveSmallIconRes(eventType: String): Int =
+        if (eventType == "考试") R.drawable.quiz_24 else R.drawable.book_24
 
     private fun buildShortPlaceText(placeText: String): String {
         val compactText = placeText
