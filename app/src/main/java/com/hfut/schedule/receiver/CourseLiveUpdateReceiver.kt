@@ -3,11 +3,9 @@ package com.hfut.schedule.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.ContextCompat
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
-import com.hfut.schedule.service.CourseLiveUpdateService
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,15 +46,19 @@ class CourseLiveUpdateReceiver : BroadcastReceiver() {
             return
         }
 
-        val serviceIntent = Intent(context, CourseLiveUpdateService::class.java).apply {
-            action = CourseLiveUpdateScheduler.ACTION_SHOW
-            putExtra(CourseLiveUpdateScheduler.EXTRA_COURSE_NAME, courseName)
-            putExtra(CourseLiveUpdateScheduler.EXTRA_PLACE, intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE))
-            putExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER, intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER))
-            putExtra(CourseLiveUpdateScheduler.EXTRA_START_MILLIS, startMillis)
-            putExtra(CourseLiveUpdateScheduler.EXTRA_END_MILLIS, endMillis)
-        }
-        ContextCompat.startForegroundService(context, serviceIntent)
+        AppNotificationManager.showCourseLiveUpdate(
+            courseName = courseName,
+            place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE),
+            teacher = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER),
+            startMillis = startMillis,
+            endMillis = endMillis,
+            contentIntent = CourseLiveUpdateScheduler.buildOpenCourseIntent(
+                context = context,
+                courseName = courseName,
+                place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE),
+                startMillis = startMillis,
+            ),
+        )
     }
 
     private fun finishCourseLiveUpdate(intent: Intent) {
