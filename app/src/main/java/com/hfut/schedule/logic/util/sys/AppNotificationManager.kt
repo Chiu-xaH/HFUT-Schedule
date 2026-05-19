@@ -167,6 +167,7 @@ object AppNotificationManager {
         }
         val subText = buildCourseLiveSubText(startMillis, endMillis)
         val shortPlaceText = buildShortPlaceText(placeText)
+        val smallIconRes = buildCourseLiveSmallIconRes(eventType)
 
         val notification = if (AppVersion.sdkInt >= 36) {
             buildAndroid16CourseLiveNotification(
@@ -178,10 +179,11 @@ object AppNotificationManager {
                 startMillis = startMillis,
                 endMillis = endMillis,
                 contentIntent = contentIntent,
+                smallIconRes = smallIconRes,
             )
         } else {
             NotificationCompat.Builder(context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-                .setSmallIcon(R.drawable.hfut_badge_white)
+                .setSmallIcon(smallIconRes)
                 .setContentTitle("${eventType}提醒：$courseName")
                 .setContentText(contentText)
                 .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看详情"))
@@ -211,9 +213,10 @@ object AppNotificationManager {
         startMillis: Long,
         endMillis: Long,
         contentIntent: PendingIntent,
+        smallIconRes: Int,
     ): Notification {
         return Notification.Builder(MyApplication.context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
-            .setSmallIcon(R.drawable.hfut_badge_white)
+            .setSmallIcon(smallIconRes)
             .setLargeIcon(Icon.createWithResource(MyApplication.context, R.drawable.hfut_badge))
             .setContentTitle("${eventType}提醒：$courseName")
             .setContentText(contentText)
@@ -238,6 +241,9 @@ object AppNotificationManager {
         val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
         return "${formatter.format(Date(startMillis))}-${formatter.format(Date(endMillis))}"
     }
+
+    private fun buildCourseLiveSmallIconRes(eventType: String): Int =
+        if (eventType == "考试") R.drawable.quiz_24 else R.drawable.book_24
 
     private fun buildShortPlaceText(placeText: String): String {
         val compactText = placeText
