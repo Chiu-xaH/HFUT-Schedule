@@ -19,9 +19,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange
-import java.time.Duration
 import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 object AppNotificationManager {
 
@@ -180,7 +178,8 @@ object AppNotificationManager {
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
-                .setShowWhen(false)
+                .setWhen(startMillis)
+                .setShowWhen(true)
                 .build()
         }
 
@@ -200,39 +199,25 @@ object AppNotificationManager {
         endMillis: Long,
         contentIntent: PendingIntent,
     ): Notification {
-        val now = System.currentTimeMillis()
-        val totalMinutes = Duration.ofMillis((endMillis - startMillis).coerceAtLeast(1)).toMinutes().toInt().coerceAtLeast(1)
-        val passedMinutes = Duration.ofMillis((now - startMillis).coerceAtLeast(0)).toMinutes().toInt()
-        val progress = ((passedMinutes.toFloat() / totalMinutes) * 1000).roundToInt().coerceIn(0, 1000)
-        val passedSegment = progress.coerceIn(1, 999)
-
-        val style = Notification.ProgressStyle()
-            .setStyledByProgress(false)
-            .setProgress(progress)
-            .setProgressSegments(
-                listOf(
-                    Notification.ProgressStyle.Segment(passedSegment).setColor(Color.GREEN),
-                    Notification.ProgressStyle.Segment(1000 - passedSegment).setColor(Color.LTGRAY),
-                )
-            )
-
         return Notification.Builder(MyApplication.context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
             .setSmallIcon(R.drawable.hfut_badge_white)
             .setLargeIcon(Icon.createWithResource(MyApplication.context, R.drawable.hfut_badge))
             .setContentTitle("上课提醒：$courseName")
             .setContentText(contentText)
+            .setStyle(Notification.BigTextStyle().bigText("$contentText\n$subText"))
             .setSubText(subText)
             .setShortCriticalText(shortText)
             .setContentIntent(contentIntent)
-            .setShowWhen(false)
+            .setWhen(startMillis)
+            .setShowWhen(true)
             .setOngoing(true)
+            .setAutoCancel(false)
             .setOnlyAlertOnce(true)
             .setPriority(Notification.PRIORITY_HIGH)
             .setCategory(Notification.CATEGORY_EVENT)
             .addExtras(Bundle().apply {
                 putBoolean(EXTRA_REQUEST_PROMOTED_ONGOING, true)
             })
-            .setStyle(style)
             .build()
     }
 

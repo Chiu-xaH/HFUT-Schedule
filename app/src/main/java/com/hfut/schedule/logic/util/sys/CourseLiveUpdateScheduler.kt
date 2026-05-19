@@ -33,26 +33,41 @@ object CourseLiveUpdateScheduler {
 
     private const val DEFAULT_REMIND_BEFORE_MINUTES = 20
     private const val WINDOW_CHECK_INTERVAL_MILLIS = 10 * 60_000L
+    private const val MAX_SCHEDULED_ALARMS = 420
+    private const val RESCHEDULE_INTERVAL_MILLIS = 6 * 60 * 60_000L
+    private const val RESCHEDULE_BEFORE_NEXT_MILLIS = 30 * 60_000L
+    private const val RESCHEDULE_REQUEST_CODE = 0x436F7572
 
     suspend fun scheduleAll(context: Context = MyApplication.context): Int = withContext(Dispatchers.IO) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val now = System.currentTimeMillis()
         val remindBeforeMinutes = getRemindBeforeMinutes()
-        var scheduledCount = 0
+        val courses = getJxglstuCourseSchedule()
+            .filter { it.time.end.toMillis() > now }
+            .sortedBy { it.time.start.toMillis() }
+        val alarmRequests = mutableListOf<CourseAlarmRequest>()
+        val scheduledCourseKeys = mutableSetOf<String>()
 
-        getJxglstuCourseSchedule().forEach { course ->
+        cancelScheduledAlarms(
+            context = context,
+            alarmManager = alarmManager,
+            courses = courses,
+            remindBeforeMinutes = remindBeforeMinutes,
+            cancelNotifications = false,
+        )
+
+        courses.forEach { course ->
             val startMillis = course.time.start.toMillis()
             val endMillis = course.time.end.toMillis()
             val triggerMillis = startMillis - remindBeforeMinutes * 60_000L
-            if (endMillis <= now) return@forEach
+            val courseKey = "${course.courseName}@$startMillis"
 
             if (triggerMillis > now) {
                 val showIntent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
                     action = ACTION_SHOW
                     putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
                 }
-                setCourseAlarm(
-                    alarmManager = alarmManager,
+                alarmRequests += CourseAlarmRequest(
                     triggerMillis = triggerMillis,
                     pendingIntent = PendingIntent.getBroadcast(
                         context,
@@ -67,24 +82,11 @@ object CourseLiveUpdateScheduler {
                 )
             }
 
-            scheduleWindowChecks(
-                context = context,
-                alarmManager = alarmManager,
-                courseName = course.courseName,
-                place = course.place,
-                teacher = course.teacher,
-                remindStartMillis = triggerMillis,
-                startMillis = startMillis,
-                endMillis = endMillis,
-                now = now
-            )
-
             val finishIntent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
                 action = ACTION_FINISH
                 putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
             }
-            setCourseAlarm(
-                alarmManager = alarmManager,
+            alarmRequests += CourseAlarmRequest(
                 triggerMillis = endMillis,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
@@ -93,10 +95,35 @@ object CourseLiveUpdateScheduler {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
-            scheduledCount++
+            scheduledCourseKeys += courseKey
         }
 
-        scheduledCount
+        val sortedRequests = alarmRequests
+            .filter { it.triggerMillis > now }
+            .sortedBy { it.triggerMillis }
+        val requestsToSchedule = sortedRequests.take(MAX_SCHEDULED_ALARMS)
+        var firstUnscheduledMillis = sortedRequests.getOrNull(requestsToSchedule.size)?.triggerMillis
+        for (request in requestsToSchedule) {
+            if (!setCourseAlarm(
+                    alarmManager = alarmManager,
+                    triggerMillis = request.triggerMillis,
+                    pendingIntent = request.pendingIntent,
+                    alarmClockInfo = request.alarmClockInfo,
+                )
+            ) {
+                firstUnscheduledMillis = request.triggerMillis
+                break
+            }
+        }
+
+        if (firstUnscheduledMillis != null) {
+            val fallbackMillis = now + RESCHEDULE_INTERVAL_MILLIS
+            val triggerMillis = maxOf(now + WINDOW_CHECK_INTERVAL_MILLIS, firstUnscheduledMillis - RESCHEDULE_BEFORE_NEXT_MILLIS)
+                .let { minOf(it, fallbackMillis) }
+            scheduleRescheduleAlarm(context, alarmManager, triggerMillis)
+        }
+
+        scheduledCourseKeys.size
     }
 
     suspend fun showCurrentWindowCourses(context: Context = MyApplication.context): Int = withContext(Dispatchers.IO) {
@@ -111,11 +138,14 @@ object CourseLiveUpdateScheduler {
             val remindStartMillis = startMillis - remindBeforeMinutes * 60_000L
             if (now !in remindStartMillis until endMillis) return@forEach
 
-            val serviceIntent = Intent(context, CourseLiveUpdateService::class.java).apply {
-                action = ACTION_SHOW
-                putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
-            }
-            ContextCompat.startForegroundService(context, serviceIntent)
+            AppNotificationManager.showCourseLiveUpdate(
+                courseName = course.courseName,
+                place = course.place,
+                teacher = course.teacher,
+                startMillis = startMillis,
+                endMillis = endMillis,
+                contentIntent = buildOpenCourseIntent(context, course.courseName, course.place, startMillis),
+            )
             shownCount++
         }
         shownCount
@@ -124,7 +154,25 @@ object CourseLiveUpdateScheduler {
     suspend fun cancelAll(context: Context = MyApplication.context) = withContext(Dispatchers.IO) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val remindBeforeMinutes = getRemindBeforeMinutes()
-        getJxglstuCourseSchedule().forEach { course ->
+        cancelScheduledAlarms(
+            context = context,
+            alarmManager = alarmManager,
+            courses = getJxglstuCourseSchedule(),
+            remindBeforeMinutes = remindBeforeMinutes,
+            cancelNotifications = true,
+        )
+        CourseLiveUpdateService.stopService(context)
+    }
+
+    private fun cancelScheduledAlarms(
+        context: Context,
+        alarmManager: AlarmManager,
+        courses: List<JxglstuCourseSchedule>,
+        remindBeforeMinutes: Int,
+        cancelNotifications: Boolean,
+    ) {
+        cancelRescheduleAlarm(context, alarmManager)
+        courses.forEach { course ->
             val startMillis = course.time.start.toMillis()
             val endMillis = course.time.end.toMillis()
             val remindStartMillis = startMillis - remindBeforeMinutes * 60_000L
@@ -151,43 +199,37 @@ object CourseLiveUpdateScheduler {
                 startMillis = startMillis,
                 endMillis = endMillis
             )
-            AppNotificationManager.cancelCourseLiveUpdate(course.courseName, startMillis)
+            if (cancelNotifications) {
+                AppNotificationManager.cancelCourseLiveUpdate(course.courseName, startMillis)
+            }
         }
-        CourseLiveUpdateService.stopService(context)
     }
 
-    private fun scheduleWindowChecks(
+    private fun scheduleRescheduleAlarm(
         context: Context,
         alarmManager: AlarmManager,
-        courseName: String,
-        place: String?,
-        teacher: String?,
-        remindStartMillis: Long,
-        startMillis: Long,
-        endMillis: Long,
-        now: Long,
+        triggerMillis: Long,
     ) {
-        var checkMillis = maxOf(startMillis, remindStartMillis + WINDOW_CHECK_INTERVAL_MILLIS)
-        while (checkMillis < endMillis) {
-            if (checkMillis > now) {
-                val intent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
-                    action = ACTION_SHOW
-                    putCourseExtras(courseName, place, teacher, startMillis, endMillis)
-                }
-                setCourseAlarm(
-                    alarmManager = alarmManager,
-                    triggerMillis = checkMillis,
-                    pendingIntent = PendingIntent.getBroadcast(
-                        context,
-                        requestCode(courseName, startMillis, "$ACTION_SHOW@$checkMillis"),
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    )
-                )
-            }
-            checkMillis += WINDOW_CHECK_INTERVAL_MILLIS
-        }
+        setCourseAlarm(
+            alarmManager = alarmManager,
+            triggerMillis = triggerMillis,
+            pendingIntent = reschedulePendingIntent(context),
+        )
     }
+
+    private fun cancelRescheduleAlarm(context: Context, alarmManager: AlarmManager) {
+        alarmManager.cancel(reschedulePendingIntent(context))
+    }
+
+    private fun reschedulePendingIntent(context: Context): PendingIntent =
+        PendingIntent.getBroadcast(
+            context,
+            RESCHEDULE_REQUEST_CODE,
+            Intent(context, CourseLiveUpdateReceiver::class.java).apply {
+                action = ACTION_RESCHEDULE
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
     private fun cancelWindowChecks(
         context: Context,
@@ -242,11 +284,11 @@ object CourseLiveUpdateScheduler {
         triggerMillis: Long,
         pendingIntent: PendingIntent,
         alarmClockInfo: AlarmManager.AlarmClockInfo? = null,
-    ) {
+    ): Boolean {
         try {
             if (alarmClockInfo != null) {
                 alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-                return
+                return true
             }
 
             when {
@@ -262,9 +304,25 @@ object CourseLiveUpdateScheduler {
             }
         } catch (e: SecurityException) {
             LogUtil.error(e)
-            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
+            return try {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
+                true
+            } catch (fallbackException: RuntimeException) {
+                LogUtil.error(fallbackException)
+                false
+            }
+        } catch (e: IllegalStateException) {
+            LogUtil.error(e)
+            return false
         }
+        return true
     }
+
+    private data class CourseAlarmRequest(
+        val triggerMillis: Long,
+        val pendingIntent: PendingIntent,
+        val alarmClockInfo: AlarmManager.AlarmClockInfo? = null,
+    )
 
     fun canPostNotification(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
