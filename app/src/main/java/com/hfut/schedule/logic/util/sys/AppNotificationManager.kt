@@ -144,6 +144,7 @@ object AppNotificationManager {
         startMillis: Long,
         endMillis: Long,
         contentIntent: PendingIntent,
+        eventType: String = "上课",
         asForeground: Boolean = false,
     ): Notification? {
         if (!canPostNotification()) return null
@@ -152,13 +153,21 @@ object AppNotificationManager {
         val context = MyApplication.context
         val notificationId = courseLiveNotificationId(courseName, startMillis)
         val placeText = place?.takeIf { it.isNotBlank() } ?: "教室待确认"
-        val teacherText = teacher?.takeIf { it.isNotBlank() } ?: "待确认"
-        val contentText = "老师:$teacherText | 地点:$placeText"
-        val subText = buildCourseLiveSubText(startMillis, endMillis)
+        val teacherText = teacher?.takeIf { it.isNotBlank() }
+        val contentText = if (eventType == "考试") {
+            listOfNotNull(
+                teacherText?.let { "类型:$it" },
+                "地点:$placeText",
+            ).joinToString(" | ")
+        } else {
+            "老师:${teacherText ?: "待确认"} | 地点:$placeText"
+        }
+        val subText = buildCourseLiveSubText(startMillis, endMillis, eventType)
         val shortPlaceText = buildShortPlaceText(placeText)
 
         val notification = if (AppVersion.sdkInt >= 36) {
             buildAndroid16CourseLiveNotification(
+                eventType = eventType,
                 courseName = courseName,
                 contentText = contentText,
                 subText = subText,
@@ -170,9 +179,9 @@ object AppNotificationManager {
         } else {
             NotificationCompat.Builder(context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
                 .setSmallIcon(R.drawable.hfut_badge_white)
-                .setContentTitle("上课提醒：$courseName")
+                .setContentTitle("${eventType}提醒：$courseName")
                 .setContentText(contentText)
-                .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看课程详细信息"))
+                .setStyle(NotificationCompat.BigTextStyle().bigText("$contentText\n点击查看详情"))
                 .setContentIntent(contentIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setOngoing(true)
@@ -191,6 +200,7 @@ object AppNotificationManager {
 
     @RequiresApi(36)
     private fun buildAndroid16CourseLiveNotification(
+        eventType: String,
         courseName: String,
         contentText: String,
         subText: String,
@@ -202,7 +212,7 @@ object AppNotificationManager {
         return Notification.Builder(MyApplication.context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
             .setSmallIcon(R.drawable.hfut_badge_white)
             .setLargeIcon(Icon.createWithResource(MyApplication.context, R.drawable.hfut_badge))
-            .setContentTitle("上课提醒：$courseName")
+            .setContentTitle("${eventType}提醒：$courseName")
             .setContentText(contentText)
             .setStyle(Notification.BigTextStyle().bigText("$contentText\n$subText"))
             .setSubText(subText)
@@ -221,14 +231,14 @@ object AppNotificationManager {
             .build()
     }
 
-    private fun buildCourseLiveSubText(startMillis: Long, endMillis: Long): String {
+    private fun buildCourseLiveSubText(startMillis: Long, endMillis: Long, eventType: String): String {
         val now = System.currentTimeMillis()
         return if (now < startMillis) {
             val minutes = ceil((startMillis - now) / 60_000.0).toInt().coerceAtLeast(1)
-            "${minutes}分钟后上课"
+            "${minutes}分钟后${eventType}"
         } else {
             val minutes = ceil((endMillis - now) / 60_000.0).toInt().coerceAtLeast(1)
-            "${minutes}分钟后下课"
+            "${minutes}分钟后结束"
         }
     }
 

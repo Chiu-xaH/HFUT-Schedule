@@ -14,6 +14,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.receiver.CourseLiveUpdateReceiver
 import com.hfut.schedule.service.CourseLiveUpdateService
 import com.hfut.schedule.ui.nav.destination.CourseLiveUpdateDetailDestination
+import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -30,6 +31,7 @@ object CourseLiveUpdateScheduler {
     const val EXTRA_TEACHER = "teacher"
     const val EXTRA_START_MILLIS = "start_millis"
     const val EXTRA_END_MILLIS = "end_millis"
+    const val EXTRA_EVENT_TYPE = "event_type"
 
     private const val DEFAULT_REMIND_BEFORE_MINUTES = 20
     private const val WINDOW_CHECK_INTERVAL_MILLIS = 10 * 60_000L
@@ -42,55 +44,55 @@ object CourseLiveUpdateScheduler {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val now = System.currentTimeMillis()
         val remindBeforeMinutes = getRemindBeforeMinutes()
-        val courses = getJxglstuCourseSchedule()
-            .filter { it.time.end.toMillis() > now }
-            .sortedBy { it.time.start.toMillis() }
+        val reminderItems = getLiveReminderItems()
+            .filter { it.endMillis > now }
+            .sortedBy { it.startMillis }
         val alarmRequests = mutableListOf<CourseAlarmRequest>()
         val scheduledCourseKeys = mutableSetOf<String>()
 
         cancelScheduledAlarms(
             context = context,
             alarmManager = alarmManager,
-            courses = courses,
+            reminderItems = reminderItems,
             remindBeforeMinutes = remindBeforeMinutes,
             cancelNotifications = false,
         )
 
-        courses.forEach { course ->
-            val startMillis = course.time.start.toMillis()
-            val endMillis = course.time.end.toMillis()
+        reminderItems.forEach { item ->
+            val startMillis = item.startMillis
+            val endMillis = item.endMillis
             val triggerMillis = startMillis - remindBeforeMinutes * 60_000L
-            val courseKey = "${course.courseName}@$startMillis"
+            val courseKey = "${item.title}@$startMillis"
 
             if (triggerMillis > now) {
                 val showIntent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
                     action = ACTION_SHOW
-                    putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
+                    putCourseExtras(item.title, item.place, item.subtitle, startMillis, endMillis, item.eventType)
                 }
                 alarmRequests += CourseAlarmRequest(
                     triggerMillis = triggerMillis,
                     pendingIntent = PendingIntent.getBroadcast(
                         context,
-                        requestCode(course.courseName, startMillis, ACTION_SHOW),
+                        requestCode(item.title, startMillis, ACTION_SHOW),
                         showIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     ),
                     alarmClockInfo = AlarmManager.AlarmClockInfo(
                         triggerMillis,
-                        buildOpenCourseIntent(context, course.courseName, course.place, startMillis)
+                        buildOpenIntent(context, item)
                     )
                 )
             }
 
             val finishIntent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
                 action = ACTION_FINISH
-                putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
+                putCourseExtras(item.title, item.place, item.subtitle, startMillis, endMillis, item.eventType)
             }
             alarmRequests += CourseAlarmRequest(
                 triggerMillis = endMillis,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    requestCode(course.courseName, startMillis, ACTION_FINISH),
+                    requestCode(item.title, startMillis, ACTION_FINISH),
                     finishIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -132,19 +134,20 @@ object CourseLiveUpdateScheduler {
         val now = System.currentTimeMillis()
         val remindBeforeMinutes = getRemindBeforeMinutes()
         var shownCount = 0
-        getJxglstuCourseSchedule().forEach { course ->
-            val startMillis = course.time.start.toMillis()
-            val endMillis = course.time.end.toMillis()
+        getLiveReminderItems().forEach { item ->
+            val startMillis = item.startMillis
+            val endMillis = item.endMillis
             val remindStartMillis = startMillis - remindBeforeMinutes * 60_000L
             if (now !in remindStartMillis until endMillis) return@forEach
 
             AppNotificationManager.showCourseLiveUpdate(
-                courseName = course.courseName,
-                place = course.place,
-                teacher = course.teacher,
+                courseName = item.title,
+                place = item.place,
+                teacher = item.subtitle,
                 startMillis = startMillis,
                 endMillis = endMillis,
-                contentIntent = buildOpenCourseIntent(context, course.courseName, course.place, startMillis),
+                contentIntent = buildOpenIntent(context, item),
+                eventType = item.eventType,
             )
             shownCount++
         }
@@ -157,7 +160,7 @@ object CourseLiveUpdateScheduler {
         cancelScheduledAlarms(
             context = context,
             alarmManager = alarmManager,
-            courses = getJxglstuCourseSchedule(),
+            reminderItems = getLiveReminderItems(),
             remindBeforeMinutes = remindBeforeMinutes,
             cancelNotifications = true,
         )
@@ -167,23 +170,23 @@ object CourseLiveUpdateScheduler {
     private fun cancelScheduledAlarms(
         context: Context,
         alarmManager: AlarmManager,
-        courses: List<JxglstuCourseSchedule>,
+        reminderItems: List<LiveReminderItem>,
         remindBeforeMinutes: Int,
         cancelNotifications: Boolean,
     ) {
         cancelRescheduleAlarm(context, alarmManager)
-        courses.forEach { course ->
-            val startMillis = course.time.start.toMillis()
-            val endMillis = course.time.end.toMillis()
+        reminderItems.forEach { item ->
+            val startMillis = item.startMillis
+            val endMillis = item.endMillis
             val remindStartMillis = startMillis - remindBeforeMinutes * 60_000L
             listOf(ACTION_SHOW, ACTION_FINISH).forEach { action ->
                 val intent = Intent(context, CourseLiveUpdateReceiver::class.java).apply {
                     this.action = action
-                    putCourseExtras(course.courseName, course.place, course.teacher, startMillis, endMillis)
+                    putCourseExtras(item.title, item.place, item.subtitle, startMillis, endMillis, item.eventType)
                 }
                 val pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    requestCode(course.courseName, startMillis, action),
+                    requestCode(item.title, startMillis, action),
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -192,15 +195,15 @@ object CourseLiveUpdateScheduler {
             cancelWindowChecks(
                 context = context,
                 alarmManager = alarmManager,
-                courseName = course.courseName,
-                place = course.place,
-                teacher = course.teacher,
+                courseName = item.title,
+                place = item.place,
+                teacher = item.subtitle,
                 remindStartMillis = remindStartMillis,
                 startMillis = startMillis,
                 endMillis = endMillis
             )
             if (cancelNotifications) {
-                AppNotificationManager.cancelCourseLiveUpdate(course.courseName, startMillis)
+                AppNotificationManager.cancelCourseLiveUpdate(item.title, startMillis)
             }
         }
     }
@@ -230,6 +233,41 @@ object CourseLiveUpdateScheduler {
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+    private suspend fun getLiveReminderItems(): List<LiveReminderItem> =
+        getCourseReminderItems() + getExamReminderItems()
+
+    private suspend fun getCourseReminderItems(): List<LiveReminderItem> =
+        getJxglstuCourseSchedule().map { course ->
+            LiveReminderItem(
+                title = course.courseName,
+                place = course.place,
+                subtitle = course.teacher,
+                startMillis = course.time.start.toMillis(),
+                endMillis = course.time.end.toMillis(),
+                eventType = "上课",
+                destination = LiveReminderDestination.COURSE,
+            )
+        }
+
+    private suspend fun getExamReminderItems(): List<LiveReminderItem> =
+        examToCalendar().mapNotNull { exam ->
+            val day = exam.day ?: return@mapNotNull null
+            val startTime = exam.startTime ?: return@mapNotNull null
+            val endTime = exam.endTime ?: return@mapNotNull null
+            val title = exam.course ?: return@mapNotNull null
+            val startMillis = parseReminderMillis(day, startTime) ?: return@mapNotNull null
+            val endMillis = parseReminderMillis(day, endTime) ?: return@mapNotNull null
+            LiveReminderItem(
+                title = title,
+                place = exam.place,
+                subtitle = exam.type,
+                startMillis = startMillis,
+                endMillis = endMillis,
+                eventType = "考试",
+                destination = LiveReminderDestination.EXAM,
+            )
+        }
 
     private fun cancelWindowChecks(
         context: Context,
@@ -274,6 +312,45 @@ object CourseLiveUpdateScheduler {
         return PendingIntent.getActivity(
             context,
             requestCode(courseName, startMillis, "open"),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    fun buildOpenLiveReminderIntent(
+        context: Context,
+        eventType: String,
+        title: String,
+        place: String?,
+        startMillis: Long,
+    ): PendingIntent =
+        if (eventType == "考试") {
+            buildOpenExamIntent(context, title, place, startMillis)
+        } else {
+            buildOpenCourseIntent(context, title, place, startMillis)
+        }
+
+    private fun buildOpenIntent(context: Context, item: LiveReminderItem): PendingIntent =
+        when (item.destination) {
+            LiveReminderDestination.COURSE -> buildOpenCourseIntent(context, item.title, item.place, item.startMillis)
+            LiveReminderDestination.EXAM -> buildOpenExamIntent(context, item.title, item.place, item.startMillis)
+        }
+
+    private fun buildOpenExamIntent(
+        context: Context,
+        examName: String,
+        place: String?,
+        startMillis: Long,
+    ): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(EXTRA_COURSE_NAME, examName)
+            putExtra(EXTRA_PLACE, place)
+            putExtra(EXTRA_START_MILLIS, startMillis)
+        }
+        return PendingIntent.getActivity(
+            context,
+            requestCode(examName, startMillis, "open_exam"),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -324,6 +401,21 @@ object CourseLiveUpdateScheduler {
         val alarmClockInfo: AlarmManager.AlarmClockInfo? = null,
     )
 
+    private data class LiveReminderItem(
+        val title: String,
+        val place: String?,
+        val subtitle: String?,
+        val startMillis: Long,
+        val endMillis: Long,
+        val eventType: String,
+        val destination: LiveReminderDestination,
+    )
+
+    private enum class LiveReminderDestination {
+        COURSE,
+        EXAM,
+    }
+
     fun canPostNotification(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
@@ -339,12 +431,14 @@ object CourseLiveUpdateScheduler {
         teacher: String?,
         startMillis: Long,
         endMillis: Long,
+        eventType: String = "上课",
     ) {
         putExtra(EXTRA_COURSE_NAME, courseName)
         putExtra(EXTRA_PLACE, place)
         putExtra(EXTRA_TEACHER, teacher)
         putExtra(EXTRA_START_MILLIS, startMillis)
         putExtra(EXTRA_END_MILLIS, endMillis)
+        putExtra(EXTRA_EVENT_TYPE, eventType)
     }
 
     private fun DateTimeBean.toMillis(): Long =
@@ -357,6 +451,24 @@ object CourseLiveUpdateScheduler {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
+
+    private fun parseReminderMillis(date: String, time: String): Long? {
+        val dateParts = date.split("-").mapNotNull { it.toIntOrNull() }
+        val timeParts = time.split(":").mapNotNull { it.toIntOrNull() }
+        if (dateParts.size != 3 || timeParts.size != 2) return null
+        return try {
+            DateTimeBean(
+                year = dateParts[0],
+                month = dateParts[1],
+                day = dateParts[2],
+                hour = timeParts[0],
+                minute = timeParts[1],
+            ).toMillis()
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            null
+        }
+    }
 
     private fun requestCode(courseName: String, startMillis: Long, action: String): Int {
         val hash = "$action@$courseName@$startMillis".hashCode()
