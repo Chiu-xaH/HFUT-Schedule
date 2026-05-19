@@ -35,6 +35,8 @@ import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -118,8 +120,10 @@ fun ClassroomScreen2(
             HorizontalPager(pagerState) { pager ->
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
                     val list = (uiState as UiState.Success).data.second
+                    AppAdaptiveScope { adaptive ->
+                    AdaptivePageContent(maxWidth = 900.dp) {
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
+                        columns = GridCells.Adaptive(adaptive.searchGridMinSize),
                         modifier = Modifier.padding(horizontal = 10.dp),
                     ) {
                         items(2) {  InnerPaddingHeight(innerPadding,true) }
@@ -139,6 +143,8 @@ fun ClassroomScreen2(
                             }
                         }
                         items(2) {  InnerPaddingHeight(innerPadding,false) }
+                    }
+                    }
                     }
                 }
             }

@@ -122,6 +122,7 @@ import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
 import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
@@ -1255,6 +1256,7 @@ fun SearchEditScreen() {
             exit = fadeOut()
         ) {
             AppAdaptiveScope { adaptive ->
+            AdaptivePageContent(maxWidth = 1100.dp) {
             LazyVerticalGrid (
                 columns = GridCells.Adaptive(adaptive.searchGridMinSize),
                 state = state,
@@ -1319,6 +1321,7 @@ fun SearchEditScreen() {
                 items(2) { Spacer(Modifier
                     .navigationBarsPadding()
                     .height(APP_HORIZONTAL_DP)) }
+            }
             }
             }
         }

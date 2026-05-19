@@ -47,6 +47,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.nav.destination.HolidayDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
@@ -136,7 +138,9 @@ fun HolidayScreen(
 @Composable
 fun HolidayUI(innerPadding : PaddingValues) {
     val list by remember { mutableStateOf(getHolidays()) }
-    LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 11.dp)) {
+    AppAdaptiveScope { adaptive ->
+    AdaptivePageContent(maxWidth = 900.dp) {
+    LazyVerticalGrid(columns = GridCells.Adaptive(adaptive.searchGridMinSize),modifier = Modifier.padding(horizontal = 11.dp)) {
         items(2) { InnerPaddingHeight(innerPadding,true) }
         items(list.size) { index->
             val item = list[index]
@@ -156,6 +160,8 @@ fun HolidayUI(innerPadding : PaddingValues) {
             BottomTip("数据来源:国务院")
         }
         items(2) { InnerPaddingHeight(innerPadding,false) }
+    }
+    }
     }
 }
 

@@ -45,6 +45,8 @@ import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -136,8 +138,10 @@ fun AdmissionListUI(
             HorizontalPager(pagerState) { page ->
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
                     val list = (uiState as UiState.Success).data.second.entries.toList()
+                    AppAdaptiveScope { adaptive ->
+                    AdaptivePageContent(maxWidth = 960.dp) {
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
+                        columns = GridCells.Adaptive(adaptive.settingsGridMinSize),
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP),
                     ) {
                         items(list.size) { index ->
@@ -165,6 +169,8 @@ fun AdmissionListUI(
                                 )
                             }
                         }
+                    }
+                    }
                     }
                 }
             }

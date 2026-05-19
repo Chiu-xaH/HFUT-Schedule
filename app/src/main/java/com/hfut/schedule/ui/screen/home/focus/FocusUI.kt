@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
@@ -48,6 +49,7 @@ import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -238,6 +240,7 @@ fun TodayScreen(
                 }
             }
             Box(modifier = Modifier.fillMaxSize()) {
+                AdaptivePageContent(maxWidth = 760.dp) {
                 LazyColumn(state = scrollState) {
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
@@ -390,6 +393,7 @@ fun TodayScreen(
                         }
                     }
                     item { InnerPaddingHeight(innerPadding,false) }
+                }
                 }
             }
         }

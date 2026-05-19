@@ -46,6 +46,7 @@ import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
 import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -196,6 +197,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
     val showUpdate = update != null
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
+        AdaptivePageContent(maxWidth = 920.dp) {
         LazyColumn {
             item { InnerPaddingHeight(innerPaddings,true) }
             item {
@@ -251,6 +253,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
                 }
             }
             item { InnerPaddingHeight(innerPaddings,false) }
+        }
         }
     }
 }

@@ -1,7 +1,13 @@
 package com.hfut.schedule.ui.adaptive
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -51,5 +57,31 @@ fun AppAdaptiveScope(
                 maxHeight = maxHeight
             )
         )
+    }
+}
+
+@Composable
+fun AdaptivePageContent(
+    modifier: Modifier = Modifier,
+    maxWidth: Dp = 920.dp,
+    content: @Composable () -> Unit
+) {
+    AppAdaptiveScope { adaptive ->
+        Box(modifier = modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (adaptive.windowSize == AppWindowSize.Compact) {
+                            Modifier
+                        } else {
+                            Modifier.widthIn(max = maxWidth)
+                        }
+                    )
+                    .align(Alignment.TopCenter)
+            ) {
+                content()
+            }
+        }
     }
 }
