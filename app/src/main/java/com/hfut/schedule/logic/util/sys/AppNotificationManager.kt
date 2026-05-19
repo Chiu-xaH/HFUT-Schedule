@@ -19,6 +19,9 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.ceil
 
 object AppNotificationManager {
@@ -156,13 +159,13 @@ object AppNotificationManager {
         val teacherText = teacher?.takeIf { it.isNotBlank() }
         val contentText = if (eventType == "考试") {
             listOfNotNull(
-                teacherText?.let { "类型:$it" },
-                "地点:$placeText",
+                teacherText?.let { "$it" },
+                "$placeText",
             ).joinToString(" | ")
         } else {
-            "老师:${teacherText ?: "待确认"} | 地点:$placeText"
+            "${teacherText ?: "老师待确认"} | $placeText"
         }
-        val subText = buildCourseLiveSubText(startMillis, endMillis, eventType)
+        val subText = buildCourseLiveSubText(startMillis, endMillis)
         val shortPlaceText = buildShortPlaceText(placeText)
 
         val notification = if (AppVersion.sdkInt >= 36) {
@@ -174,7 +177,7 @@ object AppNotificationManager {
                 shortText = shortPlaceText,
                 startMillis = startMillis,
                 endMillis = endMillis,
-                contentIntent = contentIntent
+                contentIntent = contentIntent,
             )
         } else {
             NotificationCompat.Builder(context, AppNotificationChannel.COURSE_LIVE_UPDATE.name)
@@ -231,15 +234,9 @@ object AppNotificationManager {
             .build()
     }
 
-    private fun buildCourseLiveSubText(startMillis: Long, endMillis: Long, eventType: String): String {
-        val now = System.currentTimeMillis()
-        return if (now < startMillis) {
-            val minutes = ceil((startMillis - now) / 60_000.0).toInt().coerceAtLeast(1)
-            "${minutes}分钟后${eventType}"
-        } else {
-            val minutes = ceil((endMillis - now) / 60_000.0).toInt().coerceAtLeast(1)
-            "${minutes}分钟后结束"
-        }
+    private fun buildCourseLiveSubText(startMillis: Long, endMillis: Long): String {
+        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return "${formatter.format(Date(startMillis))}-${formatter.format(Date(endMillis))}"
     }
 
     private fun buildShortPlaceText(placeText: String): String {
