@@ -300,24 +300,7 @@ fun SearchScreen(
                 modifier = (item.route?.let { paddingModifier.sharedContainer(it, MaterialTheme.shapes.small,cardNormalColor()) } ?: paddingModifier.clip(MaterialTheme.shapes.small)),
                 color = cardNormalColor()
             ) {
-                if(index % 2 == 0) {
-                    // 位于左侧 观察右侧高度
-                    if(index+1 < funcMaps.size) {
-                        if(funcMaps[index+1].isHigh) {
-                            s()
-                            return@SmallCard
-                        }
-                    }
-                } else {
-                    // 位于右侧 观察左侧高度
-                    if(index-1 >= 0) {
-                        if(funcMaps[index-1].isHigh) {
-                            s()
-                            return@SmallCard
-                        }
-                    }
-                }
-                item.ui()
+                s()
             }
         }
         items(2) { InnerPaddingHeight(innerPaddings,false) }
