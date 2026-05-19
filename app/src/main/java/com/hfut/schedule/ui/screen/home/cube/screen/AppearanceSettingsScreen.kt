@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -370,17 +371,24 @@ fun SharedAppearanceSettingsScreen(
                     value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
                 }
             }
-            CustomCard (
-                modifier = Modifier
-                    .aspectRatio(16 / 9f)
-                    .fillMaxWidth(),
-                color = MaterialTheme.colorScheme.surface,
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                video?.let {
-                    SimpleVideo(
-                        filePath = it,
-                        aspectRatio = 16/9f,
-                    )
+                Box(modifier = Modifier.widthIn(max = 920.dp)) {
+                    CustomCard (
+                        modifier = Modifier
+                            .aspectRatio(16 / 9f)
+                            .fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
+                        video?.let {
+                            SimpleVideo(
+                                filePath = it,
+                                aspectRatio = 16/9f,
+                            )
+                        }
+                    }
                 }
             }
         }
