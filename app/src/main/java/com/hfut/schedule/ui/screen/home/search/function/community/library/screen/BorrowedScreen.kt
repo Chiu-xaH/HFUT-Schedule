@@ -117,6 +117,11 @@ private fun List<String>.filterKeyword() : List<String> {
 }
 
 private val statusList = BorrowedStatus.entries
+
+private fun safeLibraryText(value: String?, fallback: String = "未知"): String {
+    return value?.takeIf { it.isNotBlank() } ?: fallback
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BorrowUI(
@@ -147,7 +152,7 @@ private fun BorrowUI(
         val listState = rememberLazyListState()
         val mostFrequents: List<Pair<Int, String>> = list
             .map {
-                it.libraryDetail.detail.keywords
+                safeLibraryText(it.libraryDetail.detail.keywords, "")
                     .split("/")
                     .filterKeyword()
             }
@@ -230,7 +235,7 @@ private fun BorrowUI(
                             modifier = Modifier.clickable {}
                         ) {
                             TransplantListItem(
-                                headlineContent = { Text(detail.title, fontWeight = FontWeight.Bold) },
+                                headlineContent = { Text(safeLibraryText(detail.title, "未命名图书"), fontWeight = FontWeight.Bold) },
                                 leadingContent = {
                                     when(borrowStatus) {
                                         BorrowedStatus.BORROWING -> {
@@ -248,19 +253,19 @@ private fun BorrowUI(
                                     }
                                 },
                                 supportingContent = {
-                                    Text(location)
+                                    Text(safeLibraryText(location, "位置未知"))
                                 },
                                 trailingContent = {
                                     borrowStatus?.description?.let { Text(it) }
                                 },
                                 overlineContent = {
                                     val borrowing = borrowStatus == BorrowedStatus.OVERDUE || borrowStatus == BorrowedStatus.BORROWING
-                                    Text("借于 $createdTime\n"
+                                    Text("借于 ${safeLibraryText(createdTime, "未知时间")}\n"
                                     + if(borrowing) {
                                         val t = returnTime?.substringBefore(' ')
                                         "应还 $t" + t?.let { " (${DateTimeManager.daysBetween(it)}天后)" }
                                     } else {
-                                        "还于 $realReturnTime"
+                                        "还于 ${safeLibraryText(realReturnTime, "未知时间")}"
                                     }
                                     )
                                 },
@@ -268,9 +273,9 @@ private fun BorrowUI(
                             PaddingHorizontalDivider()
                             with(detail) {
                                 TransplantListItem(
-                                    headlineContent = { Text(publishers + " (${year})") },
-                                    overlineContent = { Text("ISBN $isbn\n索书号 $callNo") },
-                                    supportingContent = { Text(authors) },
+                                    headlineContent = { Text("${safeLibraryText(publishers, "出版社未知")} (${safeLibraryText(year, "年份未知")})") },
+                                    overlineContent = { Text("ISBN ${safeLibraryText(isbn, "")}\n索书号 ${safeLibraryText(callNo, "")}") },
+                                    supportingContent = { Text(safeLibraryText(authors, "作者未知")) },
                                     leadingContent = {
                                         Icon(painterResource(R.drawable.person), null)
                                     },
@@ -280,12 +285,12 @@ private fun BorrowUI(
                                     headlineContent = {
                                         Text("介绍")
                                     },
-                                    supportingContent = { Text(detail.digest) },
+                                    supportingContent = { Text(safeLibraryText(detail.digest, "暂无介绍")) },
                                     leadingContent = {
                                         Icon(painterResource(R.drawable.info), null)
                                     },
                                 )
-                                val list = detail.keywords.split("/").filterKeyword()
+                                val list = safeLibraryText(detail.keywords, "").split("/").filterKeyword()
                                 LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     items(list.size) { index ->

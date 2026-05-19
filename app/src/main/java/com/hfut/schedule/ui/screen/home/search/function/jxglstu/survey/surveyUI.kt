@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.status.EmptyScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -293,9 +294,7 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
             }
         }
     else {
-        Column {
-            EmptyIcon()
-        }
+        EmptyScreen()
     }
 }
 

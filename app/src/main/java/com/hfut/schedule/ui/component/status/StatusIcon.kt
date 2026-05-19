@@ -19,12 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.text
 
 @Composable
 fun EmptyIcon(text: String = "空") = StatusIcon(R.drawable.upcoming,text(text))
+@Composable
+fun EmptyScreen(text: String = "空") = CenterScreen { EmptyIcon(text) }
 @Composable
 fun DevelopingIcon() = StatusIcon(R.drawable.sdk,text("正在开发"))
 @Composable
