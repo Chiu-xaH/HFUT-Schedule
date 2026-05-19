@@ -45,17 +45,21 @@ class CourseLiveUpdateReceiver : BroadcastReceiver() {
             AppNotificationManager.cancelCourseLiveUpdate(courseName, startMillis)
             return
         }
+        val eventType = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_EVENT_TYPE) ?: "上课"
+        val place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE)
 
         AppNotificationManager.showCourseLiveUpdate(
             courseName = courseName,
-            place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE),
+            place = place,
             teacher = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER),
             startMillis = startMillis,
             endMillis = endMillis,
-            contentIntent = CourseLiveUpdateScheduler.buildOpenCourseIntent(
+            eventType = eventType,
+            contentIntent = CourseLiveUpdateScheduler.buildOpenLiveReminderIntent(
                 context = context,
-                courseName = courseName,
-                place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE),
+                eventType = eventType,
+                title = courseName,
+                place = place,
                 startMillis = startMillis,
             ),
         )
