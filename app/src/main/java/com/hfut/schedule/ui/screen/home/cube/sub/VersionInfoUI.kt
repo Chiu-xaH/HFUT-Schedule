@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.CARD_BOTTOM_BUTTON_SIZE
@@ -254,7 +255,7 @@ private fun UpdateItems(
                             .padding(vertical = APP_HORIZONTAL_DP - 5.dp,horizontal = APP_HORIZONTAL_DP)
                             .clickable {
                                 when(to) {
-                                    is To.Screen -> navController.push(to.destination, effect = JumpTransitionEffect())
+                                    is To.Screen -> navController.push(to.destination, effect = JumpTransitionEffectWallpaper())
                                     is To.Window -> floatingController.push(to.window)
                                 }
                             }

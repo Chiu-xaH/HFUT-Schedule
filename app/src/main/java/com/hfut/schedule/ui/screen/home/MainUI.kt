@@ -116,6 +116,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -640,7 +641,7 @@ fun MainScreen(
                                                     WorkAndRestDestination(
                                                         swapUI.toString()
                                                     ),
-                                                    effect = JumpTransitionEffect()
+                                                    effect = JumpTransitionEffectWallpaper()
                                                 )
                                             },
                                         color = Color.Transparent
@@ -674,7 +675,7 @@ fun MainScreen(
                                                         ifSaved,
                                                         COURSES.name,
                                                     ),
-                                                    effect = JumpTransitionEffect()
+                                                    effect = JumpTransitionEffectWallpaper()
                                                 )
                                             }
                                         ,
@@ -773,7 +774,7 @@ fun MainScreen(
 //                                    ) {
                                         IconButton(
                                             onClick = {
-                                                navHostTopController.push(dest,effect = JumpTransitionEffect())
+                                                navHostTopController.push(dest,effect = JumpTransitionEffectWallpaper())
                                             }
                                         ) {
                                             Icon(
@@ -794,7 +795,7 @@ fun MainScreen(
 //                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
 //                                    ) {
                                         IconButton(onClick = {
-                                            navHostTopController.push(dest,effect = JumpTransitionEffect())
+                                            navHostTopController.push(dest,effect = JumpTransitionEffectWallpaper())
                                         }) {
                                             Icon(
                                                 painter = painterResource(id = TermCoursesDestination.ICON),

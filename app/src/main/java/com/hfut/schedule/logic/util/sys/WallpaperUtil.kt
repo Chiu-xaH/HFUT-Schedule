@@ -8,17 +8,14 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.annotation.RequiresPermission
 import com.hfut.schedule.application.MyApplication
 import com.sharednav.common.util.LogUtil
+import com.xah.navigation.anim.effect.JumpPageEffects
+import com.xah.navigation.anim.effect.JumpTransitionEffect
+import com.xah.navigation.util.getWallpaper
 
 /**
  * 需存储权限
  */
 @RequiresPermission(anyOf = ["android.permission.READ_WALLPAPER_INTERNAL", Manifest.permission.MANAGE_EXTERNAL_STORAGE])
-fun getWallpaper(context: Context = MyApplication.context): Bitmap? {
-    try {
-        val manager = WallpaperManager.getInstance(context)
-        return (manager.drawable as? BitmapDrawable)?.bitmap
-    } catch (e : Exception) {
-        LogUtil.error(e)
-        return null
-    }
-}
+fun getWallpaper() = getWallpaper(MyApplication.context)
+
+fun JumpTransitionEffectWallpaper() = JumpTransitionEffect()
