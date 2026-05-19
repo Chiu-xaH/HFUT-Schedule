@@ -1,12 +1,15 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -91,17 +94,24 @@ fun NetworkSettingsScreen(
                 value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
             }
         }
-        CustomCard (
-            modifier = Modifier
-                .aspectRatio(16 / 9f)
-                .fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface,
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            video?.let {
-                SimpleVideo(
-                    filePath = it,
-                    aspectRatio = 16/9f,
-                )
+            Box(modifier = Modifier.widthIn(max = 920.dp)) {
+                CustomCard (
+                    modifier = Modifier
+                        .aspectRatio(16 / 9f)
+                        .fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    video?.let {
+                        SimpleVideo(
+                            filePath = it,
+                            aspectRatio = 16/9f,
+                        )
+                    }
+                }
             }
         }
 

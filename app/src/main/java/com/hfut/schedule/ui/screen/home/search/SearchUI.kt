@@ -42,6 +42,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -271,11 +273,13 @@ fun SearchScreen(
 
 
     val paddingModifier = remember { Modifier.padding(horizontal = 3.dp, vertical = 3.dp) }
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        state = state,
-        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)
-    ) {
+    AppAdaptiveScope { adaptive ->
+        AdaptivePageContent(maxWidth = 1100.dp) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(adaptive.searchGridMinSize),
+            state = state,
+            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)
+        ) {
         items(2) {
             Column {
                 InnerPaddingHeight(innerPaddings,true)
@@ -296,27 +300,12 @@ fun SearchScreen(
                 modifier = (item.route?.let { paddingModifier.sharedContainer(it, MaterialTheme.shapes.small,cardNormalColor()) } ?: paddingModifier.clip(MaterialTheme.shapes.small)),
                 color = cardNormalColor()
             ) {
-                if(index % 2 == 0) {
-                    // 位于左侧 观察右侧高度
-                    if(index+1 < funcMaps.size) {
-                        if(funcMaps[index+1].isHigh) {
-                            s()
-                            return@SmallCard
-                        }
-                    }
-                } else {
-                    // 位于右侧 观察左侧高度
-                    if(index-1 >= 0) {
-                        if(funcMaps[index-1].isHigh) {
-                            s()
-                            return@SmallCard
-                        }
-                    }
-                }
-                item.ui()
+                s()
             }
         }
         items(2) { InnerPaddingHeight(innerPaddings,false) }
+    }
+        }
     }
 }
 

@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-16T05:20:25.039029800Z">
+        <DropdownSelection timestamp="2026-05-19T09:26:26.025205800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=D:\AVD\.android\avd\Pixel_10.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=E:\Android\.android\.android\avd\Pixel_Tablet.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -30,17 +30,6 @@
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=D:\AVD\.android\avd\Pixel_8.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="WallpaperBackground">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-16T05:20:25.039029800Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=D:\AVD\.android\avd\Pixel_10.avd" />
             </handle>
           </Target>
         </DropdownSelection>

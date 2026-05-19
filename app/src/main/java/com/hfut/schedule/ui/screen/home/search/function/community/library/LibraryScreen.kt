@@ -130,6 +130,10 @@ private val items = listOf(
 private const val TAB_PAGE_COMMUNITY = 0
 private const val TAB_PAGE_LIBRARY = 1
 
+private fun safeLibraryText(value: String?, fallback: String = "未知"): String {
+    return value?.takeIf { it.isNotBlank() } ?: fallback
+}
+
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
@@ -320,8 +324,8 @@ private fun SearchScreenCommunity(
                 item { InnerPaddingHeight(innerPadding,true) }
                 items (books.size){ index ->
                     val item = books[index]
-                    val name = item.name
-                    val callNo = item.callNumber
+                    val name = safeLibraryText(item.name, "未命名图书")
+                    val callNo = safeLibraryText(item.callNumber, "")
                     CustomCard(
                         color = cardNormalColor(),
                         modifier = Modifier.clickable {
@@ -342,8 +346,8 @@ private fun SearchScreenCommunity(
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { item.author?.let { Text(text = it) } },
-                            supportingContent = {Text(text = "${item.year}  ${item.publisher}" ) },
+                            headlineContent = { Text(text = safeLibraryText(item.author, "作者未知")) },
+                            supportingContent = {Text(text = "${safeLibraryText(item.year, "年份未知")}  ${safeLibraryText(item.publisher, "出版社未知")}" ) },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.person),
@@ -380,10 +384,10 @@ private fun DetailBookUI(vm: NetWorkViewModel, callNo : String) {
             LazyColumn {
                 items(list.size) { index ->
                     val item = list[index]
-                    val status = item.status_dictText
+                    val status = safeLibraryText(item.status_dictText, "状态未知")
                     CardListItem(
                         headlineContent = {
-                            Text(item.place)
+                            Text(safeLibraryText(item.place, "位置未知"))
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.near_me),null)
@@ -722,13 +726,13 @@ private fun SearchScreenLibrary(
                         val item = detailBean!![index]
                         CardListItem(
                             headlineContent = {
-                                Text(item.`in`)
+                                Text(safeLibraryText(item.`in`, "位置未知"))
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.near_me),null)
                             },
                             supportingContent = {
-                                Text("索书号 ${item.cp}")
+                                Text("索书号 ${safeLibraryText(item.cp, "")}")
                             },
                             trailingContent = {
                                 item.js?.let { Text(it) }
@@ -765,10 +769,10 @@ private fun SearchScreenLibrary(
                         Column {
                             TransplantListItem(
                                 headlineContent = {
-                                    Text(item.title.removeHtmlTags())
+                                    Text(safeLibraryText(item.title, "未命名图书").removeHtmlTags())
                                 },
                                 supportingContent = {
-                                    Text("ISBN ${item.isbn}")
+                                    Text("ISBN ${safeLibraryText(item.isbn, "")}")
                                 },
                                 leadingContent = {
                                     Icon(painterResource(R.drawable.book_5),null)
@@ -777,10 +781,14 @@ private fun SearchScreenLibrary(
                             PaddingHorizontalDivider()
                             TransplantListItem(
                                 headlineContent = {
-                                    Text(item.author.joinToString(","))
+                                    Text(item.author.orEmpty().joinToString(",").ifBlank { "作者未知" })
                                 },
                                 supportingContent = {
-                                    Text("${item.year}" + (item.publishers?.let { " $it" } ?: ""))
+                                    val publishInfo = listOfNotNull(
+                                        item.year?.toString()?.takeIf { it.isNotBlank() },
+                                        item.publishers?.takeIf { it.isNotBlank() }
+                                    ).joinToString(" ").ifBlank { "出版信息未知" }
+                                    Text(publishInfo)
                                 },
                                 leadingContent = {
                                     Icon(painterResource(R.drawable.person),null)
@@ -789,7 +797,7 @@ private fun SearchScreenLibrary(
                             PaddingHorizontalDivider()
                             TransplantListItem(
                                 headlineContent = {
-                                    Text("${item.ds?.joinToString(","){ it.tName }}")
+                                    Text(item.ds.orEmpty().joinToString(","){ safeLibraryText(it.tName, "") }.ifBlank { "来源未知" })
                                 },
                                 supportingContent = {
                                     item.abstract?.removeHtmlTags()?.let { Text(it) }

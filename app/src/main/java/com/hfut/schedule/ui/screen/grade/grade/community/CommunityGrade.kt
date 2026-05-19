@@ -39,7 +39,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.status.EmptyScreen
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 
@@ -142,7 +142,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             val context = LocalContext.current
             val bean = (uiState as UiState.Success).data
             val list = bean.scoreInfoDTOList
-            if(list.isEmpty()) EmptyIcon()
+            if(list.isEmpty()) EmptyScreen()
             else {
                 LazyColumn {
                     item { TotalGrade(vm) }

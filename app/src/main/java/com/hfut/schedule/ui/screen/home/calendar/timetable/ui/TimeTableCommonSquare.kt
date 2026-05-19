@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_END_TIME
@@ -91,6 +92,7 @@ fun TimetableCommonSquare(
         Pair(parseTimeToFloat(MOON_REST_START_TIME), parseTimeToFloat(MOON_REST_END_TIME)),
     ),
     zipTimeFactor : Float = 0.1f,
+    enableAutoFit : Boolean = false,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
     onLongTapBlankRegion : ((Offset) -> Unit)? = null,
     onTapBlankRegion : ((Offset) -> Unit)? = null,
@@ -110,7 +112,14 @@ fun TimetableCommonSquare(
     BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current
         val totalWidthPx = with(density) { maxWidth.toPx() }
-        val hourPx = with(density) { hourHeight.toPx() }
+        val effHours = timeToY(endTime, 1f, startTime, zipTime, zipTimeFactor)
+        val hourPx = if (enableAutoFit && effHours > 0f && maxHeight != Dp.Infinity) {
+            val spacerDp = CARD_NORMAL_DP * 2 + innerPadding.calculateTopPadding() + innerPadding.calculateBottomPadding() + APP_HORIZONTAL_DP
+            val availablePx = with(density) { (maxHeight - spacerDp).coerceAtLeast(1.dp).toPx() }
+            (availablePx / effHours).coerceAtLeast(with(density) { 20.dp.toPx() })
+        } else {
+            with(density) { hourHeight.toPx() }
+        }
         val yEnd = timeToY(endTime, hourPx, startTime, zipTime, zipTimeFactor)
         val columnWidthPx = totalWidthPx / columnCount.toFloat()
         val paddingPx = with(density) { everyPadding.toPx() }

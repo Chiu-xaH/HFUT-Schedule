@@ -46,6 +46,8 @@ import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -195,6 +197,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
     val showUpdate = update != null
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
+        AdaptivePageContent(maxWidth = 920.dp) {
         LazyColumn {
             item { InnerPaddingHeight(innerPaddings,true) }
             item {
@@ -251,6 +254,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
             }
             item { InnerPaddingHeight(innerPaddings,false) }
         }
+        }
     }
 }
 
@@ -297,10 +301,11 @@ fun UpdateContents(vm : NetWorkViewModel) {
             val v2 = tinyList[1].toInt()
             v1 * 1000 + v2
         }.reversed()
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP*2),
-        ) {
+        AppAdaptiveScope { adaptive ->
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(adaptive.settingsGridMinSize),
+                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP*2),
+            ) {
             items(list.size, key = { it }) { index ->
                 val item = list[index]
                 with(item) {
@@ -320,6 +325,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                     }
                 }
             }
+        }
         }
     }
 }

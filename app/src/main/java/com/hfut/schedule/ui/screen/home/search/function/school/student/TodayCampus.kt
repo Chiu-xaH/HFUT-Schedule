@@ -57,6 +57,8 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.adaptive.AdaptivePageContent
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
@@ -190,7 +192,9 @@ fun StuAppsScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         if(input.isNotEmpty() || input.isNotBlank()) {
             val data = localList.flatMap { it.apps }.filter { it.name.contains(input) }
-            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
+            AppAdaptiveScope { adaptive ->
+            AdaptivePageContent(maxWidth = 1100.dp) {
+            LazyVerticalGrid(columns = GridCells.Adaptive(adaptive.searchGridMinSize),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                 item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding, true) }
                 items(data.size, key = { it }) { index ->
                     val item = data[index]
@@ -250,6 +254,8 @@ fun StuAppsScreen(
                     }
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding, false) }
+            }
+            }
             }
         } else {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {

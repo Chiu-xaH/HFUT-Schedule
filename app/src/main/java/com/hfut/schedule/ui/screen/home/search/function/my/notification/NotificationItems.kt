@@ -36,7 +36,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 
-import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.status.EmptyScreen
 import com.hfut.schedule.ui.nav.destination.NotificationsDestination
 
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -84,7 +84,7 @@ fun NotificationItems() {
     }
 
     if(list.isEmpty()) {
-        EmptyIcon()
+        EmptyScreen()
     } else {
         list.forEach { item ->
             val id = item.id
