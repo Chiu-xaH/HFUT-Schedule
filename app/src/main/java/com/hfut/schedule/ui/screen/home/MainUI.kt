@@ -81,6 +81,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -95,6 +96,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -120,9 +122,11 @@ import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
+import com.hfut.schedule.ui.component.button.NavigationRailContentDynamic
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -354,8 +358,67 @@ fun MainScreen(
         value = calculatedReadNotificationCount()
     }
 
+    val navigationItems = listOf(
+        NavigationBarItemDataDynamic(
+            COURSES.name,
+            "课程表",
+            icon = { selected ->
+                NavigationBarItemDynamicIconModern(
+                    selected,
+                    R.drawable.avd_calendar
+                )
+            },
+        ),
+        NavigationBarItemDataDynamic(
+            FOCUS.name,
+            "聚焦",
+            icon = { selected ->
+                NavigationBarItemDynamicIconModern(
+                    selected,
+                    R.drawable.avd_lightbulb
+                )
+            },
+        ),
+        NavigationBarItemDataDynamic(
+            SEARCH.name,
+            "查询中心",
+            icon = { selected ->
+                NavigationBarItemDynamicIconModern(
+                    selected,
+                    R.drawable.avd_category_search,
+                )
+            },
+        ),
+        NavigationBarItemDataDynamic(
+            SETTINGS.name,
+            "选项",
+            icon = { selected ->
+                NavigationBarItemDynamicIconModern(
+                    selected,
+                    if (!showBadge) R.drawable.avd_deployed_code else R.drawable.avd_deployed_code_update,
+                )
+            },
+            badge = {
+                if (showBadge) Badge { Text("1") }
+            }
+        )
+    )
+
+    AppAdaptiveScope { adaptive ->
+        Row(modifier = Modifier.fillMaxSize()) {
+            if(adaptive.useNavigationRail) {
+                NavigationRailContentDynamic(
+                    list = navigationItems,
+                    navController = navController,
+                    modifier = Modifier
+                        .zIndex(1f)
+                        .background(if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface),
+                    enabled = isEnabled,
+                    showColor = !(useCustomBackground && targetPage == COURSES)
+                )
+            }
     Scaffold (
-        modifier = Modifier.let {
+        modifier = Modifier.weight(1f).let {
             if (targetPage != COURSES) {
                 it.nestedScroll(scrollBehavior.nestedScrollConnection)
             } else {
@@ -831,55 +894,12 @@ fun MainScreen(
             }
         },
         bottomBar = {
-            val items = listOf(
-                NavigationBarItemDataDynamic(
-                    COURSES.name,
-                    "课程表",
-                    icon = { selected ->
-                        NavigationBarItemDynamicIconModern(
-                            selected,
-                            R.drawable.avd_calendar
-                        )
-                    },
-                ),
-                NavigationBarItemDataDynamic(
-                    FOCUS.name,
-                    "聚焦",
-                    icon = { selected ->
-                        NavigationBarItemDynamicIconModern(
-                            selected,
-                            R.drawable.avd_lightbulb
-                        )
-                    },
-                ),
-                NavigationBarItemDataDynamic(
-                    SEARCH.name,
-                    "查询中心",
-                    icon = { selected ->
-                        NavigationBarItemDynamicIconModern(
-                            selected,
-                            R.drawable.avd_category_search,
-                        )
-                    },
-                ),
-                NavigationBarItemDataDynamic(
-                    SETTINGS.name,
-                    "选项",
-                    icon = { selected ->
-                        NavigationBarItemDynamicIconModern(
-                            selected,
-                            if (!showBadge) R.drawable.avd_deployed_code else R.drawable.avd_deployed_code_update,
-                        )
-                    },
-                    badge = {
-                        if (showBadge) Badge { Text("1") }
-                    }
-                )
-            )
-            if(useCustomBackground && targetPage == COURSES) {
-                SpecialBottomBar(backGroundSource,items,navController,isEnabled)
-            } else {
-                HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
+            if(!adaptive.useNavigationRail) {
+                if(useCustomBackground && targetPage == COURSES) {
+                    SpecialBottomBar(backGroundSource,navigationItems,navController,isEnabled)
+                } else {
+                    HazeBottomBarDynamic(hazeState,navigationItems,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
+                }
             }
         },
     ) { innerPadding ->
@@ -892,7 +912,10 @@ fun MainScreen(
             exitTransition = {
                 AppAnimationManager.centerAnimation.exit
             },
-            modifier = Modifier.hazeSource(state = hazeState)
+            modifier = Modifier
+                .fillMaxSize()
+                .clipToBounds()
+                .hazeSource(state = hazeState)
         ) {
             nav2Composable(COURSES.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -1052,6 +1075,8 @@ fun MainScreen(
                 }
             }
         }
+        }
+    }
     }
 }
 
@@ -1229,8 +1254,9 @@ fun SearchEditScreen() {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
+            AppAdaptiveScope { adaptive ->
             LazyVerticalGrid (
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Adaptive(adaptive.searchGridMinSize),
                 state = state,
                 modifier = Modifier
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -1293,6 +1319,7 @@ fun SearchEditScreen() {
                 items(2) { Spacer(Modifier
                     .navigationBarsPadding()
                     .height(APP_HORIZONTAL_DP)) }
+            }
             }
         }
     }

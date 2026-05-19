@@ -42,6 +42,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.adaptive.AppAdaptiveScope
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -271,11 +272,12 @@ fun SearchScreen(
 
 
     val paddingModifier = remember { Modifier.padding(horizontal = 3.dp, vertical = 3.dp) }
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        state = state,
-        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)
-    ) {
+    AppAdaptiveScope { adaptive ->
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(adaptive.searchGridMinSize),
+            state = state,
+            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)
+        ) {
         items(2) {
             Column {
                 InnerPaddingHeight(innerPaddings,true)
@@ -317,6 +319,7 @@ fun SearchScreen(
             }
         }
         items(2) { InnerPaddingHeight(innerPaddings,false) }
+    }
     }
 }
 

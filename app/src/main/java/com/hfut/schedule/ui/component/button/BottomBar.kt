@@ -7,8 +7,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -165,6 +170,54 @@ private fun BottomBarContentDynamic(
     }
 }
 
+@Composable
+fun NavigationRailContentDynamic(
+    list : List<NavigationBarItemDataDynamic>,
+    navController : NavController,
+    modifier: Modifier = Modifier,
+    enabled : Boolean = true,
+    showColor : Boolean = true,
+) {
+    val showLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
+    NavigationRail(
+        modifier = modifier,
+        containerColor = Color.Transparent
+    ) {
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            list.forEach { item ->
+                val route = item.route
+                val selected = navController.isCurrentRouteWithoutArgs(route)
+                NavigationRailItem(
+                    enabled = enabled,
+                    alwaysShowLabel = showLabel,
+                    selected = selected,
+                    onClick = {
+                        if (!selected) {
+                            navController.navigateForBottomBar(route)
+                        }
+                    },
+                    label = { Text(text = item.label) },
+                    icon = {
+                        BadgedBox(
+                            badge = { item.badge?.invoke(this) },
+                            content = { item.icon(selected) }
+                        )
+                    },
+                    colors = NavigationRailItemDefaults.colors(
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = if(showColor) .9f else 0f),
+                        selectedIconColor = if(showColor) MaterialTheme.colorScheme.primary else IconButtonDefaults.iconButtonColors().contentColor,
+                        selectedTextColor = if(showColor) MaterialTheme.colorScheme.primary else IconButtonDefaults.iconButtonColors().contentColor,
+                        unselectedIconColor = if(showColor) Color.Unspecified else IconButtonDefaults.iconButtonColors().contentColor,
+                        unselectedTextColor = if(showColor) Color.Unspecified else IconButtonDefaults.iconButtonColors().contentColor,
+                    )
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun HazeBottomBarDynamic(
