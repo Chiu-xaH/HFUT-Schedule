@@ -18,7 +18,7 @@ class GotoInterceptor : Interceptor {
                 // 登录信息门户
                 GoToInterceptorState.toOneCode.value = location[0]
             }
-            locationStr.contains("synjones") -> {
+            locationStr.contains("synjones-auth=") -> {
                 // 登录慧新易校
                 parseHuiXinAuth(locationStr)
             }
@@ -28,7 +28,8 @@ class GotoInterceptor : Interceptor {
 }
 
 private fun parseHuiXinAuth(location : String) {
-    var key = location.substringAfter("synjones-auth=").substringBefore("&")
+    LogUtil.debug("登录慧新易校 $location")
+    val key = location.substringAfter("synjones-auth=").substringBefore("&")
     SharedPrefs.saveString("auth",key)
     showToast("一卡通登录成功")
 }

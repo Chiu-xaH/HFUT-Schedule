@@ -121,6 +121,11 @@ private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
         }
 }
 
+private suspend fun loginHuiXIn(cookies: String, vm: NetWorkViewModel) {
+    // 也要发两次才给302
+    vm.goToHuiXin(cookies)
+    vm.goToHuiXin(cookies)
+}
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -267,7 +272,7 @@ fun JxglstuCourseTableUI(
                                if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
                                    loginHuiXin(vm)
                                } else {
-                                   vm.goToHuiXin(cookies)
+                                   loginHuiXIn(cookies,vm)
                                }
                            }
                        }
@@ -411,8 +416,8 @@ fun JxglstuCourseTableUI(
                        }
                    }
                }
-               // fixme:最高等待时长15s，实测合工大教务接口有时比较慢
-               withTimeoutOrNull(Constant.UNI_APP_MAX_WAIT_TIME_SEC*1000) {
+               // fixme:最高等待时长10s，实测合工大教务接口非常慢大于这个10s
+               withTimeoutOrNull(10*1000) {
                    job.await()
                }
                if(GlobalStateHolder.excludeJxglstu) {
