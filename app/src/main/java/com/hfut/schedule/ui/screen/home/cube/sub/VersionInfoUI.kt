@@ -54,7 +54,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-05-17"
+private const val RELEASE_DATE = "2026-05-21"
 private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 
 @SuppressLint("SuspiciousIndentation")
@@ -62,10 +62,14 @@ private val XAH = listOf(Constant.GITHUB_DEVELOPER_NAME)
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 日志抓取功能升级为独立界面","位于 选项-维护与关于-日志抓取")
-        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
+//        UpdateItems("新增 日志抓取功能升级为独立界面","位于 选项-维护与关于-日志抓取")
+//        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
+        UpdateItems("新增 支持获取壁纸以作为取色和设置课程表背景",to = To.Screen(SettingsAppearanceDestination))
+        UpdateItems("新增 实时通知支持考试提醒",developers = listOf("Junpgle"))//
+        UpdateItems("优化 实时通知的部分逻辑",developers = listOf("Junpgle"))//
+        UpdateItems("修复 实时通知开启时因课程过多而触发崩溃的Bug", developers = listOf("Junpgle"))//
         UpdateItems("修复 一卡通无法跟随刷新登陆状态自动刷新的问题")//
-        UpdateItems("修复 实时通知开启时因课程过多而触发崩溃的Bug", developers = listOf("Junpgle"))
+        UpdateItems("修复 课程表周数切换按钮拖动时的显示Bug")//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")

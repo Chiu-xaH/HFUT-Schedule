@@ -822,7 +822,7 @@ private fun parseScheduleText(text : String) : List<Schedule> {
             tinyList[4].let {
                 if(it.contains("(")) {
                     place = it.substringBefore("(")
-                    place = if(place.contains("学堂")) place.simplifyPlace() else it
+                    place = place.simplifyPlace()
                 }
             }
             result.add(Schedule(weekText,weekday,periodText,place))

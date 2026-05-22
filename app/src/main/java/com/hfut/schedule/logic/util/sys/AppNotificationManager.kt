@@ -19,6 +19,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -163,7 +164,7 @@ object AppNotificationManager {
                 "$placeText",
             ).joinToString(" | ")
         } else {
-            "${teacherText ?: "老师待确认"} | $placeText"
+            "${teacherText ?: "教师待确认"} | $placeText"
         }
         val subText = buildCourseLiveSubText(startMillis, endMillis)
         val shortPlaceText = buildShortPlaceText(placeText)
@@ -243,7 +244,7 @@ object AppNotificationManager {
     }
 
     private fun buildCourseLiveSmallIconRes(eventType: String): Int =
-        if (eventType == "考试") R.drawable.quiz_24 else R.drawable.book_24
+        if (eventType == "考试") R.drawable.draw else R.drawable.schedule
 
     private fun buildShortPlaceText(placeText: String): String {
         val compactText = placeText
@@ -254,16 +255,7 @@ object AppNotificationManager {
             .substringBefore("，")
             .substringBefore(";")
             .substringBefore("；")
-            .replace("翡翠湖校区", "")
-            .replace("屯溪路校区", "")
-            .replace("宣城校区", "")
-            .replace("敬亭学堂", "敬亭")
-            .replace("新安学堂", "新安")
-            .replace("学堂", "")
-            .replace("教学楼", "教")
-            .replace("综合楼", "综")
-            .replace("科教楼", "科教")
-            .replace("号楼", "楼")
+            .simplifyPlace()
             .ifBlank { "教室待定" }
 
         if (compactText.length <= 6) return compactText

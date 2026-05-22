@@ -5,10 +5,11 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.hfut.schedule.application.MyApplication
 import androidx.core.content.edit
+import com.hfut.schedule.logic.util.other.AppVersion
 
 //特别想彻底重构这里，当时键值乱飞，已经难以重构了
 object SharedPrefs {
-    private const val PREFS = "com.hfut.schedule_preferences"
+    private val PREFS = "${AppVersion.appPackageName}_preferences"
     const val LIBRARY_TOKEN = "LibraryToken"
     const val SECOND_CLASS_TOKEN = "second_class_token"
     val prefs: SharedPreferences = MyApplication.context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)

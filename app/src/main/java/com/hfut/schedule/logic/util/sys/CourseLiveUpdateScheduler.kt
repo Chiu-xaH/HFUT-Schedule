@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.receiver.CourseLiveUpdateReceiver
 import com.hfut.schedule.service.CourseLiveUpdateService
@@ -22,9 +23,9 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 object CourseLiveUpdateScheduler {
-    const val ACTION_SHOW = "com.hfut.schedule.action.SHOW_COURSE_LIVE_UPDATE"
-    const val ACTION_FINISH = "com.hfut.schedule.action.FINISH_COURSE_LIVE_UPDATE"
-    const val ACTION_RESCHEDULE = "com.hfut.schedule.action.RESCHEDULE_COURSE_LIVE_UPDATE"
+    val ACTION_SHOW = "${AppVersion.appPackageName}.action.SHOW_COURSE_LIVE_UPDATE"
+    val ACTION_FINISH = "${AppVersion.appPackageName}.action.FINISH_COURSE_LIVE_UPDATE"
+    val ACTION_RESCHEDULE = "${AppVersion.appPackageName}.action.RESCHEDULE_COURSE_LIVE_UPDATE"
 
     const val EXTRA_COURSE_NAME = "course_name"
     const val EXTRA_PLACE = "place"

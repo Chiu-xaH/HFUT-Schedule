@@ -156,6 +156,16 @@ fun DraggableWeekButton(
 
         ShareTwoContainer2D(
             modifier = Modifier
+
+                .align(Alignment.Center)
+                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
+                .let {
+                    if(!hasBackground) {
+                        it
+                    } else {
+                        it.clip(shape)
+                    }
+                }
                 .let {
                     if(!hasBackground) {
                         it.sharedContainer(
@@ -167,15 +177,8 @@ fun DraggableWeekButton(
                         it
                     }
                 }
-                .align(Alignment.Center)
-                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
-                .let {
-                    if(!hasBackground) {
-                        it
-                    } else {
-                        it.clip(shape)
-                    }
-                },
+
+            ,
             show = !expanded,
             defaultContent = {
                 Surface(

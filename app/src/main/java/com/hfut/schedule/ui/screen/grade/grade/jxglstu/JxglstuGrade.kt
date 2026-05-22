@@ -356,7 +356,7 @@ fun GradeItemJxglstuUI(
                                                     Starter.refreshLogin(context)
                                                 } else {
                                                     surveyCode = subItem.lessonCode
-                                                    showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+                                                    showToast("请为本课程的所有教师评教，下拉刷新以查看成绩")
                                                     showBottomSheet_Survey = true
                                                 }
                                             } else {

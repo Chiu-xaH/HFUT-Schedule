@@ -10,6 +10,7 @@ import com.hfut.schedule.application.MyApplication
 import com.sharednav.common.util.LogUtil
 import com.xah.navigation.anim.effect.JumpPageEffects
 import com.xah.navigation.anim.effect.JumpTransitionEffect
+import com.xah.navigation.anim.effect.defaultJumpBackground
 import com.xah.navigation.util.getWallpaper
 
 /**
@@ -18,4 +19,5 @@ import com.xah.navigation.util.getWallpaper
 @RequiresPermission(anyOf = ["android.permission.READ_WALLPAPER_INTERNAL", Manifest.permission.MANAGE_EXTERNAL_STORAGE])
 fun getWallpaper() = getWallpaper(MyApplication.context)
 
-fun JumpTransitionEffectWallpaper() = JumpTransitionEffect()
+// fixme:暂时禁用高级特效，后面流畅了再用
+fun JumpTransitionEffectWallpaper() = JumpTransitionEffect(background = defaultJumpBackground,alphaStyle = false)
