@@ -365,35 +365,43 @@ object CourseLiveUpdateScheduler {
     ): Boolean {
         try {
             if (alarmClockInfo != null) {
-                alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-                return true
+                alarmManager.setAlarmClock(
+                    alarmClockInfo,
+                    pendingIntent
+                )
+            } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerMillis,
+                    pendingIntent
+                )
             }
-
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alarmManager.canScheduleExactAlarms() -> {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
-                }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
-                }
-                else -> {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
-                }
-            }
-        } catch (e: SecurityException) {
-            LogUtil.error(e)
-            return try {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
-                true
-            } catch (fallbackException: RuntimeException) {
-                LogUtil.error(fallbackException)
-                false
-            }
-        } catch (e: IllegalStateException) {
+            return true
+        }
+        // 暂时禁用，要不然日志太多了
+//        catch (e: SecurityException) {
+//            LogUtil.error(e)
+//            return try {
+//                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent)
+//                true
+//            } catch (fallbackException: RuntimeException) {
+//                LogUtil.error(fallbackException)
+//                false
+//            }
+//        } catch (e: IllegalStateException) {
+//            LogUtil.error(e)
+//            return false
+//        }
+        catch (e: Exception) {
             LogUtil.error(e)
             return false
         }
-        return true
     }
 
     private data class CourseAlarmRequest(

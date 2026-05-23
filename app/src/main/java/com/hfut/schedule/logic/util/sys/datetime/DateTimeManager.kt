@@ -51,6 +51,9 @@ object DateTimeManager {
     val formatterTime_Minute = DateTimeFormatter.ofPattern("mm")
     val formatterTime_Second = DateTimeFormatter.ofPattern("ss")
 
+    val formatterAllWithT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    val formatterAll = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
     // 常量池
     const val APP_BIRTHDAY = "2023-10-16"
 

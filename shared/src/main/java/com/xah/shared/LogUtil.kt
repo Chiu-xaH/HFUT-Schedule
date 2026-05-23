@@ -1,10 +1,12 @@
 package com.xah.shared
 
 import android.util.Log
+import java.time.LocalDateTime
 
 /**
  * 可直接跟踪到日志打印的位置（堆栈），提升开发效率
  * debug包打印所有级别日志，release包只打印error级别日志
+ * 暂存error级别的日志的堆栈，方便导出
  */
 object LogUtil {
     private var tag: String = this::class.java.name
@@ -20,12 +22,48 @@ object LogUtil {
         ERROR(4)
     }
 
-    fun init(tagName : String,debug : Boolean = BuildConfig.DEBUG) {
+    data class ErrorEntry(
+        val throwable: Throwable,
+        val timestamp: LocalDateTime = LocalDateTime.now()
+    )
+
+    const val DEFAULT_MAX_CACHE = 300
+    private var maxCacheSize: Int = DEFAULT_MAX_CACHE
+    // 用 ArrayDeque 做有界环形缓冲，超出自动丢弃最旧的
+    private val errorCache = ArrayDeque<ErrorEntry>(DEFAULT_MAX_CACHE)
+    private val cacheLock = Any()
+
+    fun getCachedLogs(): List<ErrorEntry> = synchronized(cacheLock) {
+        errorCache.toList()
+    }
+
+    fun clearCache() = synchronized(cacheLock) {
+        errorCache.clear()
+    }
+
+    fun getCachedLogsSize() = errorCache.size
+
+
+    private fun addToCache(throwable: Throwable) = synchronized(cacheLock) {
+        if (errorCache.size >= maxCacheSize) {
+            errorCache.removeFirst()
+        }
+        errorCache.addLast(ErrorEntry(throwable))
+    }
+
+    fun init(
+        tagName : String,
+        debug : Boolean = BuildConfig.DEBUG,
+        maxCacheSize: Int = DEFAULT_MAX_CACHE
+    ) {
         tag = tagName
-        if(debug) {
-            minLevel = Level.VERBOSE
+        this.maxCacheSize = maxCacheSize
+        minLevel = if(debug) {
+            // Debug状态下，打印所有日志，并将其暂存
+            Level.VERBOSE
         } else {
-            if (BuildConfig.DEBUG) Level.VERBOSE else Level.WARN
+            // Release状态下，打印WARN及其以上日志，并将其暂存
+            if (BuildConfig.DEBUG) Level.VERBOSE else Level.ERROR
         }
     }
 
@@ -51,7 +89,7 @@ object LogUtil {
                 element
             }
         } catch (e : Exception) {
-            error(e)
+            e.printStackTrace()
             null
         }
     }
@@ -63,6 +101,9 @@ object LogUtil {
 
         val element = findCaller()
         val text = if(element == null) msg else "(${element.fileName}:${element.lineNumber}) ${element.methodName}()${if(msg.isEmpty()) "" else " : $msg"}"
+
+        throwable?.let { addToCache(it) }
+
         when(type) {
             Level.NONE -> return
             Level.VERBOSE -> Log.v(tag,text)

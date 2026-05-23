@@ -4,14 +4,17 @@ import android.os.Environment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.LogUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object CrashHandler : Thread.UncaughtExceptionHandler {
 
@@ -40,24 +43,71 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         defaultHandler?.uncaughtException(thread, throwable)
     }
 
-    private fun saveCrashLog(throwable: Throwable) {
+
+    // 文件名不让用一些特殊字符
+    private val formatterForFile = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+    fun saveCrashLog(throwable: Throwable) {
         try {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val timestamp = System.currentTimeMillis() / 1000 // 秒级时间戳
-            val filename = "${MyApplication.APP_NAME}_崩溃日志_${timestamp}.log"
+            val dateTime = LocalDateTime.now()
+            val filename = "${MyApplication.APP_NAME}_崩溃日志_${System.currentTimeMillis()}.log"
             val file = File(downloadsDir, filename)
             val log = """
-                软件版本 ${AppVersion.getVersionName()}(${AppVersion.getVersionCode()})
-                系统版本 ${AppVersion.sdkInt}
-                时间 ${DateTimeManager.Date_yyyy_MM_dd + "T" + DateTimeManager.Time_HH_MM_SS}
-                用户 ${getPersonInfo().studentId ?: "游客"}
+                软件版本: ${AppVersion.getVersionName()} (${AppVersion.getVersionCode()})
+                系统版本: ${AppVersion.sdkInt}
+                时间: ${dateTime.format(DateTimeManager.formatterAll)}
+                用户: ${getPersonInfo().studentId ?: "游客"}
                 ${getKeyStackTrace(throwable)}
-                具体信息 ${throwable.stackTraceToString()}
+                堆栈: ${throwable.stackTraceToString()}
             """.trimIndent()
             file.appendText(log) // 同步写文件
             showToast("已保存到Download/${filename}")
         } catch (e: Exception) {
             LogUtil.error(e)
+        }
+    }
+    suspend fun saveErrorLog() : Int = withContext(Dispatchers.IO) {
+        try {
+            val list = LogUtil.getCachedLogs()
+            if(list.isEmpty()) {
+                showToast("暂无错误日志，请操作后再来")
+                return@withContext 0
+            }
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val dateTime = LocalDateTime.now()
+            val filename = "${MyApplication.APP_NAME}_错误日志_${System.currentTimeMillis()}.log"
+            val file = File(downloadsDir, filename)
+
+            val result = StringBuilder()
+
+            val head = """
+                软件版本: ${AppVersion.getVersionName()} (${AppVersion.getVersionCode()})
+                系统版本: ${AppVersion.sdkInt}
+                时间: ${dateTime.format(DateTimeManager.formatterAll)}
+                用户: ${getPersonInfo().studentId ?: "游客"}
+                
+            """.trimIndent()
+            result.append(head)
+            list.forEachIndexed { index, entry ->
+                val throwable = entry.throwable
+                val log = buildString {
+                    appendLine("--[${index + 1}]------------------------------------------------")
+                    appendLine(getKeyStackTrace(throwable))
+                    appendLine("时间: ${entry.timestamp.format(DateTimeManager.formatterAll)}")
+                    appendLine("堆栈: ${throwable.stackTraceToString()}")
+                    appendLine(throwable.stackTraceToString())
+                    appendLine()
+                }
+                result.append(log)
+            }
+            // 同步写文件
+            file.appendText(result.toString())
+            showToast("已保存到Download/${filename}")
+            LogUtil.clearCache()
+            return@withContext list.size
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            return@withContext 0
         }
     }
 }

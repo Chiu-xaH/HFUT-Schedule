@@ -16,12 +16,15 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.dev.CrashHandler
+import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -46,6 +50,9 @@ import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.style.color.ShimmerAngle
+import com.xah.common.ui.style.color.shimmerEffect
+import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -131,38 +138,71 @@ fun FixUI(
 @Composable
 fun BugShare() {
     val activity = LocalActivity.current
+    val scope = rememberCoroutineScope()
+
     TransplantListItem(
         headlineContent = { Text(text = "崩溃日志抓取") },
-        leadingContent = { Icon(painterResource(R.drawable.monitor_heart), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable {
-            activity?.let { Starter.openDownloadFolder(it) }
-        },
-        supportingContent = {
+        leadingContent = {
             if(CrashHandler.isLoggingEnabled) {
-                Text("日志抓取已开启,请复现崩溃闪退的操作,当崩溃后，去Download文件夹寻找崩溃日志")
+                LoadingIcon()
+            } else{
+                Icon(
+                    painter = painterResource(id = R.drawable.slow_motion_video), contentDescription = ""
+                )
+            }
+        },
+        modifier = Modifier.clickable {
+            activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+            if(!CrashHandler.isLoggingEnabled) {
+                CrashHandler.enableLogging()
             } else {
-                Text("点击右侧开始抓取，崩溃后，日志将保存于Download文件夹")
+                CrashHandler.disableLogging()
+                showToast("日志抓取已关闭")
             }
         },
         trailingContent = {
-            Row{
-                FilledTonalIconButton(onClick = {
-                    if(!CrashHandler.isLoggingEnabled) {
-                        CrashHandler.enableLogging()
-                    } else {
-                        CrashHandler.disableLogging()
-                        showToast("日志抓取已关闭")
-                    }
-                }) {
-                    if(CrashHandler.isLoggingEnabled) {
-                        LoadingIcon()
-                    } else{
-                        Icon(painter = painterResource(id =
-                            R.drawable.slow_motion_video
-                        ), contentDescription = "")
-                    }
+            Switch(checked = CrashHandler.isLoggingEnabled, onCheckedChange = {
+                activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                if(!CrashHandler.isLoggingEnabled) {
+                    CrashHandler.enableLogging()
+                } else {
+                    CrashHandler.disableLogging()
                 }
+            })
+        },
+        supportingContent = {
+            if(CrashHandler.isLoggingEnabled) {
+                Text("正在记录日志,请复现崩溃闪退的操作,当崩溃后，在Download文件夹寻找崩溃日志")
+            } else {
+                Text("点击开始抓取，崩溃后，日志将保存于Download文件夹")
             }
         }
+    )
+    PaddingHorizontalDivider()
+    var loading by remember { mutableStateOf(false) }
+    var num by remember { mutableIntStateOf(0) }
+    LaunchedEffect(loading) {
+        num = LogUtil.getCachedLogsSize()
+    }
+    TransplantListItem(
+        headlineContent = { Text(text = "导出错误日志 (${num}条)") },
+        leadingContent = {
+            if(loading) {
+                LoadingIcon()
+            } else {
+                Icon(painterResource(R.drawable.save), contentDescription = "Localized description",)
+            }
+        },
+        modifier = Modifier.clickable {
+            scope.launch {
+                activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                loading = true
+                CrashHandler.saveErrorLog()
+                loading = false
+            }
+        },
+        supportingContent = {
+            Text("可导出非崩溃情况下的错误日志，导出后，在Download文件夹寻找错误日志")
+        },
     )
 }
