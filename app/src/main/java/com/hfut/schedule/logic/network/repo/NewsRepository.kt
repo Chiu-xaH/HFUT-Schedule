@@ -76,6 +76,26 @@ object NewsRepository {
         val document = Jsoup.parse(html)
         val newsList = mutableListOf<NewsResponse>()
 
+        // by Claude 这里接口变了，重新写解析函数
+        val links = document.select("td[align=left] > a[target=_blank]")
+
+        for (a in links) {
+            val title = a.attr("title").trim()
+            val link = a.attr("href")
+
+            val date = a
+                .parent()
+                ?.parent()
+                ?.selectFirst("td[align=right]")
+                ?.text()
+                ?.trim()
+                ?: continue
+
+            if (title.isNotEmpty() && link.isNotEmpty()) {
+                newsList.add(NewsResponse(title, date, link))
+            }
+        }
+        /*
         // 找到所有<tr class="articlelist2_tr">
         val rows = document.select("tr.articlelist2_tr")
         for (row in rows) {
@@ -90,6 +110,7 @@ object NewsRepository {
                 newsList.add(NewsResponse(title, date, link))
             }
         }
+         */
 
         newsList
     } catch (e : Exception) { throw e }
