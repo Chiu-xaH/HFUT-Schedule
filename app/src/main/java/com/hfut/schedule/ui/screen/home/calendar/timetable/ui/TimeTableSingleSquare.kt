@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -16,10 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -109,6 +104,7 @@ fun TimetableSingleSquare(
     val everyPadding by animateDpAsState(
         targetValue = if (showAll) 1.75.dp else 2.5.dp,
     )
+    val useBackground = !showLine
 
     BoxWithConstraints(
         modifier = modifier
@@ -117,7 +113,7 @@ fun TimetableSingleSquare(
         val totalWidthPx = with(density) { maxWidth.toPx() }
         val hourPx = with(density) { hourHeight.toPx() }
         val yEnd = timeToY(endTime, hourPx, startTime,zipTime,zipTimeFactor)
-        val columnWidthPx = totalWidthPx / columnCount.toFloat()
+        val columnWidthPx = totalWidthPx / columnCount
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
             Spacer(Modifier.height(CARD_NORMAL_DP*2))
@@ -167,14 +163,22 @@ fun TimetableSingleSquare(
                         val yEnd = timeToY(item.end, hourPx, startTime,zipTime,zipTimeFactor)
                         val heightPx = yEnd - yStart
 
-                        key(item.course.hashCode()) {
-                            Box (
+                        val boxContent = @Composable {
+                            Box(
                                 modifier = Modifier
                                     .offset { IntOffset(xOffset.roundToInt(), yStart.roundToInt()) }
                                     .width(with(density) { safeSingleWidthPx.toDp() })
-                                    .height(with(density) { heightPx.toDp() }),
+                                    .height(with(density) { heightPx.toDp() })
                             ) {
                                 content(item.course)
+                            }
+                        }
+
+                        if (useBackground) {
+                            boxContent()
+                        } else {
+                            key(item.course.hashCode()) {
+                                boxContent()
                             }
                         }
                     }

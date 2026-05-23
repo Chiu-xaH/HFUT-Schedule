@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.LifeDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAboutDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
@@ -61,10 +62,10 @@ private const val RELEASE_DATE = "2026-05-23"
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 日志抓取功能升级为独立界面","位于 选项-维护与关于-日志抓取")
+        UpdateItems("新增 错误日志导出功能","位于 选项-维护与关于-错误日志导出，用于协助开发者排查问题",to = To.Screen(SettingsAboutDestination))//
         UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
-        UpdateItems("修复 课表方格在启用着色器时翻页闪烁")
-        UpdateItems("修复 设置图片后退出课程表界面不恢复状态栏取色")
+        UpdateItems("修复 课程表在使用背景且着色器效果开启时，方格翻页闪烁的Bug")//
+        UpdateItems("修复 课程表在使用背景后退出界面未恢复状态栏取色的Bug")//
         UpdateItems("修复 宣城校区教务处白屏的问题")//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")

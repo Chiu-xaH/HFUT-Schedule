@@ -107,12 +107,14 @@ fun TimetableCommonSquare(
         targetValue = if (showAll) 1.75.dp else 2.5.dp,
     )
 
+    val useBackground = !showLine
+
     BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current
         val totalWidthPx = with(density) { maxWidth.toPx() }
         val hourPx = with(density) { hourHeight.toPx() }
         val yEnd = timeToY(endTime, hourPx, startTime, zipTime, zipTimeFactor)
-        val columnWidthPx = totalWidthPx / columnCount.toFloat()
+        val columnWidthPx = totalWidthPx / columnCount
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
             Spacer(Modifier.height(CARD_NORMAL_DP*2))
@@ -153,7 +155,8 @@ fun TimetableCommonSquare(
                         val yStart = timeToY(group.start, hourPx, startTime, zipTime, zipTimeFactor)
                         val yEnd = timeToY(group.end, hourPx, startTime, zipTime, zipTimeFactor)
                         val heightPx = yEnd - yStart
-                        key(group.courses.hashCode()) {
+
+                        val boxContent = @Composable {
                             Box(
                                 modifier = Modifier
                                     .offset { IntOffset(xOffset.roundToInt(), yStart.roundToInt()) }
@@ -161,6 +164,14 @@ fun TimetableCommonSquare(
                                     .height(with(density) { heightPx.toDp() })
                             ) {
                                 content(group.courses)
+                            }
+                        }
+
+                        if (useBackground) {
+                            boxContent()
+                        } else {
+                            key(group.courses.hashCode()) {
+                                boxContent()
                             }
                         }
                     }

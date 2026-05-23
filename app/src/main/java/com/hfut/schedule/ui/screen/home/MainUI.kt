@@ -44,7 +44,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -175,21 +174,20 @@ import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hjq.device.compat.DeviceOs
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
-import com.xah.common.ui.style.color.TransparentSystemBars2
+import com.xah.common.ui.style.color.TransparentSystemBars
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
-import com.sharednav.common.util.NoneRoundShape
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.anim.effect.Direction
-import com.xah.navigation.anim.effect.JumpTransitionEffect
 import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
@@ -340,10 +338,7 @@ fun MainScreen(
     }
 
     val backGroundSource = rememberShaderState()
-    var firstStart by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        firstStart = true
-    }
+
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val useCustomBackground = customBackground != ""
     val context = LocalContext.current
@@ -909,7 +904,7 @@ fun MainScreen(
                                 result
                             }
                         }
-                        TransparentSystemBars2(color?.let { it1 -> Color(it1) })
+                        TransparentSystemBars(color?.let { it1 -> Color(it1) })
                         GlideImage(
                             model = file,
                             contentDescription = null,

@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.component.webview
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -23,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.util.webview.WebViewBackHandler
@@ -42,7 +40,6 @@ import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
 import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.common.ui.style.color.TransparentSystemBars
 import com.xah.common.ui.style.color.TransparentSystemBars2
 import com.xah.shared.LogUtil
 import java.net.HttpURLConnection
