@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.util.dev.getKeyStackTrace
+import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -16,7 +16,7 @@ suspend fun getUpdates(vm : NetWorkViewModel) : GiteeReleaseResponse? = withCont
     val update = vm.giteeUpdatesResp.state.first { it !is UiState.Loading }
     return@withContext when(update) {
         is UiState.Error -> {
-            GiteeReleaseResponse(name = "检查更新错误 ${update.code}", "无法检查更新 请留意软件内提醒\n" + update.exception?.let { getKeyStackTrace(it) } ,emptyList())
+            GiteeReleaseResponse(name = "检查更新错误 ${update.code}", "无法检查更新 请留意软件内提醒\n" + update.exception?.let { getKeyStackTraceDesc(it) } ,emptyList())
         }
         is UiState.Success -> {
             val data = update.data

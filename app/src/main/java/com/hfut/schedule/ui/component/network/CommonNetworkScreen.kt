@@ -18,9 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.hfut.schedule.network.util.StatusCode
-import com.hfut.schedule.logic.util.dev.getExceptionDetail
-import com.hfut.schedule.logic.util.dev.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -79,7 +78,7 @@ fun CommonNetworkScreen(
                             LaunchedEffect(showDetail) {
                                 if(showDetail) {
                                     e?.let {
-                                        text = getKeyStackTrace(it)
+                                        text = getKeyStackTraceDesc(it)
                                     }
                                 } else {
                                     text = "解析数据错误 ${e?.message?.substringBefore(":")}"
@@ -97,7 +96,7 @@ fun CommonNetworkScreen(
                                 }
                             else
                                 TextButton(onClick = {
-                                    e?.let { ClipBoardHelper.copy(getExceptionDetail(it)) }
+                                    e?.let { ClipBoardHelper.copy(it.stackTraceToString()) }
                                     showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
                                     Starter.emailMe(context)
                                 }) {
