@@ -67,6 +67,7 @@ fun VersionInfo() {
         UpdateItems("修复 课程表在使用背景且着色器效果开启时，方格翻页闪烁的Bug")//
         UpdateItems("修复 课程表在使用背景后退出界面未恢复状态栏取色的Bug")//
         UpdateItems("修复 宣城校区教务处白屏的问题")//
+        UpdateItems("修复 聚焦点击气象预警后崩溃的Bug")
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
@@ -113,6 +114,7 @@ fun VersionInfo() {
 //        CustomCard (color = cardNormalColor()) {
 //
 //        }
+        // Fuck 修不完的Bug 加不完的新功能 卷死的就业环境 笔事多的学校 ...
     }
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP), horizontalArrangement = Arrangement.Center) {
         val navController = LocalNavController.current

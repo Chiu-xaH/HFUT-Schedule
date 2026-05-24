@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
@@ -268,13 +269,12 @@ fun FocusCard(
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = cardNormalColor(),
-            modifier = if(showWeather) {
-                Modifier.sharedContainer(
-                    key = LifeDestination.key,
-                    MaterialTheme.shapes.medium,
-                    cardNormalColor()
-                )
-            } else Modifier,
+            shape = NoneRoundShape,
+            modifier = Modifier.sharedContainer(
+                key = LifeDestination.key,
+                MaterialTheme.shapes.medium,
+                cardNormalColor()
+            ),
         ) {
             Column() {
                 if(showCard || showToday)
@@ -319,7 +319,7 @@ fun FocusCard(
                                 TransplantListItem(
                                     headlineContent = { Text(title) },
                                     overlineContent = { Text(typeName)},
-                                    leadingContent = { Icon(painterResource(R.drawable.warning),null)},
+                                    leadingContent = { Icon(painterResource(R.drawable.temp_preferences_eco),null)},
                                     modifier = Modifier.clickable {
                                         navController.push(LifeDestination)
                                     },
@@ -328,23 +328,20 @@ fun FocusCard(
                         }
                     }
                 }
-                Special(vmUI,hazeState)
+                Special(vmUI)
             }
         }
 }
 
 
-fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel)  {
+suspend fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
     val auth = prefs.getString("auth","")
-    CoroutineScope(Job()).launch {
-        async { vm.getFee("bearer $auth",FeeType.NET_XUANCHENG) }.await()
-        async {
-            Handler(Looper.getMainLooper()).post{
-                vm.infoValue.observeForever { result ->
-                    if (result != null)
-                        if(result.contains("success")&&!result.contains("账号不存在")) {
-                            vmUI.webValue.value = getWebInfo(vm)
-                        }
+    async { vm.getFee("bearer $auth",FeeType.NET_XUANCHENG) }.await()
+    async {
+        Handler(Looper.getMainLooper()).post{
+            vm.infoValue.observeForever { result ->
+                if(result != null && result.contains("success")&&!result.contains("账号不存在")) {
+                    vmUI.webValue.value = getWebInfo(vm)
                 }
             }
         }
@@ -408,11 +405,8 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
 
 @Composable
 fun Special(
-//    navController : NavHostController,
     vmUI: UIViewModel,
-    hazeState : HazeState
 ) {
-    val navController = LocalNavController.current
     var showBottomSheet by remember { mutableStateOf(false) }
     val isSpecificWorkDay = remember { isSpecificWorkDay() }
     val isSpecificWorkDayTomorrow = remember { isSpecificWorkDayTomorrow() }
@@ -440,8 +434,6 @@ fun Special(
 
     if(isHoliday) {
         Row(modifier = Modifier
-//            .background(MaterialTheme.colorScheme.surfaceContainer)
-//            .zIndex(2f)
             .clickable {
 
             }) {
@@ -458,23 +450,15 @@ fun Special(
         }
         PaddingHorizontalDivider()
         Row(modifier = Modifier
-//            .background(MaterialTheme.colorScheme.errorContainer)
-//            .zIndex(2f)
             .clickable {
                 isTomorrow = false
                 showBottomSheet = true
             }) {
-            TransplantListItem(
-                headlineContent = { ScrollText(text = "有调休上课" ) },
-                overlineContent = { ScrollText(text = "今天") },
-                leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
-                modifier = Modifier.weight(.5f)
-            )
             val d = targetDate?.substringAfter("-","")
             TransplantListItem(
+                leadingContent = { Icon(painter = painterResource(R.drawable.swap_vert) , contentDescription = "")},
                 headlineContent = { ScrollText(text = "上${ d ?: "--" }课程" ) },
-                overlineContent = { ScrollText(text = if(d == null) "选择今天上哪天的课" else "已设置") },
-                modifier = Modifier.weight(.5f)
+                overlineContent = { ScrollText(text = "今天有调休上课") },
             )
         }
     } else if(isSpecificWorkDayTomorrow) {
@@ -483,23 +467,15 @@ fun Special(
         }
         PaddingHorizontalDivider()
         Row(modifier = Modifier
-//            .background(MaterialTheme.colorScheme.surfaceContainer)
-//            .zIndex(2f)
             .clickable {
                 isTomorrow = true
                 showBottomSheet = true
             }) {
-            TransplantListItem(
-                headlineContent = { ScrollText(text = "有调休上课" ) },
-                overlineContent = { ScrollText(text = "明天") },
-                leadingContent = { Icon(painter = painterResource(R.drawable.schedule) , contentDescription = "")},
-                modifier = Modifier.weight(.5f)
-            )
             val d = targetDate?.substringAfter("-","")
             TransplantListItem(
+                leadingContent = { Icon(painter = painterResource(R.drawable.exposure_plus_1) , contentDescription = "")},
                 headlineContent = { ScrollText(text = "上${d ?: "--" }课程" ) },
-                overlineContent = { ScrollText(text = if(d == null) "选择明天将上哪天的课" else "已设置") },
-                modifier = Modifier.weight(.5f)
+                overlineContent = { ScrollText(text = "明天有调休上课") },
             )
         }
     }
@@ -508,7 +484,6 @@ fun Special(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeCourseUI(
-//    navController: NavHostController,
     isTomorrow : Boolean,
     onDismiss : (Boolean) -> Unit
 ) {

@@ -13,18 +13,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -47,42 +45,29 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.showDevelopingToast
-import com.hfut.schedule.ui.component.media.SimpleVideo
-import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CustomCard
-
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-
+import com.hfut.schedule.ui.component.media.SimpleVideo
+import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
+import com.hfut.schedule.ui.nav.destination.SettingsDeveloperDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
+import com.hfut.schedule.ui.screen.fix.about.Egg
+import com.hfut.schedule.ui.screen.fix.fix.BugShare
 import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
-import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-
+import com.sharednav.common.util.NoneRoundShape
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.util.LocalSharedRegistry
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Hashtable
-import androidx.core.graphics.createBitmap
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAvailableDestination
-import com.hfut.schedule.ui.nav.destination.SettingsDeveloperDestination
-import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
-import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
-import com.hfut.schedule.ui.screen.fix.about.About
-import com.hfut.schedule.ui.screen.fix.about.Egg
-import com.hfut.schedule.ui.screen.fix.about.Support
-import com.hfut.schedule.ui.screen.fix.fix.BugShare
-import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.LocalSharedRegistry
-import com.sharednav.common.util.NoneRoundShape
-import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -208,6 +193,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         Starter.emailMe(context)
                     }
                 )
+                /*
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsTipsDestination.key,
@@ -232,6 +218,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         }
                     )
                 }
+                 */
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.about_settings_promote_title)) },
@@ -255,6 +242,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         }
                     )
                 )
+                /*
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsAvailableDestination.key,
@@ -274,6 +262,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
                     )
                 }
+                 */
             }
         }
         DividerTextExpandedWith(stringResource(R.string.about_settings_fix_half_title)) {
@@ -313,6 +302,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                 }
             }
         }
+        InnerPaddingHeight(innerPadding,false)
     }
 }
 

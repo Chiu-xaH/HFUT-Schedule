@@ -596,9 +596,9 @@ fun TodayUI(vm: NetWorkViewModel) {
             }
             isSpecificWorkDayTomorrow() -> {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "有调休上课" ) },
+                    headlineContent = { ScrollText(text = "调休非休息" ) },
                     overlineContent = { ScrollText(text = "明天") },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.work) , contentDescription = "")},
 //                    colors = MaterialTheme.colorScheme.errorContainer
                 )
             }

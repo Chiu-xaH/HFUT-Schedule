@@ -39,9 +39,9 @@ private data class SupportItemBean(val title : String,val android : String,val u
 fun Support(innerPadding : PaddingValues) {
     val items = listOf(
         // 华为 小米 oppo vivo 荣耀 三星 魅族 类原生
-        SupportItemBean("开屏页面","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
-            false,true,true,true,true,true,true,true
-        )),
+//        SupportItemBean("开屏页面","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+//            false,true,true,true,true,true,true,true
+//        )),
         SupportItemBean("全局动态取色","Android 12+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,true,true,false,true,null,true
         )),

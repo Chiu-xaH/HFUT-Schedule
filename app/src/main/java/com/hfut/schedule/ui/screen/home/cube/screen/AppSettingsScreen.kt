@@ -363,7 +363,11 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsShortcutEditDestination.key,
-                    shape = NoneRoundShape,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp),
+                    ),
+//                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -381,6 +385,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         }
                     )
                 }
+                /*
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsLiveUpdateDestination.key,
@@ -409,6 +414,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         }
                     )
                 }
+                 */
             }
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_storage_half_title)) {

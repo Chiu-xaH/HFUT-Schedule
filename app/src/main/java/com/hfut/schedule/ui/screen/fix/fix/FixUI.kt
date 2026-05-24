@@ -157,13 +157,13 @@ fun BugShare() {
                 topBar = {
                     HazeBottomSheetTopBar("错误日志 ${list.size}/${LogUtil.DEFAULT_MAX_CACHE}条") {
                         Row() {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    refresh++
-                                }
-                            ) {
-                                Icon(painterResource(R.drawable.refresh), null)
-                            }
+//                            FilledTonalIconButton(
+//                                onClick = {
+//                                    refresh++
+//                                }
+//                            ) {
+//                                Icon(painterResource(R.drawable.refresh), null)
+//                            }
                             FilledTonalIconButton(
                                 onClick = {
                                     LogUtil.clearCache()

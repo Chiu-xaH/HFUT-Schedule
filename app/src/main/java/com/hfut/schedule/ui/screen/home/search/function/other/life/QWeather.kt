@@ -76,6 +76,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campus) {
@@ -333,10 +334,10 @@ fun WeatherScreen(vm: NetWorkViewModel) {
     var campus by remember { mutableStateOf(getCampusRegion()) }
     val uiState by vm.qWeatherResult.state.collectAsState()
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
-    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
 
     val loading = uiState !is UiState.Success
     val refreshNetwork: suspend () -> Unit = {
+        val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
         if(!showWeather) {
             vm.weatherWarningData.clear()
             vm.getWeatherWarn(campus)
