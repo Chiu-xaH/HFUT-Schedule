@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.sharednav.common.helper.DEFAULT_SHARED_SPEC
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
@@ -138,6 +139,7 @@ object DataStoreManager : IDataStore {
     private val NAV_SPLASH_SCREEN = booleanPreferencesKey("nav_splash_screen")
 //    private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
     private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
+    private val CONTAINER_SHARED_SPEED = intPreferencesKey("container_shared_speed")
 //    private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
     private val CALENDAR_SQUARE_HEIGHT_NEW = floatPreferencesKey("calendar_square_height_new")
     private val MERGE_SQUARE = booleanPreferencesKey("merge_square")
@@ -201,6 +203,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
     suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
+    suspend fun saveContainerSharedSpeed(value: Int) = saveValue(CONTAINER_SHARED_SPEED, value)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
 //    suspend fun saveShowOutOdDateEvent(value: Boolean) = saveValue(SHOW_OUT_OF_DATE_EVENT, value)
 //    suspend fun saveEnableKeepPreviousPage(value: Boolean) = saveValue(KEEP_PREVIOUS_PAGE, value)
@@ -274,6 +277,7 @@ object DataStoreManager : IDataStore {
     val enableContainerTilt = getFlow(CONTAINER_TILT,true)
     val enableContainerShare = getFlow(CONTAINER_SHEAR,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
+    val containerSharedSpeed = getFlow(CONTAINER_SHARED_SPEED,DEFAULT_SHARED_SPEC)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)

@@ -119,6 +119,7 @@ import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
+import com.sharednav.common.helper.DEFAULT_SHARED_SPEC
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.controller.NavigationController
@@ -140,6 +141,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.roundToInt
 
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -249,6 +251,7 @@ fun SharedAppearanceSettingsScreen(
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
+        val containerSharedSpeed by DataStoreManager.containerSharedSpeed.collectAsState(initial = DEFAULT_SHARED_SPEC)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
@@ -726,6 +729,44 @@ fun SharedAppearanceSettingsScreen(
 
 
                     if(enableContainerShare) {
+                        TransplantListItem(
+                            headlineContent = {
+                                Text("容器共享动画速率 ${containerSharedSpeed}ms")
+                            },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(
+                                        // TODO 这里可以做动效，懒
+                                        when(containerSharedSpeed) {
+                                            in 200 until 350 -> R.drawable.speed_2
+                                            in 350 until 500 -> R.drawable.speed_3
+                                            in 500 until 650 -> R.drawable.speed_4
+                                            in 650 .. 800 -> R.drawable.speed
+                                            else -> R.drawable.timer
+                                        }
+                                    ),
+                                    null
+                                )
+                            },
+                            supportingContent = {
+                                Text("控制带容器共享的转场速率，默认为${DEFAULT_SHARED_SPEC}ms")
+                            }
+                        )
+                        LoopingRectangleCenteredTrail2(containerSharedSpeed)
+                        CustomSlider(
+                            value = containerSharedSpeed.toFloat(),
+                            onValueChange = {
+                                scope.launch {
+                                    DataStoreManager.saveContainerSharedSpeed(it.roundToInt())
+                                }
+                            },
+                            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                            valueRange = 200f..800f,
+                            steps = 23,
+                            showProcessText = true,
+                            processText = containerSharedSpeed.toString()
+                        )
+                        PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "容器填充方案") },
                             leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },

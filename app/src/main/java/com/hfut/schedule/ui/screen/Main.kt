@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.sharednav.common.helper.DEFAULT_SHARED_SPEC
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.component.SharedNavHost
@@ -117,6 +118,7 @@ fun MainHost(
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
     val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
+    val containerSharedSpeed by DataStoreManager.containerSharedSpeed.collectAsState(initial = DEFAULT_SHARED_SPEC)
 
     // 动态ShortCut添加（长按图标菜单）
     LaunchedEffect(shortcutSort) {
@@ -176,6 +178,10 @@ fun MainHost(
             LaunchedEffect(enablePredictive) {
                 navigationController.enablePredictiveBack = enablePredictive
                 registry.enablePredictiveBack = enablePredictive
+            }
+
+            LaunchedEffect(containerSharedSpeed) {
+                registry.animationTime = containerSharedSpeed
             }
             // 系统返回手势控制
             DefaultBackHandler()
