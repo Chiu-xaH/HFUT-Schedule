@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -65,12 +64,11 @@ import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
 import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
-import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
 import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.component.text.BottomTip
@@ -78,11 +76,8 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.LocalSharedRegistry
-import com.sharednav.common.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /* 本kt文件已完成多语言文案适配 */
@@ -121,10 +116,10 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         val language by DataStoreManager.language.collectAsState(initial = Language.AUTO.code)
 
 
-        val registry = LocalSharedRegistry.current
+        val navController = LocalNavController.current
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
-                delay(registry.animationTime*1L)
+                navController.awaitTransition()
                 value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
             }
         }

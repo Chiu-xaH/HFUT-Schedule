@@ -131,7 +131,6 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.LocalSharedRegistry
 import com.xah.container.util.pixelExtension
 import com.xah.navigation.model.anim.EffectLevel
 import com.xah.shared.LogUtil
@@ -366,10 +365,10 @@ fun SharedAppearanceSettingsScreen(
         }
 
         if(!isControlCenter) {
-            val registry = LocalSharedRegistry.current
+            val navController = LocalNavController.current
             val video by produceState<String?>(initialValue = null) {
                 scope.launch {
-                    delay(registry.animationTime*1L)
+                    navController.awaitTransition()
                     value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
                 }
             }
@@ -738,10 +737,10 @@ fun SharedAppearanceSettingsScreen(
                                     painterResource(
                                         // TODO 这里可以做动效，懒
                                         when(containerSharedSpeed) {
-                                            in 200 until 350 -> R.drawable.speed_2
-                                            in 350 until 500 -> R.drawable.speed_3
-                                            in 500 until 650 -> R.drawable.speed_4
-                                            in 650 .. 800 -> R.drawable.speed
+                                            in 300 until 425 -> R.drawable.speed_2
+                                            in 425 until 550 -> R.drawable.speed_3
+                                            in 550 until 675 -> R.drawable.speed_4
+                                            in 675 .. 800 -> R.drawable.speed
                                             else -> R.drawable.timer
                                         }
                                     ),
@@ -761,8 +760,8 @@ fun SharedAppearanceSettingsScreen(
                                 }
                             },
                             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                            valueRange = 200f..800f,
-                            steps = 23,
+                            valueRange = 300f..800f,
+                            steps = 19,
                             showProcessText = true,
                             processText = containerSharedSpeed.toString()
                         )

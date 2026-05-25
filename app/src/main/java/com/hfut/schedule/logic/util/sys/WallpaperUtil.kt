@@ -20,4 +20,4 @@ import com.xah.navigation.util.getWallpaper
 fun getWallpaper() = getWallpaper(MyApplication.context)
 
 // fixme:暂时禁用高级特效，后面流畅了再用
-fun JumpTransitionEffectWallpaper() = JumpTransitionEffect(background = defaultJumpBackground,alphaStyle = false)
+fun JumpTransitionEffectWallpaper() = JumpTransitionEffect(background = defaultJumpBackground,alphaStyle = true)

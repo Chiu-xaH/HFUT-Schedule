@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,13 +44,10 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.SettingsAiApiKeyDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
 import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.LocalSharedRegistry
-import com.sharednav.common.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /* 本kt文件已完成多语言文案适配 */
@@ -84,10 +80,10 @@ fun NetworkSettingsScreen(
         var server by remember { mutableStateOf(switch_server) }
         saveBoolean("SWITCHSERVER",false,server)
         val scope = rememberCoroutineScope()
-        val registry = LocalSharedRegistry.current
+        val navController = LocalNavController.current
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
-                delay(registry.animationTime*1L)
+                navController.awaitTransition()
                 value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
             }
         }

@@ -63,9 +63,7 @@ import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.util.LocalNavController
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Hashtable
 
@@ -116,10 +114,10 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
 
 
         val scope = rememberCoroutineScope()
-        val registry = LocalSharedRegistry.current
+        val navController = LocalNavController.current
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
-                delay(registry.animationTime*1L)
+                navController.awaitTransition()
                 value = checkOrDownloadVideo(context,"example_about.mp4","https://chiu-xah.github.io/videos/example_about.mp4")
             }
         }

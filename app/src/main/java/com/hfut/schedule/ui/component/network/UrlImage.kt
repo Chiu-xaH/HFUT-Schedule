@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -31,8 +35,8 @@ import com.sharednav.common.util.NoneRoundShape
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 import com.xah.floating.util.LocalFloatingControllerSafely
+import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
-
 
 val DEFAULT_IMAGE_SIZE = 70.dp
 
@@ -46,12 +50,25 @@ fun UrlImage(
     contentScale: ContentScale = ContentScale.Crop, // 决定是否裁剪
     placeholder: Painter = painterResource(R.drawable.ic_launcher_background),
 ) {
-    val floatingControllerSafely = LocalFloatingControllerSafely.current
+    val floatingController = LocalFloatingControllerSafely.current
+    val navController = LocalNavControllerSafely.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val imageState = rememberImageState(url, cookie = cookie)
-    val bitmap = imageState.value?.asImageBitmap()
+    // 优化配合SharedNav，延迟加载
+    var enableLoad by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        navController?.awaitTransition()
+        enableLoad = true
+    }
+
+    val imageState = if (enableLoad) {
+        rememberImageState(url, cookie = cookie)
+    } else {
+        null
+    }
+    val bitmap = imageState?.value?.asImageBitmap()
 
     if (bitmap != null) {
         val window = remember(bitmap) { ImagePreviewWindow(bitmap) }
@@ -73,7 +90,7 @@ fun UrlImage(
                             interactionSource = interactionSource,
                             indication = null,
                         ) {
-                            floatingControllerSafely?.push(window)
+                            floatingController?.push(window)
                                 ?: scope.launch {
                                     Starter.startWebUrlInner(context, url, "图片", cookie)
                                 }
@@ -203,7 +220,7 @@ fun UrlImageWithAutoOcr(
     Box(
         Modifier
             .clip(RoundedCornerShape(roundSize))
-            .size(width = width,height= height)
+            .size(width = width, height = height)
     ) {
         val imageState = rememberImageState(url, cookie = cookie)
         imageState.value?.let { bitmap ->

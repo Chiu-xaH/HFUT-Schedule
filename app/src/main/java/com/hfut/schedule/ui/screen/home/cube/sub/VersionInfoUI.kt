@@ -63,12 +63,14 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
         UpdateItems("新增 错误日志导出功能","位于 选项-维护与关于-错误日志导出，用于协助开发者排查问题",to = To.Screen(SettingsAboutDestination))//
+        UpdateItems("新增 网页支持页面内搜索")//
         UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
         UpdateItems("回归 支持调节容器共享的动画速率","位于 选项-外观-动效",to = To.Screen(SettingsAppearanceDestination))
         UpdateItems("修复 课程表在使用背景且着色器效果开启时，方格翻页闪烁的Bug")//
         UpdateItems("修复 课程表在使用背景后退出界面未恢复状态栏取色的Bug")//
         UpdateItems("修复 宣城校区教务处白屏的问题")//
-        UpdateItems("修复 聚焦点击气象预警后崩溃的Bug")
+        UpdateItems("修复 聚焦点击气象预警后崩溃的Bug")//
+        UpdateItems("优化 在有图片的页面时打开页面卡顿的情况")//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
