@@ -9,37 +9,46 @@ import com.hfut.schedule.R
 @Composable
 fun DepartmentIcons(name : String, modifier: Modifier = Modifier) = Icon(painterResource(departmentIcon(name)), null,modifier)
 
+/**
+ * 学院图标重绘
+ * @param name 学院名称
+ */
 fun departmentIcon(name : String) : Int =
-    if(name.contains("计算机")) R.drawable.data_object
-    else if(name.contains("资源与环境工程")) R.drawable.eco
-    else if(name.contains("数学")) R.drawable.function
+    // 学院
+    if(name.contains("计算机与信息学院")) R.drawable.data_object
+    else if(name.contains("资源与环境工程学院")) R.drawable.eco
+    else if(name.contains("数学学院")) R.drawable.function
     else if(name.contains("外国语")) R.drawable.translate
-    else if(name.contains("马克思主义")) R.drawable.cognition
-    else if(name.contains("机械工程")) R.drawable.settings
-    else if(name.contains("材料科学")) R.drawable.texture
-    else if(name.contains("电气与自动化工程")) R.drawable.flash_on
-    else if(name.contains("土木与水利工程")) R.drawable.precision_manufacturing
-    else if(name.contains("化学与化工")) R.drawable.science
-    else if(name.contains("经济")) R.drawable.currency_pound
-    else if(name.contains("文法")) R.drawable.newsstand
-    else if(name.contains("管理")) R.drawable.account_tree
-    else if(name.contains("仪器科学与光电工程")) R.drawable.body_fat
-    else if(name.contains("建筑与艺术")) R.drawable.domain
-    else if(name.contains("食品与生物工程")) R.drawable.genetics
-    else if(name.contains("微电子")) R.drawable.empty_dashboard
-    else if(name.contains("物理")) R.drawable.category
-    else if(name.contains("汽车与交通工程")) R.drawable.directions_car
-    else if(name.contains("软件")) R.drawable.code
+    else if(name.contains("马克思主义学院")) R.drawable.cognition
+    else if(name.contains("机械工程学院")) R.drawable.settings
+    else if(name.contains("材料科学与工程学院")) R.drawable.texture
+    else if(name.contains("电气与自动化工程学院")) R.drawable.flash_on
+    else if(name.contains("土木与水利工程学院")) R.drawable.precision_manufacturing
+    else if(name.contains("化学与化工学院")) R.drawable.science
+    else if(name.contains("经济学院")) R.drawable.currency_pound
+    else if(name.contains("文法学院")) R.drawable.newsstand
+    else if(name.contains("管理学院")) R.drawable.account_tree
+    else if(name.contains("仪器科学与光电工程学院")) R.drawable.body_fat
+    else if(name.contains("建筑与艺术学院")) R.drawable.domain
+    else if(name.contains("食品与生物工程学院")) R.drawable.genetics
+    else if(name.contains("微电子学院")) R.drawable.empty_dashboard
+    else if(name.contains("物理学院")) R.drawable.category
+    else if(name.contains("汽车与交通工程学院")) R.drawable.directions_car
+    else if(name.contains("软件学院")) R.drawable.code
+    else if(name.contains("聚变科学与工程学院")) R.drawable.orbit
+    else if(name.contains("卓越工程师学院")) R.drawable.manufacturing
+    else if(name.contains("创新学院")) R.drawable.stylus_laser_pointer // 集成电路创新学院 人工智能创新学院 未来技术创新学院
     else if(name.contains("体育部")) R.drawable.directions_run
-    else if(name.contains("国际教育")) R.drawable.publics
+    // 其余机构
     else if(name.contains("校医院")) R.drawable.emergency
     else if(name.contains("工程素质教育中心")) R.drawable.massage
     else if(name.contains("创新创业教育处")) R.drawable.stylus_laser_pointer
-    // 下面是为二课适配的图标
+    // 为二课适配的图标
     else if(name.contains("教务处") || name.contains("研究生")) R.drawable.school
     else if(name.contains("党委学生工作部") || name.contains("团委")) R.drawable.person_play
     else if(name.contains("招生与就业处")) R.drawable.azm
     else if(name.contains("校领导")) R.drawable.person
+    // 未知图标
     else R.drawable.crossword
 
 @Composable

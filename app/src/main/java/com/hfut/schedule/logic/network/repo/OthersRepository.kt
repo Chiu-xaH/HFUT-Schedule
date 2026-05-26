@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.model.AdmissionDetailResponsePlan
 import com.hfut.schedule.logic.model.AdmissionListResponse
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.model.AdmissionTokenResponse
+import com.hfut.schedule.logic.model.DepartmentBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailResponse
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
@@ -31,9 +32,11 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.network.api.AdmissionService
 import com.hfut.schedule.network.api.DormitoryScore
 import com.hfut.schedule.network.api.HaiLeWashingService
+import com.hfut.schedule.network.api.HfutService
 import com.hfut.schedule.network.api.OfficeHallService
 import com.hfut.schedule.network.api.PeService
 import com.hfut.schedule.network.api.SecondClassService
@@ -44,6 +47,7 @@ import com.hfut.schedule.network.api.ZhiJianService
 import com.hfut.schedule.network.impl.AdmissionServiceCreator
 import com.hfut.schedule.network.impl.DormitoryScoreServiceCreator
 import com.hfut.schedule.network.impl.HaiLeWashingServiceCreator
+import com.hfut.schedule.network.impl.HfutServiceCreator
 import com.hfut.schedule.network.impl.OfficeHallServiceCreator
 import com.hfut.schedule.network.impl.PeServiceCreator
 import com.hfut.schedule.network.impl.SecondClassServiceCreator
@@ -57,6 +61,7 @@ import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
+import org.jsoup.Jsoup
 import java.time.LocalDate
 
 // Repo迁移计划
@@ -71,6 +76,7 @@ object OthersRepository {
     private val zhiJian = ZhiJianServiceCreator.create(ZhiJianService::class.java)
     private val pe = PeServiceCreator.create(PeService::class.java)
     private val secondClass = SecondClassServiceCreator.create(SecondClassService::class.java)
+    private val hfut = HfutServiceCreator.create(HfutService::class.java)
 
     suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestState(
         holder = holder,
@@ -170,8 +176,6 @@ object OthersRepository {
         val sId = getPersonInfo().studentId ?: throw Exception("无学号")
         json.contains(sId)
     } catch (e : Exception) { throw e }
-
-
 
 
     suspend fun officeHallSearch(
@@ -393,4 +397,46 @@ object OthersRepository {
         val data = Gson().fromJson(result, SecondClassActivitiesResponse::class.java)
         data.list
     } catch (e: Exception) { throw e }
+
+
+    suspend fun getDepartments(holder : StateHolder<List<DepartmentBean>>) =
+        launchRequestState(
+            holder = holder,
+            request = { hfut.getDepartments() },
+            transformSuccess = { _, html -> parseDepartments(html) }
+        )
+
+    @JvmStatic
+    private fun parseDepartments(html : String) : List<DepartmentBean> = try {
+        val document = Jsoup.parse(html)
+
+        document
+            .select("ul.sz-list > li")
+            .mapNotNull { li ->
+                val a = li.selectFirst("a") ?: return@mapNotNull null
+
+                val name = li
+                    .selectFirst(".sz-list-tt")
+                    ?.text()
+                    ?.trim()
+                    .orEmpty()
+
+                val website = a.attr("href").trim()
+
+                val rawIcon = li
+                    .selectFirst("font img")
+                    ?.attr("src")
+                    ?.trim()
+                    .orEmpty()
+
+                val iconUrl = rawIcon.removePrefix("../")
+
+                DepartmentBean(
+                    name = name,
+                    url = website,
+                    iconUrl = Constant.HFUT_URL + iconUrl
+                )
+            }
+
+    } catch (e : Exception) { throw e }
 }

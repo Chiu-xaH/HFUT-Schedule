@@ -35,6 +35,7 @@
     <string name="navigation_label_transfer_major">转专业</string>
     <string name="navigation_label_library">图书馆</string>
     <string name="navigation_label_all_programs">全校培养方案</string>
+    <string name="navigation_label_departments">各级学院</string>
     <string name="navigation_label_transfer_major_detail">转专业详情</string>
     <string name="navigation_label_transfer_major_applied_detail">申请详情</string>
     <string name="navigation_label_transfer_major_applied">我的申请</string>

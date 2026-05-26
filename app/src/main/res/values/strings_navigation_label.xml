@@ -35,6 +35,7 @@
     <string name="navigation_label_transfer_major">Transfer major</string>
     <string name="navigation_label_library">Library</string>
     <string name="navigation_label_all_programs">All programs</string>
+    <string name="navigation_label_departments">All departments</string>
     <string name="navigation_label_transfer_major_detail">Detail of transfer major</string>
     <string name="navigation_label_transfer_major_applied_detail">Detail of transfer major apply</string>
     <string name="navigation_label_transfer_major_applied">My applied in transfer major</string>

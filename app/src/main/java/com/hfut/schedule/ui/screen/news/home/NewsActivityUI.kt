@@ -265,7 +265,7 @@ fun NewsScreen(
                 AcademicScreen(innerPadding,vm,newsPagerState)
             }
             nav2Composable(NewsBarItems.School.name) {
-                SchoolsUI(innerPadding)
+                SchoolsUI(vm,innerPadding)
             }
         }
     }

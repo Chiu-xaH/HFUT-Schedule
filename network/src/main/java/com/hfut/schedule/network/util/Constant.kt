@@ -26,8 +26,10 @@ object Constant {
     private const val XWX_HOST = "https://xwx.gzzmedu.com"
     const val XWX_URL = "$XWX_HOST:9080/"
     const val XWX_PICTURE_URL = "$XWX_HOST:6899/"
+    // 官网
+    const val HFUT_URL = "https://www.hfut.edu.cn/"
     // 校长信箱
-    const val FEEDBACK_URL = "https://www.hfut.edu.cn/ldxx-tj.jsp?urltype=tree.TreeTempUrl&wbtreeid=1157"
+    const val FEEDBACK_URL = "${HFUT_URL}ldxx-tj.jsp?urltype=tree.TreeTempUrl&wbtreeid=1157"
     const val FEEDBACK_XC_URL = "https://xc.hfut.edu.cn/_web/_leadermail/api/lookReplieMail/new.rst?_p=YXM9MiZ0PTE0NTcmcD0xJm09TiY_&leaderMailBoxId=16&request_locale=zh_CN&localeCH=true"
     // 合工大教务 有时需校园网
     const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"

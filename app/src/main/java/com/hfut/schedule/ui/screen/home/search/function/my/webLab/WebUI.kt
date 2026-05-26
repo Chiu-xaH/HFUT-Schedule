@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,11 +52,15 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
+import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 
@@ -66,12 +71,16 @@ import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.webview.getPureUrl
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -92,10 +101,10 @@ fun WebUI() {
         }
     )
 }
-
+// TODO
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Schools(hazeState: HazeState) {
+private fun Schools(vm : NetWorkViewModel) {
     var showBottomSheet_School by remember { mutableStateOf(false) }
 
     if (showBottomSheet_School) {
@@ -115,7 +124,7 @@ private fun Schools(hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    SchoolsUI(null)
+                    SchoolsUI(vm,null)
                 }
             }
         }
@@ -215,6 +224,8 @@ fun WebNavigationScreen(
     var inputCookies by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
+    val backdrop = rememberLayerBackdrop()
+    val navController = LocalNavController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -227,6 +238,24 @@ fun WebNavigationScreen(
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
+                actions = {
+                    SharedContainer(
+                        key = DepartmentsDestination.key,
+                        shape = CircleShape,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ) {
+                        NoPadding {
+                            LiquidButton(
+                                shape = NoneRoundShape,
+                                backdrop = backdrop,
+                                onClick = { navController.push(DepartmentsDestination) },
+                            ) {
+                                Text(DepartmentsDestination.title.asString(), maxLines = 1)
+                            }
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {

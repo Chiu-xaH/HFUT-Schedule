@@ -3,70 +3,78 @@ package com.hfut.schedule.ui.screen.news.department
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.UrlImage
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
 @Composable
-fun SchoolsUI(innerPadding : PaddingValues? = null) {
-    val maps = mapOf(
-        "http://jxxy.hfut.edu.cn/" to "机械工程学院",
-        "http://mse.hfut.edu.cn/" to "材料科学与工程学院",
-        "http://ea.hfut.edu.cn/" to "电气与自动化工程学院",
-        "http://ci.hfut.edu.cn/" to "计算机与信息学院",
-        "http://civil.hfut.edu.cn/" to "土木与水利工程学院",
-        "http://hgxy.hfut.edu.cn/" to "化学与化工学院",
-        "http://mks.hfut.edu.cn/" to "马克思主义学院",
-        "http://jjxy.hfut.edu.cn/" to "经济学院",
-        "http://wgyxy.hfut.edu.cn/" to "外国语学院",
-        "http://wfxy.hfut.edu.cn/" to "文法学院",
-        "http://som.hfut.edu.cn/" to "管理学院",
-        "http://yqkx.hfut.edu.cn/" to "仪器科学与光电工程学院",
-        "http://jyxy.hfut.edu.cn/" to "建筑与艺术学院",
-        "http://geoscience.hfut.edu.cn/" to "资源与环境工程学院",
-        "http://spysw.hfut.edu.cn/" to "食品与生物工程学院",
-        "http://maths.hfut.edu.cn/" to "数学学院",
-        "http://dwxy.hfut.edu.cn/" to "电子科学与应用物理学院",
-        "http://wdzxy.hfut.edu.cn/" to "微电子学院",
-        "http://jtxy.hfut.edu.cn/" to "汽车与交通工程学院",
-        "http://rjxy.hfut.edu.cn/" to "软件学院",
-        "http://tiyu.hfut.edu.cn/" to "体育部",
-        "http://gpzx.hfut.edu.cn/" to "工培中心",
-        "http://jsxy.hfut.edu.cn/" to "技师学院",
-        "http://jxjy.hfut.edu.cn/" to "继续教育学院"
-    )
+fun SchoolsUI(vm : NetWorkViewModel,innerPadding : PaddingValues? = null) {
+    val uiState by vm.departmentsResp.state.collectAsState()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    LazyColumn {
-        item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
-        items(maps.entries.toList().size) { index ->
-            val m = maps.entries.toList()[index]
-            val title = m.value
-            val url = m.key
-            val icon = departmentIcon(title)
-//            MyCustomCard {
-            CardListItem(
+
+    val refreshNetwork = suspend {
+        if(uiState !is UiState.Success) {
+            vm.getDepartments()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val result = (uiState as UiState.Success).data
+        LazyColumn {
+            item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
+            items(result.size, key = {  result[it].name }) { index ->
+                val item = result[index]
+                val title = item.name
+                val icon = departmentIcon(title)
+                CardListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { DepartmentIcons(title) },
-                    overlineContent = { ScrollText(text = url) },
+                    trailingContent = {
+                        UrlImage(
+                            item.iconUrl,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.size(50.dp),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                        )
+                    },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebUrlInner(context,url, icon = icon )
+                            Starter.startWebUrlInner(context,item.url, icon = icon)
                         }
                     }
                 )
-//            }
+            }
+            item { if(innerPadding != null) InnerPaddingHeight(innerPadding,false) }
         }
-        item { if(innerPadding != null) InnerPaddingHeight(innerPadding,false) }
     }
+
+
 }

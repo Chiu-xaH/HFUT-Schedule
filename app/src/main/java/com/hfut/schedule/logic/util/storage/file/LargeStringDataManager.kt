@@ -37,6 +37,7 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME, MyApplicati
     const val XWX_USER_INFO = "xwx_user_info"
     private const val UNI_APP_COURSES_HEAD = "uni_app_courses_"
     const val UNI_APP_EXAMS = "uni_app_exams"
+    const val DEPARTMENTS = "departments"
 
     fun getTotalCoursesKey(semester: Int) = "$COURSES_HEAD$semester"
     fun getBookKey(semester: Int) = "$BOOK_INFO_HEAD$semester"

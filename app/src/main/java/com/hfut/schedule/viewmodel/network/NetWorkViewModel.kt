@@ -16,6 +16,7 @@ import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.model.AdmissionTokenResponse
 import com.hfut.schedule.logic.model.BuildingMapResponseBean
+import com.hfut.schedule.logic.model.DepartmentBean
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.model.GithubIssueBean
@@ -549,6 +550,9 @@ class NetWorkViewModel() : ViewModel() {
 
     val searchProgramsResp = StateHolder<List<UniAppSearchProgramBean>>()
     suspend fun searchPrograms(token : String, page : Int , keyword : String) = UniAppRepository.searchPrograms(token,page,keyword,searchProgramsResp)
+
+    val departmentsResp = StateHolder<List<DepartmentBean>>()
+    suspend fun getDepartments() = OthersRepository.getDepartments(departmentsResp)
 
     val getProgramByIdResp = StateHolder<ProgramSearchBean>()
     suspend fun getProgramById(id : Int, token: String, ) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
