@@ -64,7 +64,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
         UpdateItems("新增 错误日志导出功能","位于 选项-维护与关于-错误日志导出，用于协助开发者排查问题",to = To.Screen(SettingsAboutDestination))//
-        UpdateItems("新增 网页支持页面内搜索")
+        UpdateItems("新增 网页支持页面内搜索")//
+        // 走查nav
         UpdateItems("新增 对新增学院进行图标适配")//
         UpdateItems("重构 查询中心-通知公告-各级学院，动态获取各学院的官网")//
         UpdateItems("回归 支持调节容器共享的动画速率","位于 选项-外观-动效",to = To.Screen(SettingsAppearanceDestination))//

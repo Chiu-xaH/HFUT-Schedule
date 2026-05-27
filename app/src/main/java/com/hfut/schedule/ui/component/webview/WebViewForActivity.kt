@@ -62,6 +62,7 @@ fun WebViewScreenForActivity(
     var currentTitle by remember { mutableStateOf(title) }
     var fullScreen by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
+    var showSearch by remember { mutableStateOf(false) }
     var topColor by remember { mutableStateOf<Color?>(null) }
     val topBarTitleColor = topColor?.let {
         if (it.luminance() < 0.5f) Color.White else Color.Black
@@ -93,6 +94,9 @@ fun WebViewScreenForActivity(
             currentUrl,
             currentTitle,
             url,
+            onSearch = {
+                showSearch = !showSearch
+            }
         )
     }
 
@@ -101,6 +105,8 @@ fun WebViewScreenForActivity(
         containerColor = topColor ?: MaterialTheme.colorScheme.primary,
         topBar = {
             WebViewTopBar(
+                webView,
+                showSearch,
                 fullScreen,
                 topColor,
                 topBarTitleColor,

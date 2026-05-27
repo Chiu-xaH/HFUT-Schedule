@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -37,8 +38,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -114,6 +118,7 @@ fun WebViewTools(
     currentUrl : String,
     currentTitle : String,
     url : String,
+    onSearch : () -> Unit,
     onExtend :  @Composable (() -> Unit) = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -239,7 +244,9 @@ fun WebViewTools(
     }) { Icon(
         painterResource(id = R.drawable.net), contentDescription = "") }
 
-    IconButton(onClick = { showToast("正在开发")}) { Icon(painterResource(id = R.drawable.wand_stars), contentDescription = "") }
+    IconButton(onClick = {
+        onSearch()
+    }) { Icon(painterResource(id = R.drawable.search), contentDescription = "") }
 
     IconButton(onClick = {
         on = {}
@@ -265,6 +272,8 @@ fun WebViewTools(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebViewTopBar(
+    webView: WebView?,
+    search : Boolean,
     fullScreen : Boolean,
     topColor : Color?,
     topBarTitleColor : Color,
@@ -274,6 +283,12 @@ fun WebViewTopBar(
     currentTitle : String,
     currentUrl : String
 ) {
+    var input by remember { mutableStateOf("") }
+    var activeMatchOrdinal by remember { mutableStateOf(0) }
+    var numberOfMatches by remember { mutableStateOf(0) }
+
+    val searchEmpty by remember(numberOfMatches) { derivedStateOf { numberOfMatches == 0 } }
+
     AnimatedVisibility(
         visible = !fullScreen,
         enter = AppAnimationManager.toTopAnimation.enter,
@@ -303,13 +318,69 @@ fun WebViewTopBar(
                 },
                 navigationIcon = navigationIcon,
                 title = {
-                    Column {
-                        ScrollText(currentTitle)
-                        ScrollText(
-                            getPureUrl(currentUrl),
-                            modifier = Modifier.padding(start = 2.dp),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
+                    if(search) {
+                        LaunchedEffect(Unit) {
+                            webView?.setFindListener { a, n, isDoneCounting ->
+                                if (isDoneCounting) {
+                                    numberOfMatches = n
+                                    activeMatchOrdinal = if(!searchEmpty) {
+                                        a+1
+                                    } else {
+                                        0
+                                    }
+                                }
+                            }
+                        }
+                        CustomTextField(
+                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP, top = APP_HORIZONTAL_DP),
+                            input = input,
+                            leadingIcon = {
+                                Icon(painterResource(R.drawable.search),null)
+                            },
+                            label = {
+                                Text(
+                                    "页面内搜索" +
+                                            if(input.isEmpty()) ""
+                                            else if(searchEmpty) " 无结果"
+                                            else " ${activeMatchOrdinal}/$numberOfMatches"
+                                )
+                            },
+                            shape = CircleShape,
+                            trailingIcon = {
+                                Row {
+                                    IconButton(
+                                        onClick = {
+                                            webView?.findNext(false)
+                                        },
+                                        enabled = !searchEmpty
+                                    ) {
+                                        Icon(painterResource(R.drawable.keyboard_arrow_left),null)
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            webView?.findNext(true)
+                                        },
+                                        enabled = !searchEmpty
+                                    ) {
+                                        Icon(painterResource(R.drawable.keyboard_arrow_right),null)
+                                    }
+                                }
+                            }
+                            // 翻页器
+                        ) {
+                            input = it
+                            // 搜索
+                            webView?.findAllAsync(input)
+                        }
+                    } else {
+                        Column {
+                            ScrollText(currentTitle)
+                            ScrollText(
+                                getPureUrl(currentUrl),
+                                modifier = Modifier.padding(start = 2.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
                     }
                 },
             )

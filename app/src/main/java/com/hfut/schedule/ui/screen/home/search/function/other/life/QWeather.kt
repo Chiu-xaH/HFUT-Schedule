@@ -1,10 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -22,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
@@ -64,11 +59,10 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.window.FloorMapWindow
-import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
-import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
-import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
-import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.MID
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.DEFAULT
+import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.HIGH
+import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.LOW
+import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.MID
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -460,11 +454,15 @@ fun WeatherScreen(vm: NetWorkViewModel) {
     }
 }
 
-private enum class QWeatherLevel {
+
+/**
+ * 湿度
+ */
+private enum class HumidityLevel {
     HIGH,MID,LOW,DEFAULT
 }
 
-private fun humidityLevel(humidity : Int?) : QWeatherLevel = if (humidity != null) {
+private fun humidityLevel(humidity : Int?) : HumidityLevel = if (humidity != null) {
     if(humidity >= 70) HIGH
     else if(humidity in 0 until 50) LOW
     else if(humidity in 50 until 70) MID
@@ -472,7 +470,7 @@ private fun humidityLevel(humidity : Int?) : QWeatherLevel = if (humidity != nul
 } else DEFAULT
 
 @Composable
-private fun HumidityIcons(level : QWeatherLevel) {
+private fun HumidityIcons(level : HumidityLevel) {
     when(level) {
         HIGH -> Icon(painterResource(id = R.drawable.humidity_high), contentDescription = null)
         MID -> Icon(painterResource(id = R.drawable.humidity_mid), contentDescription = null)
@@ -485,15 +483,27 @@ private fun HumidityIcons(level : QWeatherLevel) {
 private fun QWeatherIcon(code: Int?) {
     if (code != null) {
         val context = LocalContext.current
-        val resourceName = "qweather$code"
-        val resourceId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
+        val resourceId = reflectResId(context,"qweather$code",ReflectType.DRAWABLE)
 
-        if (resourceId != 0) { // 确保资源存在
+        resourceId?.let {
             Icon(
-                painter = painterResource(id = resourceId),
+                painter = painterResource(id = it),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
         }
     }
+}
+
+enum class ReflectType {
+    DRAWABLE,STRING,DIMEN
+}
+
+/**
+ * 以反射形式拿到资源
+ */
+fun reflectResId(context : Context, resName : String,type : ReflectType) : Int? {
+    val result = context.resources.getIdentifier(resName, type.name.lowercase(), context.packageName)
+    // 确保资源存在
+    return if(result == 0) null else result
 }
