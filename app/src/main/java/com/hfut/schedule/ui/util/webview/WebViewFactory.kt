@@ -31,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -53,7 +54,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -72,11 +75,15 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.color.ColorMode
+import com.hfut.schedule.ui.util.color.deepen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.materialkolor.ktx.darken
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.shared.LogUtil
@@ -332,17 +339,30 @@ fun WebViewTopBar(
                             }
                         }
                         CustomTextField(
+                            colors =
+                                (topColor?.darken() ?: cardNormalColor(true)).let { color ->
+                                    textFiledTransplant().copy(
+                                        focusedContainerColor = color,
+                                        unfocusedContainerColor = color
+                                    )
+                                }
+                            ,
                             modifier = Modifier.padding(end = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP, top = APP_HORIZONTAL_DP),
                             input = input,
                             leadingIcon = {
-                                Icon(painterResource(R.drawable.search),null)
+                                Icon(
+                                    painterResource(R.drawable.search),
+                                    null,
+                                    tint = topBarTitleColor
+                                )
                             },
                             label = {
                                 Text(
                                     "页面内搜索" +
                                             if(input.isEmpty()) ""
                                             else if(searchEmpty) " 无结果"
-                                            else " ${activeMatchOrdinal}/$numberOfMatches"
+                                            else " ${activeMatchOrdinal}/$numberOfMatches",
+                                    color = topBarTitleColor
                                 )
                             },
                             shape = CircleShape,
@@ -352,21 +372,28 @@ fun WebViewTopBar(
                                         onClick = {
                                             webView?.findNext(false)
                                         },
-                                        enabled = !searchEmpty
+                                        enabled = !searchEmpty,
+                                        colors = IconButtonDefaults.iconButtonColors(contentColor = topBarTitleColor)
                                     ) {
-                                        Icon(painterResource(R.drawable.keyboard_arrow_left),null)
+                                        Icon(
+                                            painterResource(R.drawable.keyboard_arrow_left),
+                                            null,
+                                        )
                                     }
                                     IconButton(
                                         onClick = {
                                             webView?.findNext(true)
                                         },
-                                        enabled = !searchEmpty
+                                        enabled = !searchEmpty,
+                                        colors = IconButtonDefaults.iconButtonColors(contentColor = topBarTitleColor)
                                     ) {
-                                        Icon(painterResource(R.drawable.keyboard_arrow_right),null)
+                                        Icon(
+                                            painterResource(R.drawable.keyboard_arrow_right),
+                                            null,
+                                        )
                                     }
                                 }
                             }
-                            // 翻页器
                         ) {
                             input = it
                             // 搜索

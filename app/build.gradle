@@ -29,8 +29,8 @@ android {
         applicationId packageName
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 264
-        versionName "4.20.5.2"
+        versionCode 265
+        versionName "4.20.5.3 Dev"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
