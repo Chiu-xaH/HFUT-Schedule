@@ -2,6 +2,7 @@
 ![封面](/src/img/cover.png)
 
 ## 下载
+### 正式版
 <div align="center">
 
 [![GitHub](https://img.shields.io/github/v/release/Chiu-xaH/HFUT-Schedule?logo=github&label=GitHub&style=for-the-badge)](https://github.com/Chiu-xaH/HFUT-Schedule/releases/latest)
@@ -10,6 +11,20 @@
 
 </div>
 
+> F-Droid 发行的版本经过重签名（无法与其他渠道版本更新覆盖安装 Apk），且节奏较慢，不推荐 ；
+> 
+> Github 发行的版本有三个 Apk，分别对应 arm64, x86_64, 通用包（universal），按需选择安装（一般选 arm64）；
+> 
+> Gitee 发行的版本只有 arm64，且只有 arm64 版本支持增量更新。
+
+### [开发版（Dev）](https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Devevlop)
+> 供尝鲜正在开发中的版本，每次随代码 Push 而更新发行的 Apk，不代表最终正式版。
+
+### 资源包（可选）
+- 图片验证码识别模型（应用内下载，位于【选项-偏好与配置-图片验证码自动填充】）
+> 为减少 Apk 包体大小，验证码识别模型（约 11MB）拆分出来并支持可选下载；
+- 游客体验专用数据包（应用内下载，位于【选项-偏好与配置-备份与恢复】）
+> 为让其他开发者也可体验本应用，提供了游客数据包，导入后可解锁更多功能，但并非所有功能均可用，如有相关需求可联系开发者。
 
 ## 简介
 为合肥⼯业⼤学（HFUT）本科⽣开发的校园服务聚合类 Android 应⽤，覆盖了教学、⽣活、校内服务等 40+ 场景与功能，⽀持离⽹使⽤；使⽤现代的技术栈开发，提供全⾯、简洁、⾼效的使⽤体验。
@@ -23,13 +38,13 @@
 
 动效：自研第二代全局转场动画体系，符合直觉的一镜到底动效
 
-更新：250+版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
+更新：250+ 版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
 
 性能：冷启动迅速，开屏即展示关键信息；内存与存储占用适中
 
 ## 开始使用
 ### 要求
-Android 8.0及以上，接入互联网
+Android 8.0 (SDK26+) 及以上，接入互联网
 ### 初次使用
 保证接入互联网的环境下，填入学号与信息门户密码，登录，等待出现加载完成(底栏由暗变正常)，即可使用
 ### 刷新登陆
@@ -44,7 +59,7 @@ Android 8.0及以上，接入互联网
 
 ### [统计报表](/docs/CHART.md)
 
-用户量及日流量，通过Supabase平台托管，安全统计，无隐私数据，不定期更新
+用户量及日流量，通过 Supabase 平台托管，安全统计，无隐私数据，不定期更新
 
 ## [联系方式](zsh0908@outlook.com)
 开发者: zsh0908@outlook.com
@@ -110,42 +125,42 @@ Android 8.0及以上，接入互联网
 [Supabase](https://github.com/supabase/supabase) 托管供提供数据库
 
 ### 开源社区
-初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App(例如 [师韵-SmartHNU](https://github.com/JiaLiFuNia/SmartHNU))，还有对一些移动操作系统的借鉴，在此不一一列举了
+初期参考了 Space 课表(微信小程序)的一些功能设计，后期参考了若干开源 App (例如 [师韵-SmartHNU](https://github.com/JiaLiFuNia/SmartHNU))，还有对一些移动操作系统的借鉴，在此不一一列举了
 
 感谢其他高校开发者对本项目的肯定与参考，在此不一一列举了
 
 若干开发者和用户的帮助：
-- linsui 帮助上架F-Droid
-- James-Zhang2 提供GPA评定数据源
-- tinyvan,Today1337,zxbmmmmmmmmm,Junpgle提交RR助力开发
-- 其他用户帮助推广、通过邮件、issue等提供功能建议与反馈等，在此不一一列举了
+- linsui 帮助上架 F-Droid
+- James-Zhang2 提供 GPA 评定数据源
+- tinyvan,Today1337, zxbmmmmmmmmm, Junpgle 提交 RR 助力开发
+- 其他用户帮助推广、通过邮件、issue 等提供功能建议与反馈等，在此不一一列举了
 
 #### Pull Request 须知（参与本项目）
 
 ##### 模块分布：
-- 主仓：本仓库，约8w行代码，MVVM架构，Compose作为UI框架，体量属中型App，可善用IDE的搜索功能进行定位。
-- 网络模块：本仓库network模块，放置网络接口
-- 增量更新：DiffUpdater库，一般无需修改
-- KMP跨平台仓：暂未开始，计划筹备中
-- 基础能力（骨架）：如需修改页面导航、转场动效以及容器共享等功能，请转到[SharedNav](https://github.com/Chiu-xaH/SharedNav)库。
+- 主仓：本仓库，约 8w 行代码，MVVM 架构，Compose 作为 UI 框架，体量属中型 App，可善用 IDE 的搜索功能进行定位。
+- 网络模块：本仓库 network 模块，放置网络接口，采用设计 Service+ServiceCreator(OkHttp+Retrofit)+Repository(Gson+Jsoup)+ViewModel + StateFlow
+- 增量更新：DiffUpdater 库，一般无需修改
+- KMP 跨平台仓：暂未开始，计划筹备中
+- 基础能力（骨架）：如需修改页面导航、转场动效以及容器共享等功能，请转到 [SharedNav](https://github.com/Chiu-xaH/SharedNav) 库。
 
 ##### 规范：
 - 编程语言无特殊规范，技术栈无特殊规范，如需额外引入依赖，请与开发者提前协商并征求同意。
 - 代码风格无特殊规范，按自己习惯即可，但必须对高频敏感区块使用 `try { } catch { e : Exception -> LogUtil.error(e) }`,防止应用轻易发生Crash。
 - 代码文件的放置位置无特殊规范，按需放置即可，后续开发者会不定期整理。
 - 对于新引入资源，string 文案直接在代码中硬编码即可，方便快速开发，后续开发者会做不定期迁移到`string.xml`中；drawable 素材参考其余素材的命名以及位置，放置即可。
-- commit 的标题建议与其他提交风格一致，例如 新特性、修改优化等涉及代码的改动使用feature:XXX,修复代码存在的问题使用bugfix:XXX,重构代码使用refactor:XXX,更新非代码内容使用update:XXX…… 时间相近、功能相同的追加 commit 建议使用 `git commit --amend`合并为一个 commit。
+- commit 的标题建议与其他提交风格一致，例如 新特性、修改优化等涉及代码的改动使用 feature:XXX,修复代码存在的问题使用 bugfix:XXX,重构代码使用 refactor:XXX,更新非代码内容使用 update:XXX…… 时间相近、功能相同的追加 commit 建议使用 `git commit --amend`合并为一个 commit。
 - 如涉及 UI&UX，建议与本应用内部风格契合，尽量减少割裂感。
-- 建议在开发过程中，将app模块的build.gradle文件中的versionName后缀加上Dev，例如“4.20 Dev”，可被判定为内部开发版本，不会触发多余的上报埋点。
-- 一次PR建议应专注于一个区块，遵循最小改动化，对于多个不同的改动，可以考虑提若干个PR。
-- 对于Bug修复或者只是小改动（优化、微调等），可直接提PR。若大范围改动已有正常功能时，请与开发者提前协商并征求同意，因为有可能此改动不在更新计划内，会打乱原定计划，只能将其放置到侧分支中。
-- 不要信任AI生成的代码，做好质量把关（Review），对于Android，极易发生意想不到的情况，轻则发热卡顿，重则崩溃闪退，务必谨慎。
+- 建议在开发过程中，将 app 模块的 build.gradle 文件中的 versionName 后缀加上 Dev，例如“4.20 Dev”，可被判定为内部开发版本，不会触发多余的上报埋点。
+- 一次 PR 建议应专注于一个区块，遵循最小改动化，对于多个不同的改动，可以考虑提若干个 PR。
+- 对于 Bug 修复或者只是小改动（优化、微调等），可直接提 PR。若大范围改动已有正常功能时，请与开发者提前协商并征求同意，因为有可能此改动不在更新计划内，会打乱原定计划，只能将其放置到侧分支中。
+- 不要信任 AI 生成的代码，做好质量把关（Review），对于 Android，极易发生意想不到的情况，轻则发热卡顿，重则崩溃闪退，务必谨慎。
 
 ##### 自测：
 - 若改动较小且集中在一处，可酌情简单局部测试即可。
 - 若涉及较大范围的改动，建议选几个关键的安卓版本，且分别在正常升级、升级清除应用数据的情况下做验证。
-- 注意避免内存泄漏风险（跟随生命周期及时释放）与ANR风险（合理使用初始值+协程调度器），Global协程推荐只在全局生命周期的地方使用。
-- 若后续发布后发生了问题属于正常情况，因个人的测试范围有限以及Android生态广泛，所以更要严格遵守加try catch的原则。
+- 注意避免内存泄漏风险（跟随生命周期及时释放）与 ANR 风险（合理使用初始值+协程调度器），Global 协程推荐只在全局生命周期的地方使用。
+- 若后续发布后发生了问题属于正常情况，因个人的测试范围有限以及 Android 生态广泛，所以更要严格遵守加 try catch 的原则。
 
 ##### 提交：
 - 经过自测后，可向 dev 分支提交，stage 分支仅用于已发行版本；
