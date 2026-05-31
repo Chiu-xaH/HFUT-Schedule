@@ -256,27 +256,27 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
-                   // 慧新易校
-                   launch huiXin@ {
-                       //检测慧新易校可用性
-                       val auth = prefs.getString("auth", "")
-                       if(auth.isNullOrEmpty()) {
-                           vm.goToHuiXin(cookies)
-                       } else {
-                           vm.checkHuiXinLogin(auth)
-                           val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
-                           if(result == true) {
-                               LogUtil.debug("无需刷新慧新易校")
-                               return@huiXin
-                           } else {
-                               if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
-                                   loginHuiXin(vm)
-                               } else {
-                                   loginHuiXIn(cookies,vm)
-                               }
-                           }
-                       }
-                   }
+                    // 慧新易校
+                    launch huiXin@ {
+                        //检测慧新易校可用性
+                        val auth = prefs.getString("auth", "")
+                        if(auth.isNullOrEmpty()) {
+                            loginHuiXIn(cookies, vm)
+                        } else {
+                            vm.checkHuiXinLogin(auth)
+                            val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
+                            if(result == true) {
+                                LogUtil.debug("无需刷新慧新易校")
+                                return@huiXin
+                            } else {
+                                if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
+                                    loginHuiXin(vm)
+                                } else {
+                                    loginHuiXIn(cookies,vm)
+                                }
+                            }
+                        }
+                    }
                    // 信息门户
                    launch one@ {
                        if(useWebVpn) {
