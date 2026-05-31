@@ -256,13 +256,13 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
-                   // 慧新易校
-                   launch huiXin@ {
-                       //检测慧新易校可用性
-                       val auth = prefs.getString("auth", "")
-                       if(auth.isNullOrEmpty()) {
-                           vm.goToHuiXin(cookies)
-                       } else {
+                    // 慧新易校
+                    launch huiXin@ {
+                        //检测慧新易校可用性
+                        val auth = prefs.getString("auth", "")
+                        if(auth.isNullOrEmpty()) {
+                            loginHuiXIn(cookies, vm)
+                        } else {
                            vm.checkHuiXinLogin(auth)
                            val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
