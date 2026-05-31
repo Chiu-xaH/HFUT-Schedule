@@ -20,8 +20,16 @@ android {
             // 启用 ABI 分割
             enable true
             reset()
-            include 'arm64-v8a',  'x86_64'
-            universalApk true
+
+            def onlyArm64Debug = project.findProperty("ONLY_ARM64_DEBUG")?.toBoolean() ?: false
+
+            if (onlyArm64Debug) {
+                include 'arm64-v8a'
+                universalApk false
+            } else {
+                include 'arm64-v8a', 'x86_64'
+                universalApk true
+            }
         }
     }
 
