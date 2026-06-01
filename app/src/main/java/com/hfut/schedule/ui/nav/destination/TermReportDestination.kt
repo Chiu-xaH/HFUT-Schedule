@@ -11,7 +11,7 @@ import com.xah.common.ui.util.res
 object TermReportDestination : NavDestination() {
     override val key = "term_report"
     override val title = res(R.string.navigation_label_term_report)
-    override val icon = R.drawable.article
+    override val icon = R.drawable.kid_star
 
     @Composable
     override fun Content() {

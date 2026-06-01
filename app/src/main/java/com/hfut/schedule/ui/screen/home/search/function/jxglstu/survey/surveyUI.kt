@@ -97,7 +97,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
                     onNextPage = { semester = it },
                     onPreviousPage = { semester = it },
                     gap = 20,
-                    text = parseSemester(page),
+                    text = parseSemester(page) ?: "未知学期",
                     range = Pair(null,null),
                     resetPage = currentSemester ?: -1
                 )

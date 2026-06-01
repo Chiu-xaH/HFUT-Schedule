@@ -626,7 +626,7 @@ fun CalendarSettingsUI(
         TransplantListItem(
             headlineContent = { Text(text = stringResource(R.string.app_settings_current_term_title)) },
             supportingContent = {
-                Text(text = parseSemester(if(autoTerm) getSemesterWithoutSuspend() else autoTermValue))
+                Text(text = parseSemester(if(autoTerm) getSemesterWithoutSuspend() else autoTermValue)!!)
             },
             modifier = Modifier.clickable {
                 showToast(context.getString(R.string.app_settings_toast_change_current_term_unsupported))

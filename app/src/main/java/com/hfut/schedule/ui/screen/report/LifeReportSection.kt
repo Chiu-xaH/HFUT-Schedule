@@ -10,8 +10,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -26,7 +26,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
     val dormitoryUsers by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
     val dormitoryScore by vm.dormitoryScoreResp.state.collectAsState()
 
-    val termInfo = remember(semester) { parseSemesterInt(semester) }
+    val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
 
     LaunchedEffect(Unit) {
         try {
@@ -44,13 +44,13 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
         try {
             val token = prefs.getString("TOKEN", "") ?: ""
             if (token.isEmpty()) return@LaunchedEffect
-            val semStr = termInfo?.dormitoryName ?: return@LaunchedEffect
+            val semStr = SemesterParser.parseSemesterForDormitory(semester)
             vm.dormitoryScoreResp.clear()
             vm.getDormitoryScore(token, null, semStr)
         } catch (_: Exception) {}
     }
 
-    DividerTextExpandedWith("生活报表", false) {
+    DividerTextExpandedWith("生活报表") {
         when (dormitoryInfo) {
             is UiState.Success -> {
                 val info = (dormitoryInfo as UiState.Success).data
@@ -103,7 +103,9 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(
-                            overlineContent = { Text("${termInfo?.displayName ?: ""} 卫生评分") },
+                            overlineContent = {
+                                SemesterParser.parseSemester(semester)?.let { Text(it) }
+                            },
                             headlineContent = { Text("卫生评分", style = MaterialTheme.typography.titleMedium) }
                         )
                         scores.forEach { score ->
