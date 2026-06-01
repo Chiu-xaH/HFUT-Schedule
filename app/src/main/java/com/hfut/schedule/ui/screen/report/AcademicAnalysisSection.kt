@@ -80,29 +80,25 @@ private fun gradeDisplayText(grade: String?, credits: Double): String {
 fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
-    val currentSem = remember { SemesterParser.getSemesterWithoutSuspend() }
-
+    val defaultSem = remember { semester }
     var courseAnalysis by remember { mutableStateOf<CourseAnalysisResult?>(null) }
 
-    LaunchedEffect(semester) {
-        courseAnalysis = null
+    LaunchedEffect(Unit) {
         try {
-            if (semester == 0 || semester == currentSem) {
-                val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
-                if (json != null) {
-                    val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
-                    val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
-                    for (item in courses) {
-                        for (schedule in item.schedules) {
-                            weekCount.getOrPut(schedule.weekIndex) { mutableListOf() }
-                                .add(item.course.nameZh to "${schedule.startTime}-${schedule.endTime}")
-                        }
+            val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
+            if (json != null) {
+                val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
+                val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
+                for (item in courses) {
+                    for (schedule in item.schedules) {
+                        weekCount.getOrPut(schedule.weekIndex) { mutableListOf() }
+                            .add(item.course.nameZh to "${schedule.startTime}-${schedule.endTime}")
                     }
-                    if (weekCount.isNotEmpty()) {
-                        val busiest = weekCount.maxByOrNull { it.value.size }!!
-                        val avg = weekCount.values.sumOf { it.size }.toDouble() / weekCount.size
-                        courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
-                    }
+                }
+                if (weekCount.isNotEmpty()) {
+                    val busiest = weekCount.maxByOrNull { it.value.size }!!
+                    val avg = weekCount.values.sumOf { it.size }.toDouble() / weekCount.size
+                    courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
                 }
             }
         } catch (_: Exception) {}
@@ -216,29 +212,31 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
 
-            // 课表分析：最繁忙周
-            courseAnalysis?.let { (busiestWeekNum, busiestCourses, avgPerWeek) ->
-                val courseNames = busiestCourses.map { it.first }.distinct()
+            // 课表分析：最繁忙周（仅默认学期可见）
+            if (semester == defaultSem) {
+                courseAnalysis?.let { (busiestWeekNum, busiestCourses, avgPerWeek) ->
+                    val courseNames = busiestCourses.map { it.first }.distinct()
 
-                CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(
-                        headlineContent = { Text("最繁忙的一周", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("第${busiestWeekNum}周") },
-                        headlineContent = { Text("共 ${busiestCourses.size} 节课", style = MaterialTheme.typography.headlineMedium) },
-                        supportingContent = { Text("平均每周 ${formatDecimal(avgPerWeek, 1)} 节") }
-                    )
-                    val courseListStr = buildString {
-                        append(courseNames.take(6).joinToString("\n"))
-                        if (courseNames.size > 6) {
-                            append("\n...还有 ${courseNames.size - 6} 门课")
+                    CustomCard(color = cardNormalColor()) {
+                        TransplantListItem(
+                            headlineContent = { Text("最繁忙的一周", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        )
+                        TransplantListItem(
+                            overlineContent = { Text("第${busiestWeekNum}周") },
+                            headlineContent = { Text("共 ${busiestCourses.size} 节课", style = MaterialTheme.typography.headlineMedium) },
+                            supportingContent = { Text("平均每周 ${formatDecimal(avgPerWeek, 1)} 节") }
+                        )
+                        val courseListStr = buildString {
+                            append(courseNames.take(6).joinToString("\n"))
+                            if (courseNames.size > 6) {
+                                append("\n...还有 ${courseNames.size - 6} 门课")
+                            }
                         }
+                        TransplantListItem(headlineContent = { Text(courseListStr, style = MaterialTheme.typography.bodyMedium) })
                     }
-                    TransplantListItem(headlineContent = { Text(courseListStr, style = MaterialTheme.typography.bodyMedium) })
-                }
 
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                }
             }
 
             // 考试分析
