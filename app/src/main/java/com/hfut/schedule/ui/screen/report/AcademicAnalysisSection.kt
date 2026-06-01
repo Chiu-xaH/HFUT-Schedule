@@ -54,6 +54,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     var examAnalysis by remember { mutableStateOf<ExamAnalysisResult?>(null) }
 
     LaunchedEffect(semester) {
+        courseAnalysis = null
         try {
             val targetSemester = if (semester == 0) SemesterParser.getSemester() else semester
             val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(targetSemester))
@@ -76,6 +77,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     }
 
     LaunchedEffect(semester) {
+        examAnalysis = null
         try {
             val allExams = getExamFromCache()
             val termInfo = parseSemesterInt(semester)
