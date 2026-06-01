@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -79,16 +80,15 @@ private fun gradeDisplayText(grade: String?, credits: Double): String {
 fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
+    val currentSem = remember { SemesterParser.getSemesterWithoutSuspend() }
+
     var courseAnalysis by remember { mutableStateOf<CourseAnalysisResult?>(null) }
-    var examAnalysis by remember { mutableStateOf<ExamAnalysisResult?>(null) }
 
     LaunchedEffect(semester) {
         courseAnalysis = null
         try {
-            val currentSem = SemesterParser.getSemester()
-            // 只有在全部学期(0)或者当前学期时，才展示课表分析（因为本地只缓存了当前学期的课表）
-            if (semester == 0 || semester == currentSem || semester == SemesterParser.getSemesterWithoutSuspend()) {
-                val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(currentSem))
+            if (semester == 0 || semester == currentSem) {
+                val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
                 if (json != null) {
                     val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
                     val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
@@ -108,8 +108,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
         } catch (_: Exception) {}
     }
 
-    LaunchedEffect(semester) {
-        examAnalysis = null
+    val examAnalysis by produceState<ExamAnalysisResult?>(initialValue = null, semester) {
+        value = null
         try {
             val allExams = getExamFromCache()
             val termInfo = parseSemesterInt(semester)
@@ -119,41 +119,56 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 allExams.filter { exam ->
                     try {
                         val date = exam.dateTime.substring(0, 10)
-                        date >= start && date < end
+                        date in start..<end
                     } catch (_: Exception) { false }
                 }
             }
-            
-            if (exams.isNotEmpty()) {
-                val monthGroups = exams.groupBy { exam ->
-                    try { exam.dateTime.substring(0, 7) } catch (_: Exception) { "未知" }
-                }
-                val dates = exams.mapNotNull { exam ->
-                    try { LocalDate.parse(exam.dateTime.substring(0, 10), DateTimeFormatter.ISO_LOCAL_DATE) }
-                    catch (_: Exception) { null }
-                }.sorted()
 
-                var maxCons = 1; var curCons = 1
-                var maxStart = dates.firstOrNull(); var maxEnd = dates.firstOrNull()
-                var tempStart = dates.firstOrNull()
-                for (i in 1 until dates.size) {
-                    if (dates[i].toEpochDay() - dates[i - 1].toEpochDay() == 1L) {
-                        curCons++
-                    } else {
-                        if (curCons > maxCons) { maxCons = curCons; maxStart = tempStart; maxEnd = dates[i - 1] }
-                        curCons = 1; tempStart = dates[i]
-                    }
-                }
-                if (curCons > maxCons) { maxCons = curCons; maxStart = tempStart; maxEnd = dates.last() }
+            if (exams.isNotEmpty()) {
+                val monthGroups = exams.groupBy {
+                    try {
+                        it.dateTime.substring(5, 7).toInt()
+                    } catch (_: Exception) { 0 }
+                }.filterKeys { it != 0 }
 
                 val busiestMonthEntry = monthGroups.maxByOrNull { it.value.size }
-                val busiestMonth = busiestMonthEntry?.let { it.key to it.value }
-                val monthStats = monthGroups.map { (m, l) -> m to l.size }.sortedByDescending { it.second }
-                examAnalysis = ExamAnalysisResult(busiestMonth, monthStats, maxCons, maxStart, maxEnd)
-            } else {
-                examAnalysis = null
+                val busiestMonth = busiestMonthEntry?.let { it.key.toString() to it.value }
+
+                val monthStats = monthGroups.map { it.key.toString() to it.value.size }.sortedBy { it.first.toInt() }
+
+                val sortedDates = exams.mapNotNull {
+                    try {
+                        LocalDate.parse(it.dateTime.substring(0, 10))
+                    } catch (_: Exception) { null }
+                }.sorted().distinct()
+
+                var maxCons = 1
+                var currentCons = 1
+                var maxStart: LocalDate? = sortedDates.firstOrNull()
+                var maxEnd: LocalDate? = sortedDates.firstOrNull()
+                var currentStart: LocalDate? = sortedDates.firstOrNull()
+
+                for (i in 1 until sortedDates.size) {
+                    val prev = sortedDates[i - 1]
+                    val curr = sortedDates[i]
+                    if (prev.plusDays(1) == curr) {
+                        currentCons++
+                        if (currentCons > maxCons) {
+                            maxCons = currentCons
+                            maxStart = currentStart
+                            maxEnd = curr
+                        }
+                    } else {
+                        currentCons = 1
+                        currentStart = curr
+                    }
+                }
+
+                value = ExamAnalysisResult(busiestMonth, monthStats, maxCons, maxStart, maxEnd)
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     DividerTextExpandedWith("学业分析", false) {
@@ -207,7 +222,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text("🚀 最繁忙的一周", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        headlineContent = { Text("最繁忙的一周", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
                     )
                     TransplantListItem(
                         overlineContent = { Text("第${busiestWeekNum}周") },
@@ -230,7 +245,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             examAnalysis?.let { result ->
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text("📅 考试月分布", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        headlineContent = { Text("考试月分布", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
                     )
                     result.busiestMonth?.let { (month, exams) ->
                         TransplantListItem(
@@ -293,7 +308,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text("📊 学业数据图表", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        headlineContent = { Text("学业数据图表", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
                     )
                     
                     if (radarData.size >= 3) {
@@ -340,7 +355,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text("💡 学期总结", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        headlineContent = { Text("学期总结", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
                     )
                     TransplantListItem(
                         headlineContent = { Text(messages.joinToString("\n"), style = MaterialTheme.typography.bodyMedium) }

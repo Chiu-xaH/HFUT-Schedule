@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.chart.BarChart
+import com.xah.common.ui.component.chart.LineChart
 import com.xah.common.ui.component.chart.PieChart
 import com.xah.common.ui.component.chart.PieChartData
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -55,13 +56,18 @@ private fun classifyMeal(resume: String, time: String): String {
 @Composable
 fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     val billState by vm.huiXinBillResult.state.collectAsState()
+    val predictedState by vm.cardPredictedResponse.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        if (billState !is UiState.Success) {
-            val auth = prefs.getString("auth", "") ?: ""
-            if (auth.isNotEmpty()) {
+        val auth = prefs.getString("auth", "") ?: ""
+        if (auth.isNotEmpty()) {
+            if (billState !is UiState.Success) {
                 vm.huiXinBillResult.clear()
                 vm.getCardBill("bearer $auth", 1, 500)
+            }
+            if (predictedState !is UiState.Success) {
+                vm.cardPredictedResponse.clear()
+                vm.getCardPredicted("bearer $auth")
             }
         }
     }
@@ -77,7 +83,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                     else {
                         val start = termInfo.dateRangeStart
                         val end = termInfo.dateRangeEnd
-                        allRecords.filter { it.effectdateStr.substring(0, 7) >= start && it.effectdateStr.substring(0, 7) < end }
+                        allRecords.filter { it.effectdateStr.substring(0, 7) in start..<end }
                     }
                 }
 
@@ -91,6 +97,13 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 // 基础统计
                 val totalAmount = remember(records) { records.sumOf { (it.tranamt ?: 0) / 100.0 } }
                 val avgPerTransaction = remember(records) { if (records.isEmpty()) 0.0 else totalAmount / records.size }
+                
+                val activeDays = remember(records) { records.map { it.effectdateStr.substringBefore(" ") }.distinct().size }
+                val dailyAvg = remember(totalAmount, activeDays) { if (activeDays > 0) totalAmount / activeDays else 0.0 }
+                
+                val activeMonths = remember(records) { records.map { it.effectdateStr.substringBeforeLast("-") }.distinct().size }
+                val monthlyAvg = remember(totalAmount, activeMonths) { if (activeMonths > 0) totalAmount / activeMonths else 0.0 }
+
                 val sorted = remember(records) { records.sortedBy { it.jndatetimeStr } }
                 val earliest = sorted.first()
                 val latest = sorted.last()
@@ -200,7 +213,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
-                // 消费概览 + 消费足迹
+                // 消费概览
                 val earliestLatestByTime = remember(records) {
                     try {
                         records.mapNotNull { record ->
@@ -217,14 +230,27 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text("消费概览") },
+                        overlineContent = { Text("总消费") },
                         headlineContent = { Text("￥${formatDecimal(totalAmount, 2)}", style = MaterialTheme.typography.headlineMedium) },
                         supportingContent = { Text("共 ${records.size} 笔 | 跨越 $days 天") }
                     )
-                    TransplantListItem(
-                        overlineContent = { Text("平均单笔") },
-                        headlineContent = { Text("￥${formatDecimal(avgPerTransaction, 2)}", style = MaterialTheme.typography.titleMedium) }
-                    )
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        TransplantListItem(
+                            overlineContent = { Text("日均") },
+                            headlineContent = { Text("￥${formatDecimal(dailyAvg, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        TransplantListItem(
+                            overlineContent = { Text("月均") },
+                            headlineContent = { Text("￥${formatDecimal(monthlyAvg, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        TransplantListItem(
+                            overlineContent = { Text("单笔均") },
+                            headlineContent = { Text("￥${formatDecimal(avgPerTransaction, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                     if (highestRecord != null) {
                         TransplantListItem(
                             overlineContent = { Text("单笔最高") },
@@ -232,21 +258,123 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                             supportingContent = { Text("${highestRecord.resume.substringBefore("-").take(15)} | ${highestRecord.jndatetimeStr}") }
                         )
                     }
-                    earliestLatestByTime.first?.let { (_, date, time) ->
-                        TransplantListItem(
-                            overlineContent = { Text("最早消费") },
-                            headlineContent = { Text("${date} $time", style = MaterialTheme.typography.bodyMedium) }
-                        )
-                    }
-                    earliestLatestByTime.second?.let { (_, date, time) ->
-                        TransplantListItem(
-                            overlineContent = { Text("最晚消费") },
-                            headlineContent = { Text("${date} $time", style = MaterialTheme.typography.bodyMedium) }
-                        )
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        earliestLatestByTime.first?.let { (_, date, time) ->
+                            TransplantListItem(
+                                overlineContent = { Text("最早消费") },
+                                headlineContent = { Text("$date $time", style = MaterialTheme.typography.bodySmall) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        earliestLatestByTime.second?.let { (_, date, time) ->
+                            TransplantListItem(
+                                overlineContent = { Text("最晚消费") },
+                                headlineContent = { Text("$date $time", style = MaterialTheme.typography.bodySmall) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+
+                if (predictedState is UiState.Success) {
+                    val predictData = (predictedState as UiState.Success).data
+                    CustomCard(color = cardNormalColor()) {
+                        androidx.compose.foundation.layout.Row(modifier = Modifier.fillMaxWidth()) {
+                            TransplantListItem(
+                                overlineContent = { Text("明日预计") },
+                                headlineContent = { Text("￥${formatDecimal(predictData.day.predictData.predict, 2)}", style = MaterialTheme.typography.titleMedium) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            TransplantListItem(
+                                overlineContent = { Text("下月预计") },
+                                headlineContent = { Text("￥${formatDecimal(predictData.month.predictData.predict, 2)}", style = MaterialTheme.typography.titleMedium) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                }
+
+                // 每学期各周最早/最晚消费时间折线图
+                val semesterWeekTimeStats = remember(records) {
+                    try {
+                        val sortedByDate = records.mapNotNull {
+                            val timeStr = it.jndatetimeStr.substringAfter(" ")
+                            val dateStr = it.effectdateStr.substringBefore(" ")
+                            if (timeStr.isNotEmpty() && dateStr.isNotEmpty()) {
+                                val date = LocalDate.parse(dateStr)
+                                val hour = timeStr.substringBefore(":").toDoubleOrNull() ?: return@mapNotNull null
+                                val minute = timeStr.substringAfter(":").substringBefore(":").toDoubleOrNull() ?: 0.0
+                                val timeDecimal = hour + minute / 60.0
+                                Triple(it, date, timeDecimal)
+                            } else null
+                        }.sortedBy { it.second }
+
+                        if (sortedByDate.isEmpty()) Pair(emptyMap(), emptyMap())
+                        else {
+                            val firstDate = sortedByDate.first().second
+                            val earliestMap = mutableMapOf<Int, Double>()
+                            val latestMap = mutableMapOf<Int, Double>()
+                            
+                            for (item in sortedByDate) {
+                                val weekNum = (ChronoUnit.DAYS.between(firstDate, item.second) / 7 + 1).toInt()
+                                val timeDecimal = item.third
+                                
+                                val curEarliest = earliestMap[weekNum]
+                                if (curEarliest == null || timeDecimal < curEarliest) {
+                                    earliestMap[weekNum] = timeDecimal
+                                }
+                                val curLatest = latestMap[weekNum]
+                                if (curLatest == null || timeDecimal > curLatest) {
+                                    latestMap[weekNum] = timeDecimal
+                                }
+                            }
+                            
+                            val earliestChart = earliestMap.entries.sortedBy { it.key }.associate { it.key.toString() to it.value.toFloat() }
+                            val latestChart = latestMap.entries.sortedBy { it.key }.associate { it.key.toString() to it.value.toFloat() }
+                            
+                            Pair(earliestChart, latestChart)
+                        }
+                    } catch (_: Exception) { Pair(emptyMap(), emptyMap()) }
+                }
+
+                val (earliestTimeData, latestTimeData) = semesterWeekTimeStats
+                if (earliestTimeData.isNotEmpty()) {
+                    val timeFormatter: (Float) -> String = {
+                        val h = it.toInt()
+                        val m = ((it - h) * 60).toInt()
+                        "${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}"
+                    }
+
+                    CustomCard(color = cardNormalColor()) {
+                        TransplantListItem(
+                            overlineContent = { Text("各周消费时间分布 (横轴:周)") },
+                            headlineContent = { Text("最早消费时间", style = MaterialTheme.typography.titleMedium) }
+                        )
+                        LineChart(
+                            data = earliestTimeData,
+                            showLabel = true,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).height(120.dp),
+                            xLabelSpacing = 4,
+                            yAxisFormatter = timeFormatter
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        TransplantListItem(
+                            headlineContent = { Text("最晚消费时间", style = MaterialTheme.typography.titleMedium) }
+                        )
+                        LineChart(
+                            data = latestTimeData,
+                            showLabel = true,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).height(120.dp),
+                            xLabelSpacing = 4,
+                            yAxisFormatter = timeFormatter
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                }
 
                 // 周几消费最多
                 val weekdayChartData = remember(weekdayStats) {
@@ -324,7 +452,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                         if (totalAmount > 5000) add("本学期消费超过 5000 元，省着点花哦~")
                         if (totalAmount < 1000) add("本学期消费不到 1000 元，省钱冠军就是你！")
 
-                        if (days > 100) add("跨越 ${days} 天的消费记录，你一直在坚持记账！")
+                        if (days > 100) add("跨越 $days 天的消费记录，你一直在坚持记账！")
 
                         if (avgPerDay > 30) add("日均消费 ￥${formatDecimal(avgPerDay, 0)}，食堂不香吗？")
                         else if (avgPerDay < 15) add("日均消费 ￥${formatDecimal(avgPerDay, 0)}，你是省钱小能手！")

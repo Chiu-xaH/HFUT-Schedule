@@ -8,10 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.model.huixin.BillMonth
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -20,10 +17,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import androidx.compose.foundation.layout.padding
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 @Composable
 fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
@@ -43,38 +37,6 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
         when (uiState) {
             is UiState.Success -> {
                 val data = (uiState as UiState.Success).data
-                val allDayList = data.day.analyzeData.statisticalData.toList()
-                val allMonthList = data.month.analyzeData.statisticalData.toList()
-
-                val termInfo = parseSemesterInt(semester)
-
-                val dayList = if (termInfo == null) allDayList else {
-                    val start = termInfo.dateRangeStart
-                    val end = termInfo.dateRangeEnd
-                    allDayList.filter { it.first.substring(0, 7) >= start && it.first.substring(0, 7) < end }
-                }
-                val monthList = if (termInfo == null) allMonthList else {
-                    val start = termInfo.dateRangeStart
-                    val end = termInfo.dateRangeEnd
-                    allMonthList.filter { it.first >= start && it.first < end }
-                }
-
-                val total = dayList.sumOf { it.second }
-                val avg = if (dayList.isEmpty()) 0.0 else total / dayList.size
-                val mAvg = if (monthList.isEmpty()) 0.0 else monthList.sumOf { it.second } / monthList.size
-
-                CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(
-                        overlineContent = { Text(termInfo?.displayName ?: "全部学期") },
-                        headlineContent = { Text("消费概览", style = MaterialTheme.typography.titleMedium) }
-                    )
-                    TransplantListItem(overlineContent = { Text("总消费") }, headlineContent = { Text("￥${formatDecimal(total, 2)}", style = MaterialTheme.typography.headlineMedium) })
-                    TransplantListItem(overlineContent = { Text("日均") }, headlineContent = { Text("￥${formatDecimal(avg, 2)}", style = MaterialTheme.typography.headlineMedium) })
-                    TransplantListItem(overlineContent = { Text("月均") }, headlineContent = { Text("￥${formatDecimal(mAvg, 2)}", style = MaterialTheme.typography.headlineMedium) })
-                }
-
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
 
 
                 CustomCard(color = cardNormalColor()) {

@@ -3,6 +3,12 @@ package com.hfut.schedule.ui.screen.report
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Alignment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,39 +66,52 @@ fun LibraryReportSection(vm: NetWorkViewModel) {
                             Text("本学期借阅", style = MaterialTheme.typography.titleMedium)
                         }
                     )
-                    TransplantListItem(
-                        overlineContent = { Text("借阅次数") },
-                        headlineContent = {
-                            Text("${status.borrowCount}", style = MaterialTheme.typography.headlineMedium)
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            TransplantListItem(
+                                overlineContent = { Text("借阅次数", style = MaterialTheme.typography.bodySmall) },
+                                headlineContent = {
+                                    Text("${status.borrowCount}", style = MaterialTheme.typography.headlineSmall)
+                                },
+                                usePadding = false,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                            TransplantListItem(
+                                overlineContent = { Text("书架藏书", style = MaterialTheme.typography.bodySmall) },
+                                headlineContent = {
+                                    Text("${status.bookShelfCount}", style = MaterialTheme.typography.headlineSmall)
+                                },
+                                usePadding = false,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                            TransplantListItem(
+                                overlineContent = { Text("预约次数", style = MaterialTheme.typography.bodySmall) },
+                                headlineContent = {
+                                    Text("${status.reserveCount}", style = MaterialTheme.typography.headlineSmall)
+                                },
+                                usePadding = false,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
                         }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("书架藏书") },
-                        headlineContent = {
-                            Text("${status.bookShelfCount}", style = MaterialTheme.typography.headlineMedium)
+                        
+                        if (status.borrowCount > 0 || status.reserveCount > 0 || status.entrustCount > 0) {
+                            Box(modifier = Modifier.weight(1.5f)) {
+                                PieChart(
+                                    data = listOf(
+                                        PieChartData("借阅", status.borrowCount.toFloat()),
+                                        PieChartData("预约", status.reserveCount.toFloat()),
+                                        PieChartData("委托", status.entrustCount.toFloat())
+                                    ).filter { it.value > 0 },
+                                    modifier = Modifier.fillMaxWidth().height(160.dp),
+                                    pieModifier = Modifier.size(120.dp),
+                                    title = "借阅统计"
+                                )
+                            }
                         }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("预约次数") },
-                        headlineContent = {
-                            Text("${status.reserveCount}", style = MaterialTheme.typography.headlineMedium)
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
-                if (status.borrowCount > 0 || status.reserveCount > 0 || status.entrustCount > 0) {
-                    CustomCard(color = cardNormalColor()) {
-                        PieChart(
-                            data = listOf(
-                                PieChartData("借阅", status.borrowCount.toFloat()),
-                                PieChartData("预约", status.reserveCount.toFloat()),
-                                PieChartData("委托", status.entrustCount.toFloat())
-                            ).filter { it.value > 0 },
-                            modifier = Modifier.padding(APP_HORIZONTAL_DP),
-                            title = "借阅统计"
-                        )
                     }
                 }
 
