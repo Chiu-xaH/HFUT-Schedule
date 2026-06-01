@@ -50,7 +50,7 @@ fun BarChart(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom,
-                    modifier = Modifier.weight(1f, fill = true)
+                    modifier = Modifier.weight(1f, fill = true).fillMaxHeight()
                 ) {
                     // 上方数值标签
                     if (showLabel) {
