@@ -133,7 +133,6 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.ToadyCamp
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
-import com.hfut.schedule.ui.screen.home.search.function.report.TermReport
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -235,7 +234,7 @@ fun SearchScreen(
                 SearchAppBean(25,"体育 云运动 乐跑 校园跑 ${context.getString(R.string.navigation_label_physical_fitness_test)} 体育测试 体检", { LePaoYun() }, WebViewDestination.getKey(Constant.PE_HOME_URL)),
                 SearchAppBean(26,"${WorkAndRestDestination.TITLE.asString(context)} 校历", { WorkAndRest() }, WorkAndRestDestination(null).key),
                 SearchAppBean(27,"${context.getString(R.string.navigation_label_chsi)}", { XueXin() }, WebViewDestination.getKey(Constant.XUE_XIN_URL)),
-                SearchAppBean(28,"${LifeDestination.title.asString(context)} 校园 天气 新生 楼层导向 地图", { Life() }, LifeDestination.key),
+                SearchAppBean(28,"${LifeDestination.title.asString(context)} 校园 天气 新生 楼层导向 地图 ${TermReportDestination.title.asString(context)} 学期总结 成绩 消费 图书馆 借阅 统计 报表", { Life() }, LifeDestination.key),
                 SearchAppBean(29,"${TransferMajorDestination.title.asString(context)}", { Transfer(ifSaved) }, TransferMajorDestination.key),
                 SearchAppBean(30,"${CourseSearchDestination.title.asString(context)} 全校开课 课程", { CoursesSearch(ifSaved) }, CourseSearchDestination.key),
                 SearchAppBean(31,"${TeacherSearchDestination.title.asString(context)} 老师检索", { TeacherSearch() }, TeacherSearchDestination.key),
@@ -258,7 +257,6 @@ fun SearchScreen(
                 SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track() }, TrackDestination.key),
                 SearchAppBean(49,"拼多多 淘宝 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() },ExpressWindow.key),
                 SearchAppBean(50,"${context.getString(R.string.navigation_label_feedback)} 反馈 建议", { Feedback() }, FeedbackWindow.key),
-                SearchAppBean(51,"${TermReportDestination.title.asString(context)} 学期总结 成绩 消费 图书馆 借阅 统计 报表", { TermReport() }, TermReportDestination.key),
             )
         )
     }

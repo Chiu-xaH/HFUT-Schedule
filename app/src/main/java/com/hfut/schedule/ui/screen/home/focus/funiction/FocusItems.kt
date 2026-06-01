@@ -571,7 +571,7 @@ fun TimeStampItem() = BottomTip(getTimeStamp())
 @Composable
 fun TermTip() {
     val v by produceState(initialValue = "") {
-        value = parseSemester(getSemester())
+        value = parseSemester(getSemester())  ?: "未知学期"
     }
     BottomTip(v)
 }

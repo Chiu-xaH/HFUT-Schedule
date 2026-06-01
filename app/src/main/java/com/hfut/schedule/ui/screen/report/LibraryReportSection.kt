@@ -43,7 +43,7 @@ fun LibraryReportSection(vm: NetWorkViewModel) {
         }
     }
 
-    DividerTextExpandedWith("图书馆报表", false) {
+    DividerTextExpandedWith("图书馆报表") {
         val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "") ?: ""
         if (token.isEmpty()) {
             CustomCard(color = cardNormalColor()) {

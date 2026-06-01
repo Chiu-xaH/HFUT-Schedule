@@ -375,7 +375,7 @@ fun CourseSearchScreen(
                         scope.launch { refreshNetwork(false) }
                     },
                     gap = 20,
-                    text = parseSemester(page),
+                    text = parseSemester(page)  ?: "未知学期",
                     range = Pair(null,null),
                     paddingSafely = false,
                     resetPage = currentSemester ?: -1
@@ -452,7 +452,7 @@ fun ApiForCourseSearch(
                     scope.launch { refreshNetwork() }
                 },
                 gap = 20,
-                text = parseSemester(page),
+                text = parseSemester(page) ?: "未知学期",
                 range = Pair(null,null),
                 paddingSafely = false,
                 resetPage = currentSemester ?: -1

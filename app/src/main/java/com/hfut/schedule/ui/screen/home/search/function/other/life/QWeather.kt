@@ -58,6 +58,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.window.FloorMapWindow
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.DEFAULT
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.HIGH
@@ -70,6 +71,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -450,6 +452,33 @@ fun WeatherScreen(vm: NetWorkViewModel) {
 
         DividerTextExpandedWith(text = "校园地图") {
             SchoolMapScreen(vm)
+        }
+        DividerTextExpandedWith(text = TermReportDestination.title.asString()) {
+            val navController = LocalNavController.current
+            CardListItem(
+                shape = NoneRoundShape,
+                cardModifier = Modifier
+                    .sharedContainer(
+                        TermReportDestination.key,
+                        MaterialTheme.shapes.medium,
+                        cardNormalColor()
+                    ),
+                headlineContent = {
+                    Text(TermReportDestination.title.asString())
+                },
+                leadingContent = {
+                    Icon(
+                        painterResource(TermReportDestination.icon),
+                        null
+                    )
+                },
+                supportingContent = {
+                    Text("开启您的学期总结")
+                },
+                modifier = Modifier.clickable {
+                    navController.push(TermReportDestination)
+                }
+            )
         }
     }
 }

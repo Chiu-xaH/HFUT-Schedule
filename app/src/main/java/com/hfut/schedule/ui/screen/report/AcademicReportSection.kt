@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,11 +13,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -25,15 +25,11 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.logic.safeDiv
-import kotlinx.coroutines.flow.first
-import androidx.compose.foundation.layout.padding
+import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import kotlinx.coroutines.flow.first
 
 private data class TermGrades(val term: String, val grades: List<GradeJxglstuResponse>, val passFlags: List<Boolean>)
 
@@ -54,21 +50,21 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
 
     LaunchedEffect(Unit) { refreshNetwork() }
 
-    DividerTextExpandedWith("学业报表", false) {
+    DividerTextExpandedWith("学业报表") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             Column {
                 val gradeMap = (uiState as UiState.Success).data
-            val allTermList = remember(gradeMap) {
-                gradeMap.toList().sortedByDescending { it.first }.mapNotNull { (term, items) ->
-                    val filtered = items.filter { it.finalGrade != null }
-                    if (filtered.isEmpty()) return@mapNotNull null
-                    TermGrades(
-                        term = term,
-                        grades = filtered.map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) },
-                        passFlags = filtered.map { it.passed }
-                    )
+                val allTermList = remember(gradeMap) {
+                    gradeMap.toList().sortedByDescending { it.first }.mapNotNull { (term, items) ->
+                        val filtered = items.filter { it.finalGrade != null }
+                        if (filtered.isEmpty()) return@mapNotNull null
+                        TermGrades(
+                            term = term,
+                            grades = filtered.map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) },
+                            passFlags = filtered.map { it.passed }
+                        )
+                    }
                 }
-            }
 
             LaunchedEffect(allTermList) {
                 if (allTermList.isNotEmpty()) {
@@ -76,10 +72,10 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                 }
             }
 
-            val termInfo = remember(semester) { parseSemesterInt(semester) }
+            val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
             val list = remember(allTermList, termInfo) {
-                if (termInfo == null || semester == 0) allTermList
-                else allTermList.filter { termStringToSemesterInt(it.term) == semester }
+                if (semester == 0) allTermList
+                else allTermList.filter { SemesterParser.parseSemester(it.term) == semester }
             }
 
             val tc = remember(list) { list.fold(0f) { a, b -> a + b.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat() } }
@@ -96,7 +92,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
 
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
-                    overlineContent = { Text(termInfo?.displayName ?: "全部学期") },
+                    overlineContent = { Text(SemesterParser.parseSemester(semester) ?: "全部学期") },
                     headlineContent = { Text("总科目 $total | 通过 $passed | 未通过 ${total - passed}", style = MaterialTheme.typography.titleMedium) }
                 )
                 TransplantListItem(overlineContent = { Text("加权平均分") }, headlineContent = { Text(formatDecimal(as2.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
@@ -145,3 +141,8 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
         }
     }
 }
+
+private fun latestSemesterFromTerms(terms: List<String>): Int? {
+    return terms.maxOrNull()?.let { SemesterParser.parseSemester(it) }
+}
+

@@ -5,10 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
@@ -30,17 +35,22 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.nav.destination.LifeDestination
+import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
@@ -55,6 +65,29 @@ fun Life() {
         headlineContent = { ScrollText(text = LifeDestination.title.asString()) },
         leadingContent = {
             Icon(painterResource(LifeDestination.icon), contentDescription = null)
+        },
+        trailingContent = {
+            SharedContainer(
+                key = TermReportDestination.key,
+                shape = CircleShape,
+                containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
+            ) {
+                NoPadding {
+                    FilledTonalIconButton(
+                        shape = NoneRoundShape,
+                        modifier = Modifier.size(30.dp),
+                        onClick = {
+                            navController.push(TermReportDestination)
+                        },
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.kid_star),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
         },
         modifier = Modifier.clickable {
             navController.push(LifeDestination)

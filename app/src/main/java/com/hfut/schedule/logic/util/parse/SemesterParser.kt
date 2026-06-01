@@ -21,7 +21,10 @@ object SemesterParser {
         return  upoOrDown
     }
     @JvmStatic
-    fun parseSemester(semester : Int) : String {
+    fun parseSemester(semester : Int) : String? {
+        if(semester <= 0) {
+            return null
+        }
         val codes = (semester - 4) / 10
         val year = 2017
         val code = 3
@@ -42,6 +45,27 @@ object SemesterParser {
         }
     }
     @JvmStatic
+    fun parseSemester(text: String): Int? {
+        val regex = Regex("""(\d+)~(\d+)年第([12])学期""")
+        val match = regex.matchEntire(text) ?: return null
+
+        val startYear = match.groupValues[1].toInt()
+        val term = match.groupValues[3].toInt()
+
+        val year = 2017
+        val code = 3
+
+        val base = (startYear - (year + 1)) * 4 + code
+
+        val codes = when (term) {
+            1 -> base + 2
+            2 -> base
+            else -> return null
+        }
+
+        return codes * 10 + 4
+    }
+
     fun parseSemesterSimply(semester : Int) : String {
         val codes = (semester - 4) / 10
         val year = 2017
@@ -139,5 +163,4 @@ object SemesterParser {
 
     fun plusSemester(semester: Int) : Int = semester+20
     fun subSemester(semester: Int) : Int = semester-20
-
 }

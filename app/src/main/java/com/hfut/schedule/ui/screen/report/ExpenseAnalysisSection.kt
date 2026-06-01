@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -72,20 +73,27 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
         }
     }
 
-    DividerTextExpandedWith("消费分析", false) {
+    DividerTextExpandedWith("消费分析") {
         when (billState) {
             is UiState.Success -> {
                 val allRecords = (billState as UiState.Success).data.records.filter { it.turnoverType == "消费" }
-                val termInfo = parseSemesterInt(semester)
 
-                val records = remember(allRecords, semester) {
-                    if (termInfo == null || semester == 0) allRecords
-                    else {
-                        val start = termInfo.dateRangeStart
-                        val end = termInfo.dateRangeEnd
-                        allRecords.filter { it.effectdateStr.substring(0, 7) in start..<end }
-                    }
-                }
+
+                /**TODO 待修改
+                 *
+                 * val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
+                 *
+                 * val records = remember(allRecords, semester) {
+                 *                     if (termInfo == null || semester == 0) allRecords
+                 *                     else {
+                 *                         val start = termInfo.dateRangeStart
+                 *                         val end = termInfo.dateRangeEnd
+                 *                         allRecords.filter { it.effectdateStr.substring(0, 7) in start..<end }
+                 *                     }
+                 *                 }
+                 */
+
+                val records = allRecords
 
                 if (records.isEmpty()) {
                     CustomCard(color = cardNormalColor()) {
@@ -161,7 +169,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text(termInfo?.displayName ?: "全部学期") },
+                        overlineContent = { Text(SemesterParser.parseSemester(semester) ?: "全部学期") },
                         headlineContent = { Text("餐饮消费分析", style = MaterialTheme.typography.titleMedium) }
                     )
                     Row(
