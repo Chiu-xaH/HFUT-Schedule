@@ -2,7 +2,9 @@ package com.hfut.schedule.ui.screen.report
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,8 +26,12 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import androidx.compose.foundation.layout.Row
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.common.ui.component.chart.BarChart
+import com.xah.common.ui.component.chart.RadarChart
+import com.xah.common.ui.component.chart.RadarData
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -46,6 +52,29 @@ private data class ExamAnalysisResult(
     val consecutiveEnd: LocalDate?
 )
 
+private fun gradeTextToDouble(grade: String): Double? {
+    return grade.toDoubleOrNull() ?: when (grade) {
+        "优" -> 3.9
+        "良" -> 3.0
+        "中" -> 2.0
+        "及格" -> 1.2
+        "不及格" -> 0.0
+        else -> null
+    }
+}
+
+private fun gradeDisplayText(grade: String?, credits: Double): String {
+    if (grade == null) return "${credits}学分"
+    val numeric = grade.toDoubleOrNull()
+    return if (numeric != null) {
+        "${formatDecimal(numeric, 1)}分 / ${credits}学分"
+    } else {
+        val mapped = gradeTextToDouble(grade)
+        if (mapped != null) "$grade (${formatDecimal(mapped, 1)}) / ${credits}学分"
+        else "$grade / ${credits}学分"
+    }
+}
+
 @Composable
 fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     val uiState by vm.uniAppGradesResp.state.collectAsState()
@@ -56,21 +85,24 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     LaunchedEffect(semester) {
         courseAnalysis = null
         try {
-            val targetSemester = if (semester == 0) SemesterParser.getSemester() else semester
-            val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(targetSemester))
-            if (json != null) {
-                val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
-                val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
-                for (item in courses) {
-                    for (schedule in item.schedules) {
-                        weekCount.getOrPut(schedule.weekIndex) { mutableListOf() }
-                            .add(item.course.nameZh to "${schedule.startTime}-${schedule.endTime}")
+            val currentSem = SemesterParser.getSemester()
+            // 只有在全部学期(0)或者当前学期时，才展示课表分析（因为本地只缓存了当前学期的课表）
+            if (semester == 0 || semester == currentSem || semester == SemesterParser.getSemesterWithoutSuspend()) {
+                val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(currentSem))
+                if (json != null) {
+                    val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
+                    val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
+                    for (item in courses) {
+                        for (schedule in item.schedules) {
+                            weekCount.getOrPut(schedule.weekIndex) { mutableListOf() }
+                                .add(item.course.nameZh to "${schedule.startTime}-${schedule.endTime}")
+                        }
                     }
-                }
-                if (weekCount.isNotEmpty()) {
-                    val busiest = weekCount.maxByOrNull { it.value.size }!!
-                    val avg = weekCount.values.sumOf { it.size }.toDouble() / weekCount.size
-                    courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
+                    if (weekCount.isNotEmpty()) {
+                        val busiest = weekCount.maxByOrNull { it.value.size }!!
+                        val avg = weekCount.values.sumOf { it.size }.toDouble() / weekCount.size
+                        courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
+                    }
                 }
             }
         } catch (_: Exception) {}
@@ -142,32 +174,32 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(headlineContent = { Text("暂无成绩数据") })
                 }
-                return@CommonNetworkScreen
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+            } else {
+                // 最佳和最差科目
+                val sorted = remember(grades) { grades.sortedByDescending { it.gp } }
+                val best = sorted.first()
+                val worst = sorted.last()
+
+                CustomCard(color = cardNormalColor()) {
+                    TransplantListItem(
+                        overlineContent = { Text(termInfo?.displayName ?: "全部学期") },
+                        headlineContent = { Text("科目排行", style = MaterialTheme.typography.titleMedium) }
+                    )
+                    TransplantListItem(
+                        overlineContent = { Text("最佳科目") },
+                        headlineContent = { Text(best.courseNameZh, style = MaterialTheme.typography.titleSmall) },
+                        trailingContent = { Text(gradeDisplayText(best.finalGrade, best.credits)) }
+                    )
+                    TransplantListItem(
+                        overlineContent = { Text("最差科目") },
+                        headlineContent = { Text(worst.courseNameZh, style = MaterialTheme.typography.titleSmall) },
+                        trailingContent = { Text(gradeDisplayText(worst.finalGrade, worst.credits)) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
-
-            // 最佳和最差科目
-            val sorted = remember(grades) { grades.filter { it.finalGrade != null }.sortedByDescending { it.finalGrade!!.toDoubleOrNull() ?: 0.0 } }
-            val best = sorted.first()
-            val worst = sorted.last()
-
-            CustomCard(color = cardNormalColor()) {
-                TransplantListItem(
-                    overlineContent = { Text(termInfo?.displayName ?: "全部学期") },
-                    headlineContent = { Text("科目排行", style = MaterialTheme.typography.titleMedium) }
-                )
-                TransplantListItem(
-                    overlineContent = { Text("最佳科目 ${formatDecimal(best.finalGrade!!.toDoubleOrNull() ?: 0.0, 1)}分") },
-                    headlineContent = { Text(best.courseNameZh, style = MaterialTheme.typography.titleSmall) },
-                    trailingContent = { Text("${best.credits}学分") }
-                )
-                TransplantListItem(
-                    overlineContent = { Text("最差科目 ${formatDecimal(worst.finalGrade!!.toDoubleOrNull() ?: 0.0, 1)}分") },
-                    headlineContent = { Text(worst.courseNameZh, style = MaterialTheme.typography.titleSmall) },
-                    trailingContent = { Text("${worst.credits}学分") }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
             // 课表分析：最繁忙周
             courseAnalysis?.let { (busiestWeekNum, busiestCourses, avgPerWeek) ->
@@ -175,8 +207,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text("课表分析") },
-                        headlineContent = { Text("最繁忙的一周", style = MaterialTheme.typography.titleMedium) }
+                        headlineContent = { Text("🚀 最繁忙的一周", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
                     )
                     TransplantListItem(
                         overlineContent = { Text("第${busiestWeekNum}周") },
@@ -199,8 +230,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             examAnalysis?.let { result ->
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text("考试分析") },
-                        headlineContent = { Text("考试月份分布", style = MaterialTheme.typography.titleMedium) }
+                        headlineContent = { Text("📅 考试月分布", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
                     )
                     result.busiestMonth?.let { (month, exams) ->
                         TransplantListItem(
@@ -229,85 +259,93 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
 
-            // 学分分布
-            val creditGroups = remember(grades) {
-                grades.groupBy { it.credits.toInt() }
-                    .mapValues { (_, v) -> v.size }
-                    .toList().sortedByDescending { it.first }
-            }
-
-            CustomCard(color = cardNormalColor()) {
-                TransplantListItem(
-                    overlineContent = { Text("学分分布") },
-                    headlineContent = { Text("各学分课程数量", style = MaterialTheme.typography.titleMedium) }
-                )
-                creditGroups.forEach { (credit, count) ->
-                    if (credit > 0) {
-                        TransplantListItem(
-                            headlineContent = { Text("${credit}学分课程") },
-                            trailingContent = { Text("${count}门") }
-                        )
+            if (grades.isNotEmpty()) {
+                // 学分分布 BarChart
+                val creditGroups = remember(grades) {
+                    grades.groupBy { it.credits.toInt() }
+                        .mapValues { (_, v) -> v.size }
+                        .toList().sortedByDescending { it.first }
+                }
+                
+                // GPA分布 BarChart
+                val gpaRanges = remember(grades) {
+                    val ranges = listOf(
+                        "4.0+" to { g: Double -> g >= 4.0 },
+                        "3.5-3.9" to { g: Double -> g in 3.5..3.99 },
+                        "3.0-3.4" to { g: Double -> g in 3.0..3.49 },
+                        "2.0-2.9" to { g: Double -> g in 2.0..2.99 },
+                        "< 2.0" to { g: Double -> g < 2.0 }
+                    )
+                    ranges.mapNotNull { (label, filter) ->
+                        val count = grades.count { filter(it.gp) }
+                        if (count > 0) label to count else null
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
-            // GPA分布
-            val gpaRanges = remember(grades) {
-                val ranges = listOf(
-                    "4.0+" to { g: Double -> g >= 4.0 },
-                    "3.5-4.0" to { g: Double -> g in 3.5..3.99 },
-                    "3.0-3.5" to { g: Double -> g in 3.0..3.49 },
-                    "2.0-3.0" to { g: Double -> g in 2.0..2.99 },
-                    "2.0以下" to { g: Double -> g < 2.0 }
-                )
-                ranges.mapNotNull { (label, filter) ->
-                    val count = grades.count { (it.gp).let { g -> filter(g) } }
-                    if (count > 0) label to count else null
+                // 课程类别能力雷达图 (按单科绩点)
+                val radarData = remember(grades) {
+                    val targetGrades = if (grades.size > 8) grades.sortedByDescending { it.credits }.take(8) else grades
+                    targetGrades.map { 
+                        val ratio = (it.gp / 4.0f).toFloat().coerceIn(0f, 1f)
+                        RadarData(it.courseNameZh.take(4), ratio) 
+                    }
                 }
-            }
 
-            CustomCard(color = cardNormalColor()) {
-                TransplantListItem(
-                    overlineContent = { Text("绩点分布") },
-                    headlineContent = { Text("GPA 分布统计", style = MaterialTheme.typography.titleMedium) }
-                )
-                gpaRanges.forEach { (range, count) ->
+                CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text("GPA $range") },
-                        trailingContent = { Text("${count}门") }
+                        headlineContent = { Text("📊 学业数据图表", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                    )
+                    
+                    if (radarData.size >= 3) {
+                        TransplantListItem(headlineContent = { Text("各科绩点能力模型", style = MaterialTheme.typography.titleSmall) })
+                        RadarChart(
+                            data = radarData,
+                            modifier = Modifier.fillMaxWidth().height(220.dp).padding(16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    if (creditGroups.isNotEmpty()) {
+                        val barData = creditGroups.associate { "${it.first}学分" to it.second.toFloat() }
+                        BarChart(data = barData, showLabel = true, title = "学分分布", modifier = Modifier.padding(bottom = 16.dp))
+                    }
+                    
+                    if (gpaRanges.isNotEmpty()) {
+                        val gpaBarData = gpaRanges.associate { it.first to it.second.toFloat() }
+                        BarChart(data = gpaBarData, showLabel = true, title = "绩点分布", modifier = Modifier.padding(bottom = 16.dp))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+
+                // 有趣统计
+                val messages = remember(grades) {
+                    mutableListOf<String>().apply {
+                        val totalCredits = grades.sumOf { it.credits }
+                        val avgGp = grades.map { it.gp }.average()
+                        val highGpa = grades.count { it.gp >= 4.0 }
+                        val perfect = grades.count { val score = it.finalGrade?.toDoubleOrNull(); score != null && score >= 95.0 }
+                        val nearFail = grades.count { val score = it.finalGrade?.toDoubleOrNull(); score != null && score in 60.0..65.0 }
+
+                        add("本学期共修 ${grades.size} 门课程，总计 ${formatDecimal(totalCredits, 1)} 学分")
+                        add("平均绩点 ${formatDecimal(avgGp, 2)}")
+                        if (highGpa > 0) add("其中 $highGpa 门课程 GPA ≥ 4.0，学霸认证！")
+                        if (perfect > 0) add("有 $perfect 门课程 ≥ 95 分，接近满分！")
+                        if (nearFail > 0) add("有 $nearFail 门课程在 60-65 分之间，险过！")
+                        if (avgGp >= 3.5) add("整体表现优秀，继续保持！")
+                        else if (avgGp >= 3.0) add("表现不错，还有提升空间~")
+                        else add("革命尚未成功，同志仍需努力！")
+                    }
+                }
+
+                CustomCard(color = cardNormalColor()) {
+                    TransplantListItem(
+                        headlineContent = { Text("💡 学期总结", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                    )
+                    TransplantListItem(
+                        headlineContent = { Text(messages.joinToString("\n"), style = MaterialTheme.typography.bodyMedium) }
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
-            // 有趣统计
-            val messages = remember(grades) {
-                mutableListOf<String>().apply {
-                    val totalCredits = grades.sumOf { it.credits }
-                    val avgGp = grades.map { it.gp }.average()
-                    val highGpa = grades.count { it.gp >= 4.0 }
-                    val perfect = grades.count { (it.finalGrade?.toDoubleOrNull() ?: 0.0) >= 95.0 }
-                    val nearFail = grades.count { (it.finalGrade?.toDoubleOrNull() ?: 0.0) in 60.0..65.0 }
-
-                    add("本学期共修 ${grades.size} 门课程，总计 ${formatDecimal(totalCredits, 1)} 学分")
-                    add("平均绩点 ${formatDecimal(avgGp, 2)}")
-                    if (highGpa > 0) add("其中 $highGpa 门课程 GPA ≥ 4.0，学霸认证！")
-                    if (perfect > 0) add("有 $perfect 门课程 ≥ 95 分，接近满分！")
-                    if (nearFail > 0) add("有 $nearFail 门课程在 60-65 分之间，险过！")
-                    if (avgGp >= 3.5) add("整体表现优秀，继续保持！")
-                    else if (avgGp >= 3.0) add("表现不错，还有提升空间~")
-                    else add("革命尚未成功，同志仍需努力！")
-                }
-            }
-
-            CustomCard(color = cardNormalColor()) {
-                TransplantListItem(
-                    overlineContent = { Text("学期总结") },
-                    headlineContent = { Text(messages.joinToString("\n"), style = MaterialTheme.typography.bodyMedium) }
-                )
             }
             }
         }
