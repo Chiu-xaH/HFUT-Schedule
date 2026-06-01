@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.report
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,10 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.component.chart.BarChart
+import com.xah.common.ui.component.chart.PieChart
+import com.xah.common.ui.component.chart.PieChartData
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -127,6 +132,11 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                         overlineContent = { Text(termInfo?.displayName ?: "全部学期") },
                         headlineContent = { Text("餐饮消费分析", style = MaterialTheme.typography.titleMedium) }
                     )
+                    PieChart(
+                        data = mealStats.map { (meal, _, amount) -> PieChartData(meal, amount.toFloat()) },
+                        modifier = Modifier.padding(APP_HORIZONTAL_DP),
+                        title = "餐饮消费比例"
+                    )
                     mealStats.forEach { (meal, count, amount) ->
                         TransplantListItem(
                             overlineContent = { Text("$meal ${count}次") },
@@ -186,37 +196,63 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
                 // 周几消费最多
+                val weekdayChartData = remember(weekdayStats) {
+                    (1..7).associate { dayOfWeek ->
+                        val dayName = "周${DayOfWeek.of(dayOfWeek).getDisplayName(TextStyle.SHORT, Locale.CHINESE)}"
+                        val amount = weekdayStats.find { it.first == dayOfWeek }?.second ?: 0.0
+                        dayName to amount.toFloat()
+                    }
+                }
+
                 if (weekdayStats.isNotEmpty()) {
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(
                             overlineContent = { Text("星期分析") },
                             headlineContent = { Text("哪天最能花", style = MaterialTheme.typography.titleMedium) }
                         )
-                        weekdayStats.forEach { (dayOfWeek, amount) ->
-                            val dayName = DayOfWeek.of(dayOfWeek).getDisplayName(TextStyle.SHORT, Locale.CHINESE)
-                            TransplantListItem(
-                                headlineContent = { Text("周$dayName") },
-                                trailingContent = { Text("￥${formatDecimal(amount, 2)}", style = MaterialTheme.typography.titleMedium) }
-                            )
-                        }
+                        BarChart(
+                            data = weekdayChartData,
+                            showLabel = true,
+                            modifier = Modifier.padding(APP_HORIZONTAL_DP)
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
 
-                // 消费足迹
+                // 消费足迹：按每天最早/最晚消费时间
+                val earliestLatestByTime = remember(records) {
+                    try {
+                        records.mapNotNull { record ->
+                            val time = record.jndatetimeStr.substringAfter(" ").substringBeforeLast(":")
+                            val date = record.effectdateStr.substringBefore(" ")
+                            if (time.isNotEmpty() && date.isNotEmpty()) Triple(record, date, time) else null
+                        }.let { triples ->
+                            val earliest = triples.minByOrNull { it.third }
+                            val latest = triples.maxByOrNull { it.third }
+                            Pair(earliest, latest)
+                        }
+                    } catch (_: Exception) { null to null }
+                }
+
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = { Text("消费足迹") },
-                        headlineContent = { Text("最早记录 ${earliest.jndatetimeStr}", style = MaterialTheme.typography.bodyMedium) }
+                        headlineContent = { Text("跨越 $days 天", style = MaterialTheme.typography.titleMedium) },
+                        supportingContent = { Text("共 ${records.size} 笔 | ￥${formatDecimal(totalAmount, 2)}") }
                     )
-                    TransplantListItem(
-                        headlineContent = { Text("最晚记录 ${latest.jndatetimeStr}", style = MaterialTheme.typography.bodyMedium) }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("跨越 $days 天") },
-                        headlineContent = { Text("共 ${records.size} 笔 | ￥${formatDecimal(totalAmount, 2)}", style = MaterialTheme.typography.titleMedium) }
-                    )
+                    earliestLatestByTime.first?.let { (_, date, time) ->
+                        TransplantListItem(
+                            overlineContent = { Text("最早消费") },
+                            headlineContent = { Text("${date} $time", style = MaterialTheme.typography.bodyMedium) }
+                        )
+                    }
+                    earliestLatestByTime.second?.let { (_, date, time) ->
+                        TransplantListItem(
+                            overlineContent = { Text("最晚消费") },
+                            headlineContent = { Text("${date} $time", style = MaterialTheme.typography.bodyMedium) }
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
