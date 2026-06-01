@@ -60,7 +60,9 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                         }
                     }
                 }
+                item { AcademicAnalysisSection(vm, semester) }
                 item { ExpenseReportSection(vm, semester) }
+                item { ExpenseAnalysisSection(vm, semester) }
                 item { LibraryReportSection(vm) }
                 item { LifeReportSection(vm, semester) }
                 item { InnerPaddingHeight(innerPadding, false) }
