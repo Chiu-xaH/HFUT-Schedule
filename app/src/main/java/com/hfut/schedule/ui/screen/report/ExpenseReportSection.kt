@@ -75,19 +75,7 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
-                if (dayList.isNotEmpty()) {
-                    CustomCard(color = cardNormalColor()) {
-                        drawLineChart(dayList.take(30).reversed().map { BillMonth(it.first, it.second) }, modifier = Modifier.padding(APP_HORIZONTAL_DP))
-                    }
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                }
 
-                if (monthList.isNotEmpty()) {
-                    CustomCard(color = cardNormalColor()) {
-                        drawLineChart(monthList.reversed().map { BillMonth(it.first, it.second) }, modifier = Modifier.padding(APP_HORIZONTAL_DP))
-                    }
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                }
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(

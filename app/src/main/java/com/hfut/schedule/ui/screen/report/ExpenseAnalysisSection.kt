@@ -120,6 +120,20 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 }
                 val busiestWeekday = weekdayStats.firstOrNull()
 
+                // 哪个月消费最多
+                val monthStats = remember(records) {
+                    val monthMap = mutableMapOf<Int, Double>()
+                    for (record in records) {
+                        try {
+                            val date = LocalDate.parse(record.effectdateStr.substringBefore(" "))
+                            val month = date.monthValue
+                            monthMap[month] = (monthMap[month] ?: 0.0) + ((record.tranamt ?: 0) / 100.0)
+                        } catch (_: Exception) {}
+                    }
+                    monthMap.toList().sortedByDescending { it.second }
+                }
+                val busiestMonth = monthStats.firstOrNull()
+
                 // 早午晚餐分类
                 val mealGroups = remember(records) {
                     records.groupBy { classifyMeal(it.resume, it.jndatetimeStr) }
@@ -243,6 +257,35 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                     }
                 }
 
+                // 哪个月消费最多
+                val monthChartData = remember(monthStats) {
+                    monthStats.sortedBy { it.first }.associate { (month, amount) ->
+                        "${month}月" to amount.toFloat()
+                    }
+                }
+
+                if (monthStats.isNotEmpty()) {
+                    CustomCard(color = cardNormalColor()) {
+                        TransplantListItem(
+                            overlineContent = { Text("月份分析") },
+                            headlineContent = { Text("哪个月最能花", style = MaterialTheme.typography.titleMedium) }
+                        )
+                        BarChart(
+                            data = monthChartData,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = 8.dp)
+                        )
+                        monthStats.forEach { (month, amount) ->
+                            TransplantListItem(
+                                headlineContent = { Text("${month}月", style = MaterialTheme.typography.bodyMedium) },
+                                trailingContent = { Text("￥${formatDecimal(amount, 2)}", style = MaterialTheme.typography.bodyMedium) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                }
+
+
                 if (weekdayStats.isNotEmpty()) {
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(
@@ -293,6 +336,10 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                         busiestWeekday?.let { (day, _) ->
                             val dayName = DayOfWeek.of(day).getDisplayName(TextStyle.SHORT, Locale.CHINESE)
                             add("你最能花的一天是周$dayName，小心钱包~")
+                        }
+
+                        busiestMonth?.let { (month, _) ->
+                            add("${month}月是你消费最高的一个月，注意生活费规划哦~")
                         }
 
                         if (avgPerTransaction > 30) add("平均单笔 ￥${formatDecimal(avgPerTransaction, 0)}，偶尔奢侈一下也不错~")
