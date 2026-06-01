@@ -86,8 +86,9 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
                 val endTime = parseJxglstuIntTime(it.endTime)
                 val dateTime = "${it.examDate} ${startTime}~${endTime}"
                 if(isValidDateTime(dateTime)) {
+                    // 去除前导后导空格
                     JxglstuExam(
-                        name = it.courseNameZh,
+                        name = it.courseNameZh.trim(),
                         dateTime = dateTime,
                         place = it.place.let { p ->
                             if(p?.contains(" ") == true) {
@@ -113,18 +114,7 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
 
     // 合并并去重 优先保留信息多的，
     try {
-        val examTypeSuffixes = listOf("-期中考试", "-期末考试", "-补考", "-缓考", "-重修考试", "-考试")
-        fun normalizeExam(exam: JxglstuExam): Pair<String, String> {
-            var name = exam.name.trim()
-            for (suffix in examTypeSuffixes) {
-                if (name.endsWith(suffix)) {
-                    name = name.removeSuffix(suffix)
-                    break
-                }
-            }
-            return name to exam.dateTime.trim()
-        }
-        (jxglstuExams + uniAppExams).groupBy { normalizeExam(it) }
+        (jxglstuExams + uniAppExams).groupBy { it.name to it.dateTime }
             .map { entry ->
                 // 对每组数据按优先级（优先保留有place和type的）进行合并
                 entry.value.maxByOrNull {
