@@ -11,16 +11,20 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.huixin.BillMonth
 import com.xah.common.logic.safeDiv
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 
 //消费折线图
 @Composable
-fun drawLineChart(data: List<BillMonth>) {
+fun drawLineChart(data: List<BillMonth>, modifier: Modifier = Modifier) {
+    if (data.isEmpty()) return
     val path = Path()
-    val size = Size(300f, 300f)
     val primaryColor = MaterialTheme.colorScheme.primary
-    Canvas(modifier = Modifier.size(600.dp,120.dp)) {
-        val xInterval = 30f
-        val yInterval = size.height safeDiv data.maxOf { it.balance.toFloat() }
+    Canvas(modifier = modifier.fillMaxWidth().height(120.dp)) {
+        val xInterval = if (data.size > 1) size.width / (data.size - 1) else size.width
+        val maxBalance = data.maxOf { it.balance.toFloat() }
+        val yInterval = if (maxBalance > 0) size.height / maxBalance else 0f
+        
         path.moveTo(0f, size.height - data.first().balance.toFloat() * yInterval)
         data.forEachIndexed { index, pair ->
             val x = index * xInterval

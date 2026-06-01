@@ -1,11 +1,9 @@
 package com.hfut.schedule.ui.screen.report
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
@@ -28,18 +25,17 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getGpa
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.chart.BarChart
-import com.xah.common.ui.component.chart.PieChart
-import com.xah.common.ui.component.chart.PieChartData
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.safeDiv
 import kotlinx.coroutines.flow.first
+import androidx.compose.foundation.layout.padding
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+
+private data class TermGrades(val term: String, val grades: List<GradeJxglstuResponse>, val passFlags: List<Boolean>)
 
 @Composable
 fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester: (Int) -> Unit) {
@@ -60,12 +56,18 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
 
     DividerTextExpandedWith("学业报表", false) {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val gradeMap = (uiState as UiState.Success).data
+            Column {
+                val gradeMap = (uiState as UiState.Success).data
             val allTermList = remember(gradeMap) {
-                gradeMap.toList().sortedByDescending { it.first }.map { (term, items) ->
-                    GradeJxglstuDTO(term, items.filter { !(it.passed && it.gp == 0.0) && it.finalGrade != null }
-                        .map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) })
-                }.filter { it.list.isNotEmpty() }
+                gradeMap.toList().sortedByDescending { it.first }.mapNotNull { (term, items) ->
+                    val filtered = items.filter { it.finalGrade != null }
+                    if (filtered.isEmpty()) return@mapNotNull null
+                    TermGrades(
+                        term = term,
+                        grades = filtered.map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) },
+                        passFlags = filtered.map { it.passed }
+                    )
+                }
             }
 
             LaunchedEffect(allTermList) {
@@ -80,11 +82,17 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                 else allTermList.filter { termStringToSemesterInt(it.term) == semester }
             }
 
-            val tc = remember(list) { list.fold(0f) { a, b -> a + getTotalCredits(b) } }
-            val ag = remember(list, tc) { list.fold(0f) { a, b -> a + getTotalGpa(b) } safeDiv tc }
-            val as2 = remember(list, tc) { list.fold(0f) { a, b -> a + getTotalScore(b) } safeDiv tc }
-            val total = remember(list) { list.sumOf { it.list.size } }
-            val passed = remember(list) { list.sumOf { d -> d.list.count { getScore(it.score)?.let { s -> s >= 60f } ?: false } } }
+            val tc = remember(list) { list.fold(0f) { a, b -> a + b.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat() } }
+            val ag = remember(list, tc) {
+                val totalGp = list.sumOf { b -> b.grades.indices.sumOf { i -> (b.grades[i].gpa.toFloatOrNull()?.toDouble() ?: 0.0) * (b.grades[i].credits.toFloatOrNull() ?: 0f) } }.toFloat()
+                totalGp safeDiv tc
+            }
+            val as2 = remember(list, tc) {
+                val totalScore = list.sumOf { b -> b.grades.indices.sumOf { i -> (b.grades[i].detail.toFloatOrNull()?.toDouble() ?: 0.0) * (b.grades[i].credits.toFloatOrNull() ?: 0f) } }.toFloat()
+                totalScore safeDiv tc
+            }
+            val total = remember(list) { list.sumOf { it.grades.size } }
+            val passed = remember(list) { list.sumOf { it.passFlags.count { p -> p } } }
 
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
@@ -99,31 +107,31 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
             if (allTermList.size > 1) {
-                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP), contentAlignment = Alignment.Center) {
-                    BarChart(data = allTermList.reversed().associate { it.term to getTotalGpa(it) }, showLabel = false, title = "各学期GPA")
+                val gpaData = remember(allTermList) {
+                    allTermList.reversed().associate { tg ->
+                        val credits = tg.grades.sumOf { it.credits.toFloatOrNull()?.toDouble() ?: 0.0 }.toFloat()
+                        val gp = tg.grades.indices.sumOf { i -> (tg.grades[i].gpa.toFloatOrNull()?.toDouble() ?: 0.0) * (tg.grades[i].credits.toFloatOrNull() ?: 0f) }.toFloat()
+                        tg.term to (gp safeDiv credits)
+                    }
+                }
+                CustomCard(color = cardNormalColor()) {
+                    BarChart(data = gpaData, showLabel = false, title = "各学期GPA", modifier = Modifier.padding(APP_HORIZONTAL_DP))
                 }
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
 
-            if (total > 0) {
-                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP), contentAlignment = Alignment.Center) {
-                    PieChart(data = listOf(PieChartData("通过", passed.toFloat()), PieChartData("未通过", (total - passed).toFloat())), title = "课程通过率")
-                }
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-            }
-
-            list.reversed().forEach { dto ->
-                val ctc = remember { getTotalCredits(dto) }
-                val ctg = remember { getTotalGpa(dto) }
-                val cts = remember { getTotalScore(dto) }
+            list.reversed().forEach { tg ->
+                val ctc = tg.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat()
+                val ctg = tg.grades.indices.sumOf { i -> (tg.grades[i].gpa.toFloatOrNull()?.toDouble() ?: 0.0) * (tg.grades[i].credits.toFloatOrNull() ?: 0f) }.toFloat()
+                val cts = tg.grades.indices.sumOf { i -> (tg.grades[i].detail.toFloatOrNull()?.toDouble() ?: 0.0) * (tg.grades[i].credits.toFloatOrNull() ?: 0f) }.toFloat()
                 val cag = ctg safeDiv ctc
                 val cas = cts safeDiv ctc
-                val cc = dto.list.size
-                val pc = dto.list.count { getScore(it.score)?.let { s -> s >= 60f } ?: false }
+                val cc = tg.grades.size
+                val pc = tg.passFlags.count { it }
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text(dto.term) },
+                        overlineContent = { Text(tg.term) },
                         headlineContent = { Text("分数 ${formatDecimal(cas.toDouble(), 2)} | 绩点 ${formatDecimal(cag.toDouble(), 2)}", style = MaterialTheme.typography.titleSmall) },
                         trailingContent = { Text("${cc}科") }
                     )
@@ -131,6 +139,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                         TransplantListItem(overlineContent = { Text("学分") }, headlineContent = { Text(formatDecimal(ctc.toDouble(), 1)) }, modifier = Modifier.weight(1f))
                         TransplantListItem(overlineContent = { Text("通过") }, headlineContent = { Text("$pc/$cc") }, modifier = Modifier.weight(1f))
                     }
+                }
                 }
             }
         }

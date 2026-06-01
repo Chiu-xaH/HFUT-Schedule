@@ -22,6 +22,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import androidx.compose.foundation.layout.padding
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 @Composable
 fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
@@ -74,12 +76,16 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
                 if (dayList.isNotEmpty()) {
-                    drawLineChart(dayList.take(30).reversed().map { BillMonth(it.first, it.second) })
+                    CustomCard(color = cardNormalColor()) {
+                        drawLineChart(dayList.take(30).reversed().map { BillMonth(it.first, it.second) }, modifier = Modifier.padding(APP_HORIZONTAL_DP))
+                    }
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
 
                 if (monthList.isNotEmpty()) {
-                    drawLineChart(monthList.reversed().map { BillMonth(it.first, it.second) })
+                    CustomCard(color = cardNormalColor()) {
+                        drawLineChart(monthList.reversed().map { BillMonth(it.first, it.second) }, modifier = Modifier.padding(APP_HORIZONTAL_DP))
+                    }
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
 
