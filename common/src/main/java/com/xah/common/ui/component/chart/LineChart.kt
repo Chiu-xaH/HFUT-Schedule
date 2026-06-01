@@ -34,7 +34,9 @@ fun LineChart(
     modifier: Modifier = Modifier,
     showLabel : Boolean = false,
     title : String? = null,
-    lineColor: Color = MaterialTheme.colorScheme.primary
+    lineColor: Color = MaterialTheme.colorScheme.primary,
+    yAxisFormatter: (Float) -> String = { it.toString() },
+    xLabelSpacing: Int = 1
 ) {
     if (data.isEmpty()) return
 
@@ -112,9 +114,10 @@ fun LineChart(
                         .align(Alignment.BottomCenter),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    xLabels.forEach { label ->
+                    xLabels.forEachIndexed { index, label ->
+                        val showThisLabel = (index % xLabelSpacing == 0) || (index == xLabels.size - 1)
                         Text(
-                            text = label,
+                            text = if (showThisLabel) label else "",
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.width(IntrinsicSize.Min)
@@ -128,9 +131,9 @@ fun LineChart(
                         .align(Alignment.CenterStart),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = maxY.toString(), style = MaterialTheme.typography.labelSmall)
+                    Text(text = yAxisFormatter(maxY), style = MaterialTheme.typography.labelSmall)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = minY.toString(), style = MaterialTheme.typography.labelSmall)
+                    Text(text = yAxisFormatter(minY), style = MaterialTheme.typography.labelSmall)
                 }
             }
         }

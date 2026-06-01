@@ -50,25 +50,27 @@ fun BarChart(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom,
-                    modifier = Modifier.weight(1f, fill = true)
+                    modifier = Modifier.weight(1f, fill = true).fillMaxHeight()
                 ) {
                     // 上方数值标签
                     if (showLabel) {
                         Text(
-                            text = value.toString(),
+                            text = if (value % 1f == 0f) value.toInt().toString() else value.toString(),
                             style = MaterialTheme.typography.labelSmall,
                             color = labelColor
                         )
                     }
 
-                    // 柱子
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 4.dp)
-                            .fillMaxWidth(0.6f)
-                            .fillMaxHeight(ratio)
-                            .background(barColor, shape = RoundedCornerShape(4.dp))
-                    )
+                    // 柱子区域
+                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomCenter) {
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 4.dp)
+                                .fillMaxWidth(0.6f)
+                                .fillMaxHeight(ratio)
+                                .background(barColor, shape = RoundedCornerShape(4.dp))
+                        )
+                    }
 
                     // 下方标签
                     if (showLabel) {
