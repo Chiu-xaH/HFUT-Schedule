@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
+import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.window.ExpressWindow
 import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.RepairWindow
@@ -132,6 +133,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.ToadyCamp
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
+import com.hfut.schedule.ui.screen.home.search.function.report.TermReport
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -256,6 +258,7 @@ fun SearchScreen(
                 SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track() }, TrackDestination.key),
                 SearchAppBean(49,"拼多多 淘宝 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() },ExpressWindow.key),
                 SearchAppBean(50,"${context.getString(R.string.navigation_label_feedback)} 反馈 建议", { Feedback() }, FeedbackWindow.key),
+                SearchAppBean(51,"${TermReportDestination.title.asString(context)} 学期总结 成绩 消费 图书馆 借阅 统计 报表", { TermReport() }, TermReportDestination.key),
             )
         )
     }
