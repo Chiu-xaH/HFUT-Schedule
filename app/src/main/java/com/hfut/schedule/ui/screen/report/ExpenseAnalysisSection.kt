@@ -170,57 +170,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
-                // 消费概览
-                CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(
-                        overlineContent = { Text("消费概览") },
-                        headlineContent = { Text("总览", style = MaterialTheme.typography.titleMedium) }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("总消费") },
-                        headlineContent = { Text("￥${formatDecimal(totalAmount, 2)}", style = MaterialTheme.typography.headlineMedium) }
-                    )
-                    TransplantListItem(
-                        overlineContent = { Text("平均单笔") },
-                        headlineContent = { Text("￥${formatDecimal(avgPerTransaction, 2)}", style = MaterialTheme.typography.headlineMedium) }
-                    )
-                    if (highestRecord != null) {
-                        TransplantListItem(
-                            overlineContent = { Text("单笔最高") },
-                            headlineContent = { Text("￥${formatDecimal(highestAmount, 2)}", style = MaterialTheme.typography.headlineMedium) },
-                            supportingContent = { Text("${highestRecord.resume.substringBefore("-").take(15)} | ${highestRecord.jndatetimeStr}") }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
-                // 周几消费最多
-                val weekdayChartData = remember(weekdayStats) {
-                    (1..7).associate { dayOfWeek ->
-                        val dayName = "周${DayOfWeek.of(dayOfWeek).getDisplayName(TextStyle.SHORT, Locale.CHINESE)}"
-                        val amount = weekdayStats.find { it.first == dayOfWeek }?.second ?: 0.0
-                        dayName to amount.toFloat()
-                    }
-                }
-
-                if (weekdayStats.isNotEmpty()) {
-                    CustomCard(color = cardNormalColor()) {
-                        TransplantListItem(
-                            overlineContent = { Text("星期分析") },
-                            headlineContent = { Text("哪天最能花", style = MaterialTheme.typography.titleMedium) }
-                        )
-                        BarChart(
-                            data = weekdayChartData,
-                            showLabel = true,
-                            modifier = Modifier.padding(APP_HORIZONTAL_DP)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                }
-
-                // 消费足迹：按每天最早/最晚消费时间
+                // 消费概览 + 消费足迹
                 val earliestLatestByTime = remember(records) {
                     try {
                         records.mapNotNull { record ->
@@ -237,10 +187,21 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text("消费足迹") },
-                        headlineContent = { Text("跨越 $days 天", style = MaterialTheme.typography.titleMedium) },
-                        supportingContent = { Text("共 ${records.size} 笔 | ￥${formatDecimal(totalAmount, 2)}") }
+                        overlineContent = { Text("消费概览") },
+                        headlineContent = { Text("￥${formatDecimal(totalAmount, 2)}", style = MaterialTheme.typography.headlineMedium) },
+                        supportingContent = { Text("共 ${records.size} 笔 | 跨越 $days 天") }
                     )
+                    TransplantListItem(
+                        overlineContent = { Text("平均单笔") },
+                        headlineContent = { Text("￥${formatDecimal(avgPerTransaction, 2)}", style = MaterialTheme.typography.titleMedium) }
+                    )
+                    if (highestRecord != null) {
+                        TransplantListItem(
+                            overlineContent = { Text("单笔最高") },
+                            headlineContent = { Text("￥${formatDecimal(highestAmount, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            supportingContent = { Text("${highestRecord.resume.substringBefore("-").take(15)} | ${highestRecord.jndatetimeStr}") }
+                        )
+                    }
                     earliestLatestByTime.first?.let { (_, date, time) ->
                         TransplantListItem(
                             overlineContent = { Text("最早消费") },
@@ -253,6 +214,39 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                             headlineContent = { Text("${date} $time", style = MaterialTheme.typography.bodyMedium) }
                         )
                     }
+                }
+
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+
+                // 周几消费最多
+                val weekdayChartData = remember(weekdayStats) {
+                    (1..7).associate { dayOfWeek ->
+                        val dayName = DayOfWeek.of(dayOfWeek).getDisplayName(TextStyle.SHORT, Locale.CHINESE)
+                        val amount = weekdayStats.find { it.first == dayOfWeek }?.second ?: 0.0
+                        dayName to amount.toFloat()
+                    }
+                }
+
+                if (weekdayStats.isNotEmpty()) {
+                    CustomCard(color = cardNormalColor()) {
+                        TransplantListItem(
+                            overlineContent = { Text("星期分析") },
+                            headlineContent = { Text("哪天最能花", style = MaterialTheme.typography.titleMedium) }
+                        )
+                        BarChart(
+                            data = weekdayChartData,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = 8.dp)
+                        )
+                        weekdayStats.forEach { (dayOfWeek, amount) ->
+                            val dayName = DayOfWeek.of(dayOfWeek).getDisplayName(TextStyle.SHORT, Locale.CHINESE)
+                            TransplantListItem(
+                                headlineContent = { Text(dayName, style = MaterialTheme.typography.bodyMedium) },
+                                trailingContent = { Text("￥${formatDecimal(amount, 2)}", style = MaterialTheme.typography.bodyMedium) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
@@ -295,11 +289,8 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = { Text("小贴士") },
-                        headlineContent = {}
+                        headlineContent = { Text(messages.joinToString("\n"), style = MaterialTheme.typography.bodyMedium) }
                     )
-                    messages.forEach { msg ->
-                        TransplantListItem(headlineContent = { Text(msg, style = MaterialTheme.typography.bodyMedium) })
-                    }
                 }
             }
             is UiState.Error -> {

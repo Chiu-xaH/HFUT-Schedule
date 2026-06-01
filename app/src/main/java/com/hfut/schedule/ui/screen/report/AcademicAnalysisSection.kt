@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.report
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +55,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
     LaunchedEffect(semester) {
         try {
-            val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
+            val targetSemester = if (semester == 0) SemesterParser.getSemester() else semester
+            val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(targetSemester))
             if (json != null) {
                 val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
                 val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
@@ -75,7 +77,19 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
 
     LaunchedEffect(semester) {
         try {
-            val exams = getExamFromCache()
+            val allExams = getExamFromCache()
+            val termInfo = parseSemesterInt(semester)
+            val exams = if (termInfo == null || semester == 0) allExams else {
+                val start = termInfo.dateRangeStart
+                val end = termInfo.dateRangeEnd
+                allExams.filter { exam ->
+                    try {
+                        val date = exam.dateTime.substring(0, 10)
+                        date >= start && date < end
+                    } catch (_: Exception) { false }
+                }
+            }
+            
             if (exams.isNotEmpty()) {
                 val monthGroups = exams.groupBy { exam ->
                     try { exam.dateTime.substring(0, 7) } catch (_: Exception) { "未知" }
@@ -102,14 +116,17 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 val busiestMonth = busiestMonthEntry?.let { it.key to it.value }
                 val monthStats = monthGroups.map { (m, l) -> m to l.size }.sortedByDescending { it.second }
                 examAnalysis = ExamAnalysisResult(busiestMonth, monthStats, maxCons, maxStart, maxEnd)
+            } else {
+                examAnalysis = null
             }
         } catch (_: Exception) {}
     }
 
     DividerTextExpandedWith("学业分析", false) {
         CommonNetworkScreen(uiState, onReload = null) {
-            val gradeMap = (uiState as UiState.Success).data
-            val termInfo = parseSemesterInt(semester)
+            Column {
+                val gradeMap = (uiState as UiState.Success).data
+                val termInfo = parseSemesterInt(semester)
 
             val grades = remember(gradeMap, semester) {
                 if (termInfo == null || semester == 0) {
@@ -164,12 +181,13 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                         headlineContent = { Text("共 ${busiestCourses.size} 节课", style = MaterialTheme.typography.headlineMedium) },
                         supportingContent = { Text("平均每周 ${formatDecimal(avgPerWeek, 1)} 节") }
                     )
-                    courseNames.take(6).forEach { name ->
-                        TransplantListItem(headlineContent = { Text(name, style = MaterialTheme.typography.bodyMedium) })
+                    val courseListStr = buildString {
+                        append(courseNames.take(6).joinToString("\n"))
+                        if (courseNames.size > 6) {
+                            append("\n...还有 ${courseNames.size - 6} 门课")
+                        }
                     }
-                    if (courseNames.size > 6) {
-                        TransplantListItem(headlineContent = { Text("...还有 ${courseNames.size - 6} 门课", style = MaterialTheme.typography.bodySmall) })
-                    }
+                    TransplantListItem(headlineContent = { Text(courseListStr, style = MaterialTheme.typography.bodyMedium) })
                 }
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
@@ -195,23 +213,18 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                             trailingContent = { Text("${count}门") }
                         )
                     }
-                }
-
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
-                if (result.maxConsecutiveDays >= 2 && result.consecutiveStart != null && result.consecutiveEnd != null) {
-                    CustomCard(color = cardNormalColor()) {
+                    if (result.maxConsecutiveDays >= 2 && result.consecutiveStart != null && result.consecutiveEnd != null) {
                         TransplantListItem(
                             overlineContent = { Text("连续考试") },
-                            headlineContent = { Text("最长连续考试 ${result.maxConsecutiveDays} 天", style = MaterialTheme.typography.titleMedium) },
+                            headlineContent = { Text("最长连续 ${result.maxConsecutiveDays} 天", style = MaterialTheme.typography.titleMedium) },
                             supportingContent = {
                                 Text("${result.consecutiveStart.format(DateTimeFormatter.ofPattern("M月d日"))} ~ ${result.consecutiveEnd.format(DateTimeFormatter.ofPattern("M月d日"))}")
                             }
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
+
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
 
             // 学分分布
@@ -291,11 +304,9 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
                     overlineContent = { Text("学期总结") },
-                    headlineContent = {}
+                    headlineContent = { Text(messages.joinToString("\n"), style = MaterialTheme.typography.bodyMedium) }
                 )
-                messages.forEach { msg ->
-                    TransplantListItem(headlineContent = { Text(msg, style = MaterialTheme.typography.bodyMedium) })
-                }
+            }
             }
         }
     }
