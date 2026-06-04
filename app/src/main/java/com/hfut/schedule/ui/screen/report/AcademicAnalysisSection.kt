@@ -186,7 +186,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                     if (termInfo == null || semester == 0) {
                         gradeMap.values.flatten().filter { it.finalGrade != null }
                     } else {
-                        gradeMap.filter { SemesterParser.parseSemester(it.key) == semester }.values.flatten().filter { it.finalGrade != null }
+                        gradeMap.filter { SemesterParser.matchesSemester(it.key, semester) }.values.flatten().filter { it.finalGrade != null }
                     }
                 }
 

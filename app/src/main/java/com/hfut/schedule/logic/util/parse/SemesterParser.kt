@@ -9,6 +9,19 @@ import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
 
 object SemesterParser {
+
+    // ==================== 学期编码说明 ====================
+    // 学期用一个 Int 编码，格式为 codes*10+4
+    // codes = (semester-4)/10
+    // codes%4 == 3 → 第一学期（上学期，8月~次年1月）
+    // codes%4 == 1 → 第二学期（下学期，2月~7月）
+    // 年份推算: years = 2017 + (codes-3)/4 + 1
+    // 例: 234 → codes=23, 23%4=3 → 2023~2024第一学期
+    //     254 → codes=25, 25%4=1 → 2023~2024第二学期
+
+    // ==================== Int → 学期信息 ====================
+
+    /** Int → 上/下学期标识 (1=上学期, 2=下学期) */
     @JvmStatic
     fun parseSemesterUpOrDown(semester : Int) : Int {
         val codes = (semester - 4) / 10
@@ -20,6 +33,8 @@ object SemesterParser {
         }
         return  upoOrDown
     }
+
+    /** Int → 完整显示文本，如 "2023~2024年第1学期" (带阿拉伯数字) */
     @JvmStatic
     fun parseSemester(semester : Int) : String? {
         if(semester <= 0) {
@@ -44,13 +59,22 @@ object SemesterParser {
             "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
         }
     }
+
+    // ==================== String → Int ====================
+
+    /** 学期文本 → Int 编码，支持多种格式 ("2023~2024年第1学期", "2023-2024学年第一学期" 等) */
     @JvmStatic
     fun parseSemester(text: String): Int? {
-        val regex = Regex("""(\d+)~(\d+)年第([12])学期""")
-        val match = regex.matchEntire(text) ?: return null
+        val regex = Regex("""(\d+)\s*[~\-～]\s*(\d+)\s*学?年第([一二12])学期""")
+        val match = regex.find(text) ?: return null
 
         val startYear = match.groupValues[1].toInt()
-        val term = match.groupValues[3].toInt()
+        val termStr = match.groupValues[3]
+        val term = when (termStr) {
+            "一", "1" -> 1
+            "二", "2" -> 2
+            else -> return null
+        }
 
         val year = 2017
         val code = 3
@@ -58,14 +82,17 @@ object SemesterParser {
         val base = (startYear - (year + 1)) * 4 + code
 
         val codes = when (term) {
-            1 -> base + 2
-            2 -> base
+            1 -> base
+            2 -> base + 2
             else -> return null
         }
 
         return codes * 10 + 4
     }
 
+    // ==================== Int → 各种格式的显示文本 ====================
+
+    /** Int → 简短显示文本，如 "23~24学年上学期" (两位数年份 + 上/下) */
     fun parseSemesterSimply(semester : Int) : String {
         val codes = (semester - 4) / 10
         val year = 2017
@@ -86,6 +113,8 @@ object SemesterParser {
             "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
         }
     }
+
+    /** Int → 宿舍评分专用格式，如 "2023-2024学年第一学期" (中文数字) */
     @JvmStatic
     fun parseSemesterForDormitory(semester : Int) : String {
         val codes = (semester - 4) / 10
@@ -102,9 +131,12 @@ object SemesterParser {
         val years= (year + (codes - code) / 4) + 1
         return years.toString() +  "-" + (years + 1).toString() + "学年第" + numToChinese(upOrDown) + "学期"
     }
-    // ((semster-4)/10)-3)/4 + 2018 = firstYear
-    // ((firstYear - 2018)*4 + 3)*10 + 4 = semster
-    // 传入YYYY-MM
+
+    // ==================== 日期 → Int ====================
+
+    // 编码公式: ((semester-4)/10-3)/4 + 2018 = firstYear
+    //           ((firstYear - 2018)*4 + 3)*10 + 4 = semester
+    /** 日期字符串 "YYYY-MM" → 对应学期的 Int 编码 */
     @JvmStatic
     fun reverseGetSemester(date : String): Int? {
         // YYYY年的2~7月为 (YYYY-1)~YYYY 第2学期
@@ -141,6 +173,9 @@ object SemesterParser {
         }
     }
 
+    // ==================== 获取当前学期 ====================
+
+    /** 获取当前学期 (suspend，读取 DataStore) */
     @JvmStatic
     suspend fun getSemester() : Int {
         val autoTerm = DataStoreManager.enableAutoTerm.first()
@@ -151,6 +186,8 @@ object SemesterParser {
             return autoTermValue
         }
     }
+
+    /** 获取当前学期 (非 suspend，用于非协程环境) */
     @JvmStatic
     fun getSemesterWithoutSuspend() : Int {
         return try {
@@ -161,6 +198,50 @@ object SemesterParser {
         }
     }
 
+    // ==================== 学期导航 ====================
+
+    /** 切换到下一个学期 (+20) */
     fun plusSemester(semester: Int) : Int = semester+20
+    /** 切换到上一个学期 (-20) */
     fun subSemester(semester: Int) : Int = semester-20
+
+    // ==================== 匹配与筛选 ====================
+
+    /** 判断学期文本 termName 是否匹配目标学期编码 semester，支持多种文本格式 */
+    @JvmStatic
+    fun matchesSemester(termName: String, semester: Int): Boolean {
+        if (semester <= 0) return true
+        val parsed = parseSemester(termName)
+        if (parsed != null) return parsed == semester
+        val target = parseSemester(semester) ?: return false
+        fun norm(s: String) = s.replace(" ", "")
+            .replace("学年", "")
+            .replace("一", "1").replace("二", "2")
+            .replace("-", "~").replace("～", "~").replace("/", "~")
+            .replace("上", "1").replace("下", "2")
+        return norm(termName) == norm(target)
+    }
+
+    /** 学期对应的日期范围 (用于消费记录等按日期筛选的场景) */
+    data class SemesterDateRange(val startYearMonth: String, val endYearMonth: String)
+
+    /** Int → 学期对应的月份范围，第一学期 8月~次年1月，第二学期 2月~7月 */
+    @JvmStatic
+    fun getSemesterDateRange(semester: Int): SemesterDateRange? {
+        if (semester <= 0) return null
+        val codes = (semester - 4) / 10
+        val year = 2017
+        val code = 3
+        val years = (year + (codes - code) / 4) + 1
+        val upOrDown = when (codes % 4) {
+            3 -> 1
+            1 -> 2
+            else -> return null
+        }
+        return when (upOrDown) {
+            1 -> SemesterDateRange("${years}-08", "${years + 1}-01")
+            2 -> SemesterDateRange("${years + 1}-02", "${years + 1}-07")
+            else -> null
+        }
+    }
 }

@@ -78,22 +78,16 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             is UiState.Success -> {
                 val allRecords = (billState as UiState.Success).data.records.filter { it.turnoverType == "消费" }
 
-
-                /**TODO 待修改
-                 *
-                 * val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
-                 *
-                 * val records = remember(allRecords, semester) {
-                 *                     if (termInfo == null || semester == 0) allRecords
-                 *                     else {
-                 *                         val start = termInfo.dateRangeStart
-                 *                         val end = termInfo.dateRangeEnd
-                 *                         allRecords.filter { it.effectdateStr.substring(0, 7) in start..<end }
-                 *                     }
-                 *                 }
-                 */
-
-                val records = allRecords
+                val dateRange = remember(semester) { SemesterParser.getSemesterDateRange(semester) }
+                val records = remember(allRecords, semester) {
+                    if (dateRange == null || semester == 0) allRecords
+                    else allRecords.filter {
+                        try {
+                            val ym = it.effectdateStr.substring(0, 7)
+                            ym in dateRange.startYearMonth..dateRange.endYearMonth
+                        } catch (_: Exception) { false }
+                    }
+                }
 
                 if (records.isEmpty()) {
                     CustomCard(color = cardNormalColor()) {

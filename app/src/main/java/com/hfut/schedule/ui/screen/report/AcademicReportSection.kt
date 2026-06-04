@@ -75,7 +75,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
             val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
             val list = remember(allTermList, termInfo) {
                 if (semester == 0) allTermList
-                else allTermList.filter { SemesterParser.parseSemester(it.term) == semester }
+                else allTermList.filter { SemesterParser.matchesSemester(it.term, semester) }
             }
 
             val tc = remember(list) { list.fold(0f) { a, b -> a + b.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat() } }
