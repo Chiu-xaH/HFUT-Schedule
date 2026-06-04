@@ -174,16 +174,44 @@ object SemesterParser {
     }
 
     // ==================== 获取当前学期 ====================
+    /**
+     * 获取当前日期对应的最新学期编码
+     */
+    @JvmStatic
+    fun getLatestSemester(): Int {
+        return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+    }
+
+    /**
+     * 判断指定学期是否为当前日期对应的最新学期
+     */
+    @JvmStatic
+    fun isLatestSemester(semester: Int): Boolean {
+        val latestSemester = getLatestSemester()
+        if (latestSemester <= 0) return false
+        return semester == latestSemester
+    }
+
+    /**
+     * 判断当前正在使用的学期是否为最新学期
+     *
+     * 如果开启自动学期，一般返回 true；
+     * 如果用户手动选择了历史学期，则可能返回 false。
+     */
+    @JvmStatic
+    suspend fun isCurrentSemesterLatest(): Boolean {
+        val currentSemester = getSemester()
+        return isLatestSemester(currentSemester)
+    }
 
     /** 获取当前学期 (suspend，读取 DataStore) */
     @JvmStatic
     suspend fun getSemester() : Int {
         val autoTerm = DataStoreManager.enableAutoTerm.first()
-        if(autoTerm) {
-            return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+        return if(autoTerm) {
+            getLatestSemester()
         } else {
-            val autoTermValue = DataStoreManager.customTermValue.first()
-            return autoTermValue
+            DataStoreManager.customTermValue.first()
         }
     }
 
