@@ -204,6 +204,18 @@ object SemesterParser {
         return isLatestSemester(currentSemester)
     }
 
+    /**
+     * 从一组学期文本中解析出最新学期编码
+     *
+     * 例如：
+     * ["2023~2024年第1学期", "2023~2024年第2学期"]
+     * -> 254
+     */
+    @JvmStatic
+    fun parseLatestSemesterFromTerms(terms: List<String>): Int? {
+        return terms.mapNotNull { parseSemester(it) }.maxOrNull()
+    }
+
     /** 获取当前学期 (suspend，读取 DataStore) */
     @JvmStatic
     suspend fun getSemester() : Int {

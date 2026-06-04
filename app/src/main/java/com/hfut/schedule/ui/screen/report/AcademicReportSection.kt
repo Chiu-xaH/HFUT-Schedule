@@ -44,7 +44,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
         if (uiState is UiState.Success) return@m
         var cookie = DataStoreManager.uniAppJwt.first()
         if (cookie.isEmpty()) {
-            if (UniAppRepository.login() == false) return@m
+            if (!UniAppRepository.login()) return@m
             cookie = DataStoreManager.uniAppJwt.first()
         }
         vm.uniAppGradesResp.clear()
@@ -75,7 +75,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                     semester == 0 &&
                     allTermList.isNotEmpty()
                 ) {
-                    latestSemesterFromTerms(allTermList.map { it.term })?.let { latest ->
+                    SemesterParser.parseLatestSemesterFromTerms(allTermList.map { it.term })?.let { latest ->
                         onLatestSemester(latest)
                     }
                     initialSemesterSet = true
@@ -152,7 +152,5 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     }
 }
 
-private fun latestSemesterFromTerms(terms: List<String>): Int? {
-    return terms.mapNotNull { SemesterParser.parseSemester(it) }.maxOrNull()
-}
+
 
