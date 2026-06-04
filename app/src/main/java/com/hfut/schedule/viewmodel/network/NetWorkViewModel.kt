@@ -560,6 +560,8 @@ class NetWorkViewModel() : ViewModel() {
     val dormitoryScoreResp = StateHolder<List<DormitoryScoreBean>>()
     suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
 
+    suspend fun getAllDormitoryScores(token : String, semester : String, semesterInt : Int) = CommunityRepository.getAllDormitoryScores(token,semester,semesterInt)
+
     val uniAppBuildingsResp = StateHolder<List<UniAppBuildingBean>>()
     suspend fun getBuildings(token : String) = UniAppRepository.getBuildings(token,uniAppBuildingsResp)
 
