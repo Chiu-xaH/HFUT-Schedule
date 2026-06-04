@@ -81,70 +81,82 @@ private fun gradeDisplayText(grade: String?, credits: Double): String {
 fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
-    val defaultSem = remember { semester }
+    val isLatestSemester = remember(semester) {
+        SemesterParser.isLatestSemester(semester)
+    }
+
     var courseAnalysis by remember { mutableStateOf<CourseAnalysisResult?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(semester, isLatestSemester) {
+        courseAnalysis = null
+
+        if (!isLatestSemester) {
+            return@LaunchedEffect
+        }
+
         try {
-            val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
+            val json = LargeStringDataManager.read(
+                LargeStringDataManager.getUniAppCoursesKey(semester)
+            )
+
             if (json != null) {
                 val courses = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
                 val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
+
                 for (item in courses) {
                     for (schedule in item.schedules) {
                         weekCount.getOrPut(schedule.weekIndex) { mutableListOf() }
                             .add(item.course.nameZh to "${schedule.startTime}-${schedule.endTime}")
                     }
                 }
+
                 if (weekCount.isNotEmpty()) {
                     val busiest = weekCount.maxByOrNull { it.value.size }!!
                     val avg = weekCount.values.sumOf { it.size }.toDouble() / weekCount.size
                     courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
                 }
             }
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
     }
 
-    val examAnalysis by produceState<ExamAnalysisResult?>(initialValue = null, semester) {
+    val examAnalysis by produceState<ExamAnalysisResult?>(
+        initialValue = null,
+        semester,
+        isLatestSemester
+    ) {
         value = null
+
+        if (!isLatestSemester) {
+            return@produceState
+        }
+
         try {
             val allExams = getExamFromCache()
-
-            /**
-             * TODO 待修改
-             *
-             * val termInfo = SemesterParser.parseSemester(semester)
-             *
-             * val exams = if (semester == 0) allExams else {
-             *                 val start = termInfo.dateRangeStart
-             *                 val end = termInfo.dateRangeEnd
-             *                 allExams.filter { exam ->
-             *                     try {
-             *                         val date = exam.dateTime.substring(0, 10)
-             *                         date in start..<end
-             *                     } catch (_: Exception) { false }
-             *                 }
-             *             }
-             */
-
             val exams = allExams
 
             if (exams.isNotEmpty()) {
                 val monthGroups = exams.groupBy {
                     try {
                         it.dateTime.substring(5, 7).toInt()
-                    } catch (_: Exception) { 0 }
+                    } catch (_: Exception) {
+                        0
+                    }
                 }.filterKeys { it != 0 }
 
                 val busiestMonthEntry = monthGroups.maxByOrNull { it.value.size }
                 val busiestMonth = busiestMonthEntry?.let { it.key.toString() to it.value }
 
-                val monthStats = monthGroups.map { it.key.toString() to it.value.size }.sortedBy { it.first.toInt() }
+                val monthStats = monthGroups
+                    .map { it.key.toString() to it.value.size }
+                    .sortedBy { it.first.toInt() }
 
                 val sortedDates = exams.mapNotNull {
                     try {
                         LocalDate.parse(it.dateTime.substring(0, 10))
-                    } catch (_: Exception) { null }
+                    } catch (_: Exception) {
+                        null
+                    }
                 }.sorted().distinct()
 
                 var maxCons = 1
@@ -156,6 +168,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 for (i in 1 until sortedDates.size) {
                     val prev = sortedDates[i - 1]
                     val curr = sortedDates[i]
+
                     if (prev.plusDays(1) == curr) {
                         currentCons++
                         if (currentCons > maxCons) {
@@ -169,7 +182,13 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                     }
                 }
 
-                value = ExamAnalysisResult(busiestMonth, monthStats, maxCons, maxStart, maxEnd)
+                value = ExamAnalysisResult(
+                    busiestMonth = busiestMonth,
+                    monthStats = monthStats,
+                    maxConsecutiveDays = maxCons,
+                    consecutiveStart = maxStart,
+                    consecutiveEnd = maxEnd
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -222,18 +241,31 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 }
 
                 // 课表分析：最繁忙周（仅默认学期可见）
-                if (semester == defaultSem) {
+                if (isLatestSemester) {
                     courseAnalysis?.let { (busiestWeekNum, busiestCourses, avgPerWeek) ->
                         val courseNames = busiestCourses.map { it.first }.distinct()
 
                         CustomCard(color = cardNormalColor()) {
                             TransplantListItem(
-                                headlineContent = { Text("最繁忙的一周", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                                headlineContent = {
+                                    Text(
+                                        "最繁忙的一周",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
                             )
                             TransplantListItem(
                                 overlineContent = { Text("第${busiestWeekNum}周") },
-                                headlineContent = { Text("共 ${busiestCourses.size} 节课", style = MaterialTheme.typography.headlineMedium) },
-                                supportingContent = { Text("平均每周 ${formatDecimal(avgPerWeek, 1)} 节") }
+                                headlineContent = {
+                                    Text(
+                                        "共 ${busiestCourses.size} 节课",
+                                        style = MaterialTheme.typography.headlineMedium
+                                    )
+                                },
+                                supportingContent = {
+                                    Text("平均每周 ${formatDecimal(avgPerWeek, 1)} 节")
+                                }
                             )
                             val courseListStr = buildString {
                                 append(courseNames.take(6).joinToString("\n"))
@@ -241,7 +273,11 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                                     append("\n...还有 ${courseNames.size - 6} 门课")
                                 }
                             }
-                            TransplantListItem(headlineContent = { Text(courseListStr, style = MaterialTheme.typography.bodyMedium) })
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text(courseListStr, style = MaterialTheme.typography.bodyMedium)
+                                }
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
@@ -249,36 +285,59 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 }
 
                 // 考试分析
-                examAnalysis?.let { result ->
-                    CustomCard(color = cardNormalColor()) {
-                        TransplantListItem(
-                            headlineContent = { Text("考试月分布", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
-                        )
-                        result.busiestMonth?.let { (month, exams) ->
+                // 考试分析（仅最新学期可见）
+                if (isLatestSemester) {
+                    examAnalysis?.let { result ->
+                        CustomCard(color = cardNormalColor()) {
                             TransplantListItem(
-                                overlineContent = { Text("考试最多的月份") },
-                                headlineContent = { Text("${month}月", style = MaterialTheme.typography.headlineMedium) },
-                                supportingContent = { Text("共 ${exams.size} 门考试") }
-                            )
-                        }
-                        result.monthStats.forEach { (month, count) ->
-                            TransplantListItem(
-                                headlineContent = { Text("${month}月") },
-                                trailingContent = { Text("${count}门") }
-                            )
-                        }
-                        if (result.maxConsecutiveDays >= 2 && result.consecutiveStart != null && result.consecutiveEnd != null) {
-                            TransplantListItem(
-                                overlineContent = { Text("连续考试") },
-                                headlineContent = { Text("最长连续 ${result.maxConsecutiveDays} 天", style = MaterialTheme.typography.titleMedium) },
-                                supportingContent = {
-                                    Text("${result.consecutiveStart.format(DateTimeFormatter.ofPattern("M月d日"))} ~ ${result.consecutiveEnd.format(DateTimeFormatter.ofPattern("M月d日"))}")
+                                headlineContent = {
+                                    Text(
+                                        "考试月分布",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             )
+                            result.busiestMonth?.let { (month, exams) ->
+                                TransplantListItem(
+                                    overlineContent = { Text("考试最多的月份") },
+                                    headlineContent = {
+                                        Text("${month}月", style = MaterialTheme.typography.headlineMedium)
+                                    },
+                                    supportingContent = { Text("共 ${exams.size} 门考试") }
+                                )
+                            }
+                            result.monthStats.forEach { (month, count) ->
+                                TransplantListItem(
+                                    headlineContent = { Text("${month}月") },
+                                    trailingContent = { Text("${count}门") }
+                                )
+                            }
+                            if (
+                                result.maxConsecutiveDays >= 2 &&
+                                result.consecutiveStart != null &&
+                                result.consecutiveEnd != null
+                            ) {
+                                TransplantListItem(
+                                    overlineContent = { Text("连续考试") },
+                                    headlineContent = {
+                                        Text(
+                                            "最长连续 ${result.maxConsecutiveDays} 天",
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                    },
+                                    supportingContent = {
+                                        Text(
+                                            "${result.consecutiveStart.format(DateTimeFormatter.ofPattern("M月d日"))} ~ " +
+                                                    result.consecutiveEnd.format(DateTimeFormatter.ofPattern("M月d日"))
+                                        )
+                                    }
+                                )
+                            }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                        Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                    }
                 }
 
                 if (grades.isNotEmpty()) {
