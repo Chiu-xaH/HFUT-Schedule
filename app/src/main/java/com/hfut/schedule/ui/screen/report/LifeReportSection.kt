@@ -52,21 +52,21 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
                 vm.dormitoryInfoFromCommunityResp.clear()
                 vm.getDormitoryInfo(token)
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
+        }
     }
 
     val weeklyScores by produceState<DormitoryWeeklyScores?>(initialValue = null, semester) {
         value = null
         try {
             val token = prefs.getString("TOKEN", "") ?: ""
-            LogUtil.debug("LifeReport: token=${token.take(10)}..., isEmpty=${token.isEmpty()}")
             if (token.isEmpty()) return@produceState
             val semStr = SemesterParser.parseSemesterForDormitory(semester)
-            LogUtil.debug("LifeReport: semester=$semester, semStr=$semStr")
             val result = vm.getAllDormitoryScores(token, semStr, semester)
-            LogUtil.debug("LifeReport: result=${result?.weeks?.size ?: "null"} weeks")
             value = result
         } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
             LogUtil.error(e)
         }
     }

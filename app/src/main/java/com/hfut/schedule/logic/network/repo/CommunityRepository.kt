@@ -407,7 +407,7 @@ object CommunityRepository {
             LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
             Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
         } else {
-            LogUtil.debug("DormitoryScore: fetching all weeks, token=${token.take(10)}..., semester=$semester")
+            LogUtil.debug("DormitoryScore: fetching all weeks, semester=$semester")
             val weekScores = withContext(Dispatchers.IO) {
                 val scores = mutableListOf<WeekScore>()
                 for (week in 1..maxWeek) {
@@ -445,11 +445,10 @@ object CommunityRepository {
     }
 
     @JvmStatic
-    private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> = try {
+    private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> {
         if (result.contains("操作成功")) {
-            Gson().fromJson(result, DormitoryScoreResponse::class.java).result
+            return Gson().fromJson(result, DormitoryScoreResponse::class.java)?.result ?: emptyList()
         }
-        else
-            throw Exception(result)
-    } catch (e : Exception) { throw e }
+        throw Exception(result)
+    }
 }
