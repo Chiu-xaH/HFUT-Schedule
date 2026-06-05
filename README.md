@@ -137,6 +137,9 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 
 #### Pull Request 须知（参与本项目）
 
+##### 要求：
+熟练 Android，能够在不借助 AI 的情况下完成开发（不是要求不许用，是需要具备独立开发的能力，聚在工大多数业务代码都是需要手写的）
+
 ##### 模块分布：
 - 主仓：本仓库，约 8w 行代码，MVVM 架构，Compose 作为 UI 框架，体量属中型 App，可善用 IDE 的搜索功能进行定位。
 - 网络模块：本仓库 network 模块，放置网络接口，采用设计 Service+ServiceCreator(OkHttp+Retrofit)+Repository(Gson+Jsoup)+ViewModel + StateFlow
@@ -149,7 +152,7 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 - 代码风格无特殊规范，按自己习惯即可，但必须对高频敏感区块使用 `try { } catch { e : Exception -> LogUtil.error(e) }`,防止应用轻易发生Crash。
 - 代码文件的放置位置无特殊规范，按需放置即可，后续开发者会不定期整理。
 - 对于新引入资源，string 文案直接在代码中硬编码即可，方便快速开发，后续开发者会做不定期迁移到`string.xml`中；drawable 素材参考其余素材的命名以及位置，放置即可。
-- commit 的标题建议与其他提交风格一致，例如 新特性、修改优化等涉及代码的改动使用 feature:XXX,修复代码存在的问题使用 bugfix:XXX,重构代码使用 refactor:XXX,更新非代码内容使用 update:XXX…… 时间相近、功能相同的追加 commit 建议使用 `git commit --amend`合并为一个 commit。
+- commit 的标题建议与其他提交风格一致，例如 新特性、修改优化等涉及代码的改动使用 feature:XXX,修复代码存在的问题使用 bugfix:XXX,重构代码使用 refactor:XXX,更新非代码内容使用 update:XXX…… 时间相近、功能相同的追加 commit 建议使用 `git commit --amend`合并为一个或两三个 commit，不要把一个功能分的特别细，否则开发者将压缩 commit。
 - 如涉及 UI&UX，建议与本应用内部风格契合，尽量减少割裂感。
 - 建议在开发过程中，将 app 模块的 build.gradle 文件中的 versionName 后缀加上 Dev，例如“4.20 Dev”，可被判定为内部开发版本，不会触发多余的上报埋点。
 - 一次 PR 建议应专注于一个区块，遵循最小改动化，对于多个不同的改动，可以考虑提若干个 PR。

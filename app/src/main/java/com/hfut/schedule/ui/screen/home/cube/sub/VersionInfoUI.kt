@@ -65,7 +65,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
         UpdateItems("修复 网页搜索组件的取色Bug")//
-        UpdateItems("修复 偶见考试重复出现的Bug", developers = listOf("Junpgle",Constant.GITHUB_DEVELOPER_NAME))
+        UpdateItems("修复 慧新易校随刷新登录不刷新的Bug",developers = listOf("Junpgle"))//
+        UpdateItems("修复 偶见考试重复出现的Bug", developers = listOf("Junpgle",Constant.GITHUB_DEVELOPER_NAME))//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
