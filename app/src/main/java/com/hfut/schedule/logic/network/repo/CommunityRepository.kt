@@ -405,13 +405,13 @@ object CommunityRepository {
         holder : StateHolder<DormitoryWeeklyScores>,
         maxWeek : Int = 30
     ) = try {
+        holder.setLoading()
         val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
         val cached = LargeStringDataManager.read(cacheKey)
 
         if (cached != null) {
             LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
             val result = Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
-
             if (result != null) {
                 holder.emitData(result)
             } else {

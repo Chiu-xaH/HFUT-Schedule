@@ -23,6 +23,7 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.shared.LogUtil
+import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -497,7 +498,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             }
             else -> {
                 CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(headlineContent = { Text("加载中...") })
+                    LoadingUI()
                 }
             }
         }

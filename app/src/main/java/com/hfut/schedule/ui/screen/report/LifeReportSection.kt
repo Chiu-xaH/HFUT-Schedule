@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.chart.LineChart
 import com.xah.common.ui.component.chart.PieChart
@@ -66,7 +67,6 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
             if (token.isEmpty()) return@LaunchedEffect
 
             val semStr = SemesterParser.parseSemesterForDormitory(semester)
-            vm.allDormitoryScoresResp.clear()
             vm.getAllDormitoryScores(token, semStr, semester)
         } catch (e: CancellationException) {
             throw e
@@ -118,10 +118,22 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
                     }
                 }
             }
+            is UiState.Loading -> {
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                CustomCard(color = cardNormalColor()) {
+                    LoadingUI()
+                }
+            }
             else -> {}
         }
 
         when (weeklyScoresState) {
+            is UiState.Loading -> {
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                CustomCard(color = cardNormalColor()) {
+                    LoadingUI()
+                }
+            }
             is UiState.Success -> {
                 val data = (weeklyScoresState as UiState.Success).data
                 val weeks = data.weeks
