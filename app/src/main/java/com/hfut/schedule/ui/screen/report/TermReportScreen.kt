@@ -24,7 +24,6 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
-import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.status.LoadingScreen
@@ -84,7 +83,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                 }
 
                 PageController(
-                    modifier = Modifier.padding(innerPadding).bottomBarBlur(hazeState),
+                    modifier = Modifier.padding(innerPadding),
                     listState = listState,
                     currentPage = semester!!,
                     onNextPage = { semester = it },
