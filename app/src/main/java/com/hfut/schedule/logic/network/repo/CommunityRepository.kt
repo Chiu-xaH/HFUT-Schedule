@@ -53,6 +53,9 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 object CommunityRepository {
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
@@ -399,49 +402,73 @@ object CommunityRepository {
         token : String,
         semester : String,
         semesterInt : Int,
+        holder : StateHolder<DormitoryWeeklyScores>,
         maxWeek : Int = 30
-    ) : DormitoryWeeklyScores? = try {
+    ) = try {
         val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
         val cached = LargeStringDataManager.read(cacheKey)
+
         if (cached != null) {
             LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
-            Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
+            val result = Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
+
+            if (result != null) {
+                holder.emitData(result)
+            } else {
+                holder.emitError(Exception("卫生评分缓存解析失败"))
+            }
         } else {
             LogUtil.debug("DormitoryScore: fetching all weeks, semester=$semester")
+
             val weekScores = withContext(Dispatchers.IO) {
                 val scores = mutableListOf<WeekScore>()
+
                 for (week in 1..maxWeek) {
+                    currentCoroutineContext().ensureActive()
+
                     try {
                         val call = community.getDormitoryScoreDetail(token, week, semester)
                         val response = call.execute()
+
                         if (response.isSuccessful) {
                             val json = response.body()?.string() ?: continue
+
                             if (json.contains("操作成功")) {
                                 val allScores = parseDormitoryScore(json)
                                 val totalItem = allScores.find { it.title == "评分" }
                                 val totalValue = totalItem?.value?.toDoubleOrNull()
+
                                 if (totalValue != null) {
                                     scores.add(WeekScore(week, allScores, totalValue))
                                     LogUtil.debug("DormitoryScore: week=$week, 评分=$totalValue")
                                 }
                             }
                         }
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         LogUtil.debug("DormitoryScore: week=$week, error=${e.javaClass.simpleName}: ${e.message}")
                     }
                 }
+
                 scores
             }
+
             LogUtil.debug("DormitoryScore: total weeks with data=${weekScores.size}")
+
             if (weekScores.isNotEmpty()) {
                 val result = DormitoryWeeklyScores(semester, weekScores)
                 LargeStringDataManager.save(cacheKey, Gson().toJson(result))
-                result
-            } else null
+                holder.emitData(result)
+            } else {
+                holder.emitError(Exception("无卫生评分数据"))
+            }
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e : Exception) {
         LogUtil.error(e)
-        null
+        holder.emitError(e)
     }
 
     @JvmStatic
