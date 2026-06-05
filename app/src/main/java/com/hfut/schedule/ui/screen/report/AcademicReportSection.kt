@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.network.repo.UniAppRepository
@@ -36,12 +38,13 @@ private data class TermGrades(val term: String, val grades: List<GradeJxglstuRes
 @Composable
 fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester: (Int) -> Unit) {
     val uiState by vm.uniAppGradesResp.state.collectAsState()
+    var initialSemesterSet by remember { mutableStateOf(false) }
 
     val refreshNetwork: suspend () -> Unit = m@ {
         if (uiState is UiState.Success) return@m
         var cookie = DataStoreManager.uniAppJwt.first()
         if (cookie.isEmpty()) {
-            if (UniAppRepository.login() == false) return@m
+            if (!UniAppRepository.login()) return@m
             cookie = DataStoreManager.uniAppJwt.first()
         }
         vm.uniAppGradesResp.clear()
@@ -66,16 +69,23 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                     }
                 }
 
-            LaunchedEffect(allTermList) {
-                if (allTermList.isNotEmpty()) {
-                    latestSemesterFromTerms(allTermList.map { it.term })?.let { onLatestSemester(it) }
+            LaunchedEffect(allTermList, semester) {
+                if (
+                    !initialSemesterSet &&
+                    semester == 0 &&
+                    allTermList.isNotEmpty()
+                ) {
+                    SemesterParser.parseLatestSemesterFromTerms(allTermList.map { it.term })?.let { latest ->
+                        onLatestSemester(latest)
+                    }
+                    initialSemesterSet = true
                 }
             }
 
             val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
             val list = remember(allTermList, termInfo) {
                 if (semester == 0) allTermList
-                else allTermList.filter { SemesterParser.parseSemester(it.term) == semester }
+                else allTermList.filter { SemesterParser.matchesSemester(it.term, semester) }
             }
 
             val tc = remember(list) { list.fold(0f) { a, b -> a + b.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat() } }
@@ -142,7 +152,5 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     }
 }
 
-private fun latestSemesterFromTerms(terms: List<String>): Int? {
-    return terms.maxOrNull()?.let { SemesterParser.parseSemester(it) }
-}
+
 

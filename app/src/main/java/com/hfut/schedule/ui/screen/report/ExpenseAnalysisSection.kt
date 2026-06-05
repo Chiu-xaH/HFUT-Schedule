@@ -22,6 +22,8 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.xah.shared.LogUtil
+import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -78,22 +80,19 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             is UiState.Success -> {
                 val allRecords = (billState as UiState.Success).data.records.filter { it.turnoverType == "消费" }
 
-
-                /**TODO 待修改
-                 *
-                 * val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
-                 *
-                 * val records = remember(allRecords, semester) {
-                 *                     if (termInfo == null || semester == 0) allRecords
-                 *                     else {
-                 *                         val start = termInfo.dateRangeStart
-                 *                         val end = termInfo.dateRangeEnd
-                 *                         allRecords.filter { it.effectdateStr.substring(0, 7) in start..<end }
-                 *                     }
-                 *                 }
-                 */
-
-                val records = allRecords
+                val dateRange = remember(semester) { SemesterParser.getSemesterDateRange(semester) }
+                val records = remember(allRecords, semester) {
+                    if (dateRange == null || semester == 0) allRecords
+                    else allRecords.filter {
+                        try {
+                            val ym = it.effectdateStr.substring(0, 7)
+                            ym in dateRange.startYearMonth..dateRange.endYearMonth
+                        } catch (e: Exception) {
+                            LogUtil.error(e)
+                            false
+                        }
+                    }
+                }
 
                 if (records.isEmpty()) {
                     CustomCard(color = cardNormalColor()) {
@@ -499,7 +498,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
             }
             else -> {
                 CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(headlineContent = { Text("加载中...") })
+                    LoadingUI()
                 }
             }
         }
