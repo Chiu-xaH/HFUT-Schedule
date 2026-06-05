@@ -44,13 +44,19 @@ object SemesterParser {
             "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
         }
     }
+
     @JvmStatic
     fun parseSemester(text: String): Int? {
-        val regex = Regex("""(\d+)~(\d+)年第([12])学期""")
-        val match = regex.matchEntire(text) ?: return null
+        val regex = Regex("""(\d+)\s*[~\-～]\s*(\d+)\s*学?年第([一二12])学期""")
+        val match = regex.find(text) ?: return null
 
         val startYear = match.groupValues[1].toInt()
-        val term = match.groupValues[3].toInt()
+        val termStr = match.groupValues[3]
+        val term = when (termStr) {
+            "一", "1" -> 1
+            "二", "2" -> 2
+            else -> return null
+        }
 
         val year = 2017
         val code = 3
@@ -58,8 +64,8 @@ object SemesterParser {
         val base = (startYear - (year + 1)) * 4 + code
 
         val codes = when (term) {
-            1 -> base + 2
-            2 -> base
+            1 -> base
+            2 -> base + 2
             else -> return null
         }
 
@@ -86,6 +92,8 @@ object SemesterParser {
             "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
         }
     }
+
+    /** Int → 宿舍评分专用格式，如 "2023-2024学年第一学期" (中文数字) */
     @JvmStatic
     fun parseSemesterForDormitory(semester : Int) : String {
         val codes = (semester - 4) / 10
@@ -102,9 +110,7 @@ object SemesterParser {
         val years= (year + (codes - code) / 4) + 1
         return years.toString() +  "-" + (years + 1).toString() + "学年第" + numToChinese(upOrDown) + "学期"
     }
-    // ((semster-4)/10)-3)/4 + 2018 = firstYear
-    // ((firstYear - 2018)*4 + 3)*10 + 4 = semster
-    // 传入YYYY-MM
+
     @JvmStatic
     fun reverseGetSemester(date : String): Int? {
         // YYYY年的2~7月为 (YYYY-1)~YYYY 第2学期
@@ -142,25 +148,83 @@ object SemesterParser {
     }
 
     @JvmStatic
+    fun getLatestSemester(): Int {
+        return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+    }
+
+    @JvmStatic
+    fun isLatestSemester(semester: Int): Boolean {
+        val latestSemester = getLatestSemester()
+        if (latestSemester <= 0) return false
+        return semester == latestSemester
+    }
+
+    @JvmStatic
+    suspend fun isCurrentSemesterLatest(): Boolean {
+        val currentSemester = getSemester()
+        return isLatestSemester(currentSemester)
+    }
+
+    @JvmStatic
+    fun parseLatestSemesterFromTerms(terms: List<String>): Int? {
+        return terms.mapNotNull { parseSemester(it) }.maxOrNull()
+    }
+
+    @JvmStatic
     suspend fun getSemester() : Int {
         val autoTerm = DataStoreManager.enableAutoTerm.first()
-        if(autoTerm) {
-            return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+        return if(autoTerm) {
+            getLatestSemester()
         } else {
-            val autoTermValue = DataStoreManager.customTermValue.first()
-            return autoTermValue
+            DataStoreManager.customTermValue.first()
         }
     }
+
     @JvmStatic
     fun getSemesterWithoutSuspend() : Int {
         return try {
             reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
         } catch (e : Exception) {
             LogUtil.error(e)
-            getMy()!!.semesterId.toInt()
+            getMy()?.semesterId?.toIntOrNull() ?: 0
         }
     }
 
     fun plusSemester(semester: Int) : Int = semester+20
     fun subSemester(semester: Int) : Int = semester-20
+
+    @JvmStatic
+    fun matchesSemester(termName: String, semester: Int): Boolean {
+        if (semester <= 0) return true
+        val parsed = parseSemester(termName)
+        if (parsed != null) return parsed == semester
+        val target = parseSemester(semester) ?: return false
+        fun norm(s: String) = s.replace(" ", "")
+            .replace("学年", "")
+            .replace("一", "1").replace("二", "2")
+            .replace("-", "~").replace("～", "~").replace("/", "~")
+            .replace("上", "1").replace("下", "2")
+        return norm(termName) == norm(target)
+    }
+
+    data class SemesterDateRange(val startYearMonth: String, val endYearMonth: String)
+
+    @JvmStatic
+    fun getSemesterDateRange(semester: Int): SemesterDateRange? {
+        if (semester <= 0) return null
+        val codes = (semester - 4) / 10
+        val year = 2017
+        val code = 3
+        val years = (year + (codes - code) / 4) + 1
+        val upOrDown = when (codes % 4) {
+            3 -> 1
+            1 -> 2
+            else -> return null
+        }
+        return when (upOrDown) {
+            1 -> SemesterDateRange("${years}-08", "${years + 1}-01")
+            2 -> SemesterDateRange("${years + 1}-02", "${years + 1}-07")
+            else -> null
+        }
+    }
 }

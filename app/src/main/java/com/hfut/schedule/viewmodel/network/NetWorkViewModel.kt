@@ -43,6 +43,7 @@ import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BusBean
 import com.hfut.schedule.logic.model.community.DormitoryBean
 import com.hfut.schedule.logic.model.community.DormitoryScoreBean
+import com.hfut.schedule.logic.model.community.DormitoryWeeklyScores
 import com.hfut.schedule.logic.model.community.DormitoryUser
 import com.hfut.schedule.logic.model.community.FailRateRecord
 import com.hfut.schedule.logic.model.community.GradeAllResult
@@ -559,6 +560,9 @@ class NetWorkViewModel() : ViewModel() {
 
     val dormitoryScoreResp = StateHolder<List<DormitoryScoreBean>>()
     suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
+
+    val allDormitoryScoresResp = StateHolder<DormitoryWeeklyScores>()
+    suspend fun getAllDormitoryScores(token : String, semester : String, semesterInt : Int) = CommunityRepository.getAllDormitoryScores(token,semester,semesterInt,allDormitoryScoresResp)
 
     val uniAppBuildingsResp = StateHolder<List<UniAppBuildingBean>>()
     suspend fun getBuildings(token : String) = UniAppRepository.getBuildings(token,uniAppBuildingsResp)

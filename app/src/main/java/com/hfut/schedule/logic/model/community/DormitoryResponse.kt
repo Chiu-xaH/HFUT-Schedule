@@ -35,3 +35,14 @@ data class DormitoryScoreBean(
     val value : String,
 )
 
+data class DormitoryWeeklyScores(
+    val semester : String,
+    val weeks : List<WeekScore>
+)
+
+data class WeekScore(
+    val week : Int,
+    val scores : List<DormitoryScoreBean>,
+    val total : Double
+)
+

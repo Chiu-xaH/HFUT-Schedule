@@ -25,6 +25,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.chart.PieChart
 import com.xah.common.ui.component.chart.PieChartData
@@ -156,7 +157,7 @@ fun LibraryReportSection(vm: NetWorkViewModel) {
             }
             else -> {
                 CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(headlineContent = { Text("加载中...") })
+                    LoadingUI()
                 }
             }
         }
