@@ -445,10 +445,11 @@ object CommunityRepository {
     }
 
     @JvmStatic
-    private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> {
+    private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> = try {
         if (result.contains("操作成功")) {
-            return Gson().fromJson(result, DormitoryScoreResponse::class.java)?.result ?: emptyList()
+            Gson().fromJson(result, DormitoryScoreResponse::class.java)?.result ?: emptyList()
+        } else {
+            throw Exception(result)
         }
-        throw Exception(result)
-    }
+    } catch (e : Exception) { throw e }
 }
