@@ -22,6 +22,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.xah.shared.LogUtil
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -85,7 +86,10 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                         try {
                             val ym = it.effectdateStr.substring(0, 7)
                             ym in dateRange.startYearMonth..dateRange.endYearMonth
-                        } catch (_: Exception) { false }
+                        } catch (e: Exception) {
+                            LogUtil.error(e)
+                            false
+                        }
                     }
                 }
 

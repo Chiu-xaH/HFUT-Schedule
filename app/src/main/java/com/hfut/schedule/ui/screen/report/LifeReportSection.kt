@@ -53,7 +53,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
                 vm.getDormitoryInfo(token)
             }
         } catch (e: Exception) {
-            if (e is kotlinx.coroutines.CancellationException) throw e
+            LogUtil.error(e)
         }
     }
 
@@ -66,7 +66,6 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
             val result = vm.getAllDormitoryScores(token, semStr, semester)
             value = result
         } catch (e: Exception) {
-            if (e is kotlinx.coroutines.CancellationException) throw e
             LogUtil.error(e)
         }
     }

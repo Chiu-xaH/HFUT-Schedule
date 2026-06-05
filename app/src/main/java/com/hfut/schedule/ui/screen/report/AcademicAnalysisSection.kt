@@ -27,8 +27,6 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import androidx.compose.foundation.layout.Row
-import com.hfut.schedule.logic.model.jxglstu.semester
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.chart.BarChart
@@ -37,6 +35,7 @@ import com.xah.common.ui.component.chart.RadarData
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.shared.LogUtil
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -116,7 +115,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                     courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
                 }
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            LogUtil.error(e)
         }
     }
 
@@ -139,7 +139,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 val monthGroups = exams.groupBy {
                     try {
                         it.dateTime.substring(5, 7).toInt()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        LogUtil.error(e)
                         0
                     }
                 }.filterKeys { it != 0 }
@@ -154,7 +155,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                 val sortedDates = exams.mapNotNull {
                     try {
                         LocalDate.parse(it.dateTime.substring(0, 10))
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        LogUtil.error(e)
                         null
                     }
                 }.sorted().distinct()
