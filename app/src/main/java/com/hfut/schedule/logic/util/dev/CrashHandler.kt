@@ -37,10 +37,6 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
     }
 
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
-        // MIUI 部分机型 ContentCatcher 反射崩溃，不影响 App 运行，忽略
-        if (throwable is NoSuchFieldException && throwable.message?.contains("mContentExtensionEnabled") == true) {
-            return
-        }
         if (isLoggingEnabled) {
             saveCrashLog(throwable)
         }

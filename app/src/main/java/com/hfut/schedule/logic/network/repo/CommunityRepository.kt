@@ -98,7 +98,7 @@ object CommunityRepository {
             Gson().fromJson(json, FailRateResponse::class.java).result.records
         } else
             throw Exception(json)
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+    } catch (e : Exception) { throw e }
 
     suspend fun checkCommunityLogin(token: String,holder : StateHolder<Boolean>) =
         launchRequestState(
