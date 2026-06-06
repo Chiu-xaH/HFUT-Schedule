@@ -14,9 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,9 +47,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -63,12 +69,129 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
+private fun WelcomeScreen(
+    modifier: Modifier = Modifier,
+    onStartReport: (isGraduating: Boolean) -> Unit
+) {
+    var isGraduating by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painterResource(R.drawable.celebration),
+                contentDescription = null,
+                modifier = Modifier.size(72.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = "学期报告",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "在这里回顾你的校园时光",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(48.dp))
+            FilterChip(
+                selected = isGraduating,
+                onClick = { isGraduating = !isGraduating },
+                label = {
+                    Column {
+                        Text(
+                            text = "我是毕业生",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "开启四年回顾专属祝福",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                border = null,
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+            Spacer(Modifier.height(32.dp))
+            Button(
+                onClick = { onStartReport(isGraduating) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                Text("开始查看报告")
+            }
+        }
+    }
+}
+
+@Composable
+private fun GraduationWelcomeCard(graduationInfo: GraduationInfo) {
+    CustomCard(color = cardNormalColor()) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Text(
+                text = "🎓 毕业快乐",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "${graduationInfo.startYear}~${graduationInfo.graduationYear}届毕业生",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = "四年时光，从${graduationInfo.startYear}年秋天到${graduationInfo.graduationYear}年夏天，" +
+                        "你在这里度过了${graduationInfo.totalSemesters}个学期。",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "每一节课、每一次考试、每一个深夜的图书馆，都是你青春的注脚。" +
+                        "感谢你选择工大，愿前程似锦，未来可期。",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
 internal fun TermReportContent(
     vm: NetWorkViewModel,
     semester: Int,
+    isGraduating: Boolean = false,
     onLatestSemester: (Int) -> Unit = {}
 ) {
+    val gradeState by vm.uniAppGradesResp.state.collectAsState()
+    val graduationInfo = remember(gradeState) {
+        if (gradeState is UiState.Success) {
+            val semesters = (gradeState as UiState.Success).data.keys.mapNotNull {
+                SemesterParser.parseSemester(it)
+            }
+            detectGraduation(semesters)
+        } else null
+    }
+
     Column {
+        if (isGraduating && graduationInfo != null) {
+            GraduationWelcomeCard(graduationInfo)
+        }
         AcademicReportSection(
             vm = vm,
             semester = semester,
@@ -100,6 +223,8 @@ fun TermReportScreen(vm: NetWorkViewModel) {
         mutableStateOf(TermReportExportModule.entries.toSet())
     }
     var exportSemester by remember { mutableIntStateOf(0) }
+    var showWelcome by remember { mutableStateOf(true) }
+    var isGraduating by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         initialSemester = SemesterParser.getSemester()
@@ -302,23 +427,33 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                 title = { Text(TermReportDestination.title.asString()) },
                 navigationIcon = { TopBarNavigationIcon() },
                 actions = {
-                    IconButton(
-                        enabled = semester != null && !exporting,
-                        onClick = {
-                            exportSemester = semester ?: initialSemester
-                            showExportSheet = true
+                    if (!showWelcome) {
+                        IconButton(
+                            enabled = semester != null && !exporting,
+                            onClick = {
+                                exportSemester = semester ?: initialSemester
+                                showExportSheet = true
+                            }
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.ios_share),
+                                contentDescription = "导出"
+                            )
                         }
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ios_share),
-                            contentDescription = "导出"
-                        )
                     }
                 }
             )
         }
     ) { innerPadding ->
-        if(semester == null) {
+        if (showWelcome) {
+            WelcomeScreen(
+                modifier = Modifier.padding(innerPadding),
+                onStartReport = { graduating ->
+                    isGraduating = graduating
+                    showWelcome = false
+                }
+            )
+        } else if(semester == null) {
             LoadingScreen()
         } else {
             Box(
@@ -332,28 +467,33 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                     item {
                         TermReportContent(
                             vm = vm,
-                            semester = semester!!,
+                            semester = if (isGraduating) 0 else semester!!,
+                            isGraduating = isGraduating,
                             onLatestSemester = { latestSemester ->
                                 semester = latestSemester
                             }
                         )
                     }
 
-                    item { PaddingForPageControllerButton() }
+                    if (!isGraduating) {
+                        item { PaddingForPageControllerButton() }
+                    }
                     item { InnerPaddingHeight(innerPadding, false) }
                 }
 
-                PageController(
-                    modifier = Modifier.padding(innerPadding),
-                    listState = listState,
-                    currentPage = semester!!,
-                    onNextPage = { semester = it },
-                    onPreviousPage = { semester = it },
-                    gap = 20,
-                    text = SemesterParser.parseSemester(semester!!) ?: "未知学期",
-                    paddingBottom = false,
-                    resetPage = initialSemester
-                )
+                if (!isGraduating) {
+                    PageController(
+                        modifier = Modifier.padding(innerPadding),
+                        listState = listState,
+                        currentPage = semester!!,
+                        onNextPage = { semester = it },
+                        onPreviousPage = { semester = it },
+                        gap = 20,
+                        text = SemesterParser.parseSemester(semester!!) ?: "未知学期",
+                        paddingBottom = false,
+                        resetPage = initialSemester
+                    )
+                }
             }
         }
     }

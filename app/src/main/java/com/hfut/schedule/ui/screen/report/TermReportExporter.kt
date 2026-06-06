@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.theme.AppTheme
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -40,6 +41,33 @@ enum class TermReportExportModule(val title: String) {
 enum class TermReportExportAction {
     SAVE_TO_GALLERY,
     SHARE
+}
+
+data class GraduationInfo(
+    val startYear: Int,
+    val graduationYear: Int,
+    val totalSemesters: Int
+)
+
+fun detectGraduation(semesters: List<Int>): GraduationInfo? {
+    if (semesters.size < 7) return null
+
+    val years = semesters.mapNotNull { sem ->
+        val text = SemesterParser.parseSemester(sem) ?: return@mapNotNull null
+        val match = Regex("""(\d+)~(\d+)""").find(text) ?: return@mapNotNull null
+        match.groupValues[1].toIntOrNull()
+    }.distinct().sorted()
+
+    if (years.size < 4) return null
+
+    val startYear = years.first()
+    val graduationYear = startYear + 4
+
+    return GraduationInfo(
+        startYear = startYear,
+        graduationYear = graduationYear,
+        totalSemesters = semesters.size
+    )
 }
 
 @Composable
