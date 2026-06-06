@@ -19,12 +19,20 @@ import org.jsoup.Jsoup
 import retrofit2.awaitResponse
 import java.security.MessageDigest
 
+private data class SemesterUsageQueryContext(
+    val range: SemesterParser.SemesterDateRange,
+    val queryYears: List<Int>
+)
+
+private data class AllSemesterUsageQueryContext(
+    val allRanges: List<Pair<Int, SemesterParser.SemesterDateRange>>,
+    val uniqueYears: List<Int>
+)
+
 object SchoolNetSelfRepository {
 
     private val service = SchoolNetSelfServiceCreator.create(SchoolNetSelfService::class.java)
     private var selfServiceLoggedIn = false
-    private var semesterQueryYears: List<Int> = emptyList()
-    private var allSemesterYearRanges: List<Pair<Int, SemesterParser.SemesterDateRange>> = emptyList()
 
     suspend fun loginAndGetMonthPay(
         year: Int,
@@ -286,112 +294,110 @@ object SchoolNetSelfRepository {
     suspend fun loginAndGetSemesterUsage(
         semester: Int,
         holder: StateHolder<SchoolNetSemesterUsageResult>
-    ) = launchRequestState(
-        holder = holder,
-        request = {
-            val range = SemesterParser.getSemesterDateRange(semester)
-                ?: throw Exception("无法解析学期时间范围")
+    ) = run {
+        lateinit var ctx: SemesterUsageQueryContext
+        launchRequestState(
+            holder = holder,
+            request = {
+                val range = SemesterParser.getSemesterDateRange(semester)
+                    ?: throw Exception("无法解析学期时间范围")
 
-            val queryYears = getYearsInRange(range.startYearMonth, range.endYearMonth)
-            val firstYear = queryYears.firstOrNull()
-                ?: throw Exception("无法解析校园网查询年份")
+                val queryYears = getYearsInRange(range.startYearMonth, range.endYearMonth)
+                val firstYear = queryYears.firstOrNull()
+                    ?: throw Exception("无法解析校园网查询年份")
 
-            semesterQueryYears = queryYears
+                ctx = SemesterUsageQueryContext(range, queryYears)
 
-            if (selfServiceLoggedIn) {
-                service.getMonthPay(type = 1, year = firstYear)
-            } else {
-                doLoginAndFetch(firstYear)
+                if (selfServiceLoggedIn) {
+                    service.getMonthPay(type = 1, year = firstYear)
+                } else {
+                    doLoginAndFetch(firstYear)
+                }
+            },
+            transformSuccess = { _, firstHtml ->
+                val results = mutableListOf(parseMonthPay(firstHtml))
+
+                for (year in ctx.queryYears.drop(1)) {
+                    val html = service.getMonthPay(type = 1, year = year)
+                        .awaitResponse()
+                        .body()
+                        ?.string()
+                        .orEmpty()
+                    results.add(parseMonthPay(html))
+                }
+
+                buildSemesterUsageResult(semester, ctx.range.startYearMonth, ctx.range.endYearMonth, results)
             }
-        },
-        transformSuccess = { _, firstHtml ->
-            val range = SemesterParser.getSemesterDateRange(semester)
-                ?: throw Exception("无法解析学期时间范围")
-
-            val results = mutableListOf(parseMonthPay(firstHtml))
-
-            for (year in semesterQueryYears.drop(1)) {
-                val html = service.getMonthPay(type = 1, year = year)
-                    .awaitResponse()
-                    .body()
-                    ?.string()
-                    .orEmpty()
-                results.add(parseMonthPay(html))
-            }
-
-            buildSemesterUsageResult(semester, range.startYearMonth, range.endYearMonth, results)
-        }
-    )
+        )
+    }
 
     suspend fun loginAndGetAllSemestersUsage(
         allSemesters: List<Int>,
         holder: StateHolder<SchoolNetSemesterUsageResult>
-    ) = launchRequestState(
-        holder = holder,
-        request = {
-            if (allSemesters.isEmpty()) throw Exception("无学期数据")
+    ) = run {
+        lateinit var ctx: AllSemesterUsageQueryContext
+        launchRequestState(
+            holder = holder,
+            request = {
+                if (allSemesters.isEmpty()) throw Exception("无学期数据")
 
-            val allRanges = allSemesters.mapNotNull { sem ->
-                SemesterParser.getSemesterDateRange(sem)?.let { sem to it }
+                val allRanges = allSemesters.mapNotNull { sem ->
+                    SemesterParser.getSemesterDateRange(sem)?.let { sem to it }
+                }
+                if (allRanges.isEmpty()) throw Exception("无法解析学期时间范围")
+
+                val allYearMonthPairs = allRanges.flatMap { (_, range) ->
+                    val years = getYearsInRange(range.startYearMonth, range.endYearMonth)
+                    years.map { it to range }
+                }
+                val uniqueYears = allYearMonthPairs.map { it.first }.distinct()
+
+                ctx = AllSemesterUsageQueryContext(allRanges, uniqueYears)
+
+                val firstYear = uniqueYears.first()
+
+                if (selfServiceLoggedIn) {
+                    service.getMonthPay(type = 1, year = firstYear)
+                } else {
+                    doLoginAndFetch(firstYear)
+                }
+            },
+            transformSuccess = { _, firstHtml ->
+                val yearData = mutableMapOf<Int, SchoolNetMonthPayResult>()
+                yearData[ctx.uniqueYears.first()] = parseMonthPay(firstHtml)
+
+                for (year in ctx.uniqueYears.drop(1)) {
+                    val html = service.getMonthPay(type = 1, year = year)
+                        .awaitResponse()
+                        .body()
+                        ?.string()
+                        .orEmpty()
+                    yearData[year] = parseMonthPay(html)
+                }
+
+                val allRecords = ctx.allRanges.flatMap { (sem, range) ->
+                    val years = getYearsInRange(range.startYearMonth, range.endYearMonth)
+                    years.flatMap { yearData[it]?.records.orEmpty() }
+                        .filter { record ->
+                            val month = record.startDate.take(7)
+                            month >= range.startYearMonth && month <= range.endYearMonth
+                        }
+                }.sortedBy { it.startDate }
+
+                val startMonth = ctx.allRanges.minOf { it.second.startYearMonth }
+                val endMonth = ctx.allRanges.maxOf { it.second.endYearMonth }
+
+                SchoolNetSemesterUsageResult(
+                    semester = 0,
+                    startYearMonth = startMonth,
+                    endYearMonth = endMonth,
+                    totalDurationMinutes = allRecords.sumOf { it.durationMinutes },
+                    totalFlowMb = allRecords.sumOf { it.flowMb },
+                    records = allRecords
+                )
             }
-            if (allRanges.isEmpty()) throw Exception("无法解析学期时间范围")
-
-            val allYearMonthPairs = allRanges.flatMap { (_, range) ->
-                val years = getYearsInRange(range.startYearMonth, range.endYearMonth)
-                years.map { it to range }
-            }
-            val uniqueYears = allYearMonthPairs.map { it.first }.distinct()
-
-            allSemesterYearRanges = allYearMonthPairs
-
-            val firstYear = uniqueYears.first()
-
-            if (selfServiceLoggedIn) {
-                service.getMonthPay(type = 1, year = firstYear)
-            } else {
-                doLoginAndFetch(firstYear)
-            }
-        },
-        transformSuccess = { _, firstHtml ->
-            val allRanges = allSemesters.mapNotNull { sem ->
-                SemesterParser.getSemesterDateRange(sem)?.let { sem to it }
-            }
-            val uniqueYears = allSemesterYearRanges.map { it.first }.distinct()
-
-            val yearData = mutableMapOf<Int, SchoolNetMonthPayResult>()
-            yearData[uniqueYears.first()] = parseMonthPay(firstHtml)
-
-            for (year in uniqueYears.drop(1)) {
-                val html = service.getMonthPay(type = 1, year = year)
-                    .awaitResponse()
-                    .body()
-                    ?.string()
-                    .orEmpty()
-                yearData[year] = parseMonthPay(html)
-            }
-
-            val allRecords = allRanges.flatMap { (sem, range) ->
-                val years = getYearsInRange(range.startYearMonth, range.endYearMonth)
-                years.flatMap { yearData[it]?.records.orEmpty() }
-                    .filter { record ->
-                        val month = record.startDate.take(7)
-                        month >= range.startYearMonth && month <= range.endYearMonth
-                    }
-            }.sortedBy { it.startDate }
-
-            val startMonth = allRanges.minOf { it.second.startYearMonth }
-            val endMonth = allRanges.maxOf { it.second.endYearMonth }
-
-            SchoolNetSemesterUsageResult(
-                semester = 0,
-                startYearMonth = startMonth,
-                endYearMonth = endMonth,
-                totalDurationMinutes = allRecords.sumOf { it.durationMinutes },
-                totalFlowMb = allRecords.sumOf { it.flowMb },
-                records = allRecords
-            )
-        }
-    )
+        )
+    }
 
     @JvmStatic
     private fun getYearsInRange(startYearMonth: String, endYearMonth: String): List<Int> = try {
