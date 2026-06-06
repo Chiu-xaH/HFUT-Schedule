@@ -34,7 +34,6 @@ import com.xah.common.ui.component.chart.PieChart
 import com.xah.common.ui.component.chart.PieChartData
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.shared.LogUtil
-import kotlinx.coroutines.CancellationException
 
 @Composable
 fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
@@ -54,8 +53,6 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
 
             vm.dormitoryInfoFromCommunityResp.clear()
             vm.getDormitoryInfo(token)
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             LogUtil.error(e)
         }
@@ -68,8 +65,6 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
 
             val semStr = SemesterParser.parseSemesterForDormitory(semester)
             vm.getAllDormitoryScores(token, semStr, semester)
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             LogUtil.error(e)
         }
