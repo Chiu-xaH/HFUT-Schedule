@@ -1,6 +1,11 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +27,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +51,7 @@ import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
@@ -78,14 +92,50 @@ fun Life() {
                         modifier = Modifier.size(30.dp),
                         onClick = {
                             navController.push(TermReportDestination)
-                        },
+                        }
                     ) {
-                        Icon(
-                            painterResource(R.drawable.kid_star),
-                            contentDescription = null,
+                        val brush = Brush.sweepGradient(
+                            colors = listOf(
+                                Color(0xFFE53935), // 红
+                                Color(0xFFFB8C00), // 橙
+                                Color(0xFFFDD835), // 黄
+                                Color(0xFF43A047), // 绿
+                                Color(0xFF1E88E5), // 蓝
+                                Color(0xFF8E24AA), // 紫
+                                Color(0xFFE53935), // 闭环
+                            )
+                        )
+//                        val angle by rememberInfiniteTransition()
+//                            .animateFloat(
+//                                initialValue = 0f,
+//                                targetValue = 360f,
+//                                animationSpec = infiniteRepeatable(
+//                                    animation = tween(
+//                                        durationMillis = 5000,
+//                                        easing = LinearEasing
+//                                    )
+//                                )
+//                            )
+                        BrushIcon(
+                            brush = brush,
+                            angle = 90f,
+                            icon = R.drawable.kid_star,
                             modifier = Modifier.size(20.dp)
                         )
                     }
+//                    FilledTonalIconButton(
+//                        shape = NoneRoundShape,
+//                        modifier = Modifier.size(30.dp),
+//                        onClick = {
+//                            navController.push(TermReportDestination)
+//                        },
+//                    ) {
+//                        Icon(
+//                            painterResource(R.drawable.kid_star),
+//                            contentDescription = null,
+//                            modifier = Modifier.size(20.dp)
+//                        )
+//                    }
                 }
             }
         },
@@ -94,7 +144,6 @@ fun Life() {
         }
     )
 }
-
 
 enum class LifeBarItems(val page : Int) {
     WEATHER(0),

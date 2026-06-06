@@ -54,7 +54,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     LaunchedEffect(Unit) { refreshNetwork() }
 
     DividerTextExpandedWith("学业报表") {
-        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
             Column {
                 val gradeMap = (uiState as UiState.Success).data
                 val allTermList = remember(gradeMap) {
@@ -107,7 +107,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                 )
                 TransplantListItem(overlineContent = { Text("加权平均分") }, headlineContent = { Text(formatDecimal(as2.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
                 TransplantListItem(overlineContent = { Text("加权GPA") }, headlineContent = { Text(formatDecimal(ag.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
-                TransplantListItem(overlineContent = { Text("总学分") }, headlineContent = { Text(formatDecimal(tc.toDouble(), 1), style = MaterialTheme.typography.headlineMedium) })
+                TransplantListItem(overlineContent = { Text("总学分") }, headlineContent = { Text(formatDecimal(tc.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
             }
 
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP))

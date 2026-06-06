@@ -200,7 +200,7 @@ suspend fun exportTermReport(
     action: TermReportExportAction,
     isGraduating: Boolean = false,
     allSemesters: List<Int> = emptyList()
-) {
+) = withContext(Dispatchers.IO) {
     val bitmap = exportTermReportBitmap(
         activity = activity,
         vm = vm,

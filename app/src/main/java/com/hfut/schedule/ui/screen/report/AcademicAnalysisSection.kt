@@ -198,7 +198,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
     }
 
     DividerTextExpandedWith("学业分析") {
-        CommonNetworkScreen(uiState, onReload = null) {
+        CommonNetworkScreen(uiState, onReload = null, isFullScreen = false) {
             Column {
                 val gradeMap = (uiState as UiState.Success).data
                 val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }

@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.report
 
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,11 +47,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.PartyPlace
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -61,13 +65,18 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.status.LoadingScreen
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -236,6 +245,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
             }
         } else emptyList()
     }
+    val backdrop = rememberLayerBackdrop()
 
     LaunchedEffect(Unit) {
         initialSemester = SemesterParser.getSemester()
@@ -391,20 +401,15 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                             Text("取消")
                         }
                         Spacer(Modifier.width(8.dp))
+                        val activity = LocalActivity.current
                         FilledTonalButton(
-                            enabled = selectedModules.isNotEmpty() && !exporting,
+                            enabled = selectedModules.isNotEmpty() && !exporting && activity!= null,
                             onClick = {
-                                val activity = context.findActivity()
-                                if (activity == null) {
-                                    Toast.makeText(context, "导出失败：无法获取 Activity", Toast.LENGTH_SHORT).show()
-                                    return@FilledTonalButton
-                                }
-                                showExportSheet = false
-                                scope.launch {
+                                scope.launch(Dispatchers.IO) {
                                     exporting = true
                                     try {
                                         exportTermReport(
-                                            activity = activity,
+                                            activity = activity!!,
                                             vm = vm,
                                             semester = exportSemester,
                                             modules = selectedModules,
@@ -412,12 +417,13 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                                             isGraduating = isGraduating,
                                             allSemesters = allSemesters
                                         )
-                                        Toast.makeText(context, "已保存到相册/HFUT-Schedule", Toast.LENGTH_SHORT).show()
-                                    } catch (e: Throwable) {
-                                        Toast.makeText(context, e.message ?: "导出失败", Toast.LENGTH_LONG).show()
-                                    } finally {
-                                        exporting = false
+                                        showToast( "已保存到相册/HFUT-Schedule")
+                                    } catch (e: Exception) {
+                                        showToast("导出失败")
+                                        LogUtil.error(e)
                                     }
+                                    exporting = false
+                                    showExportSheet = false
                                 }
                             }
                         ) {
@@ -425,19 +431,13 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
-                            enabled = selectedModules.isNotEmpty() && !exporting,
+                            enabled = selectedModules.isNotEmpty() && !exporting && activity != null,
                             onClick = {
-                                val activity = context.findActivity()
-                                if (activity == null) {
-                                    Toast.makeText(context, "导出失败：无法获取 Activity", Toast.LENGTH_SHORT).show()
-                                    return@Button
-                                }
-                                showExportSheet = false
-                                scope.launch {
+                                scope.launch(Dispatchers.IO) {
                                     exporting = true
                                     try {
                                         exportTermReport(
-                                            activity = activity,
+                                            activity = activity!!,
                                             vm = vm,
                                             semester = exportSemester,
                                             modules = selectedModules,
@@ -445,11 +445,12 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                                             isGraduating = isGraduating,
                                             allSemesters = allSemesters
                                         )
-                                    } catch (e: Throwable) {
-                                        Toast.makeText(context, e.message ?: "分享失败", Toast.LENGTH_LONG).show()
-                                    } finally {
-                                        exporting = false
+                                    } catch (e: Exception) {
+                                        showToast("分享失败")
+                                        LogUtil.error(e)
                                     }
+                                    exporting = false
+                                    showExportSheet = false
                                 }
                             }
                         ) {
@@ -457,7 +458,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                         }
                     }
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 }
             }
         }
@@ -474,12 +475,15 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                 navigationIcon = { TopBarNavigationIcon() },
                 actions = {
                     if (!showWelcome) {
-                        IconButton(
+                        LiquidButton(
                             enabled = semester != null && !exporting,
                             onClick = {
                                 exportSemester = semester ?: initialSemester
                                 showExportSheet = true
-                            }
+                            },
+                            backdrop = backdrop,
+                            isCircle = true,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         ) {
                             Icon(
                                 painterResource(R.drawable.ios_share),
@@ -506,6 +510,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .hazeSource(hazeState)
+                    .backDropSource(backdrop)
             ) {
                 LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     item { InnerPaddingHeight(innerPadding, true) }
@@ -530,7 +535,10 @@ fun TermReportScreen(vm: NetWorkViewModel) {
 
                 if (!isGraduating) {
                     PageController(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .zIndex(2f)
+                        ,
                         listState = listState,
                         currentPage = semester!!,
                         onNextPage = { semester = it },

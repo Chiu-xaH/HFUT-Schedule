@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.network.repo
 
 import com.google.gson.Gson
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.model.community.ApplyFriendResponse
 import com.hfut.schedule.logic.model.community.ApplyingLists
@@ -402,7 +403,6 @@ object CommunityRepository {
         semester : String,
         semesterInt : Int,
         holder : StateHolder<DormitoryWeeklyScores>,
-        maxWeek : Int = 30
     ) {
         val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
         val cached = LargeStringDataManager.read(cacheKey)
@@ -430,7 +430,7 @@ object CommunityRepository {
                 holder = holder,
                 request = { community.getDormitoryScoreDetail(token, 1, semester) },
                 transformSuccess = { _, _ ->
-                    val weekScores = fetchAllWeekScores(token, semester, maxWeek)
+                    val weekScores = fetchAllWeekScores(token, semester)
 
                     LogUtil.debug("DormitoryScore: total weeks with data=${weekScores.size}")
 
@@ -449,11 +449,10 @@ object CommunityRepository {
     private suspend fun fetchAllWeekScores(
         token : String,
         semester : String,
-        maxWeek : Int
     ) : List<WeekScore> = withContext(Dispatchers.IO) {
         val scores = mutableListOf<WeekScore>()
 
-        for (week in 1..maxWeek) {
+        for (week in 1..MyApplication.MAX_WEEK) {
             currentCoroutineContext().ensureActive()
 
             try {

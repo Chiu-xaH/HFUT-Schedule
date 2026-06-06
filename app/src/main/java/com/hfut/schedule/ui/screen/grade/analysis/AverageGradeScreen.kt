@@ -69,7 +69,6 @@ import kotlinx.coroutines.launch
 fun AverageGradeScreen(
     vm: NetWorkViewModel,
     useUniAppData : Boolean,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -88,6 +87,7 @@ fun AverageGradeScreen(
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
+                /*
                 actions = {
                     LiquidButton(
                         onClick = {
@@ -100,6 +100,7 @@ fun AverageGradeScreen(
                         Icon(painterResource(R.drawable.settings),null)
                     }
                 }
+                 */
             )
         },
     ) { innerPadding ->
