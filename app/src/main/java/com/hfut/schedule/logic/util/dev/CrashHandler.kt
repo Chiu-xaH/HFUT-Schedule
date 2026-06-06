@@ -40,7 +40,6 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         if (isLoggingEnabled) {
             saveCrashLog(throwable)
         }
-        // 交给系统默认处理
         defaultHandler?.uncaughtException(thread, throwable)
     }
 

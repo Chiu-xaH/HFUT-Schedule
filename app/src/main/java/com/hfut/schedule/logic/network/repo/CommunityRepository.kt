@@ -53,7 +53,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
@@ -120,7 +119,7 @@ object CommunityRepository {
             Gson().fromJson(json, GradeResponse::class.java).result
         else
             throw Exception(json)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getAvgGrade(token: String,holder : StateHolder<AvgResult>) = launchRequestState(
         holder = holder,
@@ -133,7 +132,7 @@ object CommunityRepository {
             Gson().fromJson(result, GradeAvgResponse::class.java).result
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getAllAvgGrade(token: String,holder : StateHolder<List<GradeAllResult>>) =
         launchRequestState(
@@ -147,7 +146,7 @@ object CommunityRepository {
             Gson().fromJson(result, GradeAllResponse::class.java).result
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun searchBooks(token: String, name: String, page: Int,holder : StateHolder<List<LibRecord>>) =
         launchRequestState(
@@ -167,7 +166,7 @@ object CommunityRepository {
             Gson().fromJson(json, LibraryResponse::class.java).result.records
         else
             throw Exception(json)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getBookPosition(token: String,callNo: String,holder : StateHolder<List<BookPositionBean>>) =
         launchRequestState(
@@ -181,7 +180,7 @@ object CommunityRepository {
             Gson().fromJson(json, BookPositionResponse::class.java).result
         else
             throw Exception(json)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     fun getCoursesFromCommunity(token : String, studentId: String? = null) {
         val call = token.let { community.getCourse(it,studentId) }
@@ -219,7 +218,7 @@ object CommunityRepository {
         }
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getDormitoryInfo(token : String, dormitoryFromCommunityResp : StateHolder<DormitoryBean>, dormitoryInfoFromCommunityResp : StateHolder<List<DormitoryUser>>) =
         onListenStateHolderForNetwork(
@@ -242,7 +241,7 @@ object CommunityRepository {
         }
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun addFriendApply(token : String, username : String,holder : StateHolder<String>) =
         launchRequestState(
@@ -259,7 +258,7 @@ object CommunityRepository {
             Gson().fromJson(result, ApplyFriendResponse::class.java).message
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getApplying(token : String,holder : StateHolder<List<ApplyingLists?>>) =
         launchRequestState(
@@ -277,7 +276,7 @@ object CommunityRepository {
             Gson().fromJson(result, ApplyingResponse::class.java).result.records
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getMaps(token : String,holder : StateHolder<List<MapBean>>) = launchRequestState(
         holder = holder,
@@ -290,7 +289,7 @@ object CommunityRepository {
             Gson().fromJson(result, MapResponse::class.java).result
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getStuApps(token : String,holder : StateHolder<List<StuAppBean>>) =
         launchRequestState(
@@ -307,7 +306,7 @@ object CommunityRepository {
         }
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getBus(token : String,holder : StateHolder<List<BusBean>>) = launchRequestState(
         holder = holder,
@@ -321,7 +320,7 @@ object CommunityRepository {
         }
         else
             throw Exception(result)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun communityBooks(token : String, type : LibraryItems, page : Int = 1, booksChipData : StateHolder<List<BorrowRecords>>) =
         launchRequestState(
@@ -356,7 +355,7 @@ object CommunityRepository {
             Gson().fromJson(json, BorrowResponse::class.java).result.records
         else
             throw Exception(json)
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     suspend fun getToday(token : String,holder : StateHolder<TodayResult>) = launchRequestState(
         holder = holder,
@@ -366,7 +365,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseTodayFromCommunity(result : String) : TodayResult = try {
         Gson().fromJson(result, TodayResponse::class.java).result
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     fun getFriends(token : String) {
         val call = token.let { community.getFriends(it) }
@@ -404,8 +403,7 @@ object CommunityRepository {
         semesterInt : Int,
         holder : StateHolder<DormitoryWeeklyScores>,
         maxWeek : Int = 30
-    ) = try {
-        holder.setLoading()
+    ) {
         val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
         val cached = LargeStringDataManager.read(cacheKey)
 
@@ -413,64 +411,77 @@ object CommunityRepository {
             LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
             val result = Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
             if (result != null) {
-                holder.emitData(result)
+                launchRequestState(
+                    holder = holder,
+                    request = { community.getDormitoryScoreDetail(token, 0, semester) },
+                    transformSuccess = { _, _ -> result }
+                )
             } else {
-                holder.emitError(Exception("卫生评分缓存解析失败"))
+                launchRequestState(
+                    holder = holder,
+                    request = { community.getDormitoryScoreDetail(token, 0, semester) },
+                    transformSuccess = { _, _ -> throw Exception("卫生评分缓存解析失败") }
+                )
             }
         } else {
             LogUtil.debug("DormitoryScore: fetching all weeks, semester=$semester")
 
-            val weekScores = withContext(Dispatchers.IO) {
-                val scores = mutableListOf<WeekScore>()
+            launchRequestState(
+                holder = holder,
+                request = { community.getDormitoryScoreDetail(token, 1, semester) },
+                transformSuccess = { _, _ ->
+                    val weekScores = fetchAllWeekScores(token, semester, maxWeek)
 
-                for (week in 1..maxWeek) {
-                    currentCoroutineContext().ensureActive()
+                    LogUtil.debug("DormitoryScore: total weeks with data=${weekScores.size}")
 
-                    try {
-                        val call = community.getDormitoryScoreDetail(token, week, semester)
-                        val response = call.execute()
-
-                        if (response.isSuccessful) {
-                            val json = response.body()?.string() ?: continue
-
-                            if (json.contains("操作成功")) {
-                                val allScores = parseDormitoryScore(json)
-                                val totalItem = allScores.find { it.title == "评分" }
-                                val totalValue = totalItem?.value?.toDoubleOrNull()
-
-                                if (totalValue != null) {
-                                    scores.add(WeekScore(week, allScores, totalValue))
-                                    LogUtil.debug("DormitoryScore: week=$week, 评分=$totalValue")
-                                }
-                            }
-                        }
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        LogUtil.debug("DormitoryScore: week=$week, error=${e.javaClass.simpleName}: ${e.message}")
+                    if (weekScores.isNotEmpty()) {
+                        val result = DormitoryWeeklyScores(semester, weekScores)
+                        LargeStringDataManager.save(cacheKey, Gson().toJson(result))
+                        result
+                    } else {
+                        throw Exception("无卫生评分数据")
                     }
                 }
-
-                scores
-            }
-
-            LogUtil.debug("DormitoryScore: total weeks with data=${weekScores.size}")
-
-            if (weekScores.isNotEmpty()) {
-                val result = DormitoryWeeklyScores(semester, weekScores)
-                LargeStringDataManager.save(cacheKey, Gson().toJson(result))
-                holder.emitData(result)
-            } else {
-                holder.emitError(Exception("无卫生评分数据"))
-            }
+            )
         }
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e : Exception) {
-        LogUtil.error(e)
-        holder.emitError(e)
     }
 
+    private suspend fun fetchAllWeekScores(
+        token : String,
+        semester : String,
+        maxWeek : Int
+    ) : List<WeekScore> = withContext(Dispatchers.IO) {
+        val scores = mutableListOf<WeekScore>()
+
+        for (week in 1..maxWeek) {
+            currentCoroutineContext().ensureActive()
+
+            try {
+                val call = community.getDormitoryScoreDetail(token, week, semester)
+                val response = call.execute()
+
+                if (response.isSuccessful) {
+                    val json = response.body()?.string() ?: continue
+
+                    if (json.contains("操作成功")) {
+                        val allScores = parseDormitoryScore(json)
+                        val totalItem = allScores.find { it.title == "评分" }
+                        val totalValue = totalItem?.value?.toDoubleOrNull()
+
+                        if (totalValue != null) {
+                            scores.add(WeekScore(week, allScores, totalValue))
+                            LogUtil.debug("DormitoryScore: week=$week, 评分=$totalValue")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                LogUtil.error(e)
+            }
+        }
+
+        scores
+    }
+ 
     @JvmStatic
     private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> = try {
         if (result.contains("操作成功")) {
@@ -478,5 +489,5 @@ object CommunityRepository {
         } else {
             throw Exception(result)
         }
-    } catch (e : Exception) { throw e }
+    } catch (e : Exception) { LogUtil.error(e); throw e }
 }

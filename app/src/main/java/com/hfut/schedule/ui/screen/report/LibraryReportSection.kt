@@ -32,7 +32,7 @@ import com.xah.common.ui.component.chart.PieChartData
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 @Composable
-fun LibraryReportSection(vm: NetWorkViewModel) {
+fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期") {
     val libraryStatus by vm.libraryStatusResp.state.collectAsState()
     val borrowedBooks by vm.libraryBorrowedResp.state.collectAsState()
 
@@ -64,7 +64,7 @@ fun LibraryReportSection(vm: NetWorkViewModel) {
                     TransplantListItem(
                         overlineContent = { Text("图书馆概览") },
                         headlineContent = {
-                            Text("本学期借阅", style = MaterialTheme.typography.titleMedium)
+                            Text("${periodLabel}借阅", style = MaterialTheme.typography.titleMedium)
                         }
                     )
                     

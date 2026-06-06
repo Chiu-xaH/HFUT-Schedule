@@ -391,6 +391,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                 HEFEI_TAB -> {
                     Column {
                         loginUi(CampusRegion.HEFEI)
+                        SchoolNetHistoryUsage(vm)
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             CustomCard(color = cardNormalColor()) {
                                 TransplantListItem(
@@ -450,6 +451,8 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         }
 
                         loginUi(CampusRegion.XUANCHENG)
+
+                        SchoolNetHistoryUsage(vm)
 
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             CustomCard(color = cardNormalColor()) {

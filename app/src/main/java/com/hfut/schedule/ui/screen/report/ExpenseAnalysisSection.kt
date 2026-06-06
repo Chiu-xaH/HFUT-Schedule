@@ -57,7 +57,7 @@ private fun classifyMeal(resume: String, time: String): String {
 }
 
 @Composable
-fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
+fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: String = "本学期") {
     val billState by vm.huiXinBillResult.state.collectAsState()
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
 
@@ -450,14 +450,14 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                     mutableListOf<String>().apply {
                         val avgPerDay = if (days > 0) totalAmount / days else 0.0
 
-                        add("本学期共消费 ${records.size} 笔，总计 ￥${formatDecimal(totalAmount, 2)}")
+                        add("${periodLabel}共消费 ${records.size} 笔，总计 ￥${formatDecimal(totalAmount, 2)}")
                         add("平均每笔消费 ￥${formatDecimal(avgPerTransaction, 2)}")
 
                         if (records.size > 100) add("你真是个消费达人，${records.size} 笔消费记录！")
                         if (records.size < 10) add("消费记录这么少，你是用现金的吗？")
 
-                        if (totalAmount > 5000) add("本学期消费超过 5000 元，省着点花哦~")
-                        if (totalAmount < 1000) add("本学期消费不到 1000 元，省钱冠军就是你！")
+                        if (totalAmount > 5000) add("${periodLabel}消费超过 5000 元，省着点花哦~")
+                        if (totalAmount < 1000) add("${periodLabel}消费不到 1000 元，省钱冠军就是你！")
 
                         if (days > 100) add("跨越 $days 天的消费记录，你一直在坚持记账！")
 
@@ -480,7 +480,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                         if (avgPerTransaction > 30) add("平均单笔 ￥${formatDecimal(avgPerTransaction, 0)}，偶尔奢侈一下也不错~")
                         if (avgPerTransaction < 10) add("平均单笔不到 ￥10，勤俭持家！")
 
-                        if (isEmpty()) add("本学期共消费 ${records.size} 笔，总计 ￥${formatDecimal(totalAmount, 2)}")
+                        if (isEmpty()) add("${periodLabel}共消费 ${records.size} 笔，总计 ￥${formatDecimal(totalAmount, 2)}")
                     }
                 }
 

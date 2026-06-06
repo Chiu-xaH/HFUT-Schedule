@@ -77,7 +77,7 @@ private fun gradeDisplayText(grade: String?, credits: Double): String {
 }
 
 @Composable
-fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
+fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: String = "本学期") {
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
     val isLatestSemester = remember(semester) {
@@ -410,7 +410,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int) {
                             val perfect = grades.count { val score = it.finalGrade?.toDoubleOrNull(); score != null && score >= 95.0 }
                             val nearFail = grades.count { val score = it.finalGrade?.toDoubleOrNull(); score != null && score in 60.0..65.0 }
 
-                            add("本学期共修 ${grades.size} 门课程，总计 ${formatDecimal(totalCredits, 1)} 学分")
+                            add("${periodLabel}共修 ${grades.size} 门课程，总计 ${formatDecimal(totalCredits, 1)} 学分")
                             add("平均绩点 ${formatDecimal(avgGp, 2)}")
                             if (highGpa > 0) add("其中 $highGpa 门课程 GPA ≥ 4.0，学霸认证！")
                             if (perfect > 0) add("有 $perfect 门课程 ≥ 95 分，接近满分！")

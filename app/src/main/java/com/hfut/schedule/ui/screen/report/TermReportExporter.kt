@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.theme.AppTheme
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -42,12 +43,43 @@ enum class TermReportExportAction {
     SHARE
 }
 
+data class GraduationInfo(
+    val startYear: Int,
+    val graduationYear: Int,
+    val totalSemesters: Int
+)
+
+fun detectGraduation(semesters: List<Int>): GraduationInfo? {
+    if (semesters.size < 7) return null
+
+    val years = semesters.mapNotNull { sem ->
+        val text = SemesterParser.parseSemester(sem) ?: return@mapNotNull null
+        val match = Regex("""(\d+)~(\d+)""").find(text) ?: return@mapNotNull null
+        match.groupValues[1].toIntOrNull()
+    }.distinct().sorted()
+
+    if (years.size < 4) return null
+
+    val startYear = years.first()
+    val graduationYear = startYear + 4
+
+    return GraduationInfo(
+        startYear = startYear,
+        graduationYear = graduationYear,
+        totalSemesters = semesters.size
+    )
+}
+
 @Composable
 fun TermReportExportContent(
     vm: NetWorkViewModel,
     semester: Int,
-    modules: Set<TermReportExportModule>
+    modules: Set<TermReportExportModule>,
+    isGraduating: Boolean = false,
+    allSemesters: List<Int> = emptyList()
 ) {
+    val periodLabel = if (isGraduating) "四年" else "本学期"
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.background
@@ -65,16 +97,16 @@ fun TermReportExportContent(
                 )
             }
             if (TermReportExportModule.ACADEMIC_ANALYSIS in modules) {
-                AcademicAnalysisSection(vm, semester)
+                AcademicAnalysisSection(vm, semester, periodLabel)
             }
             if (TermReportExportModule.EXPENSE_ANALYSIS in modules) {
-                ExpenseAnalysisSection(vm, semester)
+                ExpenseAnalysisSection(vm, semester, periodLabel)
             }
             if (TermReportExportModule.LIBRARY in modules) {
-                LibraryReportSection(vm)
+                LibraryReportSection(vm, periodLabel)
             }
             if (TermReportExportModule.LIFE in modules) {
-                LifeReportSection(vm, semester)
+                LifeReportSection(vm, semester, allSemesters = if (isGraduating) allSemesters else emptyList())
             }
         }
     }
@@ -86,7 +118,9 @@ suspend fun exportTermReportBitmap(
     semester: Int,
     modules: Set<TermReportExportModule>,
     widthPx: Int,
-    maxBitmapBytes: Long = 180L * 1024L * 1024L
+    maxBitmapBytes: Long = 180L * 1024L * 1024L,
+    isGraduating: Boolean = false,
+    allSemesters: List<Int> = emptyList()
 ): Bitmap = withContext(Dispatchers.Main.immediate) {
     require(modules.isNotEmpty()) { "请选择至少一个导出模块" }
 
@@ -106,7 +140,9 @@ suspend fun exportTermReportBitmap(
                 TermReportExportContent(
                     vm = vm,
                     semester = semester,
-                    modules = modules
+                    modules = modules,
+                    isGraduating = isGraduating,
+                    allSemesters = allSemesters
                 )
             }
         }
@@ -161,14 +197,18 @@ suspend fun exportTermReport(
     vm: NetWorkViewModel,
     semester: Int,
     modules: Set<TermReportExportModule>,
-    action: TermReportExportAction
+    action: TermReportExportAction,
+    isGraduating: Boolean = false,
+    allSemesters: List<Int> = emptyList()
 ) {
     val bitmap = exportTermReportBitmap(
         activity = activity,
         vm = vm,
         semester = semester,
         modules = modules,
-        widthPx = activity.resources.displayMetrics.widthPixels
+        widthPx = activity.resources.displayMetrics.widthPixels,
+        isGraduating = isGraduating,
+        allSemesters = allSemesters
     )
 
     try {

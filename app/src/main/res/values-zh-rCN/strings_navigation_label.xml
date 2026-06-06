@@ -91,5 +91,5 @@
     <string name="navigation_label_settings_corner">屏幕圆角校准</string>
     <string name="navigation_label_shortcut">Shortcut</string>
     <string name="navigation_label_live_update">实时通知</string>
-    <string name="navigation_label_term_report">学期报表</string>
+    <string name="navigation_label_term_report">学期报告</string>
 </resources>
