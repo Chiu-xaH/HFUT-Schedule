@@ -62,6 +62,8 @@ object Constant {
     const val LOGIN_WEB_XC2_URL = "http://172.18.2.2/"
     // 合肥校区 校园网
     const val LOGIN_WEB_HEFEI_URL = "http://172.16.200.11/"
+    // 校园网自服务系统
+    const val SCHOOL_NET_SELF_URL = "https://xywzz.hfut.edu.cn:8443/"
     // 呱呱物联
     const val SHOWER_URL = "https://bathing.hfut.edu.cn/"
     // 宣城校区 通知公告 有些通知需校园网

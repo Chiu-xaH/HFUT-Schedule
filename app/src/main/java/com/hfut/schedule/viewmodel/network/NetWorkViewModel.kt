@@ -96,6 +96,8 @@ import com.hfut.schedule.logic.network.repo.HuiXinRepository
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.LibraryRepository
 import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
+import com.hfut.schedule.logic.network.repo.SchoolNetSelfRepository
+import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.OneRepository
 import com.hfut.schedule.logic.network.repo.OthersRepository
@@ -539,6 +541,10 @@ class NetWorkViewModel() : ViewModel() {
     val infoWebValue = StateHolder<WebInfo>()
     suspend fun getWebInfo() = LoginSchoolNetRepository.getWebInfo(infoWebValue)
     suspend fun getWebInfo2() = LoginSchoolNetRepository.getWebInfo2(infoWebValue)
+
+    val schoolNetMonthPayResp = StateHolder<SchoolNetMonthPayResult>()
+    suspend fun loginAndGetSchoolNetMonthPay(year: Int) = SchoolNetSelfRepository.loginAndGetMonthPay(year, schoolNetMonthPayResp)
+    suspend fun getSchoolNetMonthPayAfterLogin(year: Int) = SchoolNetSelfRepository.getMonthPayAfterLogin(year, schoolNetMonthPayResp)
 
     val giteeUpdatesResp = StateHolder<GiteeReleaseResponse>()
     suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)
