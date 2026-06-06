@@ -3,8 +3,10 @@ package com.hfut.schedule.logic.network.repo
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayRecord
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPaySummary
+import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.network.api.SchoolNetSelfService
 import com.hfut.schedule.network.impl.SchoolNetSelfServiceCreator
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
@@ -21,6 +23,7 @@ object SchoolNetSelfRepository {
 
     private val service = SchoolNetSelfServiceCreator.create(SchoolNetSelfService::class.java)
     private var selfServiceLoggedIn = false
+    private var semesterQueryYears: List<Int> = emptyList()
 
     suspend fun loginAndGetMonthPay(
         year: Int,
@@ -282,6 +285,77 @@ object SchoolNetSelfRepository {
         return SchoolNetMonthPayResult(
             year = year,
             summary = summary,
+            records = records
+        )
+    }
+
+    suspend fun loginAndGetSemesterUsage(
+        semester: Int,
+        holder: StateHolder<SchoolNetSemesterUsageResult>
+    ) = launchRequestState(
+        holder = holder,
+        request = {
+            val range = SemesterParser.getSemesterDateRange(semester)
+                ?: throw Exception("无法解析学期时间范围")
+
+            val queryYears = getYearsInRange(range.startYearMonth, range.endYearMonth)
+            val firstYear = queryYears.firstOrNull()
+                ?: throw Exception("无法解析校园网查询年份")
+
+            semesterQueryYears = queryYears
+
+            if (selfServiceLoggedIn) {
+                service.getMonthPay(type = 1, year = firstYear)
+            } else {
+                doLoginAndFetch(firstYear)
+            }
+        },
+        transformSuccess = { _, firstHtml ->
+            val range = SemesterParser.getSemesterDateRange(semester)
+                ?: throw Exception("无法解析学期时间范围")
+
+            val results = mutableListOf(parseMonthPay(firstHtml))
+
+            for (year in semesterQueryYears.drop(1)) {
+                val html = service.getMonthPay(type = 1, year = year)
+                    .awaitResponse()
+                    .body()
+                    ?.string()
+                    .orEmpty()
+                results.add(parseMonthPay(html))
+            }
+
+            buildSemesterUsageResult(semester, range.startYearMonth, range.endYearMonth, results)
+        }
+    )
+
+    private fun getYearsInRange(startYearMonth: String, endYearMonth: String): List<Int> {
+        val startYear = startYearMonth.substringBefore("-").toIntOrNull()
+        val endYear = endYearMonth.substringBefore("-").toIntOrNull()
+        if (startYear == null || endYear == null) return emptyList()
+        return (startYear..endYear).toList()
+    }
+
+    private fun buildSemesterUsageResult(
+        semester: Int,
+        startYearMonth: String,
+        endYearMonth: String,
+        yearResults: List<SchoolNetMonthPayResult>
+    ): SchoolNetSemesterUsageResult {
+        val records = yearResults
+            .flatMap { it.records }
+            .filter { record ->
+                val month = record.startDate.take(7)
+                month >= startYearMonth && month <= endYearMonth
+            }
+            .sortedBy { it.startDate }
+
+        return SchoolNetSemesterUsageResult(
+            semester = semester,
+            startYearMonth = startYearMonth,
+            endYearMonth = endYearMonth,
+            totalDurationMinutes = records.sumOf { it.durationMinutes },
+            totalFlowMb = records.sumOf { it.flowMb },
             records = records
         )
     }

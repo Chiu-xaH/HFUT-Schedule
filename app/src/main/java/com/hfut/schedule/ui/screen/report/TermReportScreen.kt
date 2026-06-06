@@ -47,6 +47,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.component.screen.Party
+import com.hfut.schedule.ui.component.screen.PartyPlace
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -81,6 +83,8 @@ private fun WelcomeScreen(
             .padding(32.dp),
         contentAlignment = Alignment.Center
     ) {
+        Party(show = true, timeSecond = 1L, count = 200, place = PartyPlace.TOP_CENTER)
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -92,13 +96,14 @@ private fun WelcomeScreen(
             )
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "学期报告",
+                text = if (isGraduating) "毕业快乐" else "学期报告",
                 style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = if (isGraduating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "在这里回顾你的校园时光",
+                text = if (isGraduating) "四年时光，每一节课、每一次考试、每一个深夜的图书馆，都是你青春的注脚。感谢你选择工大，愿前程似锦，未来可期。"
+                       else "在这里回顾你的校园时光",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -124,6 +129,12 @@ private fun WelcomeScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                 )
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "建议连接校园网刷新登录状态后再次打开此界面",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(32.dp))
             Button(

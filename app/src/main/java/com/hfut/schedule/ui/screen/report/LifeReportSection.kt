@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -40,6 +41,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
     val dormitoryInfo by vm.dormitoryFromCommunityResp.state.collectAsState()
     val dormitoryUsers by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
     val weeklyScoresState by vm.allDormitoryScoresResp.state.collectAsState()
+    val schoolNetUsageState by vm.schoolNetSemesterUsageResp.state.collectAsState()
 
     val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
 
@@ -61,10 +63,16 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
     LaunchedEffect(semester) {
         try {
             val token = prefs.getString("TOKEN", "") ?: ""
-            if (token.isEmpty()) return@LaunchedEffect
+            if (token.isNotEmpty()) {
+                val semStr = SemesterParser.parseSemesterForDormitory(semester)
+                vm.getAllDormitoryScores(token, semStr, semester)
+            }
+        } catch (e: Exception) {
+            LogUtil.error(e)
+        }
 
-            val semStr = SemesterParser.parseSemesterForDormitory(semester)
-            vm.getAllDormitoryScores(token, semStr, semester)
+        try {
+            vm.loginAndGetSchoolNetSemesterUsage(semester)
         } catch (e: Exception) {
             LogUtil.error(e)
         }
@@ -300,5 +308,150 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
             }
             else -> {}
         }
+
+        SchoolNetUsageReportCard(state = schoolNetUsageState)
     }
+}
+
+@Composable
+private fun SchoolNetUsageReportCard(
+    state: UiState<SchoolNetSemesterUsageResult>
+) {
+    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+
+    when (state) {
+        is UiState.Loading -> {
+            CustomCard(color = cardNormalColor()) {
+                LoadingUI()
+            }
+        }
+
+        is UiState.Success -> {
+            val data = state.data
+            val records = data.records
+
+            if (records.isEmpty()) {
+                CustomCard(color = cardNormalColor()) {
+                    TransplantListItem(
+                        overlineContent = { Text("校园网使用情况") },
+                        headlineContent = { Text("暂无本学期校园网用量数据") },
+                        supportingContent = { Text("${data.startYearMonth} 至 ${data.endYearMonth}") }
+                    )
+                }
+                return
+            }
+
+            val avgFlow = data.totalFlowMb / records.size
+            val maxRecord = records.maxByOrNull { it.flowMb }
+
+            val flowTrend = remember(records) {
+                records.associate { record ->
+                    val label = record.startDate.substring(5, 7).trimStart('0') + "月"
+                    label to record.flowMb.toFloat()
+                }
+            }
+
+            CustomCard(color = cardNormalColor()) {
+                TransplantListItem(
+                    overlineContent = {
+                        Text("校园网使用情况 · ${data.startYearMonth} 至 ${data.endYearMonth}")
+                    },
+                    headlineContent = {
+                        Text(formatSchoolNetFlow(data.totalFlowMb), style = MaterialTheme.typography.headlineMedium)
+                    },
+                    supportingContent = { Text("本学期总流量") }
+                )
+
+                Row {
+                    TransplantListItem(
+                        overlineContent = { Text("总时长") },
+                        headlineContent = {
+                            Text(formatSchoolNetDuration(data.totalDurationMinutes), style = MaterialTheme.typography.titleMedium)
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    TransplantListItem(
+                        overlineContent = { Text("月均流量") },
+                        headlineContent = {
+                            Text(formatSchoolNetFlow(avgFlow), style = MaterialTheme.typography.titleMedium)
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                maxRecord?.let {
+                    TransplantListItem(
+                        overlineContent = { Text("使用最多月份") },
+                        headlineContent = {
+                            Text("${it.startDate.take(7)} · ${formatSchoolNetFlow(it.flowMb)}", style = MaterialTheme.typography.titleMedium)
+                        },
+                        supportingContent = { Text("使用时长 ${formatSchoolNetDuration(it.durationMinutes)}") }
+                    )
+                }
+
+                if (flowTrend.canDrawFlowChart()) {
+                    LineChart(
+                        data = flowTrend,
+                        showLabel = true,
+                        modifier = Modifier
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .height(180.dp),
+                        xLabelSpacing = 1
+                    )
+                } else {
+                    TransplantListItem(
+                        headlineContent = { Text("暂无可绘制的流量趋势") },
+                        supportingContent = { Text("当前月份数据不足或流量变化过小") }
+                    )
+                }
+
+                records.forEach { record ->
+                    TransplantListItem(
+                        overlineContent = { Text("${record.startDate} 至 ${record.endDate}") },
+                        headlineContent = {
+                            Text(formatSchoolNetFlow(record.flowMb), style = MaterialTheme.typography.titleMedium)
+                        },
+                        supportingContent = {
+                            Text("使用时长 ${formatSchoolNetDuration(record.durationMinutes)} · 出账 ${record.billTime}")
+                        }
+                    )
+                }
+            }
+        }
+
+        is UiState.Error -> {
+            CustomCard(color = cardNormalColor()) {
+                TransplantListItem(
+                    overlineContent = { Text("校园网使用情况") },
+                    headlineContent = { Text("暂无校园网使用数据") },
+                    supportingContent = { Text("可能未登录校园网自服务系统，或当前网络无法访问自服务接口") }
+                )
+            }
+        }
+
+        else -> {}
+    }
+}
+
+private fun formatSchoolNetFlow(mb: Double): String {
+    return if (mb >= 1024) {
+        "${formatDecimal(mb / 1024.0, 2)} GB"
+    } else {
+        "${formatDecimal(mb, 2)} MB"
+    }
+}
+
+private fun formatSchoolNetDuration(minutes: Int): String {
+    val hours = minutes / 60
+    val leftMinutes = minutes % 60
+    return when {
+        hours > 0 && leftMinutes > 0 -> "${hours}小时${leftMinutes}分钟"
+        hours > 0 -> "${hours}小时"
+        else -> "${minutes}分钟"
+    }
+}
+
+private fun Map<String, Float>.canDrawFlowChart(): Boolean {
+    val values = values.filter { it.isFinite() }
+    return values.size >= 2 && values.distinct().size >= 2
 }

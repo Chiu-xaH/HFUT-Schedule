@@ -23,3 +23,12 @@ data class SchoolNetMonthPayRecord(
     val flowMb: Double,
     val billTime: String
 )
+
+data class SchoolNetSemesterUsageResult(
+    val semester: Int,
+    val startYearMonth: String,
+    val endYearMonth: String,
+    val totalDurationMinutes: Int,
+    val totalFlowMb: Double,
+    val records: List<SchoolNetMonthPayRecord>
+)
