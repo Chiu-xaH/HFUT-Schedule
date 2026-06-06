@@ -144,9 +144,7 @@ fun TransferScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(TransferMajorDestination.title.asString()) },
                 actions = {
-                    val dest = NewsApiDestination(
-                        NewsApiDestination.Keyword.TRANSFER_MAJOR.keyword
-                    )
+                    val dest = NewsApiDestination(NewsApiDestination.Keyword.TRANSFER_MAJOR)
                     SharedContainer(
                         key = dest.key,
                         shape = CircleShape,

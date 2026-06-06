@@ -14,7 +14,9 @@ import com.hfut.schedule.network.impl.AcademicServiceCreator
 import com.hfut.schedule.network.impl.AcademicXCServiceCreator
 import com.hfut.schedule.network.impl.NewsServiceCreator
 import com.hfut.schedule.network.impl.XuanChengServiceCreator
+import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -170,7 +172,12 @@ object NewsRepository {
             if(title.isEmpty() || title.isBlank()) {
                 break
             }
-            newsList.add(NewsResponse(title, date, link))
+            val links = if(isValidWebUrl(link)) {
+                link
+            } else {
+                Constant.NEWS_URL + link
+            }
+            newsList.add(NewsResponse(title, date, links))
         }
         // 去重
         newsList = newsList.distinctBy { it.title + it.link + it.date }.toMutableList()

@@ -83,10 +83,7 @@ fun Exam() {
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ExamScreen(
-//    navController : NavHostController,
-    origin : String?
-) {
+fun ExamScreen() {
     val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)

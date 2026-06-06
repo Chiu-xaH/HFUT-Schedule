@@ -415,99 +415,105 @@ private fun EventUI() {
                 }
             }
         )
-        CardListItem(
-            headlineContent = {
-                Text(if (enableLiveCourseReminder) "Android 16 Live Activity 已开启" else "开启 Android 16 Live Activity 提醒")
-            },
-            overlineContent = {
-                Text("使用上方提醒时间，上课前${time}min弹出并显示教室；低版本降级为普通通知")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.notifications), null) },
-            modifier = Modifier.clickable {
-                activity?.let { checkAndRequestNotificationPermission(it) }
-                scope.launch {
-                    if (enableLiveCourseReminder) {
-                        CourseLiveUpdateScheduler.cancelAll(context)
-                        DataStoreManager.saveLiveCourseReminder(false)
-                        showToast("已关闭 Live Activity 提醒")
-                    } else if (CourseLiveUpdateScheduler.canPostNotification(context)) {
-                        val count = CourseLiveUpdateScheduler.scheduleAll(context)
-                        CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
-                        DataStoreManager.saveLiveCourseReminder(true)
-                        showToast("已开启 Live Activity 提醒，共调度${count}节课")
-                    } else {
-                        showToast("请先授予通知权限")
+        DividerTextExpandedWith("实时通知") {
+            CustomCard(color = cardNormalColor()) {
+                TransplantListItem(
+                    headlineContent = {
+                        Text(if (enableLiveCourseReminder) "Android 16 Live Activity 已开启" else "开启 Android 16 Live Activity 提醒")
+                    },
+                    supportingContent = {
+                        Text("使用上方提醒时间，上课前${time}min弹出并显示教室；低版本降级为普通通知")
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.notifications), null) },
+                    modifier = Modifier.clickable {
+                        activity?.let { checkAndRequestNotificationPermission(it) }
+                        scope.launch {
+                            if (enableLiveCourseReminder) {
+                                CourseLiveUpdateScheduler.cancelAll(context)
+                                DataStoreManager.saveLiveCourseReminder(false)
+                                showToast("已关闭 Live Activity 提醒")
+                            } else if (CourseLiveUpdateScheduler.canPostNotification(context)) {
+                                val count = CourseLiveUpdateScheduler.scheduleAll(context)
+                                CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
+                                DataStoreManager.saveLiveCourseReminder(true)
+                                showToast("已开启 Live Activity 提醒，共调度${count}节课")
+                            } else {
+                                showToast("请先授予通知权限")
+                            }
+                        }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("刷新 Live Activity 提醒")
+                    },
+                    supportingContent = {
+                        Text("课表或提醒时间变化后重新调度后台提醒")
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            CourseLiveUpdateScheduler.cancelAll(context)
+                            val count = CourseLiveUpdateScheduler.scheduleAll(context)
+                            CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
+                            DataStoreManager.saveLiveCourseReminder(true)
+                            showToast("已刷新 Live Activity 提醒，共调度${count}节课")
+                        }
+                    }
+                )
+            }
+        }
+        DividerTextExpandedWith("日历日程") {
+            CardListItem(
+                headlineContent = {
+                    Text("清空+导入")
+                },
+                supportingContent = {
+                    Text("将目前的教务课表写入到日程")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.event_upcoming),null) },
+                modifier = Modifier.clickable {
+                    activity?.let {
+                        scope.launch {
+                            async { loading = true }.await()
+                            async { delAllCourseEvent(activity = it) }.await()
+                            async { addCourseToEvent(activity = it,time) }.await()
+                            launch { loading = false }
+                        }
                     }
                 }
-            }
-        )
-        CardListItem(
-            headlineContent = {
-                Text("刷新 Live Activity 提醒")
-            },
-            overlineContent = {
-                Text("课表或提醒时间变化后重新调度后台提醒")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
-            modifier = Modifier.clickable {
-                scope.launch {
-                    CourseLiveUpdateScheduler.cancelAll(context)
-                    val count = CourseLiveUpdateScheduler.scheduleAll(context)
-                    CourseLiveUpdateScheduler.showCurrentWindowCourses(context)
-                    DataStoreManager.saveLiveCourseReminder(true)
-                    showToast("已刷新 Live Activity 提醒，共调度${count}节课")
-                }
-            }
-        )
-        CardListItem(
-            headlineContent = {
-                Text("清空+导入")
-            },
-            overlineContent = {
-                Text("将目前的教务课表写入到日程")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.event_upcoming),null) },
-            modifier = Modifier.clickable {
-                activity?.let {
-                    scope.launch {
-                        async { loading = true }.await()
-                        async { delAllCourseEvent(activity = it) }.await()
-                        async { addCourseToEvent(activity = it,time) }.await()
-                        launch { loading = false }
+            )
+            CardListItem(
+                headlineContent = {
+                    Text("清空")
+                },
+                supportingContent = {
+                    Text("清空导入的日程")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.event_busy),null) },
+                modifier = Modifier.clickable {
+                    activity?.let {
+                        scope.launch {
+                            async { loading = true }.await()
+                            async { delAllCourseEvent(activity = it) }.await()
+                            launch { loading = false }
+                        }
                     }
                 }
-            }
-        )
-
-        CardListItem(
-            headlineContent = {
-                Text("清空")
-            },
-            overlineContent = {
-                Text("清空导入的日程")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.event_busy),null) },
-            modifier = Modifier.clickable {
-                activity?.let {
-                    scope.launch {
-                        async { loading = true }.await()
-                        async { delAllCourseEvent(activity = it) }.await()
-                        launch { loading = false }
-                    }
+            )
+            CardListItem(
+                headlineContent = {
+                    Text("导出为ics")
+                },
+                supportingContent = {
+                    Text("将目前的教务课表写入到日程ics文件")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.attach_file),null) },
+                modifier = Modifier.clickable {
+                    showToast("正在开发")
                 }
-            }
-        )
-        CardListItem(
-            headlineContent = {
-                Text("导出为ics")
-            },
-            overlineContent = {
-                Text("将目前的教务课表写入到日程ics文件")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.attach_file),null) },
-            modifier = Modifier.clickable {
-                showToast("正在开发")
-            }
-        )
+            )
+        }
     }
 }

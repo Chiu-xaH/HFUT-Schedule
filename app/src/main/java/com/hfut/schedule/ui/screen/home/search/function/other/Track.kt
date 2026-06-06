@@ -58,9 +58,12 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -70,6 +73,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -106,7 +110,7 @@ private fun ContributeButtons() {
     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
         LargeButton(
             modifier = Modifier.fillMaxWidth().weight(.5f),
-            text = "开发者反馈通道",
+            text = "Github反馈通道",
             icon = R.drawable.github,
             containerColor = Color.Black,
             contentColor = Color.White,
@@ -122,7 +126,7 @@ private fun ContributeButtons() {
         Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
         LargeButton(
             modifier = Modifier.fillMaxWidth().weight(.5f),
-            text = "普通用户反馈通道",
+            text = "邮件反馈通道",
             icon = R.drawable.mail,
             onClick = {
                 Starter.emailMe(context)
@@ -154,7 +158,8 @@ fun TrackScreen(
         refreshNetwork()
     }
 
-    var showCompeted by rememberSaveable() { mutableStateOf(false) }
+    var displayAll by rememberSaveable { mutableStateOf(false) }
+    var displayCompactly by rememberSaveable { mutableStateOf(false) }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -171,17 +176,35 @@ fun TrackScreen(
                     },
                     actions = {
                         if(uiState !is UiState.Error) {
-                            LiquidButton(
-                                backdrop = backdrop,
-                                isCircle = false,
-                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-                                onClick = {
-                                    showCompeted = !showCompeted
+                            Row {
+                                LiquidButton(
+                                    backdrop = backdrop,
+                                    isCircle = false,
+                                    modifier = Modifier.padding(end = BUTTON_PADDING),
+                                    onClick = {
+                                        displayAll = !displayAll
+                                    }
+                                ) {
+                                    Text(
+                                        if(displayAll) "隐藏已完成事务" else "显示所有事务"
+                                    )
                                 }
-                            ) {
-                                Text(
-                                    if(showCompeted) "隐藏已完成事务" else "显示所有事务"
-                                )
+                                LiquidButton(
+                                    onClick = {
+                                        displayCompactly = !displayCompactly
+                                    } ,
+                                    backdrop = backdrop,
+                                    isCircle = true,
+                                    modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                                ) {
+                                    Icon(
+                                        painterResource(
+                                            if(!displayCompactly) R.drawable.horizontal_split
+                                            else R.drawable.reorder
+                                        ),
+                                        null
+                                    )
+                                }
                             }
                         }
                     }
@@ -202,7 +225,7 @@ fun TrackScreen(
                 val list = (uiState as UiState.Success).data
                     .sortedByDescending { it.updatedTime }
                     .filter {
-                        if(showCompeted) it.getStateOpen() else true
+                        if(!displayAll) it.getStateOpen() else true
                     }
                 Box(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(state = listState) {
@@ -211,7 +234,15 @@ fun TrackScreen(
                             ContributeButtons()
                         }
                         item {
-                            BottomTip("事务推进有快有慢为正常现象, 以开发者的闲暇情况以及影响用户体验的严重性为准, 任何开发者和用户可贡献代码、想法或资料等")
+                            CardListItem(
+                                cardModifier = Modifier.padding(top = CARD_NORMAL_DP),
+                                headlineContent = {
+                                    Text("通过邮件或Github反馈后会答复并在提案板显示；事务推进有快有慢为正常现象, 以开发者的闲暇情况以及影响用户体验的严重性为准。")
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.info),null)
+                                }
+                            )
                         }
                         items(list.size, key = { list[it].number }) { index ->
                             val item = list[index]
@@ -241,7 +272,9 @@ fun TrackScreen(
                                         Text("创建于 ${item.createTime}",textDecoration = textDecoration)
                                     },
                                 )
-                                IssueFlowChart(item)
+                                if(!displayCompactly) {
+                                    IssueFlowChart(item)
+                                }
                             }
                         }
                         item { PaddingForPageControllerButton() }
@@ -254,7 +287,9 @@ fun TrackScreen(
     }
 }
 
-
+/**
+ * by Claude 非手写代码，风格雨应用不契合！待重构
+ */
 // ── 颜色 ─────────────────────────────────────────────
 private val ColorInactive   = Color(0xFFE5E7EB)
 private val ColorInactiveFg = Color(0xFF9CA3AF)
@@ -297,7 +332,7 @@ private fun IssueFlowChart(issue: GithubIssueBean) {
         CircleNode("设计",    ColorDesign,   isDesign || isDev || isVerity || isResolved),
         CircleNode("开发",    ColorDev,      isDev || isVerity || isResolved),
         CircleNode("测试",    ColorVerity,   isVerity || isResolved),
-        CircleNode("发布",    ColorResolved, isResolved),
+        CircleNode("完成",    ColorResolved, isResolved),
     )
     val discardNode = CircleNode("暂不采纳", ColorDiscard, isDiscard)
 
@@ -318,7 +353,6 @@ private fun IssueFlowChart(issue: GithubIssueBean) {
         val diameter  = availableWidth / (nodeCount + (nodeCount - 1) * 0.4f)
         val radius    = diameter / 2
         val hSpacing  = diameter * 0.4f
-        val totalWidth = availableWidth
 
         val maxMainChars  = mainNodes.maxOf { it.label.length }
         val mainLabelH    = charH * maxMainChars
@@ -327,7 +361,7 @@ private fun IssueFlowChart(issue: GithubIssueBean) {
                 branchGap + discardLabelH + labelGap + diameter
 
         Canvas(
-            modifier = Modifier.width(totalWidth).height(totalHeight)
+            modifier = Modifier.width(availableWidth).height(totalHeight)
         ) {
             val r    = radius.toPx()
             val step = diameter.toPx() + hSpacing.toPx()
@@ -356,7 +390,7 @@ private fun IssueFlowChart(issue: GithubIssueBean) {
         }
 
         Column(
-            modifier = Modifier.width(totalWidth),
+            modifier = Modifier.width(availableWidth),
             horizontalAlignment = Alignment.Start
         ) {
             Row(

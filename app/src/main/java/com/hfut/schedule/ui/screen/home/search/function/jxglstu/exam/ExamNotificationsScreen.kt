@@ -10,7 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,9 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
+import androidx.compose.ui.res.painterResource
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
 import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
@@ -41,13 +40,11 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
-
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -56,8 +53,6 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.rememberShaderState
-
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
@@ -118,7 +113,7 @@ fun ExamNotificationsScreen(
                 val campus = campusList[page]
                 when(campus) {
                     HEFEI -> {
-                        TotalNewsScreen(vm, NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword,innerPadding)
+                        TotalNewsScreen(vm, NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI,innerPadding)
                     }
                     XUANCHENG -> {
                         var page by remember { mutableIntStateOf(1) }
@@ -138,6 +133,16 @@ fun ExamNotificationsScreen(
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn(state = listState) {
                                     item { InnerPaddingHeight(innerPadding,true) }
+                                    item {
+                                        CardListItem(
+                                            headlineContent = {
+                                                Text("目前宣城校区教务处每周三发布下一周的考试安排，请及时关注")
+                                            },
+                                            leadingContent = {
+                                                Icon(painterResource(R.drawable.info),null)
+                                            }
+                                        )
+                                    }
                                     items(list.size, key = { it }) { index ->
                                         val item = list[index]
                                         CardListItem(

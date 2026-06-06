@@ -20,6 +20,6 @@ data class ExamDestination(
 
     @Composable
     override fun Content() {
-        ExamScreen(origin)
+        ExamScreen()
     }
 }

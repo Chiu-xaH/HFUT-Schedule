@@ -43,14 +43,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.network.util.CryptoUtil
@@ -58,6 +54,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -81,23 +78,21 @@ import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
-import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.mirror.util.rememberShaderState
 
-import com.xah.navigation.util.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -223,7 +218,7 @@ fun NewsScreen(
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("搜索通知公告：${NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword},${NewsApiDestination.Keyword.TRANSFER_MAJOR.keyword},${NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${NewsApiDestination.Keyword.SELECT_COURSE.keyword}") },
+                            label = { Text("搜索通知公告：${NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword},${NewsApiDestination.Keyword.TRANSFER_MAJOR.keyword},${NewsApiDestination.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${NewsApiDestination.Keyword.SELECT_COURSE_HEFEI.keyword}") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(
@@ -277,7 +272,7 @@ private const val TAB_XC = 1
 fun NewsScreenMini(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState,input : String) {
     HorizontalPager(state = pagerState) { page ->
         when(page) {
-            TAB_TOTAL -> TotalNewsScreen(vm,input,innerPadding,false)
+            TAB_TOTAL -> TotalNewsScreen(vm,input,emptyList(),innerPadding,false)
             TAB_XC -> XuanquNewsUI(innerPadding, vm)
         }
     }
@@ -295,7 +290,22 @@ fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState
 @Composable
 fun TotalNewsScreen(
     vm: NetWorkViewModel,
+    keyword : NewsApiDestination.Keyword,
+    innerPadding : PaddingValues?,
+    paddingBottom : Boolean = true
+) = TotalNewsScreen(
+    vm,
+    keyword.keyword,
+    keyword.filteredHost,
+    innerPadding,
+    paddingBottom
+)
+
+@Composable
+fun TotalNewsScreen(
+    vm: NetWorkViewModel,
     keyword : String,
+    filteredHosts : List<String>,
     innerPadding : PaddingValues?,
     paddingBottom : Boolean = true
 ) {
@@ -316,7 +326,27 @@ fun TotalNewsScreen(
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data
+        val mFilteredHosts = remember(GlobalStateHolder.globalWebVpn) {
+            if (GlobalStateHolder.globalWebVpn) {
+                filteredHosts.map {
+                    WebVpnConvertor.getWebVpnUrl(it)
+                }
+            } else {
+                filteredHosts
+            }
+        }
+        // 过滤处理
+        val source = (uiState as UiState.Success).data
+        val list = if (mFilteredHosts.isEmpty()) {
+            source
+        } else {
+            source.filter { item ->
+                mFilteredHosts.any { host ->
+                    item.link.startsWith(host)
+                }
+            }
+        }
+
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {
@@ -329,13 +359,7 @@ fun TotalNewsScreen(
                         leadingContent = { Text(text = (item + 1).toString()) },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                val links = if(isValidWebUrl(listItem.link)) {
-                                    listItem.link
-                                } else {
-                                    Constant.NEWS_URL + listItem.link
-                                }
-
-                                autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
+                                autoWebVpnForNews(context,listItem.link,listItem.title, icon = R.drawable.stream, cookie = cookies)
                             }
                         },
                     )

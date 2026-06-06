@@ -150,7 +150,6 @@ fun StorageWeb(hazeState : HazeState) {
                     }
                 }
             }
-            Spacer(Modifier.height(60.dp + APP_HORIZONTAL_DP))
         }
     }
 }

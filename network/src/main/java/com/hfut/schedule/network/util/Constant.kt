@@ -101,8 +101,12 @@ object Constant {
     const val WX_URL = "https://wx.hfut.edu.cn/"
     // 教务处 有些通知需校园网
     const val ACADEMIC_URL = "https://jwc.hfut.edu.cn/"
+    const val ACADEMIC_HTTP_URL = "http://jwc.hfut.edu.cn/"
     // 宣城校区 教务处 有些通知需校园网
     const val XC_ACADEMIC_URL = "https://xcjwb.hfut.edu.cn/"
+    // 党支部 有些通知需校园网
+    const val PARTY_BRANCH_URL = "https://dzb.hfut.edu.cn/"
+    const val PARTY_BRANCH_HTTP_URL = "http://dzb.hfut.edu.cn/"
     // Supabase 新加坡服务器 可裸连
     const val SUPABASE_URL = "https://uadgxvstybecnhqemxvj.supabase.co/"
     // 海乐生活 洗衣机

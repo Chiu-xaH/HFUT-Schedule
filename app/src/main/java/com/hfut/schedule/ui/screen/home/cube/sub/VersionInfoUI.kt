@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,8 +49,12 @@ import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.model.ContainerFilledStrategy
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.anim.effect.JumpTransitionEffect
 import com.xah.navigation.util.LocalNavController
@@ -67,6 +72,9 @@ fun VersionInfo() {
         UpdateItems("修复 网页搜索组件的取色Bug")//
         UpdateItems("修复 慧新易校随刷新登录不刷新的Bug",developers = listOf("Junpgle"))//
         UpdateItems("修复 偶见考试重复出现的Bug", developers = listOf("Junpgle",Constant.GITHUB_DEVELOPER_NAME))//
+        UpdateItems("优化 调休安排和全校考试安排过滤掉不相关的项目")//
+        UpdateItems("优化 部分界面的显示")//
+        // 浮窗跟随transtionlevel受控
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
@@ -117,15 +125,21 @@ fun VersionInfo() {
     }
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP), horizontalArrangement = Arrangement.Center) {
         val navController = LocalNavController.current
-        Text(
-            text = "想成为下个版本的贡献者或建言献策?",
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.clickable {
-                navController.push(TrackDestination)
-            }
-        )
+        SharedContainer(
+            TrackDestination.key,
+            containerColor = Color.Transparent,
+            shape = NoneRoundShape,
+        ) {
+            Text(
+                text = "想成为下个版本的贡献者或建言献策?",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.clickable {
+                    navController.push(TrackDestination)
+                }
+            )
+        }
     }
 }
 

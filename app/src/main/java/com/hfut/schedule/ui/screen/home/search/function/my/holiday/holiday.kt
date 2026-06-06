@@ -99,9 +99,7 @@ fun HolidayScreen(
                     TopBarNavigationIcon()
                 },
                 actions = {
-                    val dest = NewsApiDestination(
-                        NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword
-                    )
+                    val dest = NewsApiDestination(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE)
                     SharedContainer(
                         key = dest.key,
                         shape = CircleShape,
@@ -163,9 +161,8 @@ fun HolidayUI(innerPadding : PaddingValues) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsApiScreen(
-//    navController : NavHostController,
     vm : NetWorkViewModel,
-    keyword : String
+    keyword : NewsApiDestination.Keyword
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -180,7 +177,7 @@ fun NewsApiScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(keyword) },
+                    title = { Text(keyword.keyword) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

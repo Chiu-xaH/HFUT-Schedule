@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.component.status
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +46,7 @@ fun StatusIcon(
     iconContainerColor : Color = MaterialTheme.colorScheme.secondaryContainer,
     textColor : Color = if(onTextClick != null) MaterialTheme.colorScheme.primary else iconColor.copy(.75f),
 ) {
-    ColumnVertical(modifier = Modifier.fillMaxWidth()) {
+    ColumnVertical(modifier = Modifier.fillMaxWidth().padding(top = CARD_NORMAL_DP*3)) {
         Surface(
             modifier = Modifier.size(100.dp),
             shape = MaterialTheme.shapes.largeIncreased,
@@ -63,7 +64,7 @@ fun StatusIcon(
             color = textColor,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(top = CARD_NORMAL_DP*3*3/2)
+                .padding(top = CARD_NORMAL_DP*4)
                 .padding(horizontal = APP_HORIZONTAL_DP)
                 .clickable(onTextClick != null) {
                     onTextClick?.let { it() }

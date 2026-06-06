@@ -42,6 +42,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
@@ -54,6 +55,7 @@ import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
 import com.hfut.schedule.ui.nav.destination.SettingsDeveloperDestination
+import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.fix.about.Egg
 import com.hfut.schedule.ui.screen.fix.fix.BugShare
@@ -191,7 +193,6 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         Starter.emailMe(context)
                     }
                 )
-                /*
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsTipsDestination.key,
@@ -216,7 +217,6 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                         }
                     )
                 }
-                 */
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.about_settings_promote_title)) },

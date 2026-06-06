@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
@@ -273,7 +274,7 @@ fun WebNavigationScreen(
                 .fillMaxSize()
         ) {
             InnerPaddingHeight(innerPadding,true)
-            DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
+            DividerTextExpandedWith(text = "浏览器") {
                 Column() {
                     CustomTextField(
                         input = input,
@@ -298,27 +299,27 @@ fun WebNavigationScreen(
                         }
                     ) { input = it }
 
+                    /*
                     Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
                     CustomTextField(
                         input = inputCookies,
                         label = { Text("输入Cookies(可选)") },
                         singleLine = false,
                     ) { inputCookies = it }
+                     */
                 }
             }
-            DividerTextExpandedWith(text = "固定项") {
-                WebItem()
-            }
-            DividerTextExpandedWith(text = "实验室") {
-                LabUI()
-            }
-            DividerTextExpandedWith(text = "本地收藏夹(点击刷新)") {
+//            DividerTextExpandedWith(text = "固定项") {
+//                WebItem()
+//            }
+            DividerTextExpandedWith(text = "收藏夹") {
                 StorageWeb(hazeState)
             }
+            LabUI()
+            PaddingForPageControllerButton()
             InnerPaddingHeight(innerPadding,false)
         }
     }
-//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -358,9 +359,7 @@ fun NotificationBoxScreen(
                 NotificationItems()
             }
             // TODO 解耦给云端共建
-            DividerTextExpandedWith("实验室") {
-                LabUI()
-            }
+            LabUI()
             // TODO 新增
 //            DividerTextExpandedWith("使用技巧") {
 //            }
