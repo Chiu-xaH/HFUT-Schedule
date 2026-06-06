@@ -70,6 +70,11 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
         }
     }
 
+    fun Map<String, Float>.canDrawLineChart(): Boolean {
+        val values = this.values.filter { it.isFinite() }
+        return values.size >= 2 && values.distinct().size >= 2
+    }
+
     DividerTextExpandedWith("生活报表") {
         when (dormitoryInfo) {
             is UiState.Success -> {
@@ -223,18 +228,31 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
                     val totalTrend = remember(weeks) {
                         weeks.associate { "第${it.week}周" to it.total.toFloat() }
                     }
+
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(
                             overlineContent = { Text("学期趋势") },
-                            headlineContent = { Text("共 ${weeks.size} 周数据", style = MaterialTheme.typography.titleMedium) }
+                            headlineContent = {
+                                Text("共 ${weeks.size} 周数据", style = MaterialTheme.typography.titleMedium)
+                            }
                         )
-                        LineChart(
-                            data = totalTrend,
-                            showLabel = true,
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).height(180.dp),
-                            xLabelSpacing = if (weeks.size > 15) 3 else 1
-                        )
+
+                        if (totalTrend.canDrawLineChart()) {
+                            LineChart(
+                                data = totalTrend,
+                                showLabel = true,
+                                modifier = Modifier
+                                    .padding(horizontal = APP_HORIZONTAL_DP)
+                                    .height(180.dp),
+                                xLabelSpacing = if (weeks.size > 15) 3 else 1
+                            )
+                        } else {
+                            TransplantListItem(
+                                headlineContent = { Text("暂无可绘制的趋势变化") },
+                                supportingContent = { Text("当前多周评分相同或数据不足，暂不展示折线图") }
+                            )
+                        }
                     }
 
                     val rankingTrend = remember(weeks) {
@@ -244,19 +262,32 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int) {
                             if (ranking != null) "第${week.week}周" to ranking.toFloat() else null
                         }.toMap()
                     }
+
                     if (rankingTrend.size >= 2) {
                         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                         CustomCard(color = cardNormalColor()) {
                             TransplantListItem(
                                 overlineContent = { Text("排名趋势") },
-                                headlineContent = { Text("共 ${rankingTrend.size} 周数据", style = MaterialTheme.typography.titleMedium) }
+                                headlineContent = {
+                                    Text("共 ${rankingTrend.size} 周数据", style = MaterialTheme.typography.titleMedium)
+                                }
                             )
-                            LineChart(
-                                data = rankingTrend,
-                                showLabel = true,
-                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).height(180.dp),
-                                xLabelSpacing = if (rankingTrend.size > 15) 3 else 1
-                            )
+
+                            if (rankingTrend.canDrawLineChart()) {
+                                LineChart(
+                                    data = rankingTrend,
+                                    showLabel = true,
+                                    modifier = Modifier
+                                        .padding(horizontal = APP_HORIZONTAL_DP)
+                                        .height(180.dp),
+                                    xLabelSpacing = if (rankingTrend.size > 15) 3 else 1
+                                )
+                            } else {
+                                TransplantListItem(
+                                    headlineContent = { Text("暂无可绘制的排名变化") },
+                                    supportingContent = { Text("当前多周排名相同或数据不足，暂不展示折线图") }
+                                )
+                            }
                         }
                     }
                 }

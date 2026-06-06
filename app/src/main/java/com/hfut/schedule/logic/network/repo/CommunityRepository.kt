@@ -38,6 +38,9 @@ import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.network.state.dispatchData
+import com.hfut.schedule.logic.util.network.state.dispatchError
+import com.hfut.schedule.logic.util.network.state.dispatchLoading
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
@@ -404,7 +407,7 @@ object CommunityRepository {
         holder : StateHolder<DormitoryWeeklyScores>,
         maxWeek : Int = 30
     ) = try {
-        holder.setLoading()
+        holder.dispatchLoading()
         val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
         val cached = LargeStringDataManager.read(cacheKey)
 
@@ -412,9 +415,9 @@ object CommunityRepository {
             LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
             val result = Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
             if (result != null) {
-                holder.emitData(result)
+                holder.dispatchData(result)
             } else {
-                holder.emitError(Exception("卫生评分缓存解析失败"))
+                holder.dispatchError(Exception("卫生评分缓存解析失败"))
             }
         } else {
             LogUtil.debug("DormitoryScore: fetching all weeks, semester=$semester")
@@ -456,14 +459,14 @@ object CommunityRepository {
             if (weekScores.isNotEmpty()) {
                 val result = DormitoryWeeklyScores(semester, weekScores)
                 LargeStringDataManager.save(cacheKey, Gson().toJson(result))
-                holder.emitData(result)
+                holder.dispatchData(result)
             } else {
-                holder.emitError(Exception("无卫生评分数据"))
+                holder.dispatchError(Exception("无卫生评分数据"))
             }
         }
     } catch (e : Exception) {
         LogUtil.error(e)
-        holder.emitError(e)
+        holder.dispatchError(e)
     }
 
     @JvmStatic
