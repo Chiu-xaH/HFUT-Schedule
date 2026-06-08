@@ -222,7 +222,7 @@ fun ZhiJianCourseTableUI(
     var findNewCourse by remember { mutableStateOf(false) }
 
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeight = height * 2
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)

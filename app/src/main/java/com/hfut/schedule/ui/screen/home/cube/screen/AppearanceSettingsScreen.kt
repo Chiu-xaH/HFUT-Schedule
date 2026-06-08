@@ -1005,7 +1005,7 @@ fun CalendarUISettings(
     isTiny : Boolean  = false
 ) {
 //    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
-    val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
@@ -1166,7 +1166,7 @@ fun CalendarUISettings(
                     Text(
                         stringResource(
                             R.string.appearance_settings_calendar_square_height_description,
-                            formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.toDouble(), 0)
+                            formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT.toDouble(), 0)
                         ))
             },
             leadingContent = {

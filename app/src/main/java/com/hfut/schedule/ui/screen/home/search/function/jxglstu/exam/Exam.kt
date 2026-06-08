@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -31,9 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
@@ -45,7 +42,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.ExamDestination
-import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
+import com.hfut.schedule.ui.nav.destination.AllExamDestination
 
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -99,7 +96,7 @@ fun ExamScreen() {
                 title = { Text(ExamDestination.TITLE.asString()) },
                 actions = {
                     SharedContainer(
-                        key = ExamNewsDestination.key,
+                        key = AllExamDestination.key,
                         shape = CircleShape,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -108,7 +105,7 @@ fun ExamScreen() {
                             LiquidButton(
                                 shape = NoneRoundShape,
                                 backdrop = backdrop,
-                                onClick = { navController.push(ExamNewsDestination) },
+                                onClick = { navController.push(AllExamDestination) },
                             ) {
                                 Text("全校考试安排", maxLines = 1)
                             }

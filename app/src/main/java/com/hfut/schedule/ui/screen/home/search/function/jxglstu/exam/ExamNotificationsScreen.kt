@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
+import com.hfut.schedule.ui.nav.destination.AllExamDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
@@ -93,7 +93,7 @@ fun ExamNotificationsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(ExamNewsDestination.title.asString()) },
+                    title = { Text(AllExamDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

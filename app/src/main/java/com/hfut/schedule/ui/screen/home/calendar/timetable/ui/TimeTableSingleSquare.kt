@@ -82,7 +82,7 @@ fun TimetableSingleSquare(
     innerPadding : PaddingValues,
     startTime: Float = parseTimeToFloat(DEFAULT_START_TIME),
     endTime : Float = parseTimeToFloat(DEFAULT_END_TIME),
-    hourHeight: Dp = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.dp,
+    hourHeight: Dp = MyApplication.CALENDAR_SQUARE_HEIGHT.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(

@@ -85,21 +85,25 @@
             android:configChanges="uiMode"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
+            <!--            入口Activity-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!--            忘了为啥加这个了-->
             <intent-filter
-                android:scheme="http"
-                tools:ignore="AppLinkUrlError">
+                android:scheme="http" tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
-
+            <!--            DeepLink-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="hfut_schedule"/>
+            </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />

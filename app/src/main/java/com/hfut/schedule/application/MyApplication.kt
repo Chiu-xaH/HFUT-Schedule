@@ -6,13 +6,14 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import com.hfut.schedule.BuildConfig
-import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.nav.deepLinks
+import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
@@ -21,19 +22,27 @@ import java.util.Collections
 
 class MyApplication : Application() {
 
+    // 这里必须严格限制，不许放入太耗时的方法，不是不得不在Activity之前初始化的函数别放这里，放Activity里或者Compose里都可以
     override fun onCreate() {
         super.onCreate()
+        // 暴露全局Context
         context = applicationContext
+        // 初始化日志工具
         LogUtil.init(APP_NAME)
+        // 控制SharedNav库的日志
+        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",BuildConfig.DEBUG)
+        // 注册DeepLink
+        DeepLinkRegistry.init(deepLinks)
         GlobalScope.launch {
+            // 初始化周数（为课程表服务）
             DateTimeManager.initCurrentWeekValue()
+            // Added by @Junpgle 为实时通知服务，这里不归我管
             if (DataStoreManager.enableLiveCourseReminder.first()) {
                 CourseLiveUpdateScheduler.scheduleAll()
                 CourseLiveUpdateScheduler.showCurrentWindowCourses()
             }
         }
-        // 控制SharedNav库的日志
-        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",BuildConfig.DEBUG)
+        // 监听Activity栈
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(a: Activity, b: Bundle?) {
                 activities.add(a)
@@ -46,6 +55,7 @@ class MyApplication : Application() {
             override fun onActivityPaused(activity: Activity) {}
 
             override fun onActivityResumed(activity: Activity) {
+                // Added by @Junpgle 为实时通知服务，这里不归我管
                 GlobalScope.launch {
                     if (DataStoreManager.enableLiveCourseReminder.first()) {
                         CourseLiveUpdateScheduler.showCurrentWindowCourses()
@@ -70,8 +80,7 @@ class MyApplication : Application() {
         // 全局上下文
         lateinit var context: Context
         // 方格默认高度
-        const val CALENDAR_SQUARE_HEIGHT = 125f
-        const val CALENDAR_SQUARE_HEIGHT_NEW = 70f
+        const val CALENDAR_SQUARE_HEIGHT = 70f
         const val CALENDAR_SQUARE_TEXT_PADDING = 1.35f
         const val CALENDAR_SQUARE_ALPHA = 0.6f
         const val SWIPE = 5f

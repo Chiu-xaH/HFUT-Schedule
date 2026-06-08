@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -68,7 +66,6 @@ import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.placeTextFactor
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.timeTextFactor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.CalendarStyle
@@ -182,7 +179,7 @@ fun JxglstuCourseTableSearch(
     onSwapShowAll : (Boolean) -> Unit
 ) {
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeight = height * 2
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)

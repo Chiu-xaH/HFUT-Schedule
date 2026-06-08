@@ -62,7 +62,7 @@ fun MainHost(
     uiVm : UIViewModel,
     login : Boolean,
     isSuccessActivity: Boolean,
-    startRoute : String? = null
+    startDestination : NavDestination
 ) {
     val celebration = remember { getCelebration() }
     // 初始化网络请求
@@ -95,7 +95,7 @@ fun MainHost(
         }
     }
 
-    val navigationController = rememberNavController(getStartDestination(startRoute))
+    val navigationController = rememberNavController(startDestination)
     val dependencies = rememberNavDependencies(networkVm,uiVm,login,login,celebration,isSuccessActivity) {
         put(networkVm)
         put(uiVm)
@@ -189,63 +189,6 @@ fun MainHost(
     }
 }
 
-// 比较版本号 前2位相同则不显示 否则显示
-private fun haveImportantUpdate() : Boolean {
-    try {
-        val lastVersionName =  prefs.getString("versionName", "上版本") ?: return true
-        val nowVersionName = AppVersion.getVersionName()
-
-        if(lastVersionName == nowVersionName) {
-            return false
-        }
-
-        if(lastVersionName == "上版本") {
-            return true
-        }
-
-        val lastVersion = lastVersionName.split('.')
-        if(lastVersion.size < 2) {
-            return false
-        }
-
-        val nowVersion = nowVersionName.split('.')
-        if(nowVersion.size < 2) {
-            return false
-        }
-
-        return !(nowVersion[1] == lastVersion[1] && nowVersion[0] == lastVersion[0])
-    } catch (e : Exception) {
-        LogUtil.error(e)
-        return false
-    }
-}
-
-private fun getStartDestination(route : String?) : NavDestination {
-    return if(prefs.getBoolean("canUse",false)) {
-        if(route != null) {
-            try {
-                val finalClassName = if(route.split(".").size == 1) {
-                    "com.hfut.schedule.ui.nav.destination.$route"
-                } else {
-                    route
-                }
-                val clazz = Class.forName(finalClassName)
-                clazz.getField("INSTANCE").get(null) as NavDestination
-            } catch (e : Exception) {
-                LogUtil.error(e)
-                ExceptionDestination(e)
-            }
-        } else {
-            if(!haveImportantUpdate()) {
-                HomeDestination
-            } else {
-                UpdateSuccessfullyDestination
-            }
-        }
-    } else {
-        AgreementDestination
-    }
-}
 
 private const val OFFSET_KEY = "OFFSET_DRAWERS"
 

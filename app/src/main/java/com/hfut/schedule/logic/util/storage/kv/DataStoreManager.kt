@@ -283,7 +283,7 @@ object DataStoreManager : IDataStore {
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
 //    val enableShowOutOfDateEvent = getFlow(SHOW_OUT_OF_DATE_EVENT, false)
 //    val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
-    val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
     val screenCorner = getFlow(SCREEN_CORNER, -1f)

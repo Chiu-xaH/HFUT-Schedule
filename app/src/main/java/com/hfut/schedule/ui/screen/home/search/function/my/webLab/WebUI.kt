@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.R
@@ -61,7 +60,6 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
-import com.hfut.schedule.ui.nav.destination.ExamNewsDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 
@@ -82,7 +80,6 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

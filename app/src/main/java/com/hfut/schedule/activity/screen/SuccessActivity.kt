@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,7 @@ class SuccessActivity : BaseActivity() {
             uiVm,
             false,
             true,
+            HomeDestination
         )
     }
 
