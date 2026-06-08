@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.enumeration.CasLoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.model.CasGetFlavorResponse
@@ -13,6 +13,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.network.api.LoginService
 import com.hfut.schedule.network.impl.LoginGetCookieServiceCreator
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import okhttp3.Headers
 import org.jsoup.Jsoup
@@ -87,7 +88,7 @@ object CasLoginRepository {
             CasGetFlavorBean(
                 jSession = it,
                 needCaptcha = try {
-                    Gson().fromJson(json, CasGetFlavorResponse::class.java).needCaptcha
+                    GsonInstance.fromJson(json, CasGetFlavorResponse::class.java).needCaptcha
                 } catch (e: Exception) {
                     throw Exception(e)
                 }

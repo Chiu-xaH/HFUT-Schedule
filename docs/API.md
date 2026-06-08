@@ -385,7 +385,7 @@ fun postResult(vm: LoginSuccessViewModel,goodMode: Boolean): JsonObject {
   // 组装数据
   val postSurvey = PostSurvey(surveyAssoc, lessonSurveyTaskAssoc, choiceNewList, inputNewList)
     
-  return Gson().toJsonTree(postSurvey).asJsonObject
+  return GsonInstance.toJsonTree(postSurvey).asJsonObject
 }
 ```
 这里面JSON需要按上面获取教评题目响应JSON写，具体不展开说了，抓包看看或者看我的源代码

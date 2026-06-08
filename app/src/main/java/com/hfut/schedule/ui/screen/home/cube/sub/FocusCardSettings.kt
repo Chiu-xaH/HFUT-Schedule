@@ -40,7 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.util.insertSafely
@@ -58,6 +58,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -364,7 +365,7 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                 vm.hefeiElectric.observeForever { result ->
                     if (result?.contains("success") == true) {
                         try {
-                            val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
+                            val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
                                 vmUI.electricValue.value = value
                                 saveString("memoryEle",vmUI.electricValue.value)
@@ -388,7 +389,7 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                 vm.electricData.observeForever { result ->
                     if (result?.contains("success") == true) {
                         try {
-                            val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
+                            val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
                                 vmUI.electricValue.value = formatDecimal(value.substringAfter("剩余金额:").toDouble(),2)
                                 saveString("memoryEle",vmUI.electricValue.value)

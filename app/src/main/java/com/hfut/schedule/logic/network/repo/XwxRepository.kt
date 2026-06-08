@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.network.repo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.google.gson.Gson
+
 import com.hfut.schedule.network.model.XwxDocPreviewRequest
 import com.hfut.schedule.logic.model.xwx.XwxDocPreviewResponseBody
 import com.hfut.schedule.logic.model.xwx.XwxFunction
@@ -20,6 +20,7 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.GsonInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -36,7 +37,7 @@ object XwxRepository {
     )
     @JvmStatic
     private fun parseSchoolList(json : String) : List<XwxSchoolBean> = try {
-        val result = Gson().fromJson(json, XwxSchoolListResponseBody::class.java)
+        val result = GsonInstance.fromJson(json, XwxSchoolListResponseBody::class.java)
         if(isXwxRequestSuccessful(result.code) == false) {
             throw Exception("登录状态失效")
         }
@@ -57,7 +58,7 @@ object XwxRepository {
     private suspend fun parseLogin(json : String)  = withContext(Dispatchers.IO) {
         try {
             val result = withContext(Dispatchers.Default) {
-                Gson().fromJson(json, XwxLoginResponseBody::class.java)
+                GsonInstance.fromJson(json, XwxLoginResponseBody::class.java)
             }
             if(!isXwxRequestSuccessful(result.code)) {
                 throw Exception("登录状态失效")
@@ -82,7 +83,7 @@ object XwxRepository {
     )
     @JvmStatic
     private fun parseFunctions(json : String) : List<XwxFunction> = try {
-        val result = Gson().fromJson(json, XwxFunctionsResponseBody::class.java)
+        val result = GsonInstance.fromJson(json, XwxFunctionsResponseBody::class.java)
         if(isXwxRequestSuccessful(result.code) == false) {
             throw Exception("登录状态失效")
         }
@@ -103,7 +104,7 @@ object XwxRepository {
     )
     @JvmStatic
     private fun parseDocPreview(json : String) : Bitmap = try {
-        val result = Gson().fromJson(json, XwxDocPreviewResponseBody::class.java)
+        val result = GsonInstance.fromJson(json, XwxDocPreviewResponseBody::class.java)
         if(isXwxRequestSuccessful(result.code) == false) {
             throw Exception("登录状态失效")
         }

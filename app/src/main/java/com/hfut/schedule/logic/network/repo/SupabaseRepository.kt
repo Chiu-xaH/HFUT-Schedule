@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.network.repo
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
+
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventForkCount
@@ -22,6 +22,7 @@ import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -76,7 +77,7 @@ object SupabaseRepository {
         )
     @JvmStatic
     private fun parseRefreshTokenSupabase(json : String) : SupabaseLoginResponse = try {
-        Gson().fromJson(json, SupabaseLoginResponse::class.java)
+        GsonInstance.fromJson(json, SupabaseLoginResponse::class.java)
     } catch (e : Exception) { throw e }
 
 
@@ -171,7 +172,7 @@ object SupabaseRepository {
             transformSuccess = { _, json -> parseSupabaseMyEvents(json) }
         )
     private fun parseSupabaseMyEvents(json : String) : List<SupabaseEventsInput> = try {
-        val list : List<SupabaseEventEntity> = Gson().fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
+        val list : List<SupabaseEventEntity> = GsonInstance.fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
         list.mapNotNull { item -> supabaseEventEntityToDto(item) }
     } catch(e : Exception) { throw e }
 

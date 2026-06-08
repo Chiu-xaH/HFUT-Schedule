@@ -70,7 +70,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.google.gson.Gson
+
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -83,6 +83,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -682,7 +683,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
 
 private fun parseDynamicJson(jsonString: String): Map<String, Int> {
     try {
-        val gson = Gson()
+        val gson = GsonInstance
         val mapType = object : TypeToken<Map<String, Int>>() {}.type
         return gson.fromJson(jsonString, mapType)
     } catch (e : Exception) {

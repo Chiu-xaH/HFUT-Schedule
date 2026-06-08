@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.model.community.ApplyFriendResponse
@@ -48,6 +48,7 @@ import kotlinx.coroutines.withContext
 import com.hfut.schedule.network.api.CommunityService
 import com.hfut.schedule.network.impl.CommunityServiceCreator
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import okhttp3.ResponseBody
@@ -68,7 +69,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseCommunity(json : String) : String = try {
         if (json.contains(StatusCode.OK.code.toString())) {
-            val token = Gson().fromJson(json, LoginCommunityResponse::class.java).result.token!!
+            val token = GsonInstance.fromJson(json, LoginCommunityResponse::class.java).result.token!!
             SharedPrefs.saveString("TOKEN", token)
             showToast("智慧社区登陆成功")
             token
@@ -96,7 +97,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseFailRate(json : String) : List<FailRateRecord> = try {
         if(json.contains("操作成功")) {
-            Gson().fromJson(json, FailRateResponse::class.java).result.records
+            GsonInstance.fromJson(json, FailRateResponse::class.java).result.records
         } else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -117,7 +118,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseGradeFromCommunity(json : String) : GradeResult = try {
         if(json.contains("success"))
-            Gson().fromJson(json, GradeResponse::class.java).result
+            GsonInstance.fromJson(json, GradeResponse::class.java).result
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -130,7 +131,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseAvgGradeFromCommunity(result : String) : AvgResult = try {
         if(result.contains("success"))
-            Gson().fromJson(result, GradeAvgResponse::class.java).result
+            GsonInstance.fromJson(result, GradeAvgResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
@@ -144,7 +145,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseAllAvgGradeFromCommunity(result : String) : List<GradeAllResult> = try {
         if(result.contains("success"))
-            Gson().fromJson(result, GradeAllResponse::class.java).result
+            GsonInstance.fromJson(result, GradeAllResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
@@ -164,7 +165,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseSearchBooks(json : String) : List<LibRecord> = try {
         if(json.contains("操作成功"))
-            Gson().fromJson(json, LibraryResponse::class.java).result.records
+            GsonInstance.fromJson(json, LibraryResponse::class.java).result.records
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -178,7 +179,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseBookPosition(json : String) : List<BookPositionBean> = try {
         if(json.contains("成功"))
-            Gson().fromJson(json, BookPositionResponse::class.java).result
+            GsonInstance.fromJson(json, BookPositionResponse::class.java).result
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -215,7 +216,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseDormitory(result : String) : DormitoryBean = try {
         if (result.contains("操作成功")) {
-            Gson().fromJson(result, DormitoryResponse::class.java).result ?: throw Exception("无住宿信息")
+            GsonInstance.fromJson(result, DormitoryResponse::class.java).result ?: throw Exception("无住宿信息")
         }
         else
             throw Exception(result)
@@ -237,7 +238,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseDormitoryInfo(result : String) : List<DormitoryUser> = try {
         if (result.contains("操作成功")) {
-            val list1 = Gson().fromJson(result, DormitoryInfoResponse::class.java).result?.profileList ?: throw Exception("未查询到宿舍")
+            val list1 = GsonInstance.fromJson(result, DormitoryInfoResponse::class.java).result?.profileList ?: throw Exception("未查询到宿舍")
             list1.flatMap { it.userList }.distinct()
         }
         else
@@ -256,7 +257,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseApplyFriend(result : String) : String = try {
         if (result.contains("success"))
-            Gson().fromJson(result, ApplyFriendResponse::class.java).message
+            GsonInstance.fromJson(result, ApplyFriendResponse::class.java).message
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
@@ -274,7 +275,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseApplyFriends(result : String) : List<ApplyingLists?> = try {
         if(result.contains("success"))
-            Gson().fromJson(result, ApplyingResponse::class.java).result.records
+            GsonInstance.fromJson(result, ApplyingResponse::class.java).result.records
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
@@ -287,7 +288,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseMaps(result : String) : List<MapBean> = try {
         if(result.contains("操作成功"))
-            Gson().fromJson(result, MapResponse::class.java).result
+            GsonInstance.fromJson(result, MapResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
@@ -301,7 +302,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseStuApps(result : String) : List<StuAppBean> = try {
         if(result.contains("操作成功")) {
-            val list = Gson().fromJson(result, StuAppsResponse::class.java).result
+            val list = GsonInstance.fromJson(result, StuAppsResponse::class.java).result
             val totalList = list.flatMap { it.subList }
             totalList.filter { it.url?.startsWith(Constant.STU_URL) == true }
         }
@@ -317,7 +318,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseBus(result : String) : List<BusBean> = try {
         if(result.contains("操作成功")) {
-            Gson().fromJson(result, BusResponse::class.java).result
+            GsonInstance.fromJson(result, BusResponse::class.java).result
         }
         else
             throw Exception(result)
@@ -353,7 +354,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseMyBookFromCommunity(json : String) : List<BorrowRecords> = try {
         if(json.contains("success"))
-            Gson().fromJson(json, BorrowResponse::class.java).result.records
+            GsonInstance.fromJson(json, BorrowResponse::class.java).result.records
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -365,7 +366,7 @@ object CommunityRepository {
     )
     @JvmStatic
     private fun parseTodayFromCommunity(result : String) : TodayResult = try {
-        Gson().fromJson(result, TodayResponse::class.java).result
+        GsonInstance.fromJson(result, TodayResponse::class.java).result
     } catch (e : Exception) { throw e }
 
     fun getFriends(token : String) {
@@ -409,7 +410,7 @@ object CommunityRepository {
 
         if (cached != null) {
             LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
-            val result = Gson().fromJson(cached, DormitoryWeeklyScores::class.java)
+            val result = GsonInstance.fromJson(cached, DormitoryWeeklyScores::class.java)
             if (result != null) {
                 launchRequestState(
                     holder = holder,
@@ -436,7 +437,7 @@ object CommunityRepository {
 
                     if (weekScores.isNotEmpty()) {
                         val result = DormitoryWeeklyScores(semester, weekScores)
-                        LargeStringDataManager.save(cacheKey, Gson().toJson(result))
+                        LargeStringDataManager.save(cacheKey, GsonInstance.toJson(result))
                         result
                     } else {
                         throw Exception("无卫生评分数据")
@@ -484,7 +485,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> = try {
         if (result.contains("操作成功")) {
-            Gson().fromJson(result, DormitoryScoreResponse::class.java)?.result ?: emptyList()
+            GsonInstance.fromJson(result, DormitoryScoreResponse::class.java)?.result ?: emptyList()
         } else {
             throw Exception(result)
         }

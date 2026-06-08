@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.util.network
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.util.CustomEventMapper
@@ -9,6 +9,7 @@ import com.hfut.schedule.logic.model.MyAPIResponse
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.SettingsInfo
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.network.util.GsonInstance
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +19,7 @@ object MyApiParse {
     fun getMy() : MyAPIResponse? {
         val json = SharedPrefs.prefs.getString("my","")
         return try {
-            Gson().fromJson(json, MyAPIResponse::class.java)
+            GsonInstance.fromJson(json, MyAPIResponse::class.java)
         } catch (e : Exception) {
             LogUtil.error(e)
             null

@@ -1,9 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.shared.LogUtil
@@ -54,7 +55,7 @@ fun getWebInfo(vm: NetWorkViewModel) : WebInfo? {
     val json = vm.infoValue.value
     try {
         if(json != null && json.contains("success")&& !json.contains("账号不存在")) {
-            val jsons = Gson().fromJson(json, FeeResponse::class.java).map
+            val jsons = GsonInstance.fromJson(json, FeeResponse::class.java).map
             val data = jsons.showData
 
             val jsonObject = JSONObject(json)

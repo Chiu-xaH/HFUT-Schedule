@@ -26,7 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
+
 import com.google.gson.JsonObject
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.PostMode
@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -242,7 +243,7 @@ fun postResult(
     // 组装数据
     val postSurvey = PostSurvey(surveyAssoc, teacherId, getLevel(mode,bean), inputNewList)
 
-    return Gson().toJsonTree(postSurvey).asJsonObject
+    return GsonInstance.toJsonTree(postSurvey).asJsonObject
 }
 
 

@@ -6,7 +6,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
+
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.SupabaseLoginResponse

@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.repo
 
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.guagua.UseCodeResponse
@@ -11,6 +11,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.GuaGuaService
 import com.hfut.schedule.network.impl.GuaGuaServiceCreator
 import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -96,7 +97,7 @@ object GuaGuaRepository {
 
     @JvmStatic
     private fun parseGuaGuaLogin(result: String): GuaGuaLoginResponse = try {
-        val data = Gson().fromJson(result, GuaGuaLoginResponse::class.java)
+        val data = GsonInstance.fromJson(result, GuaGuaLoginResponse::class.java)
         if(data.message.contains("成功")) {
             SharedPrefs.saveString("GuaGuaPersonInfo", result)
             SharedPrefs.saveString("loginCode", data.data?.loginCode)
@@ -106,24 +107,24 @@ object GuaGuaRepository {
 
     @JvmStatic
     private fun parseGuaGuaStartShower(result: String): String = try {
-        Gson().fromJson(result, StatusMsgResponse::class.java).message
+        GsonInstance.fromJson(result, StatusMsgResponse::class.java).message
     } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun parseGuaGuaBills(result: String) : GuaguaBillsResponse = try {
-        Gson().fromJson(result, GuaguaBillsResponse::class.java)
+        GsonInstance.fromJson(result, GuaguaBillsResponse::class.java)
     } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun parseGuaGuaUseCode(result: String) : String = try {
         if(result.contains("成功"))
-            Gson().fromJson(result, UseCodeResponse::class.java).data.randomCode
+            GsonInstance.fromJson(result, UseCodeResponse::class.java).data.randomCode
         else throw Exception("解析错误")
     } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun parseGuaGuaReSetUseCode(result: String) : String = try {
-        Gson().fromJson(result, StatusMsgResponse::class.java).message
+        GsonInstance.fromJson(result, StatusMsgResponse::class.java).message
     } catch (e : Exception) { throw e }
 
 }

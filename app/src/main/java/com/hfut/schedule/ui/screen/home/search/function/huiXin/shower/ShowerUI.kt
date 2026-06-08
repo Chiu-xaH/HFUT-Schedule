@@ -49,7 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Observer
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
@@ -64,6 +64,7 @@ import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -273,7 +274,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                         if (result?.contains("success") == true) {
                                             showButton = true
                                             try {
-                                                val jsons = Gson().fromJson(result, ShowerFeeResponse::class.java).map.data
+                                                val jsons = GsonInstance.fromJson(result, ShowerFeeResponse::class.java).map.data
 
                                                 studentID = jsons.identifier.toString()
                                                 balance = jsons.accountMoney

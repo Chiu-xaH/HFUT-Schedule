@@ -1,8 +1,9 @@
 package com.hfut.schedule.logic.model.community
 
 import android.content.Context
-import com.google.gson.Gson
+
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.network.util.GsonInstance
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 
@@ -36,7 +37,7 @@ fun getTodayCampusApps(context: Context) : List<TodayCampusAppLargeBean> {
             context.assets.open("stu.json").bufferedReader().use { it.readText() }
         }
         return with(Dispatchers.Default) {
-            Gson().fromJson(json, TodayCampusAppsResponse::class.java).datas
+            GsonInstance.fromJson(json, TodayCampusAppsResponse::class.java).datas
         }
     } catch (e : Exception) {
         LogUtil.error(e)

@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -205,11 +206,11 @@ private fun getTotalCourse(json : String?): MutableList<lessons>  {
     try {
         if (json != null) {
             if(json.contains("lessonIds")) {
-                val result = Gson().fromJson(json,lessonResponse::class.java).lessons
+                val result = GsonInstance.fromJson(json,lessonResponse::class.java).lessons
                 return result.toMutableList()
             }
             else {
-                val result = Gson().fromJson(json,CourseSearchResponse::class.java).data
+                val result = GsonInstance.fromJson(json,CourseSearchResponse::class.java).data
                 for (i in result.indices) {
                     val courses = result[i].lesson
                     list.add(courses)

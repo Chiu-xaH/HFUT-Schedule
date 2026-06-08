@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.repo
 
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
+
 import com.google.gson.JsonObject
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingsResponse
@@ -23,6 +23,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.HuiXinService
 import com.hfut.schedule.network.impl.HuiXinServiceCreator
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.xah.forecast.getConsumptionResult
 import com.xah.forecast.model.network.BillBean
 import com.xah.forecast.model.network.BillResponse
@@ -51,7 +52,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinBills(json : String) : BillBean = try {
         if(json.contains("操作成功")){
-            Gson().fromJson(json, BillResponse::class.java).data
+            GsonInstance.fromJson(json, BillResponse::class.java).data
         } else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -92,7 +93,7 @@ object HuiXinRepository {
         )
     }
     private fun parseHuiXinLogin(json : String) : String = try {
-        val token = Gson().fromJson(json, HuiXinLoginResponse::class.java).token
+        val token = GsonInstance.fromJson(json, HuiXinLoginResponse::class.java).token
         SharedPrefs.saveString("auth", token)
         showToast("一卡通登陆成功")
         token
@@ -125,7 +126,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinPayStep1(result : String) : String = try {
         if(result.contains("操作成功")) {
-            Gson().fromJson(result, PayStep1Response::class.java).data.orderid
+            GsonInstance.fromJson(result, PayStep1Response::class.java).data.orderid
         } else {
             throw Exception("Step1失败 终止支付")
         }
@@ -155,7 +156,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinPayStep2(result : String) : Map<String, String> = try {
         if(result.contains("操作成功")) {
-            Gson().fromJson(result, PayStep2Response::class.java).data.passwordMap
+            GsonInstance.fromJson(result, PayStep2Response::class.java).data.passwordMap
         } else {
             throw Exception("Step2失败 终止支付")
         }
@@ -185,7 +186,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinPayStep3(result : String) : String = try {
         if(result.contains("success")) {
-            Gson().fromJson(result, PayStep3Response::class.java).msg
+            GsonInstance.fromJson(result, PayStep3Response::class.java).msg
         } else {
             throw Exception("支付失败")
         }
@@ -199,7 +200,7 @@ object HuiXinRepository {
         )
     @JvmStatic
     private fun parseHuiXinChangeLimit(json : String) : String = try {
-        Gson().fromJson(json, ChangeLimitResponse::class.java).msg
+        GsonInstance.fromJson(json, ChangeLimitResponse::class.java).msg
     } catch (e : Exception) { throw e }
 
     suspend fun searchDate(auth : String, timeFrom : String, timeTo : String,holder : StateHolder<Float>) =
@@ -211,7 +212,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinRange(result : String) : Float = try {
         if(result.contains("操作成功")) {
-            val data = Gson().fromJson(result, BillRangeResponse::class.java)
+            val data = GsonInstance.fromJson(result, BillRangeResponse::class.java)
             data.data.expenses / 100
         } else {
             throw Exception(result)
@@ -234,7 +235,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinSearchBills(result : String) : BillBean = try {
         if(result.contains("操作成功")) {
-            Gson().fromJson(result, BillResponse::class.java).data
+            GsonInstance.fromJson(result, BillResponse::class.java).data
         } else {
             throw Exception(result)
         }
@@ -249,7 +250,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinMonthBills(json : String) : List<BillMonth> = try {
         if(json.contains("操作成功")) {
-            val data = Gson().fromJson(json, BillMonthResponse::class.java)
+            val data = GsonInstance.fromJson(json, BillMonthResponse::class.java)
             val bill = data.data
             bill.map { (date,balance) -> BillMonth(date, balance) }
         } else {
@@ -260,7 +261,7 @@ object HuiXinRepository {
 
     @JvmStatic
     private fun parseHefeiBuildings(json : String) : List<HuiXinHefeiBuildingBean> = try {
-        Gson().fromJson(json, HuiXinHefeiBuildingsResponse::class.java).map.data
+        GsonInstance.fromJson(json, HuiXinHefeiBuildingsResponse::class.java).map.data
     } catch (e : Exception) { throw e }
 
     suspend fun getHefeiRooms(

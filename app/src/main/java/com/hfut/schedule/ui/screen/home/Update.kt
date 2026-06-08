@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home
 
-import com.google.gson.Gson
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HolidayBean
@@ -15,6 +14,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
@@ -209,7 +209,7 @@ suspend fun updateCourses(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
 private fun getHoliday() : HolidayResponse? {
     val json = prefs.getString("HOLIDAY",null)
     return try {
-        Gson().fromJson(json, HolidayResponse::class.java)
+        GsonInstance.fromJson(json, HolidayResponse::class.java)
     } catch (e : Exception) {
         LogUtil.error(e)
         null

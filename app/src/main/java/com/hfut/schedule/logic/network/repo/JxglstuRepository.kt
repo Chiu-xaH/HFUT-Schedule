@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.network.repo
 
 import android.util.Base64
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
+
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.JxglstuService
 import com.hfut.schedule.network.impl.JxglstuServiceCreator
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
@@ -109,7 +110,7 @@ object JxglstuRepository {
     private fun parsePostTransfer(result : String) : String = try {
         var msg = ""
         if(result.contains("result")) {
-            val data =  Gson().fromJson(result, TransferPostResponse::class.java)
+            val data =  GsonInstance.fromJson(result, TransferPostResponse::class.java)
             if(data.result) {
                 msg = "成功"
             } else {
@@ -201,7 +202,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSelectedList(json : String) : List<SelectCourse> = try {
-        val courses: List<SelectCourse> = Gson().fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
+        val courses: List<SelectCourse> = GsonInstance.fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
@@ -213,7 +214,7 @@ object JxglstuRepository {
         )
     @JvmStatic
     private fun parseSelectCourseInfo(json : String) : List<SelectCourseInfo> = try {
-        val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+        val courses: List<SelectCourseInfo> = GsonInstance.fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
@@ -275,7 +276,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSelectedCourses(json : String) : List<SelectCourseInfo> = try {
-        val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+        val courses: List<SelectCourseInfo> = GsonInstance.fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
@@ -298,7 +299,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSelectResult(json : String) : Pair<Boolean, String> = try {
-        val data = Gson().fromJson(json, SelectPostResponse::class.java)
+        val data = GsonInstance.fromJson(json, SelectPostResponse::class.java)
         val status = data.success
         val statusText = if(status) {
             "成功"
@@ -322,7 +323,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseTransfer(json : String) : TransferResponse = try {
-        Gson().fromJson(json, TransferResponse::class.java)
+        GsonInstance.fromJson(json, TransferResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun getTransferList(
@@ -377,7 +378,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseMyApply(json: String) : MyApplyResponse = try {
-        Gson().fromJson(json, MyApplyResponse::class.java)
+        GsonInstance.fromJson(json, MyApplyResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun getMyApplyInfo(
@@ -560,7 +561,7 @@ object JxglstuRepository {
 //        SharedPrefs.saveString("courses", json)
         updateStartDate(json)
         try {
-            return Gson().fromJson(json, lessonResponse::class.java)
+            return GsonInstance.fromJson(json, lessonResponse::class.java)
         } catch (e : Exception) { throw e }
     }
 
@@ -646,7 +647,7 @@ object JxglstuRepository {
         withContext(Dispatchers.IO) {
             DataStoreManager.saveCourseTable(result)
             return@withContext try {
-                Gson().fromJson(result, LessonTimesResponse::class.java).result.courseUnitList
+                GsonInstance.fromJson(result, LessonTimesResponse::class.java).result.courseUnitList
             } catch (e: Exception) {
                 throw e
             }
@@ -667,7 +668,7 @@ object JxglstuRepository {
     private suspend fun parseProgram(result: String) : ProgramResponse {
         LargeStringDataManager.save(LargeStringDataManager.PROGRAM,result)
         return try {
-            Gson().fromJson(result, ProgramResponse::class.java)
+            GsonInstance.fromJson(result, ProgramResponse::class.java)
         } catch (e : Exception) {
             throw e
         }
@@ -683,7 +684,7 @@ object JxglstuRepository {
     private fun parseProgramCompletion(json : String) : ProgramCompletionResponse = try {
         SharedPrefs.saveString("PROGRAM_COMPETITION", json)
         val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
-        val data : List<ProgramCompletionResponse> = Gson().fromJson(json, listType)
+        val data : List<ProgramCompletionResponse> = GsonInstance.fromJson(json, listType)
         data[0]
     } catch (e : Exception) { throw e }
 
@@ -701,7 +702,7 @@ object JxglstuRepository {
     @JvmStatic
     private suspend fun parseProgramPerformance(json : String) : ProgramBean = try {
         LargeStringDataManager.save(LargeStringDataManager.PROGRAM_PERFORMANCE,json)
-        Gson().fromJson(json, ProgramBean::class.java)
+        GsonInstance.fromJson(json, ProgramBean::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun searchCourse(
@@ -731,7 +732,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSearchCourse(result : String) : List<lessons> = try {
-        Gson().fromJson(result, CourseSearchResponse::class.java).data.map { it.lesson }
+        GsonInstance.fromJson(result, CourseSearchResponse::class.java).data.map { it.lesson }
     } catch (e : Exception) { throw e }
 
     suspend fun getSurveyList(
@@ -750,7 +751,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSurveyList(json : String) : List<forStdLessonSurveySearchVms> = try {
-        Gson().fromJson(json, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
+        GsonInstance.fromJson(json, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
     } catch (e : Exception) { throw e }
 
     suspend fun getSurvey(cookie: String, id : String,holder : StateHolder<SurveyResponse>) =
@@ -761,7 +762,7 @@ object JxglstuRepository {
         )
     @JvmStatic
     private fun parseSurvey(json : String) : SurveyResponse = try {
-        Gson().fromJson(json, SurveyResponse::class.java)
+        GsonInstance.fromJson(json, SurveyResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun getSurveyToken(
@@ -845,7 +846,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private suspend fun parseCourseBookNetwork(json : String,semester : Int) : Pair<Int,Map<Long, CourseBookBean>> = try {
-        val gson = Gson()
+        val gson = GsonInstance
         val data = gson.fromJson(json, CourseBookResponse::class.java).textbookAssignMap
 //        val originMapJson = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO)
 //        val originMap = originMapJson?.let {
@@ -863,7 +864,7 @@ object JxglstuRepository {
     @JvmStatic
     fun parseCourseBook(json: String) : Map<Long, CourseBookBean> = try {
         val type = object : TypeToken<Map<String, CourseBookBean>>() {}.type
-        val data: Map<String, CourseBookBean> = Gson().fromJson(json, type)
+        val data: Map<String, CourseBookBean> = GsonInstance.fromJson(json, type)
         // 键为id，与课程汇总对接
         // 将键转换为Long
         data.mapNotNull { (key, value) ->
@@ -878,7 +879,7 @@ object JxglstuRepository {
 
     @JvmStatic
     fun parseDatumCourse(result: String) : List<lessons> = try {
-        Gson().fromJson(result, lessonResponse::class.java).lessons
+        GsonInstance.fromJson(result, lessonResponse::class.java).lessons
     } catch (e : Exception) {
         LogUtil.error(e)
         emptyList<lessons>()

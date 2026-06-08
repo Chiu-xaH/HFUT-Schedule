@@ -30,7 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.FriendsList
 import com.hfut.schedule.logic.model.community.FriendsResopnse
@@ -46,6 +46,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -55,7 +56,7 @@ fun getFriendsList() : List<FriendsList?> {
     return try {
         val json = prefs.getString("feiends","")
 
-        val data = Gson().fromJson(json,FriendsResopnse::class.java)
+        val data = GsonInstance.fromJson(json,FriendsResopnse::class.java)
         if(data.success) {
             data.result
         } else {

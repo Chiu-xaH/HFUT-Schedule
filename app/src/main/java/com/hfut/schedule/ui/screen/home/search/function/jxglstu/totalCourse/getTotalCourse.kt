@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.model.community.CourseResult
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
@@ -15,6 +15,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
+import com.hfut.schedule.network.util.GsonInstance
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -23,7 +24,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 private fun parseDatumCourse(result: String) : List<lessons> = try {
-    Gson().fromJson(result,lessonResponse::class.java).lessons
+    GsonInstance.fromJson(result,lessonResponse::class.java).lessons
 } catch (e : Exception) {
     LogUtil.error(e)
     emptyList<lessons>()
@@ -113,7 +114,7 @@ fun getCourseInfoFromCommunity(weekday : Int, week : Int, friendUserName : Strin
 fun getFormCommunity(friendUserName : String? = null): CourseResult? {
     val json = prefs.getString(if(friendUserName == null) "Course" else "Course${friendUserName}",null)
     return try {
-        Gson().fromJson(json, CourseTotalResponse::class.java).result
+        GsonInstance.fromJson(json, CourseTotalResponse::class.java).result
     } catch (e:Exception) {
         LogUtil.error(e)
         null

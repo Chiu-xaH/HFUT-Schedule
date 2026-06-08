@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryBorrowedResponse
@@ -14,6 +14,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.network.api.LibraryService
 import com.hfut.schedule.network.impl.LibraryServiceCreator
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 
 object LibraryRepository {
@@ -56,7 +57,7 @@ object LibraryRepository {
             var sharingCount = 0
             var recommendCount = 0
 
-            val data = Gson().fromJson(json, LibraryStatusResponse::class.java).data
+            val data = GsonInstance.fromJson(json, LibraryStatusResponse::class.java).data
             for(item in data) {
                 when(item.code) {
                     "mybookshelf" -> bookShelfCount = item.count
@@ -94,7 +95,7 @@ object LibraryRepository {
         )
     @JvmStatic
     private fun parseBorrowed(json : String) : List<LibraryBorrowedBean> = try {
-        Gson().fromJson(json, LibraryBorrowedResponse::class.java).data.list
+        GsonInstance.fromJson(json, LibraryBorrowedResponse::class.java).data.list
     } catch (e : Exception) { throw e }
 
     suspend fun search(
@@ -120,6 +121,6 @@ object LibraryRepository {
     )
     @JvmStatic
     private fun parseSearch(json : String) : List<LibrarySearchBean> = try {
-        Gson().fromJson(json, LibrarySearchResponse::class.java).data.rows
+        GsonInstance.fromJson(json, LibrarySearchResponse::class.java).data.rows
     } catch (e : Exception) { throw e }
 }

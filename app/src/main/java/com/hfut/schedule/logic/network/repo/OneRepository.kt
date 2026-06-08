@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
@@ -16,6 +16,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.OneService
 import com.hfut.schedule.network.impl.OneServiceCreator
 import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
@@ -35,7 +36,7 @@ object OneRepository {
     )
     @JvmStatic
     private fun parsePayFee(result : String) : PayData = try {
-        Gson().fromJson(result, PayResponse::class.java).data ?: throw Exception("数据为空")
+        GsonInstance.fromJson(result, PayResponse::class.java).data ?: throw Exception("数据为空")
     } catch (e : Exception) { throw e }
 
     suspend fun getMailURL(token : String,holder : StateHolder<MailResponse>)  =
@@ -53,7 +54,7 @@ object OneRepository {
     @JvmStatic
     private fun parseMailUrl(result: String) : MailResponse = try {
         if(result.contains("success"))
-            Gson().fromJson(result, MailResponse::class.java)
+            GsonInstance.fromJson(result, MailResponse::class.java)
         else
             throw Exception(result)
     } catch (e: Exception) { throw e }
@@ -67,7 +68,7 @@ object OneRepository {
     @JvmStatic
     private fun parseClassroom(result: String) : List<ClassroomBean> = try {
         if(result.contains("success"))
-            Gson().fromJson(result, ClassroomResponse::class.java).data.records
+            GsonInstance.fromJson(result, ClassroomResponse::class.java).data.records
         else
             throw Exception(result)
     } catch (e: Exception) { throw e }
@@ -88,7 +89,7 @@ object OneRepository {
     @JvmStatic
     private fun parseBuildings(campus: Campus, result: String) : Pair<Campus, List<BuildingBean>> = try {
         if(result.contains("success"))
-            Pair(campus, Gson().fromJson(result, BuildingResponse::class.java).data)
+            Pair(campus, GsonInstance.fromJson(result, BuildingResponse::class.java).data)
         else
             throw Exception(result)
     } catch (e: Exception) { throw e }
@@ -114,7 +115,7 @@ object OneRepository {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
                 try {
-                    val data = Gson().fromJson(json, getTokenResponse::class.java)
+                    val data = GsonInstance.fromJson(json, getTokenResponse::class.java)
                     if (data.msg.contains("success")) {
                         SharedPrefs.saveString("bearer", "Bearer " + data.data.access_token)
                         showToast("信息门户登陆成功")

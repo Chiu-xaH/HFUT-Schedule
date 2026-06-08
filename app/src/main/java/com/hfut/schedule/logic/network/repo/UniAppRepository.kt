@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
@@ -35,6 +35,7 @@ import com.hfut.schedule.network.model.UniAppEmptyClassroomRequest
 import com.hfut.schedule.network.model.UniAppSearchProgramRequest
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -88,9 +89,9 @@ object UniAppRepository {
         isSuccessful : Boolean
     ) : String? = try {
         if(isSuccessful) {
-            Gson().fromJson(json, UniAppLoginResponse.UniAppLoginSuccessfulResponse::class.java).data.idToken
+            GsonInstance.fromJson(json, UniAppLoginResponse.UniAppLoginSuccessfulResponse::class.java).data.idToken
         } else {
-            Gson().fromJson(json, UniAppLoginResponse.UniAppLoginError::class.java).message
+            GsonInstance.fromJson(json, UniAppLoginResponse.UniAppLoginError::class.java).message
         }
     } catch (e : Exception) {
         LogUtil.error(e)
@@ -109,7 +110,7 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseClassmates(json : String) = try {
-        Gson().fromJson(json, UniAppClassmatesResponse::class.java).data ?: emptyList()
+        GsonInstance.fromJson(json, UniAppClassmatesResponse::class.java).data ?: emptyList()
     } catch (e : Exception) { throw e }
 
     suspend fun updateCourses(token : String) {
@@ -131,7 +132,7 @@ object UniAppRepository {
             LargeStringDataManager.getUniAppCoursesKey(
                 SemesterParser.getSemester())) ?: jStr
         return try {
-            Gson().fromJson(json, UniAppCoursesResponse::class.java).data
+            GsonInstance.fromJson(json, UniAppCoursesResponse::class.java).data
         } catch (e : Exception) {
             LogUtil.error(e)
             emptyList()
@@ -149,7 +150,7 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseGrades(json : String) : Map<String, List<UniAppGradeBean>> = try {
-        val originalList = Gson().fromJson(json, UniAppGradesResponse::class.java).data
+        val originalList = GsonInstance.fromJson(json, UniAppGradesResponse::class.java).data
         // 按列表项目的term进行分类
         val finalList = mutableMapOf<String, MutableList<UniAppGradeBean>>()
         originalList.forEach { item ->
@@ -202,7 +203,7 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseProgramSearch(json : String) : List<UniAppSearchProgramBean> = try {
-        Gson().fromJson(json, UniAppSearchProgramResponse::class.java).data.data
+        GsonInstance.fromJson(json, UniAppSearchProgramResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
     suspend fun getProgramById(
@@ -217,7 +218,7 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
-        Gson().fromJson(json, ProgramSearchResponse::class.java).data
+        GsonInstance.fromJson(json, ProgramSearchResponse::class.java).data
     } catch (e : Exception) { throw e }
 
     suspend fun getBuildings(
@@ -230,7 +231,7 @@ object UniAppRepository {
     )
     @JvmStatic
     private fun parseBuildings(json : String) : List<UniAppBuildingBean> = try {
-        val originalList = Gson().fromJson(json, UniAppBuildingsResponse::class.java).data
+        val originalList = GsonInstance.fromJson(json, UniAppBuildingsResponse::class.java).data
         val codeList = UniAppCampus.entries.map { it.code }
         originalList.filter { it.campusAssoc in codeList }
     } catch (e : Exception) { throw e }
@@ -265,7 +266,7 @@ object UniAppRepository {
     )
     @JvmStatic
     private fun parseEmptyClassrooms(json : String) : List<UniAppEmptyClassroomBean>  = try {
-        Gson().fromJson(json, UniAppEmptyClassroomResponse::class.java).data.data
+        GsonInstance.fromJson(json, UniAppEmptyClassroomResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
     suspend fun searchClassrooms(
@@ -286,7 +287,7 @@ object UniAppRepository {
     )
     @JvmStatic
     private fun parseSearchClassrooms(json : String) = try {
-        Gson().fromJson(json, UniAppSearchClassroomsResponse::class.java).data.data
+        GsonInstance.fromJson(json, UniAppSearchClassroomsResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
     suspend fun getClassroomLessons(
@@ -301,7 +302,7 @@ object UniAppRepository {
     )
     @JvmStatic
     private fun parseClassroomLessons(json : String) = try {
-        Gson().fromJson(json, UniAppClassroomLessonsResponse::class.java).data
+        GsonInstance.fromJson(json, UniAppClassroomLessonsResponse::class.java).data
     } catch (e : Exception) { throw e }
 
 

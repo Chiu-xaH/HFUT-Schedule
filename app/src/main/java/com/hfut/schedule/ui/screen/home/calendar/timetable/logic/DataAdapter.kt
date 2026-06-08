@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.screen.home.calendar.timetable.logic
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.google.gson.Gson
+
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
@@ -14,6 +14,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.calendar.common.autoCalculateAndUpdateTermStartDate
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
@@ -91,7 +92,7 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
     var tag = false
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
-        val list = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
+        val list = GsonInstance.fromJson(json, UniAppCoursesResponse::class.java).data
         val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
         for(item in list) {
             val courseName = item.course.nameZh
@@ -148,7 +149,7 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
 
-        val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
+        val datumResponse = GsonInstance.fromJson(json, DatumResponse::class.java)
         val scheduleList = datumResponse.result.scheduleList
         val lessonList = datumResponse.result.lessonList
         // 根据id得到课程名

@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.repo
 
 import androidx.core.net.toUri
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesResponse
 import com.hfut.schedule.logic.model.wx.WXLoginResponse
@@ -16,6 +16,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.WxService
 import com.hfut.schedule.network.impl.WxServiceCreator
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 
 object WxRepository {
     private val wx = WxServiceCreator.create(WxService::class.java)
@@ -31,7 +32,7 @@ object WxRepository {
     )
     @JvmStatic
     private suspend fun parseWxLogin(json : String) : String = try {
-        val bean = Gson().fromJson(json, WXLoginResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WXLoginResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             // 保存
@@ -52,7 +53,7 @@ object WxRepository {
         )
     @JvmStatic
     private fun parseWxPersonInfo(json : String) : WXPersonInfoBean = try {
-        val bean = Gson().fromJson(json, WXPersonInfoResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WXPersonInfoResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             SharedPrefs.saveString("WX_PERSON_INFO", json)
@@ -71,7 +72,7 @@ object WxRepository {
         )
     @JvmStatic
     private fun parseWxClassmates(json : String) : WXClassmatesBean = try {
-        val bean = Gson().fromJson(json, WXClassmatesResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WXClassmatesResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             bean.data
@@ -101,7 +102,7 @@ object WxRepository {
 
     @JvmStatic
     private fun parseWxLoginCas(json : String) : Pair<String, Boolean> = try {
-        val bean = Gson().fromJson(json, WXQrCodeResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WXQrCodeResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             Pair("扫码成功",true)
@@ -119,7 +120,7 @@ object WxRepository {
         )
     @JvmStatic
     private fun parseWxConfirmLogin(json : String) : String = try {
-        val bean = Gson().fromJson(json, WXQrCodeLoginResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WXQrCodeLoginResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             bean.data

@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
 import com.hfut.schedule.logic.model.jxglstu.PlanCourses
@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -293,7 +294,7 @@ private fun ProgramPerformance(
         } else {
             val bean = try {
                 val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
-                Gson().fromJson(json,ProgramBean::class.java)
+                GsonInstance.fromJson(json,ProgramBean::class.java)
             } catch (e : Exception) {
                 LogUtil.error(e)
                 null

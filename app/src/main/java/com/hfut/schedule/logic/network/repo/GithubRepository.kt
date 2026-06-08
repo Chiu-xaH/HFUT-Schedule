@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
@@ -26,6 +26,7 @@ import com.hfut.schedule.network.impl.GiteeServiceCreator
 import com.hfut.schedule.network.impl.GithubRawServiceCreator
 import com.hfut.schedule.network.impl.GithubServiceCreator
 import com.hfut.schedule.network.impl.MyServiceCreator
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
 import com.hfut.schedule.ui.screen.home.search.function.other.life.RoomRect
 import okhttp3.Headers
@@ -68,7 +69,7 @@ object GithubRepository {
             transformSuccess = { _, json -> parseProgramSearchInfo(json) }
         )
     private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
-        Gson().fromJson(json,ProgramSearchResponse::class.java).data
+        GsonInstance.fromJson(json,ProgramSearchResponse::class.java).data
     } catch (e : Exception) { throw e }
 
     suspend fun getProgramList(campus : CampusRegion,holder : StateHolder<List<ProgramListBean>>) =
@@ -86,7 +87,7 @@ object GithubRepository {
         )
     @JvmStatic
     private fun parseProgramSearch(json : String) : List<ProgramListBean> = try {
-        val data: List<ProgramListBean> = Gson().fromJson(json,object : TypeToken<List<ProgramListBean>>() {}.type)
+        val data: List<ProgramListBean> = GsonInstance.fromJson(json,object : TypeToken<List<ProgramListBean>>() {}.type)
         data
     } catch (e : Exception) { throw e }
 
@@ -98,7 +99,7 @@ object GithubRepository {
 
     @JvmStatic
     private fun parseGithubStarNum(json : String) : Int = try {
-        Gson().fromJson(json,GithubBean::class.java).stargazers_count
+        GsonInstance.fromJson(json,GithubBean::class.java).stargazers_count
     } catch (e : Exception) { throw e }
 
     suspend fun getUpdateContents(holder : StateHolder<List<GithubFolderBean>>) =
@@ -111,7 +112,7 @@ object GithubRepository {
     @JvmStatic
     private fun parseUpdateContents(json : String) : List<GithubFolderBean> = try {
         val listType = object : TypeToken<List<GithubFolderBean>>() {}.type
-        val data : List<GithubFolderBean> = Gson().fromJson(json,listType)
+        val data : List<GithubFolderBean> = GsonInstance.fromJson(json,listType)
         data
     } catch (e : Exception) { throw e }
 
@@ -150,7 +151,7 @@ object GithubRepository {
     @JvmStatic
     private fun parseGiteeUpdates(json : String) : GiteeReleaseResponse = try {
         val listType = object : TypeToken<List<GiteeReleaseResponse>>() {}.type
-        val b : List<GiteeReleaseResponse> = Gson().fromJson(json,listType)
+        val b : List<GiteeReleaseResponse> = GsonInstance.fromJson(json,listType)
         val data = b[0]
         val list = data.assets.filter {
             it.name.endsWith(".apk") || it.name.endsWith(".patch")
@@ -167,7 +168,7 @@ object GithubRepository {
     @JvmStatic
     private fun parseGithubIssues(json : String) : List<GithubIssueBean> = try {
         val listType = object : TypeToken<List<GithubIssueBean>>() {}.type
-        val issues : List<GithubIssueBean> = Gson().fromJson(json,listType)
+        val issues : List<GithubIssueBean> = GsonInstance.fromJson(json,listType)
         val flowLabelIds = GithubIssueLabel.entries.map { it.id }.toSet()
         val realIssues = issues.filter { issue ->
             // 过滤 PR
@@ -189,7 +190,7 @@ object GithubRepository {
     @JvmStatic
     private fun parseBuildingMaps(json : String) : List<BuildingMapResponseBean> = try {
         val listType = object : TypeToken<List<BuildingMapResponseBean>>() {}.type
-        Gson().fromJson(json,listType) as List<BuildingMapResponseBean>
+        GsonInstance.fromJson(json,listType) as List<BuildingMapResponseBean>
     } catch (e : Exception) { throw e }
 
     suspend fun getFloorXml(filename : String,holder : StateHolder<FloorMap>) = launchRequestState(

@@ -2,12 +2,13 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.os.Handler
 import android.os.Looper
-import com.google.gson.Gson
+
 import com.hfut.schedule.logic.model.huixin.BalanceResponse
 import com.hfut.schedule.logic.model.huixin.ReturnCard
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.shared.LogUtil
@@ -28,7 +29,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
             vm.huiXinCardInfoResponse.observeForever { result ->
                 if (result != null && result.contains("操作成功")) {
                     try {
-                        val yuedata = Gson().fromJson(result, BalanceResponse::class.java).data.card[0]
+                        val yuedata = GsonInstance.fromJson(result, BalanceResponse::class.java).data.card[0]
                         val limite = transferNum(yuedata.autotrans_limite)
                         val amt = transferNum(yuedata.autotrans_amt)
                         val name = yuedata.name

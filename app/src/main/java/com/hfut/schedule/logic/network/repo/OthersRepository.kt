@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.google.gson.Gson
+
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.enumeration.CampusRegion
@@ -57,6 +57,7 @@ import com.hfut.schedule.network.impl.WorkServiceCreator
 import com.hfut.schedule.network.impl.ZhiJianServiceCreator
 import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.LogUtil
@@ -110,7 +111,7 @@ object OthersRepository {
             transformSuccess = m@{ _, json ->
                 if (json.contains("false")) {
                     val root = try {
-                        Gson().fromJson(json, MsgResponse::class.java).msg ?: json
+                        GsonInstance.fromJson(json, MsgResponse::class.java).msg ?: json
                     } catch (e: Exception) {
                         throw e
                     }
@@ -126,11 +127,11 @@ object OthersRepository {
             "date" to date,
             "id_number" to idNumber
         )
-        return Gson().toJson(map)
+        return GsonInstance.toJson(map)
     }
     @JvmStatic
     private fun parseZhiJianCourses(json : String,mondayDate : String) : List<ZhiJianCourseItemDto> = try {
-        val gson = Gson()
+        val gson = GsonInstance
         val root = gson.fromJson(json, ZhiJianCoursesResponse::class.java)
         val data = root.data
 
@@ -194,7 +195,7 @@ object OthersRepository {
     )
     @JvmStatic
     private fun parseOfficeHallSearch(json : String) : List<OfficeHallSearchBean> = try {
-        Gson().fromJson(json, OfficeHallSearchResponse::class.java).data.records
+        GsonInstance.fromJson(json, OfficeHallSearchResponse::class.java).data.records
     } catch (e : Exception) { throw e }
 
     suspend fun searchTeacher(name: String = "", direction: String = "",teacherSearchData : StateHolder<TeacherResponse>) =
@@ -211,7 +212,7 @@ object OthersRepository {
 
     @JvmStatic
     private fun parseTeacherSearch(json : String) : TeacherResponse = try {
-        Gson().fromJson(json, TeacherResponse::class.java)
+        GsonInstance.fromJson(json, TeacherResponse::class.java)
     } catch (e : Exception) { throw e }
 
 
@@ -224,7 +225,7 @@ object OthersRepository {
 
     @JvmStatic
     private fun parseAdmissionList(type: AdmissionType, json : String) : Pair<AdmissionType, Map<String, List<AdmissionMapBean>>> = try {
-        Pair(type, Gson().fromJson(json, AdmissionListResponse::class.java).data.list)
+        Pair(type, GsonInstance.fromJson(json, AdmissionListResponse::class.java).data.list)
     } catch (e : Exception) { throw e }
 
     suspend fun getAdmissionDetail(type : AdmissionType, bean : AdmissionMapBean, region: String, holder : StateHolder<AdmissionDetailBean>, tokenHolder : StateHolder<AdmissionTokenResponse>) =
@@ -251,11 +252,11 @@ object OthersRepository {
     private fun parseAdmissionDetail(type : AdmissionType, json : String) : AdmissionDetailBean = try {
         when(type) {
             AdmissionType.HISTORY -> {
-                val parsed = Gson().fromJson(json, AdmissionDetailResponseHistory::class.java)
+                val parsed = GsonInstance.fromJson(json, AdmissionDetailResponseHistory::class.java)
                 AdmissionDetailBean.History(parsed.data)
             }
             AdmissionType.PLAN -> {
-                val parsed = Gson().fromJson(json, AdmissionDetailResponsePlan::class.java)
+                val parsed = GsonInstance.fromJson(json, AdmissionDetailResponsePlan::class.java)
                 AdmissionDetailBean.Plan(parsed.data)
             }
         }
@@ -280,7 +281,7 @@ object OthersRepository {
 
     @JvmStatic
     private fun parseAdmissionToken(json : String) : AdmissionTokenResponse = try {
-        Gson().fromJson(json, AdmissionTokenResponse::class.java)
+        GsonInstance.fromJson(json, AdmissionTokenResponse::class.java)
     } catch (e : Exception) { throw e }
 
 
@@ -303,7 +304,7 @@ object OthersRepository {
     private fun parseWorkResponse(resp : String): WorkSearchResponse = try {
         // 去掉前缀，提取 JSON 部分
         val jsonStr = resp.removePrefix("var __result = ").removeSuffix(";").trim()
-        Gson().fromJson(jsonStr, WorkSearchResponse::class.java)
+        GsonInstance.fromJson(jsonStr, WorkSearchResponse::class.java)
     } catch (e : Exception) { throw e }
 
 
@@ -313,7 +314,7 @@ object OthersRepository {
     @JvmStatic
     private fun parseElectric(result : String) : String = try {
         if (result.contains("query_elec_roominfo")) {
-            var msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
+            var msg = GsonInstance.fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
 
             if(msg.contains("剩余金额"))
                 formatDecimal(msg.substringAfter("剩余金额").substringAfter(":").toDouble(), 2)
@@ -355,7 +356,7 @@ object OthersRepository {
     @JvmStatic
     private fun parseHaiLeNear(result: String): List<HaiLeNearPositionBean> = try {
         if(result.contains("success")) {
-            Gson().fromJson(result, HaiLeNearPositionResponse::class.java).data.items
+            GsonInstance.fromJson(result, HaiLeNearPositionResponse::class.java).data.items
         } else {
             throw Exception(result)
         }
@@ -372,7 +373,7 @@ object OthersRepository {
     @JvmStatic
     private fun parseHaiLeDeviceDetail(result: String): List<HaiLeDeviceDetailBean> = try {
         if(result.contains("success")) {
-            Gson().fromJson(result, HaiLeDeviceDetailResponse::class.java).data.items
+            GsonInstance.fromJson(result, HaiLeDeviceDetailResponse::class.java).data.items
         } else {
             throw Exception(result)
         }
@@ -394,7 +395,7 @@ object OthersRepository {
         if(result.startsWith("<!DOCTYPE html>")) {
             throw Exception("登录状态失效")
         }
-        val data = Gson().fromJson(result, SecondClassActivitiesResponse::class.java)
+        val data = GsonInstance.fromJson(result, SecondClassActivitiesResponse::class.java)
         data.list
     } catch (e: Exception) { throw e }
 

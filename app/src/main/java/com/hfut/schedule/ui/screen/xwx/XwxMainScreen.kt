@@ -51,7 +51,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
@@ -65,6 +65,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -96,7 +97,7 @@ suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
     return@withContext try {
         val jStr = LargeStringDataManager.read(LargeStringDataManager.XWX_USER_INFO)
         withContext(Dispatchers.Default) {
-            with(Gson().fromJson(jStr, XwxLoginResponseBody::class.java).result) {
+            with(GsonInstance.fromJson(jStr, XwxLoginResponseBody::class.java).result) {
                 XwxLoginInfo(
                     data[0],
                     token

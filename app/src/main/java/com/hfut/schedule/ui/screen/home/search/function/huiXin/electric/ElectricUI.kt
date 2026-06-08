@@ -57,7 +57,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
@@ -78,6 +78,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -337,7 +338,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     vm.hefeiElectric.observeForever { result ->
                         if (result?.contains("success") == true) {
                             try {
-                                val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
                                 val data = jsons.showData
                                 for ((_, value) in data) {
                                     scope.launch {
@@ -388,7 +389,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                             vm.electricData.observeForever { result ->
                                                 if (result?.contains("success") == true) {
                                                     try {
-                                                        val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                                        val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
                                                         val data = jsons.showData
                                                         for ((_, value) in data) {
                                                             Result = value

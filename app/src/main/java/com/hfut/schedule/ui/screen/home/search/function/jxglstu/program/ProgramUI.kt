@@ -38,7 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
+
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCourses
@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -86,7 +87,7 @@ suspend fun createProgramRemarkMap() : Map<Long, String?> {
     try {
         val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
         val bean = with(Dispatchers.Default) {
-            Gson().fromJson(content, ProgramResponse::class.java)
+            GsonInstance.fromJson(content, ProgramResponse::class.java)
         }
         // 将所有的PlanCourses汇总成哈希表
         val typeRemarkMap = mutableMapOf<Long, String?>()
@@ -111,7 +112,7 @@ suspend fun createProgramMap() : Map<String, PlanCourses> {
     try {
         val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
         val bean = with(Dispatchers.Default) {
-            Gson().fromJson(content, ProgramResponse::class.java)
+            GsonInstance.fromJson(content, ProgramResponse::class.java)
         }
         // 将所有的PlanCourses汇总成哈希表
         val courseMap = mutableMapOf<String, PlanCourses>()
@@ -145,7 +146,7 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
             value = try {
                 val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
                 with(Dispatchers.Default) {
-                    Gson().fromJson(content, ProgramResponse::class.java)
+                    GsonInstance.fromJson(content, ProgramResponse::class.java)
                 }
             } catch (e : Exception) {
                 LogUtil.error(e)
@@ -207,7 +208,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
         } else {
             value = try {
                 val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
-                val data : List<ProgramCompletionResponse> = Gson().fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
+                val data : List<ProgramCompletionResponse> = GsonInstance.fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
                 data[0]
             } catch (e : Exception) {
                 LogUtil.error(e)

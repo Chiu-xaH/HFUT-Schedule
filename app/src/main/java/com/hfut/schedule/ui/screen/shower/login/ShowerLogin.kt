@@ -42,7 +42,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
+
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
@@ -55,6 +55,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -292,7 +293,7 @@ suspend fun loginGuaGuaClick(
 
 fun getGuaGuaPersonInfo() : GuaGuaLogin? = try {
     val json = prefs.getString("GuaGuaPersonInfo",null)
-    Gson().fromJson(json, GuaGuaLoginResponse::class.java).data
+    GsonInstance.fromJson(json, GuaGuaLoginResponse::class.java).data
 } catch (_:Exception) {
     null
 }
