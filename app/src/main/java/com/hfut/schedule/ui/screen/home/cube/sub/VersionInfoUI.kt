@@ -40,29 +40,21 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
-import com.hfut.schedule.ui.nav.destination.LifeDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAboutDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsLiveUpdateDestination
+import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
-import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.component.base.sharedContainer
-import com.xah.container.model.ContainerFilledStrategy
 import com.xah.floating.util.LocalFloatingControllerSafely
-import com.xah.navigation.anim.effect.JumpTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-05-28"
+private const val RELEASE_DATE = "2026-06-10"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -71,12 +63,12 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
         UpdateItems("新增 学期报表", "位于 查询中心-生活服务", to = To.Screen(TermReportDestination),developers = listOf("Junpgle"))//
-        UpdateItems("修复 网页搜索组件的取色Bug")//
+//        UpdateItems("新增 深度链接的适配", "位于 选项-偏好与配置-深度链接，供外部应用与网页直接跳转至聚在工大的某些功能", to = To.Screen(SettingsDeepLinkDestination))//
         UpdateItems("修复 慧新易校随刷新登录不刷新的Bug",developers = listOf("Junpgle"))//
         UpdateItems("修复 偶见考试重复出现的Bug", developers = listOf("Junpgle",Constant.GITHUB_DEVELOPER_NAME))//
+        UpdateItems("修复 网页搜索组件的取色的Bug")//
         UpdateItems("优化 调休安排和全校考试安排过滤掉不相关的项目")//
         UpdateItems("优化 部分界面的显示")//
-        // 浮窗跟随transtionlevel受控
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")

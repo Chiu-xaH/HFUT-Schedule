@@ -87,7 +87,7 @@ class MyApplication : Application() {
         // HAZE模糊半径
         const val BLUR_RADIUS = 20
         // 宣城校区免费流量额度 GiB
-        const val DEFAULT_MAX_FREE_FLOW = 30
+        const val DEFAULT_MAX_FREE_FLOW = 200
         // 最大周
         const val MAX_WEEK = 20
         // 三个校区的经纬度 来自高德地图坐标拾取器

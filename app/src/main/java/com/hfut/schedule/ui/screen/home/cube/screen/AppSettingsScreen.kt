@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
 import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
+import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
 import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination
@@ -293,8 +294,8 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                             DataStoreManager.saveMaxFlow(formatDecimal(freeFeevalue.toDouble(),0).toInt())
                         }
                     },
-                    steps = 37,
-                    valueRange = 10f..200f,
+                    steps = 48,
+                    valueRange = 10f..500f,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                 )
                 PaddingHorizontalDivider()
@@ -358,11 +359,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsShortcutEditDestination.key,
-                    shape = MaterialTheme.shapes.medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                    ),
-//                    shape = NoneRoundShape,
+                    shape = NoneRoundShape,
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
@@ -377,6 +374,31 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         ) },
                         modifier = Modifier.clickable {
                             navTopController.push(SettingsShortcutEditDestination)
+                        }
+                    )
+                }
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsDeepLinkDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp),
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = SettingsDeepLinkDestination.title.asString()) },
+                        supportingContent = {
+                            Text(text = "向外界应用与网页提供跳转能力")
+                        },
+                        leadingContent = { Icon(
+                            painterResource(SettingsDeepLinkDestination.icon),
+                            contentDescription = "Localized description"
+                        ) },
+                        modifier = Modifier.clickable {
+                            showDevelopingToast()
+//                            navTopController.push(SettingsDeepLinkDestination)
                         }
                     )
                 }

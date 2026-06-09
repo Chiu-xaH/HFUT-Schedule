@@ -1,23 +1,27 @@
 [versions]
 baseline = "1.4.1"
+# 这个库新版跟现在的Api变动有点多，暂时先不升级
 androidliquidglass = "1.0.0"
 devicecompat = "2.6"
 glance = "1.1.1"
 leakcanaryAndroid = "2.14"
-materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
+# 3.0.0-beta05 3.0.0-alpha03 不要升级版本
+materialKolor = "3.0.0-beta05"
 maxAndroidVersion = "36"
 minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
-animation = "1.7.0-beta06" # 1.7.0-beta06
+animation = "1.7.0-beta06"
 animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
 benchmarkMacroJunit4 = "1.4.1"
 biometric = "1.1.0"
+# 增量更新，永远钉死不动，除非增量更新的逻辑发生变更
 bsdiffLib = "1.0.3"
 cameraCamera2 = "1.4.2"
 glideCompose = "1.0.0-alpha.1"
-composeBom = "2026.02.01"  # 别动版本
+# 非必要别动
+composeBom = "2026.02.01"
 converterGson = "2.9.0"
 coreKtx = "1.17.0"
 coreSplashscreen = "1.0.1"
@@ -34,8 +38,12 @@ lifecycleExtensions = "2.2.0"
 lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
-material3 = "1.5.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
+# 1.4.0-alpha12 别动，新版本 bottomsheet又大改了，UI都要重新适配，而且Drawer回弹被砍了很生硬
+# 还是动了，需要用其中最新的API实现形状插值，妈的真SB，全屏可滚动内容在BottomSheet中滑动到顶或者底时会顿一下，弄个BottomSheet总特么改
+# 整个聚在工大随material3升级的时候BottomSheet大改了两次，非必要千万不要再升级了，不想来第三次重适配了
+material3 = "1.5.0-alpha12"
 mirror = "0.1-alpha08"
+# Nav2就是一坨答辩，尽管再封装了一次，也只勉强用了 4.17 4.18 4.19 三个大版本，随着SharedNav的开发完成，Nav2在项目中的占比很小了，只剩下一小部分负责管理平切场景的导航（带BottomBar的页面），等后续SharedNav继续迭代接管此功能就可以删了
 #navigationCompose = "2.7.5" # 2.9.1 2.7.5
 navigationComposeVersion = "2.7.0-alpha07" # 2.9.0-beta04
 okhttp = "4.9.0"
@@ -43,13 +51,16 @@ palette = "1.0.0"
 profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
-sharednav = "1.0.0-dev05272344"
+# 聚在工大的底座/骨架，负责整个应用大部分的页面与浮窗管理、容器共享、与外界深度链接的交互等功能
+sharednav = "1.0.0-dev06080100"
 tesseract4android = "4.9.0"
 uiautomator = "2.3.0"
+# 非必要不建议动
 kotlin = "2.1.21"
 agp = "8.9.3"
 runner = "1.7.0"
 core = "1.5.0"
+# 非必要不建议动
 ksp = "2.1.20-1.0.32"
 test = "8.9.3"
 webkit = "1.14.0"

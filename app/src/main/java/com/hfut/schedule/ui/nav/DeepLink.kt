@@ -1,42 +1,37 @@
 package com.hfut.schedule.ui.nav
 
+import android.net.Uri
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
+import com.hfut.schedule.ui.nav.destination.AllExamDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
 import com.hfut.schedule.ui.nav.destination.DormitoryDestination
-import com.hfut.schedule.ui.nav.destination.AllExamDestination
 import com.hfut.schedule.ui.nav.destination.HomeDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.navigation.model.dest.DeepLink
 
-private val AdmissionDeepLink = with(AdmissionDestination) {
+private fun createDeepLinkByKey(destination : NavDestination) = with(destination) {
     DeepLink(this.key) { this }
 }
 
-private val AllExamDeepLink = with(AllExamDestination) {
-    DeepLink(this.key) { this }
-}
-
-private val BusDeepLink = with(BusDestination) {
-    DeepLink(this.key) { this }
-}
-
-private val DepartmentsDeepLink = with(DepartmentsDestination) {
-    DeepLink(this.key) { this }
-}
-
-private val DormitoryDeepLink = with(DormitoryDestination) {
-    DeepLink(this.key) { this }
-}
-
-private val HomeDeepLink = with(HomeDestination) {
-    DeepLink(this.key) { this }
-}
+/**
+ * 用于向外界展示
+ */
+data class DeepLinkBean(
+    val destination: NavDestination,
+    val hasArgs: Boolean,
+    val deepLink: DeepLink<*>,
+    val description: String,
+    val exampleUri: Uri
+)
 
 val deepLinks = listOf(
-    AdmissionDeepLink,
-    AllExamDeepLink,
-    BusDeepLink,
-    DepartmentsDeepLink,
-    DormitoryDeepLink,
-    HomeDeepLink
+    createDeepLinkByKey(AdmissionDestination),
+    createDeepLinkByKey(AllExamDestination) ,
+    createDeepLinkByKey(BusDestination),
+    createDeepLinkByKey(DepartmentsDestination) ,
+    createDeepLinkByKey(DormitoryDestination),
+    createDeepLinkByKey(HomeDestination),
 )
+
+//val deepLinks = deepLinkBeans.map { it }
