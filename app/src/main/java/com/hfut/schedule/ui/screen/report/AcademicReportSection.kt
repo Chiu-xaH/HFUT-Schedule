@@ -15,8 +15,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.network.repo.UniAppRepository
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -33,7 +37,7 @@ import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.flow.first
 
-private data class TermGrades(val term: String, val grades: List<GradeJxglstuResponse>, val passFlags: List<Boolean>)
+private data class TermGradeStats(val dto: GradeJxglstuDTO, val passFlags: List<Boolean>)
 
 @Composable
 fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester: (Int) -> Unit) {
@@ -59,11 +63,13 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                 val gradeMap = (uiState as UiState.Success).data
                 val allTermList = remember(gradeMap) {
                     gradeMap.toList().sortedByDescending { it.first }.mapNotNull { (term, items) ->
-                        val filtered = items.filter { it.finalGrade != null }
+                        val filtered = items.filter { !(it.passed && it.gp == 0.0) && it.finalGrade != null }
                         if (filtered.isEmpty()) return@mapNotNull null
-                        TermGrades(
-                            term = term,
-                            grades = filtered.map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) },
+                        TermGradeStats(
+                            dto = GradeJxglstuDTO(
+                                term,
+                                filtered.map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) }
+                            ),
                             passFlags = filtered.map { it.passed }
                         )
                     }
@@ -75,7 +81,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                     semester == 0 &&
                     allTermList.isNotEmpty()
                 ) {
-                    SemesterParser.parseLatestSemesterFromTerms(allTermList.map { it.term })?.let { latest ->
+                    SemesterParser.parseLatestSemesterFromTerms(allTermList.map { it.dto.term })?.let { latest ->
                         onLatestSemester(latest)
                     }
                     initialSemesterSet = true
@@ -85,19 +91,17 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
             val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
             val list = remember(allTermList, termInfo) {
                 if (semester == 0) allTermList
-                else allTermList.filter { SemesterParser.matchesSemester(it.term, semester) }
+                    else allTermList.filter { SemesterParser.matchesSemester(it.dto.term, semester) }
             }
 
-            val tc = remember(list) { list.fold(0f) { a, b -> a + b.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat() } }
+            val tc = remember(list) { list.fold(0f) { a, b -> a + getTotalCredits(b.dto) } }
             val ag = remember(list, tc) {
-                val totalGp = list.sumOf { b -> b.grades.indices.sumOf { i -> (b.grades[i].gpa.toFloatOrNull()?.toDouble() ?: 0.0) * (b.grades[i].credits.toFloatOrNull() ?: 0f) } }.toFloat()
-                totalGp safeDiv tc
+                list.fold(0f) { a, b -> a + getTotalGpa(b.dto) } safeDiv tc
             }
             val as2 = remember(list, tc) {
-                val totalScore = list.sumOf { b -> b.grades.indices.sumOf { i -> (b.grades[i].detail.toFloatOrNull()?.toDouble() ?: 0.0) * (b.grades[i].credits.toFloatOrNull() ?: 0f) } }.toFloat()
-                totalScore safeDiv tc
+                list.fold(0f) { a, b -> a + getTotalScore(b.dto) } safeDiv tc
             }
-            val total = remember(list) { list.sumOf { it.grades.size } }
+            val total = remember(list) { list.sumOf { it.dto.list.size } }
             val passed = remember(list) { list.sumOf { it.passFlags.count { p -> p } } }
 
             CustomCard(color = cardNormalColor()) {
@@ -115,9 +119,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
             if (allTermList.size > 1) {
                 val gpaData = remember(allTermList) {
                     allTermList.reversed().associate { tg ->
-                        val credits = tg.grades.sumOf { it.credits.toFloatOrNull()?.toDouble() ?: 0.0 }.toFloat()
-                        val gp = tg.grades.indices.sumOf { i -> (tg.grades[i].gpa.toFloatOrNull()?.toDouble() ?: 0.0) * (tg.grades[i].credits.toFloatOrNull() ?: 0f) }.toFloat()
-                        tg.term to (gp safeDiv credits)
+                        tg.dto.term to getTotalGpa(tg.dto)
                     }
                 }
                 CustomCard(color = cardNormalColor()) {
@@ -127,22 +129,20 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
             }
 
             list.reversed().forEach { tg ->
-                val ctc = tg.grades.let { g -> g.indices.sumOf { g[it].credits.toFloatOrNull()?.toDouble() ?: 0.0 } }.toFloat()
-                val ctg = tg.grades.indices.sumOf { i -> (tg.grades[i].gpa.toFloatOrNull()?.toDouble() ?: 0.0) * (tg.grades[i].credits.toFloatOrNull() ?: 0f) }.toFloat()
-                val cts = tg.grades.indices.sumOf { i -> (tg.grades[i].detail.toFloatOrNull()?.toDouble() ?: 0.0) * (tg.grades[i].credits.toFloatOrNull() ?: 0f) }.toFloat()
-                val cag = ctg safeDiv ctc
-                val cas = cts safeDiv ctc
-                val cc = tg.grades.size
+                val ctc = getTotalCredits(tg.dto)
+                val cag = getTotalGpa(tg.dto) safeDiv ctc
+                val cas = getTotalScore(tg.dto) safeDiv ctc
+                val cc = tg.dto.list.size
                 val pc = tg.passFlags.count { it }
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        overlineContent = { Text(tg.term) },
+                        overlineContent = { Text(tg.dto.term) },
                         headlineContent = { Text("分数 ${formatDecimal(cas.toDouble(), 2)} | 绩点 ${formatDecimal(cag.toDouble(), 2)}", style = MaterialTheme.typography.titleSmall) },
                         trailingContent = { Text("${cc}科") }
                     )
                     Row {
-                        TransplantListItem(overlineContent = { Text("学分") }, headlineContent = { Text(formatDecimal(ctc.toDouble(), 1)) }, modifier = Modifier.weight(1f))
+                        TransplantListItem(overlineContent = { Text("学分") }, headlineContent = { Text(formatDecimal(ctc.toDouble(), 2)) }, modifier = Modifier.weight(1f))
                         TransplantListItem(overlineContent = { Text("通过") }, headlineContent = { Text("$pc/$cc") }, modifier = Modifier.weight(1f))
                     }
                 }
