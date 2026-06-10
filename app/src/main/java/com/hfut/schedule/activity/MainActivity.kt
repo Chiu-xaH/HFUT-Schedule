@@ -68,7 +68,7 @@ class MainActivity : BaseActivity() {
     private fun getDefaultStartDestination() : NavDestination {
         return if(prefs.getBoolean("canUse",false)) {
             if(!haveImportantUpdate()) {
-                HomeDestination
+                HomeDestination()
             } else {
                 UpdateSuccessfullyDestination
             }

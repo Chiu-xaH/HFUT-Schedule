@@ -1,11 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,24 +22,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
-import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
-import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
-import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -52,7 +37,6 @@ import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.BrushIcon
-import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.style.special.topBarBlur

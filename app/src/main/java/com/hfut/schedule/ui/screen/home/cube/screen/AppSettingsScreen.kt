@@ -397,8 +397,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                             contentDescription = "Localized description"
                         ) },
                         modifier = Modifier.clickable {
-                            showDevelopingToast()
-//                            navTopController.push(SettingsDeepLinkDestination)
+                            navTopController.push(SettingsDeepLinkDestination)
                         }
                     )
                 }

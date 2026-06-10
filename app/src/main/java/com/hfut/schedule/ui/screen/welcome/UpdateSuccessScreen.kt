@@ -156,7 +156,7 @@ fun UpdateSuccessScreen() {
                                 )
                             }.await()
                             navController.push(
-                                HomeDestination,
+                                HomeDestination(),
                                 LaunchMode.Single(reuse = true, actionType = ActionType.POP)
                             )
 //                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)

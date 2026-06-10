@@ -24,7 +24,7 @@ class SuccessActivity : BaseActivity() {
             uiVm,
             false,
             true,
-            HomeDestination
+            HomeDestination()
         )
     }
 

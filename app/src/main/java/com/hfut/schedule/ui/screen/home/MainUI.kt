@@ -103,9 +103,9 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.FriendEntity
 import com.hfut.schedule.logic.enumeration.BottomBarItems
-import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
+import com.hfut.schedule.logic.enumeration.BottomBarItems.CALENDAR
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
-import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
+import com.hfut.schedule.logic.enumeration.BottomBarItems.FUNCTIONS
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
@@ -229,6 +229,7 @@ fun MainScreen(
     vmUI : UIViewModel,
     celebrationText : String?,
     isLogin : Boolean,
+    subStartDestination : BottomBarItems?
 ) {
     val navHostTopController = LocalNavController.current
     val navController = rememberNavController()
@@ -243,12 +244,12 @@ fun MainScreen(
 
     //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(
-        if(isLogin) COURSES else FOCUS
+        if(isLogin) CALENDAR else (subStartDestination ?: FOCUS)
     ) }
     val targetPage = when(navController.currentRouteWithoutArgs()) {
-        COURSES.name -> COURSES
+        CALENDAR.name -> CALENDAR
         FOCUS.name -> FOCUS
-        SEARCH.name -> SEARCH
+        FUNCTIONS.name -> FUNCTIONS
         SETTINGS.name -> SETTINGS
         else -> first
     }
@@ -352,7 +353,7 @@ fun MainScreen(
 
     Scaffold (
         modifier = Modifier.let {
-            if (targetPage != COURSES) {
+            if (targetPage != CALENDAR) {
                 it.nestedScroll(scrollBehavior.nestedScrollConnection)
             } else {
                 it
@@ -391,7 +392,7 @@ fun MainScreen(
         topBar = {
             Column(
                 modifier = Modifier.let {
-                    if(targetPage == COURSES && useCustomBackground) {
+                    if(targetPage == CALENDAR && useCustomBackground) {
                        it
                     } else {
                         it.topBarBlur(
@@ -401,7 +402,7 @@ fun MainScreen(
                     }
                 }
             ) {
-                if (targetPage != COURSES) {
+                if (targetPage != CALENDAR) {
                     MediumTopAppBar(
                         colors = topBarTransplantColor(),
                         navigationIcon = {
@@ -418,7 +419,7 @@ fun MainScreen(
                         title = { Text(topBarText(targetPage,context)) },
                         actions = {
                             when (targetPage) {
-                                SEARCH -> {
+                                FUNCTIONS -> {
 //                                    SharedContainer(
 //                                        key = FunctionsSortDestination.key,
 //                                        shape = CircleShape,
@@ -570,7 +571,7 @@ fun MainScreen(
                     )
                     when (targetPage) {
                         FOCUS -> CustomTabRow(pagerState, titles)
-                        SEARCH -> {
+                        FUNCTIONS -> {
                             if (showSearch) {
                                 SearchFuncs(searchText, onShow = {
                                     searchText = ""
@@ -608,7 +609,7 @@ fun MainScreen(
                                         ),
                                     color = Color.Transparent
                                 ) {
-                                    Text(topBarText(COURSES,context), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
+                                    Text(topBarText(CALENDAR,context), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
                                 }
                             },
                             title = {
@@ -668,7 +669,7 @@ fun MainScreen(
                                                 navHostTopController.push(
                                                     TermCoursesDestination(
                                                         ifSaved,
-                                                        COURSES.name,
+                                                        CALENDAR.name,
                                                     ),
                                                     effect = JumpTransitionEffectWallpaper()
                                                 )
@@ -756,7 +757,7 @@ fun MainScreen(
                         TopAppBar(
                             colors = topBarTransplantColor(),
                             title = {
-                                Text(topBarText(COURSES,context))
+                                Text(topBarText(CALENDAR,context))
                             },
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
@@ -782,7 +783,7 @@ fun MainScreen(
                                 } else {
                                     val dest = TermCoursesDestination(
                                         ifSaved,
-                                        COURSES.name
+                                        CALENDAR.name
                                     )
 //                                    SharedContainer(
 //                                        key = dest.key,
@@ -829,7 +830,7 @@ fun MainScreen(
         bottomBar = {
             val items = listOf(
                 NavigationBarItemDataDynamic(
-                    COURSES.name,
+                    CALENDAR.name,
                     "课程表",
                     icon = { selected ->
                         NavigationBarItemDynamicIconModern(
@@ -849,7 +850,7 @@ fun MainScreen(
                     },
                 ),
                 NavigationBarItemDataDynamic(
-                    SEARCH.name,
+                    FUNCTIONS.name,
                     "查询中心",
                     icon = { selected ->
                         NavigationBarItemDynamicIconModern(
@@ -872,7 +873,7 @@ fun MainScreen(
                     }
                 )
             )
-            if(useCustomBackground && targetPage == COURSES) {
+            if(useCustomBackground && targetPage == CALENDAR) {
                 SpecialBottomBar(backGroundSource,items,navController,isEnabled)
             } else {
                 HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
@@ -890,7 +891,7 @@ fun MainScreen(
             },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
-            nav2Composable(COURSES.name) {
+            nav2Composable(CALENDAR.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
                     if (useCustomBackground) {
@@ -1030,7 +1031,7 @@ fun MainScreen(
                     )
                 }
             }
-            nav2Composable(SEARCH.name) {
+            nav2Composable(FUNCTIONS.name) {
                 Scaffold {
                     SearchScreen(
                         vm,
@@ -1053,7 +1054,7 @@ fun MainScreen(
 
 
 fun topBarText(num : BottomBarItems,context: Context) : String = when(num) {
-    SEARCH -> MyApplication.context.getString(R.string.functions_center_title)
+    FUNCTIONS -> MyApplication.context.getString(R.string.functions_center_title)
     SETTINGS -> context.getString(R.string.settings_title)
     else -> {
         val chineseNumber  =

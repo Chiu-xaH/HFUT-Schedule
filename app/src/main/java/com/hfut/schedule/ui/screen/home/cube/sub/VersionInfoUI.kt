@@ -62,13 +62,7 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
-        UpdateItems("新增 学期报表", "位于 查询中心-生活服务", to = To.Screen(TermReportDestination),developers = listOf("Junpgle"))//
-//        UpdateItems("新增 深度链接的适配", "位于 选项-偏好与配置-深度链接，供外部应用与网页直接跳转至聚在工大的某些功能", to = To.Screen(SettingsDeepLinkDestination))//
-        UpdateItems("修复 慧新易校随刷新登录不刷新的Bug",developers = listOf("Junpgle"))//
-        UpdateItems("修复 偶见考试重复出现的Bug", developers = listOf("Junpgle",Constant.GITHUB_DEVELOPER_NAME))//
-        UpdateItems("修复 网页搜索组件的取色的Bug")//
-        UpdateItems("优化 调休安排和全校考试安排过滤掉不相关的项目")//
-        UpdateItems("优化 部分界面的显示")//
+        UpdateItems("新增 深度链接的适配", "位于 选项-偏好与配置-深度链接，供外部应用与网页直接跳转至聚在工大的某些功能", to = To.Screen(SettingsDeepLinkDestination))//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")

@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.util.sys.datetime.Celebration
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
@@ -15,10 +16,17 @@ import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
 
-object HomeDestination : NavDestination() {
-    override val key: String = "home"
+data class HomeDestination(
+    val subStartDestination: BottomBarItems? = null
+) : NavDestination() {
+    override val key: String = KEY
     override val title: UiText = res(R.string.navigation_label_home)
     override val icon = R.drawable.home
+
+
+    companion object {
+        const val KEY = "home"
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Composable
@@ -36,13 +44,15 @@ object HomeDestination : NavDestination() {
                     vmUI = uiVm,
                     celebrationText = celebrationText,
                     isLogin = true,
+                    subStartDestination = subStartDestination
                 )
             } else if(!login) {
                 MainScreen(
-                    networkVm,
-                    uiVm,
-                    celebrationText,
-                    false,
+                    vm = networkVm,
+                    vmUI = uiVm,
+                    celebrationText = celebrationText,
+                    isLogin = false,
+                    subStartDestination = subStartDestination
                 )
             } else LoginScreen(
                 loginVm,
