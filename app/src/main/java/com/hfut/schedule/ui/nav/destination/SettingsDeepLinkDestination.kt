@@ -33,7 +33,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsDeepLinkDestination : NavDestination() {
-    override val key: String = "settings_deep_link"
+    override val key: String = "settings_deeplink"
     override val title: UiText = text("深度链接")
     override val icon = R.drawable.link_2
 

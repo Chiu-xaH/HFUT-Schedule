@@ -559,7 +559,7 @@ fun ChangeCourseUI(
                 headlineContent = { Text("查询学校调休安排")},
                 modifier = Modifier.clickable {
                     navController.push(
-                        NewsApiDestination(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE)
+                        NewsApiDestination.create(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE)
                     )
                 },
                 leadingContent = { Icon(painterResource(NewsApiDestination.ICON),null)}

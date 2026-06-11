@@ -8,7 +8,7 @@ import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
 
 object UpdateSuccessfullyDestination : NavDestination() {
-    override val key: String = "update_success"
+    override val key: String = "update_successfully"
     override val title: UiText = res(R.string.navigation_label_update_successfully)
     override val icon = R.drawable.settings
 

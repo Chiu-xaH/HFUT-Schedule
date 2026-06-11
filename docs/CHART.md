@@ -1,11 +1,13 @@
 # 统计报表
 
 ## 总代码量
-不包括增量更新、镜面效果、导航&容器共享库三个模块(已发布至JitPack)，以 Static 插件统计以下文件的总行数减去空行数，截止2026-03-15T22:57为**73747**，其中Kotlin占比约**98.91%**
+包括从主仓解耦的增量更新、镜面效果、骨架库三个模块，以 Static 插件统计以下文件的总行数减去空行数，截止2026-06-12T01:55，主仓代码为85170行，全仓代码为**91090**行
 
-| java | kt    | py  | sql |
-|------|-------|-----|-----|
-| 290  | 72944 | 325 | 188 |
+格式：HFUT-Schedule+SharedNav+Mirror+DiffUpdater
+
+| aidl     | java        | kt                 | py        | sql       | c        |
+|----------|-------------|--------------------|-----------|-----------|----------|
+| 22+0+0+0 | 290+18+0+23 | 84345+4472+747+598 | 325+0+0+0 | 188+0+0+0 | 0+0+0+62 |
 
 ## Star
 [![Star history chart](https://api.star-history.com/svg?repos=Chiu-xaH/HFUT-SChedule&type=Date)](https://www.star-history.com/#Chiu-xaH/HFUT-Schedule&Date)

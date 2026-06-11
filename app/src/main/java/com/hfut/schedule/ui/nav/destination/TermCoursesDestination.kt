@@ -12,11 +12,12 @@ data class TermCoursesDestination(
     val ifSaved : Boolean,
     val origin : String,
 ) : NavDestination() {
-    override val key = "term_courses_${ifSaved}_$origin"
+    override val key = "${KEY}_${ifSaved}_$origin"
     override val title = TITLE
     override val icon = ICON
 
     companion object {
+        const val KEY = "term_courses"
         val TITLE = res(R.string.navigation_label_term_courses)
         val ICON = R.drawable.category
     }

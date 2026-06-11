@@ -13,12 +13,13 @@ data class AddEventDestination(
     val id : Int?,
     val origin : String
 ) : NavDestination() {
-    override val key: String = "add_event_${origin}_$id"
+    override val key: String = "${KEY}_${origin}_$id"
     override val title: UiText = TITLE
     override val description = "日程 $id"
     override val icon = ICON
 
     companion object {
+        const val KEY = "add_event"
         val TITLE = res(R.string.navigation_label_add_event)
         val ICON = R.drawable.add
     }

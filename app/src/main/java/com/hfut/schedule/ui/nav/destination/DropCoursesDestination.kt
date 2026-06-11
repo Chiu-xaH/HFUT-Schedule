@@ -9,10 +9,10 @@ import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.res
 
 data class DropCoursesDestination(
-    val index : Int,
+    val courseId : Int,
     val name : String,
 ) : NavDestination() {
-    override val key = "drop_courses_${index}_$name"
+    override val key = "drop_courses_${courseId}_$name"
     override val description = name
     override val title = TITLE
     override val icon = ICON
@@ -25,6 +25,6 @@ data class DropCoursesDestination(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        DropCourseScreen(vm,index,name)
+        DropCourseScreen(vm,courseId,name)
     }
 }

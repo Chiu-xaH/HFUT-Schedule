@@ -10,17 +10,20 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.res
 
-data class NewsApiDestination(
-    val keyword : Keyword
+class NewsApiDestination(
+    val keyword : String,
+    val filteredHost : List<String> = emptyList()
 ) : NavDestination() {
     override val key = "news_api_$keyword"
-    override val description = keyword.keyword
+    override val description = keyword
     override val title = TITLE
     override val icon = ICON
 
     companion object {
         val TITLE = res(R.string.navigation_label_news)
         val ICON = R.drawable.stream
+
+        fun create(keyword: Keyword) = NewsApiDestination(keyword.keyword,keyword.filteredHost)
     }
 
     // 自动支持webvpn，直接贴原始链接就行
@@ -34,6 +37,6 @@ data class NewsApiDestination(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        NewsApiScreen(vm, keyword)
+        NewsApiScreen(vm, keyword,filteredHost)
     }
 }

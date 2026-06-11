@@ -11,11 +11,12 @@ import com.xah.common.ui.util.res
 data class SurveyDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
-    override val key = "survey_$ifSaved"
+    override val key = "${KEY}_$ifSaved"
     override val title = TITLE
     override val icon = ICON
 
     companion object {
+        const val KEY = "survey"
         val TITLE = res(R.string.navigation_label_survey)
         val ICON = R.drawable.verified
     }

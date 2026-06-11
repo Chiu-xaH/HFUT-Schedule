@@ -11,11 +11,12 @@ import com.xah.common.ui.util.res
 data class GradeDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
-    override val key = "grade_$ifSaved"
+    override val key = "${KEY}_$ifSaved"
     override val title = TITLE
     override val icon = ICON
 
     companion object {
+        const val KEY = "grade"
         val TITLE = res(R.string.navigation_label_grade)
         val ICON = R.drawable.article
     }

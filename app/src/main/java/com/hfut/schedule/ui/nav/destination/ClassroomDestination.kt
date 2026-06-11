@@ -11,11 +11,12 @@ import com.xah.common.ui.util.res
 data class ClassroomDestination(
     val origin : String = "Search"
 ) : NavDestination() {
-    override val key = "classroom_$origin"
+    override val key = "${KEY}_$origin"
     override val title = TITLE
     override val icon = ICON
 
     companion object {
+        const val KEY = "classroom"
         val TITLE = res(R.string.navigation_label_classroom)
         val ICON = R.drawable.meeting_room
     }

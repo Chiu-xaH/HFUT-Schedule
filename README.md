@@ -138,11 +138,11 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 #### Pull Request 须知（参与本项目）
 
 ##### 要求：
-熟练 Android，能够在不借助 AI 的情况下完成开发（不是要求不许用，是需要具备独立开发的能力，聚在工大多数业务代码都是需要手写的）
+熟练 Android，能够在不借助 AI 的情况下完成开发（不是要求不许用，是需要具备独立开发的能力）
 
 ##### 模块分布：
-- 主仓：本仓库，约 8w 行代码，MVVM 架构，Compose 作为 UI 框架，体量属中型 App，可善用 IDE 的搜索功能进行定位。
-- 网络模块：本仓库 network 模块，放置网络接口，采用设计 Service+ServiceCreator(OkHttp+Retrofit)+Repository(Gson+Jsoup)+ViewModel + StateFlow
+- 主仓：本仓库，约 8.5w 行代码（总仓为约 9.1w 行代码），MVVM 架构，Compose 作为 UI 框架，体量属中型 App，可善用 IDE 的搜索功能进行定位。
+- 网络模块：本仓库 network 模块，放置网络接口，采用分层设计 Api+Client(OkHttp+Retrofit)+Repo(Gson+Jsoup)+ViewModel+StateFlow
 - 增量更新：DiffUpdater 库，一般无需修改
 - KMP 跨平台仓：暂未开始，计划筹备中
 - 基础能力（骨架）：如需修改页面导航、转场动效以及容器共享等功能，请转到 [SharedNav](https://github.com/Chiu-xaH/SharedNav) 库。

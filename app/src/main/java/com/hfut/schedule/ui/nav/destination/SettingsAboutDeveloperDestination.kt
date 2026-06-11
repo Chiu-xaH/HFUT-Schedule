@@ -13,7 +13,7 @@ import com.xah.common.ui.util.text
 import com.xah.navigation.util.LocalNavDependencies
 
 object SettingsAboutDeveloperDestination : NavDestination() {
-    override val key: String = "settings_backup"
+    override val key: String = "settings_about_developer"
     override val title: UiText = text("关于")
     override val icon = R.drawable.info
 

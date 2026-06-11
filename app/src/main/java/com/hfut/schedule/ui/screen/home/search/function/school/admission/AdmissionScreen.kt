@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -33,11 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.AdmissionType
@@ -61,7 +58,6 @@ import com.hfut.schedule.ui.nav.destination.AdmissionDetailDestination
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
@@ -143,7 +139,7 @@ fun AdmissionListUI(
                         items(list.size) { index ->
                             val item = list[index]
                             val dest = AdmissionDetailDestination(
-                                index,
+                                list[index],
                                 pageList[page].description
                             )
                             SmallCard (
@@ -176,15 +172,14 @@ fun AdmissionListUI(
 @Composable
 fun AdmissionRegionScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
-    type : String,
-    index: Int
+    bean : Map.Entry<String, List<AdmissionMapBean>>,
+    typeStr : String,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val listState by vm.admissionListResp.state.collectAsState()
-    val data = (listState as? UiState.Success)?.data?.second?.entries?.toList()[index] ?: return
+    val data = bean
     val titles = remember { data.value.map { it.toString() } }
     val pagerState = rememberPagerState { titles.size }
     val uiState by vm.admissionDetailResp.state.collectAsState()
@@ -196,7 +191,7 @@ fun AdmissionRegionScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         val bean = data.value[pagerState.currentPage]
-        val typeE = AdmissionType.entries.find { it.description == type }!!
+        val typeE = AdmissionType.entries.find { it.description == typeStr }!!
         val region = data.key
         refreshNetwork(typeE,bean,region)
     }
@@ -209,7 +204,7 @@ fun AdmissionRegionScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(type + " : "+ data.key) },
+                    title = { Text(typeStr + " : "+ data.key) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }
@@ -220,7 +215,7 @@ fun AdmissionRegionScreen(
     ) { innerPadding ->
         HorizontalPager(pagerState) { page ->
             val bean = data.value[page]
-            val typeE = AdmissionType.entries.find { it.description == type }!!
+            val typeE = AdmissionType.entries.find { it.description == typeStr }!!
             val region = data.key
             CommonNetworkScreen(uiState, onReload = { refreshNetwork(typeE,bean,region)}) {
                 val data = (uiState as UiState.Success).data

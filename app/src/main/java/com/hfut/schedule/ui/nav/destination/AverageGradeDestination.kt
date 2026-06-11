@@ -11,12 +11,13 @@ import com.xah.common.ui.util.res
 data class AverageGradeDestination(
     val useUniAppData : Boolean
 ) : NavDestination() {
-    override val key = "average_grade_$useUniAppData"
+    override val key = "${KEY}_$useUniAppData"
     override val description = if(useUniAppData) "合工大教务数据源" else "教务系统数据源"
     override val title = TITLE
     override val icon = ICON
 
     companion object {
+        const val KEY = "average_grade"
         val TITLE = res(R.string.navigation_label_average_grade)
         val ICON = R.drawable.leaderboard
     }

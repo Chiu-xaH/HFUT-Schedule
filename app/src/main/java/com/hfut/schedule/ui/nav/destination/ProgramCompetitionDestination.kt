@@ -12,11 +12,12 @@ import com.xah.common.ui.util.res
 data class ProgramCompetitionDestination(
     val ifSaved : Boolean,
 ) : NavDestination() {
-    override val key = "program_competition_${ifSaved}"
+    override val key = "${KEY}_${ifSaved}"
     override val title = TITLE
     override val icon = ICON
 
     companion object {
+        const val KEY = "program_competition"
         val TITLE = res(R.string.navigation_label_program_competition)
         val ICON = R.drawable.leaderboard
     }

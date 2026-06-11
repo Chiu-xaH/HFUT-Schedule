@@ -182,7 +182,7 @@ fun ApiToFailRate(
     input : String,
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-    lessonCode : String
+    lessonCode : String?
 ) {
     val uiState by vm.failRateData.state.collectAsState()
     val scope = rememberCoroutineScope()

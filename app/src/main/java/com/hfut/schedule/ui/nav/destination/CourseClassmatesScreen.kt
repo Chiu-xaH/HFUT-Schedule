@@ -10,15 +10,16 @@ import com.xah.common.ui.util.text
 
 data class CourseClassmatesScreen(
     val lessonId : Int,
-    val courseName : String,
+    val courseName : String?,
     val isScheduled : Boolean
 ) : NavDestination() {
-    override val key = "course_classmates_${lessonId}_$courseName"
+    override val key = "${KEY}_${lessonId}_$courseName"
     override val description = courseName
     override val title = text(TITLE)
     override val icon = ICON
 
     companion object {
+        const val KEY = "course_classmates"
         const val TITLE = "同班同学"
         val ICON = R.drawable.group
     }
