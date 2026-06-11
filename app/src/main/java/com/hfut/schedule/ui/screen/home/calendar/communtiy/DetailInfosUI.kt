@@ -159,7 +159,7 @@ fun CourseDetailApiScreen(
         val list = withContext(Dispatchers.Default) {
             getTotalCourse(json)
         }
-        value = list.find { it.course.nameZh == courseName }
+        value = list.find { it.course.nameZh.trim() == courseName.trim() }
     }
 
     val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
