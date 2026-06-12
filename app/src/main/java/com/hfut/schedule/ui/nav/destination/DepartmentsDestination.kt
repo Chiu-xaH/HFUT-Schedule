@@ -26,7 +26,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 object DepartmentsDestination : NavDestination() {
-    override val key = "departments"
+    override val key = "all_department"
     override val title = res(R.string.navigation_label_departments)
     override val icon = R.drawable.school
 

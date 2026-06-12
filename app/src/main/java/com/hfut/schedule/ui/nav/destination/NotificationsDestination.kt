@@ -7,7 +7,7 @@ import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.common.ui.util.res
 
 object NotificationsDestination : NavDestination() {
-    override val key = "notifications"
+    override val key = "notification_center"
     override val title = res(R.string.navigation_label_notifications)
     override val icon = R.drawable.notifications
 

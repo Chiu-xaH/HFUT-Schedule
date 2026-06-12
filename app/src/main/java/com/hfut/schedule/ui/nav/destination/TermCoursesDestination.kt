@@ -17,7 +17,7 @@ data class TermCoursesDestination(
     override val icon = ICON
 
     companion object {
-        const val KEY = "term_courses"
+        const val KEY = "all_course"
         val TITLE = res(R.string.navigation_label_term_courses)
         val ICON = R.drawable.category
     }

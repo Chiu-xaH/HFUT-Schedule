@@ -16,7 +16,7 @@ data class AllProgramsDestination(
     override val icon = ICON
 
     companion object {
-        const val KEY = "all_programs"
+        const val KEY = "all_program"
         val TITLE = res(R.string.navigation_label_all_programs)
         val ICON = R.drawable.conversion_path
     }

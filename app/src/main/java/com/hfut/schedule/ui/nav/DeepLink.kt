@@ -111,7 +111,9 @@ val deepLinks = listOf(
     createDeepLinkByKey(SettingsBackupDestination),
     createDeepLinkByKey(SettingsConfigurationDestination),
     createDeepLinkByKey(SettingsDeepLinkDestination),
+    /* TODO:暂未上线
     createDeepLinkByKey(SettingsTipsDestination),
+     */
     createDeepLinkByKey(SettingsNetworkDestination),
     createDeepLinkByKey(TermReportDestination),
     createDeepLinkByKey(TrackDestination),
