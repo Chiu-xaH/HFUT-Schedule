@@ -100,6 +100,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.getWallpaper
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -109,6 +110,7 @@ import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
@@ -119,6 +121,7 @@ import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.DEFAULT_SHARED_SPEC
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
@@ -488,12 +491,14 @@ fun SharedAppearanceSettingsScreen(
                     }
 
                     Box {
+                        val backdrop = rememberLayerBackdrop()
                         wallpaper?.let {
                             Image(
                                 bitmap = it.asImageBitmap(),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .matchParentSize()
+                                    .backDropSource(backdrop)
                                     .mask(MaterialTheme.colorScheme.surface.copy(.75f)),
                                 contentScale = ContentScale.Crop
                             )
@@ -505,7 +510,9 @@ fun SharedAppearanceSettingsScreen(
                                 Text("选择图片或以壁纸取色")
                             },
                             trailingContent = {
-                                FilledTonalIconButton(
+                                LiquidButton (
+                                    backdrop = backdrop,
+                                    isCircle = true,
                                     onClick = {
                                         activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
                                         wallpaper = getWallpaper()
@@ -1055,12 +1062,14 @@ fun CalendarUISettings(
 
     Column {
         Box {
+            val backdrop = rememberLayerBackdrop()
             wallpaper?.let {
                 Image(
                     bitmap = it.asImageBitmap(),
                     contentDescription = null,
                     modifier = Modifier
                         .matchParentSize()
+                        .backDropSource(backdrop)
                         .mask(MaterialTheme.colorScheme.surface.copy(customSquareAlpha)),
                     contentScale = ContentScale.Crop
                 )
@@ -1081,7 +1090,9 @@ fun CalendarUISettings(
                 },
                 trailingContent = {
                     if(useCustomBackground) {
-                        FilledTonalIconButton(
+                        LiquidButton(
+                            backdrop = backdrop,
+                            isCircle = true,
                             onClick = {
                                 scope.launch {
                                     deleteCustomBackground(context)
@@ -1091,7 +1102,9 @@ fun CalendarUISettings(
                             Icon(painterResource(R.drawable.delete),null)
                         }
                     } else {
-                        FilledTonalIconButton(
+                        LiquidButton(
+                            backdrop = backdrop,
+                            isCircle = true,
                             onClick = {
                                 scope.launch {
                                     activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
@@ -1113,14 +1126,19 @@ fun CalendarUISettings(
                         ) {
                             Icon(painterResource(R.drawable.wallpaper),null)
                         }
+//                        FilledTonalIconButton(
+//
+//                        ) {
+//                        }
                     }
                 }
             )
         }
 
         if(useCustomBackground) {
-            if(!isTiny && wallpaper == null)
+            if(!isTiny && (wallpaper == null || customSquareAlpha == 1f)) {
                 PaddingHorizontalDivider()
+            }
             TransplantListItem(
                 headlineContent = {
                     Text(

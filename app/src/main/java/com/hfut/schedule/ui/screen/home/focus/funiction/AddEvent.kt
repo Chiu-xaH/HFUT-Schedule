@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
@@ -44,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -55,6 +57,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -89,8 +92,14 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
+import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.LocalEvent
+import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.model.SupabaseEventOutput
+import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
+import com.hfut.schedule.logic.model.uniapp.UniAppCampus
+import com.hfut.schedule.logic.network.repo.UniAppRepository
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -102,6 +111,7 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -112,10 +122,13 @@ import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.divider.defaultDividerColor
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 
 import com.hfut.schedule.ui.component.status.StatusIcon
+import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -130,6 +143,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.util.LocalNavController
@@ -146,6 +160,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -807,9 +822,30 @@ fun AddEventUI(
 
             Spacer(Modifier.height(CARD_NORMAL_DP*2))
             CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
-            Spacer(Modifier.height(CARD_NORMAL_DP*3))
-            CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
             Spacer(Modifier.height(CARD_NORMAL_DP*2))
+            CustomCard(color = cardNormalColor()) {
+                CustomTextField(
+                    input = description,
+                    label = { Text("备注") },
+                    singleLine = false,
+                    shape = NoneRoundShape,
+                    colors = TextFieldDefaults.colors().copy(
+                        focusedIndicatorColor = defaultDividerColor(),
+                        unfocusedIndicatorColor = defaultDividerColor(),
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    ),
+                    modifier = Modifier,
+                ) {
+                    description = it
+                }
+                DividerTextExpandedWith("预设文案") {
+                    BuildingsSelector(vm) {
+                        description = it
+                    }
+                }
+            }
+            Spacer(Modifier.height(CARD_NORMAL_DP))
             val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
                 value = dateToWeek(date.first)
             }
@@ -1058,6 +1094,155 @@ fun AddEventUI(
             Spacer(Modifier
                 .height(bottomHeight + APP_HORIZONTAL_DP)
                 .navigationBarsPadding())
+        }
+    }
+}
+// TODO:后续改成滚轮
+@Composable
+private fun BuildingsSelector(
+    vm : NetWorkViewModel,
+    modifier : Modifier = Modifier,
+    onSelected : (String) -> Unit
+) {
+    var campus by remember { mutableStateOf<Campus?>(getCampus() ?: Campus.XC) }
+    var selectedBuildings by remember { mutableStateOf<String?>(null) }
+
+    val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
+    val refreshNetworkChips = suspend m@ {
+        if(chipsUiState is UiState.Success) {
+            return@m
+        }
+        var jwt = DataStoreManager.uniAppJwt.first()
+        if(jwt.isEmpty() || jwt.isEmpty()) {
+            val loginResult = UniAppRepository.login()
+            if(!loginResult) {
+                return@m
+            }
+            jwt = DataStoreManager.uniAppJwt.first()
+        }
+        vm.uniAppBuildingsResp.clear()
+        vm.getBuildings(token = jwt)
+    }
+
+    LaunchedEffect(Unit) {
+        refreshNetworkChips()
+    }
+
+    LaunchedEffect(selectedBuildings) {
+        selectedBuildings?.let { onSelected(it) }
+    }
+
+    val ddlList = remember {
+        listOf(
+            Starter.AppPackages.RAIN_CLASSROOM.appName,
+            Starter.AppPackages.CHAO_XING.appName,
+            Starter.AppPackages.MOOC.appName,
+            Starter.AppPackages.TODAY_CAMPUS.appName,
+            "U校园"
+        )
+    }
+
+    Column(modifier = modifier) {
+        NoPadding {
+            // 校区
+            val campusList = Campus.entries
+            LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                items(campusList.size) { index ->
+                    val item = campusList[index]
+                    val selected = item == campus
+                    FilterChip (
+                        border = null,
+                        colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
+                        selected = selected,
+                        onClick = {
+                            campus = if(selected) {
+                                null
+                            } else {
+                                item
+                            }
+                        },
+                        label = { Text(item.description) },
+                        modifier = Modifier.padding(end = CARD_NORMAL_DP*3)
+                    )
+                }
+                item {
+                    val item = "其它"
+                    val selected = campus == null
+                    FilterChip (
+                        border = null,
+                        colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
+                        selected = selected,
+                        onClick = {
+                            campus = null
+                        },
+                        label = { Text(item) },
+                    )
+                }
+                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+            }
+            // 建筑
+            if(campus == null) {
+                LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)) {
+                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                    items(ddlList.size) { index ->
+                        val item = ddlList[index]
+                        val selected = item == selectedBuildings
+                        FilterChip (
+                            border = null,
+                            colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
+                            selected = selected,
+                            onClick = {
+                                selectedBuildings = if(selected) {
+                                    ""
+                                } else {
+                                    item
+                                }
+                            },
+                            label = { Text(item) },
+                            modifier = Modifier.padding(end = if(index == ddlList.size-1) 0.dp else CARD_NORMAL_DP*3)
+                        )
+                    }
+                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                }
+            } else if(chipsUiState is UiState.Success) {
+                val buildingList = (chipsUiState as UiState.Success).data.filter {
+                    when(campus) {
+                        Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
+                        Campus.TXL -> UniAppCampus.TXL.code == it.campusAssoc
+                        Campus.FCH -> UniAppCampus.FCH.code == it.campusAssoc
+                        else -> true
+                    }
+                }
+                LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)) {
+                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                    items(buildingList.size) { index ->
+                        val item = buildingList[index]
+                        val selected = item.nameZh == selectedBuildings
+                        FilterChip (
+                            border = null,
+                            colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
+                            selected = selected,
+                            onClick = {
+                                selectedBuildings = if(selected) {
+                                    ""
+                                } else {
+                                    item.nameZh
+                                }
+                            },
+                            label = { Text(item.nameZh) },
+                            modifier = Modifier.padding(end = if(index == buildingList.size-1) 0.dp else CARD_NORMAL_DP*3)
+                        )
+                    }
+                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                }
+            } else if(chipsUiState is UiState.Loading) {
+                BottomTip("正在获取建筑列表")
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP*3))
+            } else if(chipsUiState is UiState.Error) {
+                BottomTip("获取建筑列表失败")
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP*3))
+            }
         }
     }
 }

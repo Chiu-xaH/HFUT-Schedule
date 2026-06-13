@@ -40,9 +40,11 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.sharednav.common.util.NoneRoundShape
@@ -63,6 +65,12 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
         UpdateItems("新增 深度链接的适配", "位于 选项-偏好与配置-深度链接，供外部应用与网页直接跳转至聚在工大的某些功能", to = To.Screen(SettingsDeepLinkDestination))//
+        UpdateItems("新增 新增日程时，支持快速选择常用地点",to = To.Screen(AddEventDestination(null, VersionInfoDestination.key)))//
+        UpdateItems("修复 旧课程表在不使用背景的情况下，方格透明度仍生效的Bug")
+        UpdateItems("修复 部分课程从课程表方格进入课程详情后为空的问题")//
+        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)
+        UpdateItems("优化 部分界面的显示")//
+
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")

@@ -112,12 +112,18 @@ suspend fun autoCalculateAndUpdateTermStartDate(
 
 fun String.simplifyPlace() : String {
     return this
-         // by @Junpgle
-        .replace("敬亭学堂", "敬亭")
-        .replace("新安学堂", "新安")
+        // 处理下发的数据
+        .substringBefore("（")
+        .replace("(宣)","")
+        // 对宣城校区建筑进行过滤
         .replace("学堂", "")
+        .replace("电子电气楼","电气楼")
+        .replace("大学生活动中心","大活")
+        .replace("综合实验楼","实验楼")
+        .replace("化学化工楼","化工楼")
+        .replace("工程训练中心","工训中心")
+         // by @Junpgle
         .replace("教学楼", "教")
         .replace("综合楼", "综")
         .replace("科教楼", "科教")
-        .replace("号楼", "楼")
 }
