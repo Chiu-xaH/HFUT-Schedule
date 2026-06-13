@@ -18,7 +18,7 @@ fun departmentIcon(name : String) : Int =
     if(name.contains("计算机与信息学院")) R.drawable.data_object
     else if(name.contains("资源与环境工程学院")) R.drawable.eco
     else if(name.contains("数学学院")) R.drawable.function
-    else if(name.contains("外国语")) R.drawable.translate
+    else if(name.contains("外国语学院")) R.drawable.translate
     else if(name.contains("马克思主义学院")) R.drawable.cognition
     else if(name.contains("机械工程学院")) R.drawable.settings
     else if(name.contains("材料科学与工程学院")) R.drawable.texture
@@ -34,7 +34,8 @@ fun departmentIcon(name : String) : Int =
     else if(name.contains("微电子学院")) R.drawable.empty_dashboard
     else if(name.contains("物理学院")) R.drawable.category
     else if(name.contains("汽车与交通工程学院")) R.drawable.directions_car
-    else if(name.contains("软件学院")) R.drawable.code
+    // 新名字：智能软件工程学院，旧名字：软件学院
+    else if(name.contains("软件")) R.drawable.code
     else if(name.contains("聚变科学与工程学院")) R.drawable.orbit
     else if(name.contains("卓越工程师学院")) R.drawable.manufacturing
     else if(name.contains("创新学院")) R.drawable.stylus_laser_pointer // 集成电路创新学院 人工智能创新学院 未来技术创新学院
