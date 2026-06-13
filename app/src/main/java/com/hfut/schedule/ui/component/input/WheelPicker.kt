@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.component.input
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,10 +18,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -30,30 +33,38 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-//滚轮 组件
 private const val visibleCount = 3
 private const val height = 120
 
+/**
+ * 通用滚轮组件
+ */
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> WheelPicker(
     data: List<T>,
-    selectIndex: Int = 0,
     modifier: Modifier = Modifier,
+    initialSelectedIndex: Int = 0,
     selectedColor : Color = MaterialTheme.colorScheme.surfaceContainer,
+    selectedShape : Shape = MaterialTheme.shapes.medium,
+    enableInfiniteScroll : Boolean? = null,
     onSelect: (index: Int, item: T) -> Unit,
     content: @Composable (item: T) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
+    val finalEnableInfinite = enableInfiniteScroll ?: enableInfiniteWheelPicker
+
     BoxWithConstraints(modifier = modifier.height(height.dp), propagateMinConstraints = true) {
         val density = LocalDensity.current
         val size = data.size
         // 伪装无限滚动
-        val count = if (enableInfiniteWheelPicker) {
+        val count = if (finalEnableInfinite) {
             size * 10000
         } else {
             val paddingCount = visibleCount / 2
@@ -66,17 +77,17 @@ fun <T> WheelPicker(
         val itemHeightPx = pickerHeightPx / visibleCount
         val startIndex = count / 2
         val listState = rememberLazyListState(
-            initialFirstVisibleItemIndex = if (enableInfiniteWheelPicker) {
-                startIndex - startIndex.floorMod(size) + selectIndex
+            initialFirstVisibleItemIndex = if (finalEnableInfinite) {
+                startIndex - startIndex.floorMod(size) + initialSelectedIndex
             } else {
-                selectIndex
+                initialSelectedIndex
             },
             initialFirstVisibleItemScrollOffset = ((itemHeightPx - pickerHeightPx) / 2).roundToInt(),
         )
         val layoutInfo by remember { derivedStateOf { listState.layoutInfo } }
 
         // 手势处理
-        val nestedScrollConnection = remember(listState, enableInfiniteWheelPicker) {
+        val nestedScrollConnection = remember(listState, finalEnableInfinite) {
             object : NestedScrollConnection {
 
                 override fun onPreScroll(
@@ -85,7 +96,7 @@ fun <T> WheelPicker(
                 ): Offset {
 
                     // 无限模式：永远不拦截（让自己随便滚）
-                    if (enableInfiniteWheelPicker) return Offset.Zero
+                    if (finalEnableInfinite) return Offset.Zero
 
                     val delta = available.y
 
@@ -109,7 +120,7 @@ fun <T> WheelPicker(
 
                 override suspend fun onPreFling(available: Velocity): Velocity {
 
-                    if (enableInfiniteWheelPicker) return Velocity.Zero
+                    if (finalEnableInfinite) return Velocity.Zero
 
                     val velocityY = available.y
 
@@ -140,13 +151,13 @@ fun <T> WheelPicker(
 
                 val paddingCount = visibleCount / 2
 
-                val currIndex = if (enableInfiniteWheelPicker) {
+                val currIndex = if (finalEnableInfinite) {
                     (index - startIndex).floorMod(size)
                 } else {
                     index - paddingCount
                 }
 
-                val isPaddingItem = !enableInfiniteWheelPicker && (index < paddingCount || index >= paddingCount + size)
+                val isPaddingItem = !finalEnableInfinite && (index < paddingCount || index >= paddingCount + size)
 
                 val item = layoutInfo.visibleItemsInfo.find { it.index == index }
 
@@ -179,10 +190,25 @@ fun <T> WheelPicker(
                     modifier = Modifier
                         .height(itemHeight)
                         .fillMaxWidth()
+                        // 选中态背景
                         .background(
                             selectedColor.copy(colorAlpha),
-                            shape = MaterialTheme.shapes.medium
+                            shape = selectedShape
                         )
+                        // 点击切换
+                        .clickable(
+                            enabled = !isPaddingItem && !selected,
+                            // 去水波纹
+                            interactionSource = null,
+                            indication = null
+                        ) {
+                            scope.launch {
+                                listState.animateScrollToItem(
+                                    index = index,
+                                    scrollOffset = ((itemHeightPx - pickerHeightPx) / 2).roundToInt()
+                                )
+                            }
+                        }
                         .graphicsLayer {
                             alpha = if (isPaddingItem) 0f else currentsAdjust
                             scaleX = currentsAdjust

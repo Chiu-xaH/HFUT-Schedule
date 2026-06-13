@@ -24,7 +24,7 @@ fun AnimatedIconButton(
     onClick: (() -> Unit)? = null
 ) {
     val animatedImageVector: AnimatedImageVector =
-        AnimatedImageVector.animatedVectorResource(id = R.drawable.avd1) // 正向动画就行，compose 会自己计算反向的部分
+        AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand) // 正向动画就行，compose 会自己计算反向的部分
 
     val painter = rememberAnimatedVectorPainter(animatedImageVector, valueState)
 

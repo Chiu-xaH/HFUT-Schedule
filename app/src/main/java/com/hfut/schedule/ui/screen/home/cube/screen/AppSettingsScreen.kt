@@ -96,7 +96,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         .padding(innerPaddings)
     ) {
         Spacer(modifier = Modifier.height(5.dp))
-//        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
+        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
         val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
 //        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 

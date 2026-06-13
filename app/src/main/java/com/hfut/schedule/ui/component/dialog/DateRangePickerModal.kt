@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.component.dialog
 
-import android.media.DrmInitData
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -40,7 +38,6 @@ import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.xah.common.ui.style.align.CenterScreen
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -294,7 +291,7 @@ fun TimePicker(
         // 小时
         WheelPicker(
             data = hours,
-            selectIndex = init[0],
+            initialSelectedIndex = init[0],
             modifier = Modifier.weight(1f),
             onSelect = { _, h ->
                 hour = h
@@ -316,7 +313,7 @@ fun TimePicker(
         // 分钟
         WheelPicker(
             data = minutes,
-            selectIndex = minutes.indexOf(init[1]).coerceAtLeast(0),
+            initialSelectedIndex = minutes.indexOf(init[1]).coerceAtLeast(0),
             modifier = Modifier.weight(1f),
             onSelect = { _, m ->
                 min = m

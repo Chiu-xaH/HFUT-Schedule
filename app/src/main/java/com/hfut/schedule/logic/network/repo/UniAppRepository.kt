@@ -233,7 +233,14 @@ object UniAppRepository {
     private fun parseBuildings(json : String) : List<UniAppBuildingBean> = try {
         val originalList = GsonInstance.fromJson(json, UniAppBuildingsResponse::class.java).data
         val codeList = UniAppCampus.entries.map { it.code }
-        originalList.filter { it.campusAssoc in codeList }
+        val result = originalList.filter { it.campusAssoc in codeList }
+        result.map { item ->
+            item.copy(
+                nameZh = item.nameZh
+                    .replace("（宣城）","")
+                    .replace("(宣)",""),
+            )
+        }
     } catch (e : Exception) { throw e }
 
     suspend fun getEmptyClassrooms(

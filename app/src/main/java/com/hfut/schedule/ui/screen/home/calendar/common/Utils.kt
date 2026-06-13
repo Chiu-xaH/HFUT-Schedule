@@ -112,9 +112,6 @@ suspend fun autoCalculateAndUpdateTermStartDate(
 
 fun String.simplifyPlace() : String {
     return this
-        // 处理下发的数据
-        .substringBefore("（")
-        .replace("(宣)","")
         // 对宣城校区建筑进行过滤
         .replace("学堂", "")
         .replace("电子电气楼","电气楼")

@@ -2,6 +2,6 @@
 <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:drawable="@drawable/collapse_content">
     <target
-        android:name="animated"
-        android:animation="@animator/forward" />
+        android:name="animated_expand"
+        android:animation="@animator/forward_expand" />
 </animated-vector>

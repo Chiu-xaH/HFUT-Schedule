@@ -174,7 +174,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCardPassword(value: String) = saveValue(CARD_PASSWORD,value)
     suspend fun saveUseDefaultCardPassword(value: Boolean) = saveValue(USE_DEFAULT_CARD_PASSWORD,value)
     suspend fun saveUseDefaultJxglstuPassword(value: Boolean) = saveValue(USE_DEFAULT_JXGLSTU_PASSWORD,value)
-//    suspend fun saveInfiniteWheelPicker(value: Boolean) = saveValue(INFINITE_WHEEL_PICKER,value)
+    suspend fun saveInfiniteWheelPicker(value: Boolean) = saveValue(INFINITE_WHEEL_PICKER,value)
     suspend fun saveDefaultCalendarAccount(value: Long) = saveValue(DEFAULT_CALENDAR_ACCOUNT,value)
     suspend fun saveCourseTable(value: String) = saveValue(COURSE_TABLE_TIME,value)
     suspend fun saveWebVpnCookie(value: String) = saveValue(WEBVPN_COOKIE,value)

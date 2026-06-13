@@ -657,7 +657,7 @@ fun ElectricHefei(
                             ) {
                                 WheelPicker(
                                     data = Campus.entries,
-                                    selectIndex = Campus.entries.indexOf(campus),
+                                    initialSelectedIndex = Campus.entries.indexOf(campus),
                                     modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
                                     onSelect = { index, element ->
                                         campus = element
@@ -690,7 +690,7 @@ fun ElectricHefei(
                                         Campus.TXL -> IntArray(14) { it+1 }
                                         Campus.FCH -> IntArray(13) { it+1 }
                                     }.toList(),
-                                    selectIndex = if(buildingCode <= 0) 0 else buildingCode-1,
+                                    initialSelectedIndex = if(buildingCode <= 0) 0 else buildingCode-1,
                                     modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
                                     onSelect = { index, element ->
                                         buildingCode = element
@@ -724,7 +724,7 @@ fun ElectricHefei(
                     ) {
                         WheelPicker(
                             data = getType(campus, buildingCode),
-                            selectIndex = 0,
+                            initialSelectedIndex = 0,
                             modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
                             onSelect = { index, element ->
                                 typeCode = element
@@ -844,7 +844,7 @@ fun ElectricHefei(
                 list?.let {
                     WheelPicker(
                         data = it,
-                        selectIndex = 0,
+                        initialSelectedIndex = 0,
                         modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
                         onSelect = { index, element ->
                             roomNumber = element

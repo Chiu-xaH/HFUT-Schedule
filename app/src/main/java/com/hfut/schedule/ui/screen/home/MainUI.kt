@@ -735,7 +735,7 @@ fun MainScreen(
                                     ,
                                     color = Color.Transparent
                                 ) {
-                                    val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.avd1) 
+                                    val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
                                     val painter = rememberAnimatedVectorPainter(animatedImageVector, showAll)
                                     Icon(
                                         painter = painter,//painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
