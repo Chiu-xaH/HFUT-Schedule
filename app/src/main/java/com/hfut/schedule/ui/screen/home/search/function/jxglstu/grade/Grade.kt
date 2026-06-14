@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.nav.destination.GradeDestination
 
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
@@ -47,7 +48,11 @@ fun Grade(
             ScrollText(text = GradeDestination.TITLE.asString())
         },
         leadingContent = {
-            Icon(painterResource(GradeDestination.ICON), contentDescription = null)
+            if(loading) {
+                LoadingIcon()
+            } else {
+                Icon(painterResource(GradeDestination.ICON), contentDescription = null)
+            }
         },
         trailingContent = {
             FilledTonalIconButton(
@@ -60,8 +65,12 @@ fun Grade(
                         loading = false
                     }
                 },
-            ) { Icon( painterResource(R.drawable.attach_file), contentDescription = "Localized description",
-                Modifier.size(21.dp)) }
+            ) {
+                Icon(
+                    painterResource(R.drawable.attach_file), contentDescription = "Localized description",
+                    Modifier.size(21.dp)
+                )
+            }
         },
         modifier = Modifier.clickable {
             navController.push(GradeDestination(ifSaved))

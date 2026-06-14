@@ -53,13 +53,48 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 在启动时自动检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有下载提示，下载完成后点击安装，授权安装未知应用权限即可
 
 ## 文档库
-### [开发文档](docs/Developer.md) (正在完善)
-
 ### [更新日志](docs/update)
 
-### [统计报表](/docs/CHART.md)
+### [开发文档](docs/Developer.md) 
+正在佛系完善，方便参与本项目（Pull Request）时能方便地知晓各处轮子地用法
 
-用户量及日流量，通过 Supabase 平台托管，安全统计，无隐私数据，不定期更新
+### [Pull Request 规范](/docs/Rule.md)
+如需参与本项目，请阅读
+
+### [DeepLink](docs/DeepLink.md)
+如有需要跳转其他场景的需求，可发 issue
+
+### [Aidl](docs/Aidl.md)
+暂时停更，如有接入需求，可发 issue 使其重启
+
+### [校内 Api 收集](docs/HfutApi.md)
+已停更，大部分核心接口已写好，因 AI 的发展，其余接口可直接让 AI 从代码中梳理即可
+
+### [功能差异化](/docs/FeatureAvailable.md)
+因安卓版本不同以及不同厂商定制系统，聚在工大某些功能呈现会有差异
+
+### [统计报表](/docs/Chart.md)
+仓库代码体量、用户量及日流量（通过 Supabase 平台托管，安全统计，无隐私数据，不定期更新）
+
+### 开发纪实
+本主题随缘更新，都是自己在开发项目时候的一些经历（但我对于写文章很懒，佛系更新...）
+
+#### [开发纪实：包体缩减](/docs/technical/PackageLess.md)
+如何让聚在工大从巅峰期的 49MB 缩减至目前的 26MB
+
+#### [开发纪实：容器共享](/docs/technical/ContainerShared.md) (待更新)
+对官方库的改造再封装，以及无奈妥协，最终决定自制SharedNav
+
+#### [开发纪实：KMP 改造](/docs/technical/ToKmp.md) (待更新)
+待开发，等买了 MacBook
+
+#### [开发纪实：论 Android 软件架构](/docs/technical/Architecture.md) (待更新)
+
+#### [开发纪实：聚在工大的 UI&UX 设计](/docs/technical/Design.md) (待更新)
+
+#### [开发纪实：聚在工大的背景与前世今生](/docs/technical/Background.md) (待更新)
+
+#### [开发纪实：评当下的 Android 领域](/docs/technical/Now.md) (待更新)
 
 ## [联系方式](zsh0908@outlook.com)
 开发者: zsh0908@outlook.com
@@ -134,5 +169,3 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 - James-Zhang2 提供 GPA 评定数据源
 - tinyvan,Today1337, zxbmmmmmmmmm, Junpgle 提交 RR 助力开发
 - 其他用户帮助推广、通过邮件、issue 等提供功能建议与反馈等，在此不一一列举了
-
-#### [Pull Request 须知（参与本项目）](/docs/Rule.md)

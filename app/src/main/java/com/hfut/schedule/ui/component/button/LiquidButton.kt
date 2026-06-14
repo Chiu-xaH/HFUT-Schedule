@@ -49,6 +49,7 @@ import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -366,17 +367,15 @@ fun Modifier.containerBackDrop(
 ) : Modifier {
     val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
 
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     return this
         .clip(shape)
         .let {
             if(isTransiting) {
-                it.glassLayer(
+                it.layerGlass(
                     backdrop,
                     style = largeStyle.copy(
                         overlayColor = surfaceColor
                     ),
-                    enableLiquidGlass
                 )
             } else {
                 it

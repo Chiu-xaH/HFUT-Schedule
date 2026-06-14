@@ -107,19 +107,6 @@ fun Life() {
                             modifier = Modifier.size(20.dp)
                         )
                     }
-//                    FilledTonalIconButton(
-//                        shape = NoneRoundShape,
-//                        modifier = Modifier.size(30.dp),
-//                        onClick = {
-//                            navController.push(TermReportDestination)
-//                        },
-//                    ) {
-//                        Icon(
-//                            painterResource(R.drawable.kid_star),
-//                            contentDescription = null,
-//                            modifier = Modifier.size(20.dp)
-//                        )
-//                    }
                 }
             }
         },

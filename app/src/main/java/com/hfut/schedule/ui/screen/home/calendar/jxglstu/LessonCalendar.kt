@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,12 +73,14 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.container.component.base.sharedContainer
+import com.xah.container.model.ContainerFilledStrategy
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
@@ -189,32 +192,6 @@ fun JxglstuCourseTableSearch(
     val placeTextLineHeight = lineHeight * placeTextFactor
     val placeTextSize = textSize * placeTextFactor
 
-//    var numItem by remember { mutableIntStateOf(0) }
-//
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//    if (showBottomSheet) {
-//        HazeBottomSheet (
-//            onDismissRequest = { showBottomSheet = false },
-//            showBottomSheet = showBottomSheet,
-//        ) {
-//            Scaffold(
-//                modifier = Modifier.fillMaxSize(),
-//                containerColor = Color.Transparent,
-//                topBar = {
-//                    HazeBottomSheetTopBar(list[numItem].course.nameZh)
-//                },
-//            ) { innerPadding ->
-//                Column(
-//                    modifier = Modifier
-//                        .padding(innerPadding)
-//                        .fillMaxSize()
-//                ) {
-//                    DetailItems(list[numItem],vm,mapOf())
-//                }
-//            }
-//        }
-//    }
-
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
 
     var courses by remember { mutableStateOf(listOf<CardBean>()) }
@@ -297,7 +274,6 @@ fun JxglstuCourseTableSearch(
         }
     }
 
-    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     var findNewCourse by remember { mutableStateOf(false) }
     fun refreshUI() {
         // 清空
@@ -588,8 +564,8 @@ fun JxglstuCourseTableSearch(
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
-        val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-        val squareColor =  style.containerColor.copy(customBackgroundAlpha)
+        val hasBackground = backGroundHaze != null
+        val noAlpha = customBackgroundAlpha == 1f
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(style.rowCount),
@@ -599,7 +575,7 @@ fun JxglstuCourseTableSearch(
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
             items(style.rowCount*style.columnCount) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                if(texts.isEmpty() && backGroundHaze != null) {
+                if(texts.isEmpty() && hasBackground) {
                     Box(modifier = Modifier.height(calendarSquareHeight.dp).padding(style.everyPadding))
                 } else {
                     val dest = if (texts.size == 1) {
@@ -615,41 +591,45 @@ fun JxglstuCourseTableSearch(
                         null
                     }
                     Card(
-                        shape = style.containerCorner,
-                        colors = CardDefaults.cardColors(containerColor = color),
+                        shape = NoneRoundShape,
+                        colors = CardDefaults.cardColors(containerColor = if(!hasBackground) style.containerColor else Color.Transparent),
                         modifier = Modifier
                             .fillMaxWidth() // 填满列宽
                             // 高度由内容撑开
                             .height(calendarSquareHeight.dp)
                             .padding(style.everyPadding)
-                            .let {
-                                if(backGroundHaze != null) {
-                                    it
-                                        .clip(style.containerCorner)
-                                        .let { i ->
-                                            if(AppVersion.CAN_SHADER) {
-                                                i.calendarSquareGlass(
-                                                    backGroundHaze,
-                                                    squareColor,
-                                                )
-                                            } else {
-                                                i
-                                            }
+                            .sharedContainer(
+                                key = dest?.key,
+                                shape = style.containerCorner,
+                                containerFilledStrategy =
+                                    if(hasBackground) {
+                                        if(noAlpha) {
+                                            ContainerFilledStrategy.Pixel(
+                                                ContainerFilledStrategy.Color(style.containerColor)
+                                            )
+                                        } else {
+                                            ContainerFilledStrategy.Clip
                                         }
-                                } else {
-                                    it
-                                        .sharedContainer(
-                                            key = dest?.key,
-                                            shape = style.containerCorner,
+                                    } else {
+                                        ContainerFilledStrategy.Pixel(
+                                            ContainerFilledStrategy.Color(style.containerColor)
                                         )
+                                    }
+                            )
+                            .let {
+                                if(!hasBackground) {
+                                    it
+                                } else {
+                                    it.calendarSquareGlass(
+                                        backGroundHaze,
+                                        style.containerColor.copy(customBackgroundAlpha)
+                                    )
                                 }
                             }
                             .clickableWithScale(ClickScale.SMALL.scale){
                                 // 只有一节课
                                 if (texts.size == 1) {
                                     dest?.let { navController.push(it) }
-//                                    numItem = texts[0].lessonNum
-//                                    showBottomSheet = true
                                 } else if (texts.size > 1) {
                                     multiWeekday =
                                         if (showAll) (cell + 1) % 7 else (cell + 1) % 5
@@ -671,7 +651,6 @@ fun JxglstuCourseTableSearch(
                             ) {
                                 Text(
                                     text = time,
-//                                    fontSize = style.textSize,
                                     fontSize = placeTextSize,
                                     lineHeight = placeTextLineHeight,
                                     textAlign = TextAlign.Center,
@@ -691,7 +670,6 @@ fun JxglstuCourseTableSearch(
                                         text = name,
                                         fontSize = textSize,
                                         lineHeight = lineHeight,
-//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                         modifier = Modifier.fillMaxWidth()
@@ -702,7 +680,6 @@ fun JxglstuCourseTableSearch(
                                         text = it,
                                         fontSize = placeTextSize,
                                         lineHeight = placeTextLineHeight,
-//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -726,7 +703,6 @@ fun JxglstuCourseTableSearch(
                             ) {
                                 Text(
                                     text = time,
-//                                    fontSize = style.textSize,
                                     fontSize = placeTextSize,
                                     lineHeight = placeTextLineHeight,
                                     textAlign = TextAlign.Center,
@@ -746,7 +722,6 @@ fun JxglstuCourseTableSearch(
                                         text = name,
                                         fontSize = textSize,
                                         lineHeight = lineHeight,
-//                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                         modifier = Modifier.fillMaxWidth()
@@ -757,7 +732,6 @@ fun JxglstuCourseTableSearch(
                                         text = it,
                                         fontSize = placeTextSize,
                                         lineHeight = placeTextLineHeight,
-                            //                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier
                                             .fillMaxWidth()

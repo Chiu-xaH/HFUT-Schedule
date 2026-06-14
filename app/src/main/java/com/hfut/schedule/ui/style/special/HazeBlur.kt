@@ -47,6 +47,7 @@ import com.xah.container.util.LocalSharedRegistrySafely
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.navigation.util.LocalNavControllerSafely
@@ -321,19 +322,27 @@ fun Modifier.coverBlur(
 fun Modifier.calendarSquareGlass(
     state : ShaderState,
     color : Color,
+) : Modifier = this.layerGlass(
+    state,
+    style = GlassStyle(
+        blur = 3.5.dp ,
+        border = 30f,
+        dispersion = 0f,
+        distortFactor = 0f,
+        stretchFactor = 0.4f,
+        overlayColor = color
+    )
+)
+
+fun Modifier.layerGlass(
+    state: ShaderState,
+    style: GlassStyle = largeStyle,
 ) : Modifier = composed {
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val enableEffect = enableEffect()
     this.glassLayer(
         state,
-        style = GlassStyle(
-            blur = 3.5.dp ,
-            border = 30f,
-            dispersion = 0f,
-            distortFactor = 0f,
-            stretchFactor = 0.4f,
-            overlayColor = color
-        ),
+        style = style,
         enabled = enableEffect && enableLiquidGlass
     )
 }

@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,8 +57,10 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.style.special.layerGlass
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
+import com.xah.container.model.ContainerFilledStrategy
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
@@ -109,7 +113,6 @@ fun DraggableWeekButton(
 
     val hasBackground = shaderState != null
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     Box(
         modifier = modifier
@@ -148,107 +151,105 @@ fun DraggableWeekButton(
             }
     ) {
         val shape = if(expanded) {
-//            FloatingActionButtonDefaults.extendedFabShape
             (FloatingActionButtonDefaults.shape as? CornerBasedShape) ?: MaterialTheme.shapes.large
         } else {
             MaterialTheme.shapes.small
         }
 
-        ShareTwoContainer2D(
-            modifier = Modifier
-
-                .align(Alignment.Center)
-                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
-                .let {
-                    if(!hasBackground) {
-                        it
-                    } else {
-                        it.clip(shape)
-                    }
-                }
-                .let {
-                    if(!hasBackground) {
-                        it.sharedContainer(
-                            key = TimeTablePreviewWindow.KEY,
-                            shape = shape,
-                            containerColor = containerColor
-                        )
-                    } else {
-                        it
-                    }
-                }
-
-            ,
-            show = !expanded,
-            defaultContent = {
-                Surface(
-                    shape = NoneRoundShape,
-                    color = if(hasBackground) Color.Transparent else containerColor,
-                    modifier = Modifier
-                        .height(56.dp)
-                        .let {
+        val noAlpha = customBackgroundAlpha == 1f
+        key(hasBackground,noAlpha) {
+            ShareTwoContainer2D(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
+                    .sharedContainer(
+                        key = TimeTablePreviewWindow.KEY,
+                        shape = shape,
+                        containerFilledStrategy =
                             if(hasBackground) {
-                                it
-                                    .clip(FloatingActionButtonDefaults. extendedFabShape)
-                                    .glassLayer(
-                                        shaderState,
-                                        style = largeStyle.copy(
-                                            overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                        ),
-                                        enabled = enableLiquidGlass
-                                    )
+                                if(noAlpha) {
+//                                    ContainerFilledStrategy.Pixel(
+                                        ContainerFilledStrategy.Color(MaterialTheme.colorScheme.surface)
+//                                    )
+                                } else {
+                                    ContainerFilledStrategy.Clip
+                                }
                             } else {
-                                it
+//                                ContainerFilledStrategy.Pixel(
+                                    ContainerFilledStrategy.Color(containerColor)
+//                                )
                             }
-                        }
-                        .combinedClickable(
-                            onClick = onClick,
-                            onLongClick = onLongClick
-                        )
-                ) {
-                    Row(
-                        modifier =
-                            Modifier
-                                .sizeIn(minWidth = 80.dp)
-                                .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-//                        content = content,
                     )
+                ,
+                show = !expanded,
+                defaultContent = {
+                    Surface(
+                        shape = NoneRoundShape,
+                        color = if(hasBackground) Color.Transparent else containerColor,
+                        modifier = Modifier
+                            .height(56.dp)
+                            .let {
+                                if(hasBackground) {
+                                    it
+                                        .clip(FloatingActionButtonDefaults. extendedFabShape)
+                                        .layerGlass(
+                                            shaderState,
+                                            style = largeStyle.copy(
+                                                overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
+                                            ),
+                                        )
+                                } else {
+                                    it
+                                }
+                            }
+                            .combinedClickable(
+                                onClick = onClick,
+                                onLongClick = onLongClick
+                            )
+                    ) {
+                        Row(
+                            modifier =
+                                Modifier
+                                    .sizeIn(minWidth = 80.dp)
+                                    .padding(horizontal = 20.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+//                        content = content,
+                        )
 //                    Row(
 //                        verticalAlignment = Alignment.CenterVertically,
 //                        horizontalArrangement = Arrangement.Center,
 //                    )
-                    {
-                        val iconSize = 19.dp
+                        {
+                            val iconSize = 19.dp
 
-                        // 左箭头（展开时显示）
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            contentDescription = null,
-                            tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
-                            modifier = Modifier
-                                .size(iconSize)
-                                .clickable { onPrevious() }
-                        )
+                            // 左箭头（展开时显示）
+                            Icon(
+                                painterResource(R.drawable.arrow_back),
+                                contentDescription = null,
+                                tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
+                                modifier = Modifier
+                                    .size(iconSize)
+                                    .clickable { onPrevious() }
+                            )
 
-                        Spacer(modifier = Modifier.width(padding))
+                            Spacer(modifier = Modifier.width(padding))
 
-                        textUI()
+                            textUI()
 
-                        Spacer(modifier = Modifier.width(padding))
+                            Spacer(modifier = Modifier.width(padding))
 
-                        // 右箭头（展开时显示）
-                        Icon(
-                            painterResource(R.drawable.arrow_forward),
-                            contentDescription = null,
-                            tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
-                            modifier = Modifier
-                                .size(iconSize)
-                                .clickable { onNext() }
-                        )
+                            // 右箭头（展开时显示）
+                            Icon(
+                                painterResource(R.drawable.arrow_forward),
+                                contentDescription = null,
+                                tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
+                                modifier = Modifier
+                                    .size(iconSize)
+                                    .clickable { onNext() }
+                            )
+                        }
                     }
-                }
 //                ExtendedFloatingActionButton(
 //                    onClick = {},
 //                    containerColor = if(hasBackground) Color.Transparent else containerColor,
@@ -258,7 +259,7 @@ fun DraggableWeekButton(
 //                            if(hasBackground) {
 //                                it
 //                                    .clip(FloatingActionButtonDefaults. extendedFabShape)
-//                                    .glassLayer(
+//                                    .layerGlass(
 //                                        shaderState,
 //                                        style = largeStyle.copy(
 //                                            overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
@@ -275,37 +276,37 @@ fun DraggableWeekButton(
 //                        )
 //                    ,
 //                )
-            },
-            secondContent = {
-                Surface(
-                    color = if(hasBackground) Color.Transparent else containerColor,
-                    shape = NoneRoundShape,
-                    modifier = Modifier
-                        .let {
-                            if(hasBackground) {
-                                it
-                                    .clip(MaterialTheme.shapes.small)
-                                    .glassLayer(
-                                        shaderState,
-                                        style = largeStyle.copy(
-                                            overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                        ),
-                                        enabled = enableLiquidGlass
-                                    )
-                            } else {
-                                it
+                },
+                secondContent = {
+                    Surface(
+                        color = if(hasBackground) Color.Transparent else containerColor,
+                        shape = NoneRoundShape,
+                        modifier = Modifier
+                            .let {
+                                if(hasBackground) {
+                                    it
+                                        .clip(MaterialTheme.shapes.small)
+                                        .layerGlass(
+                                            shaderState,
+                                            style = largeStyle.copy(
+                                                overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
+                                            ),
+                                        )
+                                } else {
+                                    it
+                                }
                             }
+                            .combinedClickable(
+                                onClick = onClick,
+                                onLongClick = onLongClick
+                            )
+                    ) {
+                        Box(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP*3, vertical = CARD_NORMAL_DP/2)) {
+                            textUI()
                         }
-                        .combinedClickable(
-                            onClick = onClick,
-                            onLongClick = onLongClick
-                        )
-                ) {
-                    Box(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP*3, vertical = CARD_NORMAL_DP/2)) {
-                        textUI()
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }

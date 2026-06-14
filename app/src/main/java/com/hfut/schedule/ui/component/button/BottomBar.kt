@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
@@ -194,7 +195,7 @@ fun SpecialBottomBar(
     enabled : Boolean = true,
 ) {
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+
     Column(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding()
 
     ) {
@@ -202,12 +203,11 @@ fun SpecialBottomBar(
         Box(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.large)
-                .glassLayer(
+                .layerGlass(
                     shaderState,
                     style = largeStyle.copy(
                         overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
                     ),
-                    enabled = enableLiquidGlass
                 )
         ) {
             Column {

@@ -58,7 +58,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-06-10"
+private const val RELEASE_DATE = "2026-06-14"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -66,11 +66,12 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
-        UpdateItems("新增 深度链接的适配", "位于 选项-偏好与配置-深度链接，供外部应用与网页直接跳转至聚在工大的某些功能", to = To.Screen(SettingsDeepLinkDestination))//
+        UpdateItems("新增 深度链接的适配", "供外部应用与网页直接跳转至聚在工大的某些功能")//
+        UpdateItems("新增 课程表在有背景时支持容器共享动画")//
         UpdateItems("新增 新增日程时，支持快速选择常用地点",to = To.Screen(AddEventDestination(null, VersionInfoDestination.key)))//
         UpdateItems("新增 智能软件工程学院的图标适配","原软件学院更名",to = To.Screen(DepartmentsDestination))//
         UpdateItems("重构 动画速率调整为统一的动画速率倍数调整",to = To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("修复 旧课程表在不使用背景的情况下，方格透明度仍生效的Bug")
+        UpdateItems("修复 旧课程表在不使用背景的情况下，方格透明度仍生效的Bug")//
         UpdateItems("修复 部分课程从课程表方格进入课程详情后为空的问题")//
         UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)
         UpdateItems("优化 部分界面的显示")//

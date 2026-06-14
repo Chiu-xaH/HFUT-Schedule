@@ -164,6 +164,7 @@ import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.color.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
@@ -597,7 +598,7 @@ fun MainScreen(
                                     modifier = Modifier
                                         .padding(horizontal = APP_HORIZONTAL_DP - (if (showAll) 1.75.dp else 2.5.dp) * 3)
                                         .clip(CircleShape)
-                                        .glassLayer(
+                                        .layerGlass(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
@@ -605,7 +606,6 @@ fun MainScreen(
                                                     customBackgroundAlpha
                                                 )
                                             ),
-                                            enableLiquidGlass
                                         ),
                                     color = Color.Transparent
                                 ) {
@@ -622,15 +622,14 @@ fun MainScreen(
                                         shape = CircleShape,
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .glassLayer(
+                                            .layerGlass(
                                                 backGroundSource,
                                                 smallStyle.copy(
                                                     blur = 2.dp,
                                                     overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                         customBackgroundAlpha
                                                     )
-                                                ),
-                                                enableLiquidGlass
+                                                )
                                             )
                                             .clickable {
                                                 navHostTopController.push(
@@ -655,15 +654,14 @@ fun MainScreen(
                                         shape = CircleShape,
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .glassLayer(
+                                            .layerGlass(
                                                 backGroundSource,
                                                 smallStyle.copy(
                                                     blur = 2.dp,
                                                     overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                         customBackgroundAlpha
                                                     )
-                                                ),
-                                                enableLiquidGlass
+                                                )
                                             )
                                             .clickable {
                                                 navHostTopController.push(
@@ -691,15 +689,14 @@ fun MainScreen(
                                     shape = CircleShape,
                                     modifier = Modifier
                                         .clip(CircleShape)
-                                        .glassLayer(
+                                        .layerGlass(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
                                                 overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                     customBackgroundAlpha
                                                 )
-                                            ),
-                                            enableLiquidGlass
+                                            )
                                         )
                                         .clickable {
                                             showBottomSheet_multi = true
@@ -719,15 +716,14 @@ fun MainScreen(
                                     shape = CircleShape,
                                     modifier = Modifier
                                         .clip(CircleShape)
-                                        .glassLayer(
+                                        .layerGlass(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
                                                 overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                     customBackgroundAlpha
                                                 )
-                                            ),
-                                            enableLiquidGlass
+                                            )
                                         )
                                         .clickable {
                                             showAll = !showAll
@@ -748,7 +744,7 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            ZhiJianSearchBar(backGroundSource,customBackgroundAlpha,enableLiquidGlass,zhiJianStudentId,showAll) {
+                            ZhiJianSearchBar(backGroundSource,customBackgroundAlpha,zhiJianStudentId,showAll) {
                                 zhiJianStudentId = it
                             }
                         }
@@ -818,7 +814,7 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            ZhiJianSearchBar(null,1f,false,zhiJianStudentId,showAll) {
+                            ZhiJianSearchBar(null,1f,zhiJianStudentId,showAll) {
                                 zhiJianStudentId = it
                             }
                         }
@@ -1299,7 +1295,6 @@ fun SearchEditScreen() {
 private fun ZhiJianSearchBar(
     shaderState: ShaderState? = null,
     customBackgroundAlpha : Float,
-    enableLiquidGlass : Boolean,
     input : String,
     showAll : Boolean,
     onValueChange : (String) -> Unit,
@@ -1471,15 +1466,14 @@ private fun ZhiJianSearchBar(
                         shaderState?.let { state ->
                             it
                                 .clip(MaterialTheme.shapes.medium)
-                                .glassLayer(
+                                .layerGlass(
                                     state,
                                     largeStyle.copy(
                                         blur = 2.5.dp,
                                         overlayColor = MaterialTheme.colorScheme.surface.copy(
                                             customBackgroundAlpha
                                         )
-                                    ),
-                                    enableLiquidGlass
+                                    )
                                 )
                         } ?: it
                     }

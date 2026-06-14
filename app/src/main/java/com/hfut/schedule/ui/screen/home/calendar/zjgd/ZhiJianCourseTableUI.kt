@@ -89,11 +89,13 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.container.component.base.sharedContainer
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavController
 import com.xah.shared.LogUtil
@@ -201,7 +203,6 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-//            isFullScreen = false,
         ) {
             MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm)
         }
@@ -213,7 +214,6 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetCourse = false
             },
-//            isFullScreen = false,
         ) {
             CourseDetail(selectedItem[0])
         }
@@ -231,7 +231,6 @@ fun ZhiJianCourseTableUI(
     val lineHeight = textSize * calendarSquareTextPadding
     val placeTextLineHeight = lineHeight * placeTextFactor
     val placeTextSize = textSize * placeTextFactor
-    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -481,12 +480,7 @@ fun ZhiJianCourseTableUI(
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
-        val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-        val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-//        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
-//        val height by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
-//        val calendarSquareHeight = height * 2
-        val squareColor =  containerColor.copy(customBackgroundAlpha)
+
         Box {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(style.rowCount),
@@ -510,26 +504,20 @@ fun ZhiJianCourseTableUI(
                     } else {
                         Card(
                             shape = style.containerCorner,
-                            colors = CardDefaults.cardColors(containerColor = color),
+                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze == null) style.containerColor else Color.Transparent),
                             modifier = Modifier
                                 .height(calendarSquareHeight.dp)
                                 .padding(style.everyPadding)
                                 .let {
-                                    if(backGroundHaze != null) {
+                                    if(backGroundHaze == null) {
                                         it
-                                            .clip(style.containerCorner)
-                                            .let { i ->
-                                                if(AppVersion.CAN_SHADER) {
-                                                    i.calendarSquareGlass(
-                                                        backGroundHaze,
-                                                        squareColor,
-                                                    )
-                                                } else {
-                                                    i
-                                                }
-                                            }
                                     } else {
                                         it
+                                            .clip(style.containerCorner)
+                                            .calendarSquareGlass(
+                                            backGroundHaze,
+                                            style.containerColor.copy(customBackgroundAlpha)
+                                            )
                                     }
                                 }
                                 .clickableWithScale(ClickScale.SMALL.scale) {

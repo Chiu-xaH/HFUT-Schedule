@@ -40,6 +40,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.CalendarStyle
+import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.smallStyle
@@ -58,7 +59,6 @@ fun ScheduleTopDate(
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val style = CalendarStyle(showAll)
     val size = style.rowCount
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     Column(modifier = Modifier.background(Color.Transparent)) {
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*0))
@@ -75,13 +75,12 @@ fun ScheduleTopDate(
                     modifier = Modifier
                         .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
                         .clip(CircleShape)
-                        .glassLayer(
+                        .layerGlass(
                             shaderState,
                             smallStyle.copy(
                                 blur = 2.dp,
                                 overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
                             ),
-                            enableLiquidGlass
                         )
                     ,
                     color = Color.Transparent
