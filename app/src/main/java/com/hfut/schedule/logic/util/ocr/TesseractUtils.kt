@@ -5,6 +5,7 @@ import android.os.Environment
 import android.util.Log
 
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.shared.LogUtil
 import java.io.File
 
@@ -12,6 +13,10 @@ object TesseractUtils {
     const val filename = "eng.traineddata"
     @JvmStatic
     fun recognizeCaptcha(bitmap: Bitmap): String {
+        if(!isExistModule()) {
+            showToast("未检测到模型，确认是否下载?")
+            return ""
+        }
         try {
             val tesseractOCR = TesseractOCR()
             val result = tesseractOCR.recognizeText(bitmap)

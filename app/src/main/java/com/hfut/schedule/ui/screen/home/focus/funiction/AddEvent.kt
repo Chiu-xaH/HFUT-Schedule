@@ -1133,7 +1133,7 @@ private fun BuildingsSelector(
     modifier : Modifier = Modifier,
     onSelected : (String) -> Unit
 ) {
-    var campus by remember { mutableStateOf<Any?>(getCampus() ?: Campus.XC) }
+    var campus by remember { mutableStateOf<Any?>(getCampus() ?: OuterApp()) }
     var selectedBuildings by remember { mutableStateOf<String?>(null) }
 
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
@@ -1153,7 +1153,10 @@ private fun BuildingsSelector(
         vm.getBuildings(token = jwt)
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(campus) {
+        if(campus is OuterApp) {
+            return@LaunchedEffect
+        }
         refreshNetworkChips()
     }
 
@@ -1217,7 +1220,9 @@ private fun BuildingsSelector(
                 ) {
                     ScrollText(it)
                 }
-            } else if(chipsUiState is UiState.Success) {
+                return
+            }
+            if(chipsUiState is UiState.Success) {
                 val buildingList = (chipsUiState as UiState.Success).data
                     .filter {
                         when(campus) {
@@ -1243,7 +1248,6 @@ private fun BuildingsSelector(
                 }
             }
         }
-
         // 建筑
         if(chipsUiState is UiState.Loading) {
             BottomTip("正在获取建筑列表")
