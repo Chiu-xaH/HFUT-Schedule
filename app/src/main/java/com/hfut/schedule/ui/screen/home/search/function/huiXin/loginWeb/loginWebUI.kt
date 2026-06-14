@@ -51,7 +51,8 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
@@ -120,14 +121,14 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
     // 百分比
     val percent = try {
-        formatDecimal(((flow?.toDouble() ?: 0.0) safeDiv (1024 * maxFlow)) * 100,2)
+        (((flow?.toDoubleOrNull() ?: 0.0) safeDiv (1024 * maxFlow)) * 100).roundOffString(2)
     } catch (e:Exception) {
         LogUtil.error(e)
         "未知"
     }
 
     val str = try {
-        formatDecimal((flow?.toDouble() ?: 0.0) / 1024,2)
+        ((flow?.toDoubleOrNull() ?: 0.0) / 1024).roundOffString(2)
     } catch (e:Exception) {
         LogUtil.error(e)
         0.0

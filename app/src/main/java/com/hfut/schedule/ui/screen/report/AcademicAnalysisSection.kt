@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -69,10 +70,10 @@ private fun gradeDisplayText(grade: String?, credits: Double): String {
     if (grade == null) return "${credits}学分"
     val numeric = grade.toDoubleOrNull()
     return if (numeric != null) {
-        "${formatDecimal(numeric, 1)}分 / ${credits}学分"
+        "${numeric.roundOffString(2)}分 / ${credits}学分"
     } else {
         val mapped = gradeTextToDouble(grade)
-        if (mapped != null) "$grade (${formatDecimal(mapped, 1)}) / ${credits}学分"
+        if (mapped != null) "$grade (${mapped.roundOffString(2)}) / ${credits}学分"
         else "$grade / ${credits}学分"
     }
 }
@@ -267,7 +268,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                                     )
                                 },
                                 supportingContent = {
-                                    Text("平均每周 ${formatDecimal(avgPerWeek, 1)} 节")
+                                    Text("平均每周 ${avgPerWeek.roundOffString(2)} 节")
                                 }
                             )
                             val courseListStr = buildString {
@@ -411,8 +412,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                             val perfect = grades.count { val score = it.finalGrade?.toDoubleOrNull(); score != null && score >= 95.0 }
                             val nearFail = grades.count { val score = it.finalGrade?.toDoubleOrNull(); score != null && score in 60.0..65.0 }
 
-                            add("${periodLabel}共修 ${grades.size} 门课程，总计 ${formatDecimal(totalCredits, 1)} 学分")
-                            add("平均绩点 ${formatDecimal(avgGp, 2)}")
+                            add("${periodLabel}共修 ${grades.size} 门课程，总计 ${totalCredits.roundOffString(2)} 学分")
+                            add("平均绩点 ${avgGp.roundOffString(2)}")
                             if (highGpa > 0) add("其中 $highGpa 门课程 GPA ≥ 4.0，学霸认证！")
                             if (perfect > 0) add("有 $perfect 门课程 ≥ 95 分，接近满分！")
                             if (nearFail > 0) add("有 $nearFail 门课程在 60-65 分之间，险过！")

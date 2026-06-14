@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -167,14 +168,14 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                         Row(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text("评分概览", style = MaterialTheme.typography.titleMedium)
-                                Text(formatDecimal(avgTotal, 1), style = MaterialTheme.typography.headlineMedium)
+                                Text(avgTotal.roundOffString(2), style = MaterialTheme.typography.headlineMedium)
                                 Text("学期均分", style = MaterialTheme.typography.bodySmall)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 maxWeek?.let {
-                                    Text("最高周 第${it.week}周 ${formatDecimal(it.total, 1)}", style = MaterialTheme.typography.bodySmall)
+                                    Text("最高周 第${it.week}周 ${it.total.roundOffString(2)}", style = MaterialTheme.typography.bodySmall)
                                 }
                                 minWeek?.let {
-                                    Text("最低周 第${it.week}周 ${formatDecimal(it.total, 1)}", style = MaterialTheme.typography.bodySmall)
+                                    Text("最低周 第${it.week}周 ${it.total.roundOffString(2)}", style = MaterialTheme.typography.bodySmall)
                                 }
                             }
                             if (gradeDistribution.isNotEmpty()) {
@@ -434,7 +435,7 @@ private fun SchoolNetUsageReportCard(
     }
 }
 
-private fun formatSchoolNetFlow(mb: Double): String = if (mb >= 1024) "${formatDecimal(mb / 1024.0, 2)} GB" else "${formatDecimal(mb, 2)} MB"
+private fun formatSchoolNetFlow(mb: Double): String = if (mb >= 1024) "${(mb / 1024.0).roundOffString(2)} GB" else "${mb.roundOffString(2)} MB"
 
 private fun formatSchoolNetDuration(minutes: Int): String {
     val hours = minutes / 60

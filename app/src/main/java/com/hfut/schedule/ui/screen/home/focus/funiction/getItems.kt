@@ -5,7 +5,8 @@ import android.os.Looper
 
 import com.hfut.schedule.logic.model.huixin.BalanceResponse
 import com.hfut.schedule.logic.model.huixin.ReturnCard
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.network.util.GsonInstance
@@ -39,7 +40,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
                         val settle = transferNum(yuedata.unsettle_amount)
                         SharedPrefs.saveString("card_settle", settle.toString())
                         now += settle
-                        val str = formatDecimal(now.toDouble(),2)
+                        val str = now.roundOffString(2)
                         val balance = str
                         SharedPrefs.saveString("card", str)
                         SharedPrefs.saveString("card_account", account)

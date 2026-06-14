@@ -32,7 +32,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayRecord
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -48,9 +49,9 @@ import java.util.Calendar
 
 private fun formatFlow(mb: Double): String {
     return if (mb >= 1024) {
-        "${formatDecimal(mb / 1024.0, 2)} GB"
+        "${(mb / 1024.0).roundOffString(2)} GB"
     } else {
-        "${formatDecimal(mb, 2)} MB"
+        "${mb.roundOffString(2)} MB"
     }
 }
 
@@ -191,7 +192,7 @@ private fun MonthPayContent(result: SchoolNetMonthPayResult) {
             )
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text("￥${formatDecimal(result.summary.baseFee, 2)}") },
+                headlineContent = { Text("￥${result.summary.baseFee.roundOffString(2)}") },
                 overlineContent = { Text("基本月租") },
                 leadingContent = {
                     Icon(painterResource(R.drawable.paid), contentDescription = null)
@@ -199,7 +200,7 @@ private fun MonthPayContent(result: SchoolNetMonthPayResult) {
             )
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text("￥${formatDecimal(result.summary.usageFee, 2)}") },
+                headlineContent = { Text("￥${result.summary.usageFee.roundOffString(2)}") },
                 overlineContent = { Text("时长/流量计费") },
                 leadingContent = {
                     Icon(painterResource(R.drawable.paid), contentDescription = null)
@@ -268,11 +269,11 @@ private fun MonthPayRecordCard(record: SchoolNetMonthPayRecord) {
                 }
                 Column {
                     Text("基本月租", style = MaterialTheme.typography.labelSmall)
-                    Text("￥${formatDecimal(record.baseFee, 2)}", style = MaterialTheme.typography.bodyMedium)
+                    Text("￥${record.baseFee.roundOffString(2)}", style = MaterialTheme.typography.bodyMedium)
                 }
                 Column {
                     Text("计费", style = MaterialTheme.typography.labelSmall)
-                    Text("￥${formatDecimal(record.usageFee, 2)}", style = MaterialTheme.typography.bodyMedium)
+                    Text("￥${record.usageFee.roundOffString(2)}", style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }

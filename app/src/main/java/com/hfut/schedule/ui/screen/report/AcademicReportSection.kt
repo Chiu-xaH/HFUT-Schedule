@@ -23,7 +23,8 @@ import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -109,9 +110,9 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                     overlineContent = { Text(SemesterParser.parseSemester(semester) ?: "全部学期") },
                     headlineContent = { Text("总科目 $total | 通过 $passed | 未通过 ${total - passed}", style = MaterialTheme.typography.titleMedium) }
                 )
-                TransplantListItem(overlineContent = { Text("加权平均分") }, headlineContent = { Text(formatDecimal(as2.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
-                TransplantListItem(overlineContent = { Text("加权GPA") }, headlineContent = { Text(formatDecimal(ag.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
-                TransplantListItem(overlineContent = { Text("总学分") }, headlineContent = { Text(formatDecimal(tc.toDouble(), 2), style = MaterialTheme.typography.headlineMedium) })
+                TransplantListItem(overlineContent = { Text("加权平均分") }, headlineContent = { Text(as2.roundOffString(2), style = MaterialTheme.typography.headlineMedium) })
+                TransplantListItem(overlineContent = { Text("加权GPA") }, headlineContent = { Text(ag.roundOffString(2), style = MaterialTheme.typography.headlineMedium) })
+                TransplantListItem(overlineContent = { Text("总学分") }, headlineContent = { Text(tc.roundOffString(2), style = MaterialTheme.typography.headlineMedium) })
             }
 
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
@@ -138,11 +139,11 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = { Text(tg.dto.term) },
-                        headlineContent = { Text("分数 ${formatDecimal(cas.toDouble(), 2)} | 绩点 ${formatDecimal(cag.toDouble(), 2)}", style = MaterialTheme.typography.titleSmall) },
+                        headlineContent = { Text("分数 ${cas.roundOffString(2)} | 绩点 ${cag.roundOffString(2)}", style = MaterialTheme.typography.titleSmall) },
                         trailingContent = { Text("${cc}科") }
                     )
                     Row {
-                        TransplantListItem(overlineContent = { Text("学分") }, headlineContent = { Text(formatDecimal(ctc.toDouble(), 2)) }, modifier = Modifier.weight(1f))
+                        TransplantListItem(overlineContent = { Text("学分") }, headlineContent = { Text(ctc.roundOffString(2)) }, modifier = Modifier.weight(1f))
                         TransplantListItem(overlineContent = { Text("通过") }, headlineContent = { Text("$pc/$cc") }, modifier = Modifier.weight(1f))
                     }
                 }

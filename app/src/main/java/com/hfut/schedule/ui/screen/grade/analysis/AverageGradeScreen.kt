@@ -28,21 +28,18 @@ import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.showDevelopingToast
-import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
-
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
@@ -168,7 +165,7 @@ fun AverageGradeScreen(
                         item(key = "total") {
                             DividerTextExpandedWith("平均成绩",false) {
                                 LargeCard(
-                                    title = "分数 ${formatDecimal(allAvgScore.toDouble(),2)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),2)}",
+                                    title = "分数 ${allAvgScore.roundOffString(2)} 绩点 ${allAvgGpa.roundOffString(2)}",
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                     BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
@@ -182,10 +179,10 @@ fun AverageGradeScreen(
 
                                         TransplantListItem(
                                             trailingContent = {
-                                                Text("占比${formatDecimal((totalCredits/allTotalCredits*100).toDouble(),0)}%")
+                                                Text("占比${(totalCredits/allTotalCredits*100).roundOffString(0)}%")
                                             },
                                             headlineContent = {
-                                                ScrollText("分数 ${formatDecimal(avgScore.toDouble(),2)} | 绩点 ${formatDecimal(avgGpa.toDouble(),2)} | 学分 $totalCredits")
+                                                ScrollText("分数 ${avgScore.roundOffString(2)} | 绩点 ${avgGpa.roundOffString(2)} | 学分 $totalCredits")
                                             },
                                             overlineContent = { Text(it.term) }
                                         )
@@ -247,7 +244,7 @@ fun AverageGradeScreen(
                         item(key = "total") {
                             DividerTextExpandedWith("平均成绩",false) {
                                 LargeCard(
-                                    title = "分数 ${formatDecimal(allAvgScore.toDouble(),2)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),2)}",
+                                    title = "分数 ${allAvgScore.roundOffString(2)} 绩点 ${allAvgGpa.roundOffString(2)}",
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                     BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
@@ -261,10 +258,10 @@ fun AverageGradeScreen(
 
                                         TransplantListItem(
                                             trailingContent = {
-                                                Text("占比${formatDecimal((totalCredits/allTotalCredits*100).toDouble(),0)}%")
+                                                Text("占比${(totalCredits/allTotalCredits*100).roundOffString(0)}%")
                                             },
                                             headlineContent = {
-                                                ScrollText("分数 ${formatDecimal(avgScore.toDouble(),2)} | 绩点 ${formatDecimal(avgGpa.toDouble(),2)} | 学分 $totalCredits")
+                                                ScrollText("分数 ${avgScore.roundOffString(2)} | 绩点 ${avgGpa.roundOffString(2)} | 学分 $totalCredits")
                                             },
                                             overlineContent = { Text(it.term) }
                                         )

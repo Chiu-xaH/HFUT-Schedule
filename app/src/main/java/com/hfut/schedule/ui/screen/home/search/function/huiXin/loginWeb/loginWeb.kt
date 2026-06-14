@@ -15,13 +15,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -59,9 +60,9 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
 
             val flow = vmUI.webValue.value?.flow?: memoryWeb
             val gB = (flow?.toDouble() ?: 0.0) / 1024
-            val str = formatDecimal(gB,2)
+            val str = gB.roundOffString(2)
 
-            val precent = formatDecimal(((flow?.toDouble() ?: 0.0) safeDiv (1024 * maxFlow)) * 100,2)
+            val precent = (((flow?.toDoubleOrNull() ?: 0.0) safeDiv (1024 * maxFlow)) * 100).roundOffString(2)
 
             TransplantListItem(
                 headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text =

@@ -27,7 +27,6 @@ import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
-import com.sharednav.common.helper.DEFAULT_SHARED_SPEC
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
@@ -139,9 +138,8 @@ object DataStoreManager : IDataStore {
     private val NAV_SPLASH_SCREEN = booleanPreferencesKey("nav_splash_screen")
 //    private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
     private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
-    private val CONTAINER_SHARED_SPEED = intPreferencesKey("container_shared_speed")
-//    private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
-    private val CALENDAR_SQUARE_HEIGHT_NEW = floatPreferencesKey("calendar_square_height_new")
+    private val SHARED_NAV_SPEED_RADIO = floatPreferencesKey("shared_nav_speed_radio")
+    private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height_new")
     private val MERGE_SQUARE = booleanPreferencesKey("merge_square")
     private val CALENDAR_SQUARE_TEXT_SIZE = floatPreferencesKey("calendar_square_test_size")
     private val CALENDAR_SQUARE_TEXT_PADDING = floatPreferencesKey("calendar_square_test_padding_2")
@@ -203,12 +201,11 @@ object DataStoreManager : IDataStore {
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
     suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
-    suspend fun saveContainerSharedSpeed(value: Int) = saveValue(CONTAINER_SHARED_SPEED, value)
+    suspend fun saveSharedNavSpeedRadio(value: Float) = saveValue(SHARED_NAV_SPEED_RADIO, value)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
 //    suspend fun saveShowOutOdDateEvent(value: Boolean) = saveValue(SHOW_OUT_OF_DATE_EVENT, value)
 //    suspend fun saveEnableKeepPreviousPage(value: Boolean) = saveValue(KEEP_PREVIOUS_PAGE, value)
-//    suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
-    suspend fun saveCalendarSquareHeightNew(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT_NEW, value)
+    suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
     suspend fun saveCalendarSquareTextSize(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_SIZE, value)
     suspend fun saveCalendarSquareTextPadding(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_PADDING, value)
     suspend fun saveFocusWidgetTextSize(value: Float) = saveValue(FOCUS_WIDGET_TEXT_SIZE, value)
@@ -277,13 +274,12 @@ object DataStoreManager : IDataStore {
     val enableContainerTilt = getFlow(CONTAINER_TILT,true)
     val enableContainerShare = getFlow(CONTAINER_SHEAR,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
-    val containerSharedSpeed = getFlow(CONTAINER_SHARED_SPEED,DEFAULT_SHARED_SPEC)
+    val sharedNavSpeedRadio = getFlow(SHARED_NAV_SPEED_RADIO,1f)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
 //    val enableShowOutOfDateEvent = getFlow(SHOW_OUT_OF_DATE_EVENT, false)
-//    val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
-    val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
     val screenCorner = getFlow(SCREEN_CORNER, -1f)
@@ -313,8 +309,8 @@ object DataStoreManager : IDataStore {
 
     fun getSyncDefaultCalendar(): Int? {
         return runBlocking {
-            val preferences = dataStore.data.first() // 获取第一次的值
-            preferences[DEFAULT_CALENDAR] // 返回你需要的值
+            val preferences = dataStore.data.first()
+            preferences[DEFAULT_CALENDAR]
         }
     }
 }

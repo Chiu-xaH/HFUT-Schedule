@@ -19,14 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 @Composable
 fun CustomLineProgressIndicator(
     value : Float,
-    text : String? = "${formatDecimal((value * 100).toDouble(),1)}%",
+    text : String? = "${(value * 100).roundOffString(1)}%",
     color : Color = ProgressIndicatorDefaults.linearColor,
     trackColor : Color = ProgressIndicatorDefaults. linearTrackColor,
     height : Dp = 20.dp,

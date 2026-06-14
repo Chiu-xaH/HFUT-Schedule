@@ -46,7 +46,8 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.item
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
@@ -244,7 +245,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                     title = "已修 ${it.total.actual}/${it.total.full}",
                     rightTop = {
                         val res = (it.total.actual safeDiv it.total.full) * 100.0
-                        Text(text = "${formatDecimal(res,1)} %")
+                        Text(text = "${res.roundOffString(1)} %")
                     },
                     loading = loading
                 ) {

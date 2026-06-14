@@ -10,7 +10,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -43,11 +44,11 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
                     TransplantListItem(
                         overlineContent = { Text("消费预测") },
                         headlineContent = { Text("明日预计") },
-                        trailingContent = { Text("￥${formatDecimal(data.day.predictData.predict, 2)}", style = MaterialTheme.typography.titleMedium) }
+                        trailingContent = { Text("￥${data.day.predictData.predict.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) }
                     )
                     TransplantListItem(
                         headlineContent = { Text("下月预计") },
-                        trailingContent = { Text("￥${formatDecimal(data.month.predictData.predict, 2)}", style = MaterialTheme.typography.titleMedium) }
+                        trailingContent = { Text("￥${data.month.predictData.predict.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) }
                     )
                 }
             }

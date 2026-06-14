@@ -47,7 +47,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.BillMonth
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -178,7 +179,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                     item {
                         SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
                             TransplantListItem(
-                                headlineContent = { Text(text = "￥${formatDecimal(total,2)}") },
+                                headlineContent = { Text(text = "￥${total.roundOffString(2)}") },
                                 overlineContent = { Text(text = "支出总和")},
                                 leadingContent = { Icon(painterResource(R.drawable.toll), contentDescription = "Localized description",) },
                                 colors = MaterialTheme.colorScheme.secondaryContainer,
@@ -186,8 +187,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                         }
                     }
                     item {
-//                        val big = BigDecimal()
-                        val sumFloat = formatDecimal((total / filteredList.size),2)
+                        val sumFloat = (total / filteredList.size).roundOffString(2)
                         SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "￥$sumFloat") },

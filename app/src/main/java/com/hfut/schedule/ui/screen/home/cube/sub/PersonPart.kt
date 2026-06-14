@@ -29,7 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -58,12 +59,10 @@ fun PersonPart() {
                                 if(startDate != null && endDate != null && startDate != "" && endDate != "") {
                                     Text(text = stringResource(
                                         R.string.settings_person_info_tag_normal,
-                                        formatDecimal(
-                                            DateTimeManager.getPercent(
-                                                startDate,
-                                                endDate
-                                            ), 1
-                                        )
+                                        DateTimeManager.getPercent(
+                                            startDate,
+                                            endDate
+                                        ).roundOffString(1)
                                     ))
                                 } else { null }
                             }

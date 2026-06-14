@@ -49,7 +49,8 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -391,7 +392,7 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                         try {
                             val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
-                                vmUI.electricValue.value = formatDecimal(value.substringAfter("剩余金额:").toDouble(),2)
+                                vmUI.electricValue.value = value.substringAfter("剩余金额:").toDouble().roundOffString(2)
                                 saveString("memoryEle",vmUI.electricValue.value)
                             }
                         } catch (e:Exception) {

@@ -31,7 +31,8 @@ import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.network.api.AdmissionService
 import com.hfut.schedule.network.api.DormitoryScore
@@ -314,10 +315,10 @@ object OthersRepository {
     @JvmStatic
     private fun parseElectric(result : String) : String = try {
         if (result.contains("query_elec_roominfo")) {
-            var msg = GsonInstance.fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
+            val msg = GsonInstance.fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
 
             if(msg.contains("剩余金额"))
-                formatDecimal(msg.substringAfter("剩余金额").substringAfter(":").toDouble(), 2)
+                msg.substringAfter("剩余金额").substringAfter(":").toDouble().roundOffString(2)
             else
                 throw Exception(msg)
         }

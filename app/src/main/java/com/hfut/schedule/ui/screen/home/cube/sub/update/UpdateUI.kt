@@ -49,7 +49,8 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
@@ -300,7 +301,7 @@ fun UpdateUI(
                                 if (uiState is UiState.Success) {
                                     stringResource(
                                         R.string.settings_update_button_download_file_size,
-                                        formatDecimal((uiState as UiState.Success).data, 2)
+                                        (uiState as UiState.Success).data.roundOffString(2)
                                     )
                                 } else ""
                             ),
@@ -549,7 +550,7 @@ fun PatchUpdateUI(
                                 if(uiStatePatch is UiState.Success) {
                                     stringResource(
                                         R.string.settings_update_button_download_file_size,
-                                        formatDecimal((uiStatePatch as UiState.Success).data, 2)
+                                        (uiStatePatch as UiState.Success).data.roundOffString(2)
                                     )
                                 } else ""  
                             }",

@@ -41,7 +41,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.BillMonth
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -173,7 +174,7 @@ private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues
                 ){
                     TransplantListItem(
                         headlineContent = {
-                            Text("￥${formatDecimal(item.second,2)}")
+                            Text("￥${item.second.roundOffString(2)}")
                         },
                         overlineContent = {
                             Text(item.first)
@@ -238,7 +239,7 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
                 ) {
                     TransplantListItem(
                         headlineContent = {
-                            Text("￥${formatDecimal(item.second,2)}")
+                            Text("￥${item.second.roundOffString(2)}")
                         },
                         overlineContent = {
                             Text(item.first)
@@ -320,9 +321,9 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                         )
                     } else {
                         val t = if(difference < 0) {
-                            "偏高￥${formatDecimal(today-dailyAvg,2)}"
+                            "偏高￥${(today-dailyAvg).roundOffString(2)}"
                         } else if(difference > 0) {
-                            "偏低￥${formatDecimal(dailyAvg-today,2)}"
+                            "偏低￥${(dailyAvg-today).roundOffString(2)}"
                         } else {
                             ""
                         }
@@ -331,7 +332,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                                 Text("今日(${t})")
                             },
                             headlineContent = {
-                                Text("￥${formatDecimal(today,2)}", fontWeight = FontWeight.Bold)
+                                Text("￥${today.roundOffString(2)}", fontWeight = FontWeight.Bold)
                             },
                             leadingContent = {
                                 Icon(
@@ -372,7 +373,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                                 Text("日平均")
                             },
                             headlineContent = {
-                                Text("￥${formatDecimal(dailyAvg,2)}")
+                                Text("￥${dailyAvg.roundOffString(2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.filter_vintage),null)
@@ -384,7 +385,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                                 Text("明日预计")
                             },
                             headlineContent = {
-                                Text("￥${formatDecimal(day.predictData.predict,2)}")
+                                Text("￥${day.predictData.predict.roundOffString(2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.azm),null)
@@ -401,7 +402,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                             Text("本月")
                         },
                         headlineContent = {
-                            Text("￥${formatDecimal(monthList.first().second,2)}", fontWeight = FontWeight.Bold)
+                            Text("￥${monthList.first().second.roundOffString(2)}", fontWeight = FontWeight.Bold)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.send_money),null)
@@ -423,7 +424,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                                 Text("月平均")
                             },
                             headlineContent = {
-                                Text("￥${formatDecimal(monthAvg,2)}")
+                                Text("￥${monthAvg.roundOffString(2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.filter_vintage),null)
@@ -435,7 +436,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                                 Text("下月预计")
                             },
                             headlineContent = {
-                                Text("￥${formatDecimal(month.predictData.predict,2)}")
+                                Text("￥${month.predictData.predict.roundOffString(2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.azm),null)

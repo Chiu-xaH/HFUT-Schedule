@@ -69,7 +69,8 @@ import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.HefeiElectricStorage
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.getHefeiElectric
@@ -546,7 +547,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                 LoadingLargeCard(
                                     title = if(!show)"￥XX.XX"
                                     else
-                                        "￥${formatDecimal(Result2.substringAfter(" ").toDouble(),2)}",
+                                        "￥${Result2.substringAfter(" ").toDouble().roundOffString(2)}",
                                     loading = !show ,
                                     prepare = true,
                                     rightTop = {

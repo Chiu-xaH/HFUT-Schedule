@@ -28,7 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.MyApiParse.getMy
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
@@ -106,7 +107,7 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
                         )
                     } else {
                         TransplantListItem(
-                            headlineContent = { Text("${formatDecimal(percent,1)}%") },
+                            headlineContent = { Text("${percent.roundOffString(1)}%") },
                             overlineContent = { Text("已过")},
                             modifier = Modifier.weight(.5f)
                         )

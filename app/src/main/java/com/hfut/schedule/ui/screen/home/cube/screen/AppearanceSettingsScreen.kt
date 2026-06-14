@@ -94,7 +94,9 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOff
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.PermissionSet
@@ -122,7 +124,7 @@ import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.sharednav.common.helper.DEFAULT_SHARED_SPEC
+import com.sharednav.common.helper.AnimationSpecManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.controller.NavigationController
@@ -253,7 +255,7 @@ fun SharedAppearanceSettingsScreen(
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
-        val containerSharedSpeed by DataStoreManager.containerSharedSpeed.collectAsState(initial = DEFAULT_SHARED_SPEC)
+        val containerSharedSpeed by DataStoreManager.sharedNavSpeedRadio.collectAsState(initial = 1f)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
@@ -475,7 +477,7 @@ fun SharedAppearanceSettingsScreen(
                             value = customColorStyle.toFloat(),
                             onValueChange = { value ->
                                 scope.launch {
-                                    val target = styleList.find { it.code == formatDecimal(value.toDouble(),0).toInt() }
+                                    val target = styleList.find { it.code == value.roundOff(0).toInt() }
                                         ?: return@launch
                                     DataStoreManager.saveCustomColorStyle(target)
                                 }
@@ -706,7 +708,7 @@ fun SharedAppearanceSettingsScreen(
                     value = transition.toFloat(),
                     onValueChange = { value ->
                         scope.launch {
-                            val target = transitionLevels.find { it.levelNum == formatDecimal(value.toDouble(),0).toInt() }
+                            val target = transitionLevels.find { it.levelNum == value.roundOff(0).toInt() }
                                 ?: return@launch
                             DataStoreManager.saveTransition(target)
                         }
@@ -737,17 +739,17 @@ fun SharedAppearanceSettingsScreen(
                     if(enableContainerShare) {
                         TransplantListItem(
                             headlineContent = {
-                                Text("容器共享动画速率 ${containerSharedSpeed}ms")
+                                Text("动画速率倍数 x${containerSharedSpeed.roundOffString(2)}")
                             },
                             leadingContent = {
                                 Icon(
                                     painterResource(
                                         // TODO 这里可以做动效，懒
                                         when(containerSharedSpeed) {
-                                            in 300 until 425 -> R.drawable.speed_2
-                                            in 425 until 550 -> R.drawable.speed_3
-                                            in 550 until 675 -> R.drawable.speed_4
-                                            in 675 .. 800 -> R.drawable.speed
+                                            in 0.5f .. 0.875f -> R.drawable.speed_2
+                                            in 0.875f .. 1.25f -> R.drawable.speed_3
+                                            in 1.25f .. 1.625f -> R.drawable.speed_4
+                                            in 1.625f .. 2f -> R.drawable.speed
                                             else -> R.drawable.timer
                                         }
                                     ),
@@ -755,22 +757,22 @@ fun SharedAppearanceSettingsScreen(
                                 )
                             },
                             supportingContent = {
-                                Text("控制带容器共享的转场速率，默认为${DEFAULT_SHARED_SPEC}ms")
+                                Text("控制转场动画速率，默认为1x")
                             }
                         )
-                        LoopingRectangleCenteredTrail2(containerSharedSpeed)
+                        LoopingRectangleCenteredTrail2(AnimationSpecManager.getSharedTween())
                         CustomSlider(
-                            value = containerSharedSpeed.toFloat(),
+                            value = containerSharedSpeed,
                             onValueChange = {
                                 scope.launch {
-                                    DataStoreManager.saveContainerSharedSpeed(it.roundToInt())
+                                    DataStoreManager.saveSharedNavSpeedRadio(it)
                                 }
                             },
                             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                            valueRange = 300f..800f,
-                            steps = 19,
+                            valueRange = 0.5f..2f,
+                            steps = 29,
                             showProcessText = true,
-                            processText = containerSharedSpeed.toString()
+                            processText = containerSharedSpeed.roundOffString(2)
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -1012,7 +1014,7 @@ fun CalendarUISettings(
     isTiny : Boolean  = false
 ) {
 //    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
-    val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val calendarSquareHeightNew by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
@@ -1144,7 +1146,7 @@ fun CalendarUISettings(
                     Text(
                         stringResource(
                             R.string.appearance_settings_calendar_square_alpha_title,
-                            formatDecimal((customSquareAlpha * 100).toDouble(), 0)
+                            (customSquareAlpha * 100).roundOffString(0)
                         ))
                 },
                 leadingContent = {
@@ -1176,7 +1178,7 @@ fun CalendarUISettings(
                 Text(
                     stringResource(
                         R.string.appearance_settings_calendar_square_height_title,
-                        formatDecimal(calendarSquareHeightNew.toDouble(), 1)
+                        calendarSquareHeightNew.roundOffString(1)
                     ))
             },
             supportingContent = {
@@ -1184,7 +1186,7 @@ fun CalendarUISettings(
                     Text(
                         stringResource(
                             R.string.appearance_settings_calendar_square_height_description,
-                            formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT.toDouble(), 0)
+                            MyApplication.CALENDAR_SQUARE_HEIGHT.roundOffString(0)
                         ))
             },
             leadingContent = {
@@ -1195,7 +1197,7 @@ fun CalendarUISettings(
         CustomSlider(
             value = calendarSquareHeightNew,
             onValueChange = {
-                scope.launch { DataStoreManager.saveCalendarSquareHeightNew(it) }
+                scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
             },
             modifier = Modifier.let {
                 if(isTiny) it
@@ -1204,7 +1206,7 @@ fun CalendarUISettings(
             valueRange = 25f..125f,
             showProcessText = true,
             steps = 99,
-            processText = formatDecimal(calendarSquareHeightNew.toDouble(),1)
+            processText = calendarSquareHeightNew.roundOffString(1)
         )
         if(!isTiny)
             PaddingHorizontalDivider()
@@ -1213,7 +1215,7 @@ fun CalendarUISettings(
                 Text(
                     stringResource(
                         R.string.appearance_settings_calendar_square_text_size_title,
-                        formatDecimal(calendarSquareTextSize.toDouble() * 100, 0)
+                        (calendarSquareTextSize * 100).roundOffString(0)
                     ))
             },
             supportingContent = {
@@ -1236,7 +1238,7 @@ fun CalendarUISettings(
             },
             valueRange = 0.25f..2f,
             showProcessText = true,
-            processText = formatDecimal(calendarSquareTextSize.toDouble()*100,0)
+            processText = (calendarSquareTextSize * 100).roundOffString(0)
         )
         if(!isTiny)
             PaddingHorizontalDivider()
@@ -1245,7 +1247,7 @@ fun CalendarUISettings(
                 Text(
                     stringResource(
                         R.string.appearance_settings_calendar_square_text_line_padding_title,
-                        formatDecimal(calendarSquareTextPadding.toDouble(), 2)
+                        calendarSquareTextPadding.roundOffString(2)
                     ))
             },
             supportingContent = {
@@ -1265,7 +1267,7 @@ fun CalendarUISettings(
             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
             valueRange = 1f..2f,
             showProcessText = true,
-            processText = formatDecimal(calendarSquareTextPadding.toDouble(),2)
+            processText = calendarSquareTextPadding.roundOffString(2)
         )
     }
 }

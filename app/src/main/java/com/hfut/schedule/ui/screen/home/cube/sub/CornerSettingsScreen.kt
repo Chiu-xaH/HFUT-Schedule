@@ -24,7 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
@@ -111,7 +112,7 @@ fun CornerSettingsScreen() {
                             },
                             modifier = Modifier.align(Alignment.Center)
                         ) {
-                            Text("${formatDecimal(corner.toDouble(),2)}")
+                            Text(corner.roundOffString(2))
                         }
                         FilledTonalButton(
                             onClick = {

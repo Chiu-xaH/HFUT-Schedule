@@ -39,7 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
@@ -114,7 +115,7 @@ fun FocusWidgetSettingsUI(
                 ) {
                     TransplantListItem(
                         headlineContent = {
-                            Text("内容文字大小 ${formatDecimal(textSize.toDouble()*100,0)}%")
+                            Text("内容文字大小 ${(textSize*100).roundOffString(0)}%")
                         },
                         supportingContent = { Text("调整方格的文字大小(默认为100%)") },
                         leadingContent = {
@@ -136,7 +137,7 @@ fun FocusWidgetSettingsUI(
                         modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                         valueRange = 0.25f..2f,
                         showProcessText = true,
-                        processText = formatDecimal(textSize.toDouble()*100,0)
+                        processText = (textSize*100).roundOffString(0)
                     )
                 }
             }

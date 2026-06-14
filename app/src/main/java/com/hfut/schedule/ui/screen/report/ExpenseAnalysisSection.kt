@@ -19,7 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.shared.LogUtil
@@ -179,7 +180,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                             mealStats.forEach { (meal, count, amount) ->
                                 TransplantListItem(
                                     overlineContent = { Text("$meal ${count}次", style = MaterialTheme.typography.bodySmall) },
-                                    headlineContent = { Text("￥${formatDecimal(amount, 0)}", style = MaterialTheme.typography.titleSmall) },
+                                    headlineContent = { Text("￥${amount.roundOffString(0)}", style = MaterialTheme.typography.titleSmall) },
                                     usePadding = false,
                                     modifier = Modifier.padding(vertical = 2.dp)
                                 )
@@ -213,7 +214,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                         TransplantListItem(
                             overlineContent = { Text("${pair.first}次") },
                             headlineContent = { Text(name) },
-                            trailingContent = { Text("￥${formatDecimal(pair.second, 2)}") }
+                            trailingContent = { Text("￥${pair.second.roundOffString(2)}") }
                         )
                     }
                 }
@@ -238,30 +239,30 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = { Text("总消费") },
-                        headlineContent = { Text("￥${formatDecimal(totalAmount, 2)}", style = MaterialTheme.typography.headlineMedium) },
+                        headlineContent = { Text("￥${totalAmount.roundOffString(2)}", style = MaterialTheme.typography.headlineMedium) },
                         supportingContent = { Text("共 ${records.size} 笔 | 跨越 $days 天") }
                     )
                     Row(modifier = Modifier.fillMaxWidth()) {
                         TransplantListItem(
                             overlineContent = { Text("日均") },
-                            headlineContent = { Text("￥${formatDecimal(dailyAvg, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            headlineContent = { Text("￥${dailyAvg.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) },
                             modifier = Modifier.weight(1f)
                         )
                         TransplantListItem(
                             overlineContent = { Text("月均") },
-                            headlineContent = { Text("￥${formatDecimal(monthlyAvg, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            headlineContent = { Text("￥${monthlyAvg.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) },
                             modifier = Modifier.weight(1f)
                         )
                         TransplantListItem(
                             overlineContent = { Text("单笔均") },
-                            headlineContent = { Text("￥${formatDecimal(avgPerTransaction, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            headlineContent = { Text("￥${avgPerTransaction.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) },
                             modifier = Modifier.weight(1f)
                         )
                     }
                     if (highestRecord != null) {
                         TransplantListItem(
                             overlineContent = { Text("单笔最高") },
-                            headlineContent = { Text("￥${formatDecimal(highestAmount, 2)}", style = MaterialTheme.typography.titleMedium) },
+                            headlineContent = { Text("￥${highestAmount.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) },
                             supportingContent = { Text("${highestRecord.resume.substringBefore("-").take(15)} | ${highestRecord.jndatetimeStr}") }
                         )
                     }
@@ -288,15 +289,15 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                 if (predictedState is UiState.Success) {
                     val predictData = (predictedState as UiState.Success).data
                     CustomCard(color = cardNormalColor()) {
-                        androidx.compose.foundation.layout.Row(modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
                             TransplantListItem(
                                 overlineContent = { Text("明日预计") },
-                                headlineContent = { Text("￥${formatDecimal(predictData.day.predictData.predict, 2)}", style = MaterialTheme.typography.titleMedium) },
+                                headlineContent = { Text("￥${predictData.day.predictData.predict.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) },
                                 modifier = Modifier.weight(1f)
                             )
                             TransplantListItem(
                                 overlineContent = { Text("下月预计") },
-                                headlineContent = { Text("￥${formatDecimal(predictData.month.predictData.predict, 2)}", style = MaterialTheme.typography.titleMedium) },
+                                headlineContent = { Text("￥${predictData.month.predictData.predict.roundOffString(2)}", style = MaterialTheme.typography.titleMedium) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -412,7 +413,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                         monthStats.forEach { (month, amount) ->
                             TransplantListItem(
                                 headlineContent = { Text("${month}月", style = MaterialTheme.typography.bodyMedium) },
-                                trailingContent = { Text("￥${formatDecimal(amount, 2)}", style = MaterialTheme.typography.bodyMedium) }
+                                trailingContent = { Text("￥${amount.roundOffString(2)}", style = MaterialTheme.typography.bodyMedium) }
                             )
                         }
                     }
@@ -435,7 +436,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                             val dayName = DayOfWeek.of(dayOfWeek).getDisplayName(TextStyle.SHORT, Locale.CHINESE)
                             TransplantListItem(
                                 headlineContent = { Text(dayName, style = MaterialTheme.typography.bodyMedium) },
-                                trailingContent = { Text("￥${formatDecimal(amount, 2)}", style = MaterialTheme.typography.bodyMedium) }
+                                trailingContent = { Text("￥${amount.roundOffString(2)}", style = MaterialTheme.typography.bodyMedium) }
                             )
                         }
                     }
@@ -450,8 +451,8 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                     mutableListOf<String>().apply {
                         val avgPerDay = if (days > 0) totalAmount / days else 0.0
 
-                        add("${periodLabel}共消费 ${records.size} 笔，总计 ￥${formatDecimal(totalAmount, 2)}")
-                        add("平均每笔消费 ￥${formatDecimal(avgPerTransaction, 2)}")
+                        add("${periodLabel}共消费 ${records.size} 笔，总计 ￥${totalAmount.roundOffString(2)}")
+                        add("平均每笔消费 ￥${avgPerTransaction.roundOffString(2)}")
 
                         if (records.size > 100) add("你真是个消费达人，${records.size} 笔消费记录！")
                         if (records.size < 10) add("消费记录这么少，你是用现金的吗？")
@@ -461,12 +462,12 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
 
                         if (days > 100) add("跨越 $days 天的消费记录，你一直在坚持记账！")
 
-                        if (avgPerDay > 30) add("日均消费 ￥${formatDecimal(avgPerDay, 0)}，食堂不香吗？")
-                        else if (avgPerDay < 15) add("日均消费 ￥${formatDecimal(avgPerDay, 0)}，你是省钱小能手！")
-                        else add("日均消费 ￥${formatDecimal(avgPerDay, 0)}，花得刚刚好~")
+                        if (avgPerDay > 30) add("日均消费 ￥${avgPerDay.roundOffString(0)}，食堂不香吗？")
+                        else if (avgPerDay < 15) add("日均消费 ￥${avgPerDay.roundOffString(0)}，你是省钱小能手！")
+                        else add("日均消费 ￥${avgPerDay.roundOffString(0)}，花得刚刚好~")
 
-                        if (highestAmount > 200) add("单笔最高 ￥${formatDecimal(highestAmount, 0)}，这是吃了什么大餐？")
-                        if (highestAmount in 50.0..100.0) add("单笔最高 ￥${formatDecimal(highestAmount, 0)}，是不是买了什么好东西？")
+                        if (highestAmount > 200) add("单笔最高 ￥${highestAmount.roundOffString(0)}，这是吃了什么大餐？")
+                        if (highestAmount in 50.0..100.0) add("单笔最高 ￥${highestAmount.roundOffString(0)}，是不是买了什么好东西？")
 
                         busiestWeekday?.let { (day, _) ->
                             val dayName = DayOfWeek.of(day).getDisplayName(TextStyle.SHORT, Locale.CHINESE)
@@ -477,10 +478,10 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                             add("${month}月是你消费最高的一个月，注意生活费规划哦~")
                         }
 
-                        if (avgPerTransaction > 30) add("平均单笔 ￥${formatDecimal(avgPerTransaction, 0)}，偶尔奢侈一下也不错~")
+                        if (avgPerTransaction > 30) add("平均单笔 ￥${avgPerTransaction.roundOffString(0)}，偶尔奢侈一下也不错~")
                         if (avgPerTransaction < 10) add("平均单笔不到 ￥10，勤俭持家！")
 
-                        if (isEmpty()) add("${periodLabel}共消费 ${records.size} 笔，总计 ￥${formatDecimal(totalAmount, 2)}")
+                        if (isEmpty()) add("${periodLabel}共消费 ${records.size} 笔，总计 ￥${totalAmount.roundOffString(2)}")
                     }
                 }
 

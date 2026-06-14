@@ -56,7 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
@@ -610,7 +611,7 @@ private fun TransferUI(
                                 Text("$count/$limit (${
                                     if(successRate == 1.0) "满" 
                                     else if(successRate == 0.0 || successRate >= 1.0) "稳" 
-                                    else "前${formatDecimal(successRate*100,0)}%"
+                                    else "前${(successRate*100).roundOffString(0)}%"
                                 })")
                             }
                         },

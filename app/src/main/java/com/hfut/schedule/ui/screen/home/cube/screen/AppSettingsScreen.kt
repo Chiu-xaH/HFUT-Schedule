@@ -43,7 +43,9 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.reverseGetSemester
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOff
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
@@ -271,7 +273,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     headlineContent = { Text(
                         stringResource(
                             R.string.app_settings_free_flow_of_school_net_of_xc_campus_title,
-                            formatDecimal(freeFeevalue.toDouble(), 0)
+                            freeFeevalue.roundOffString(0)
                         ))},
                     supportingContent = {
                         Text(
@@ -291,7 +293,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     },
                     onValueChangeFinished = {
                         scope.launch {
-                            DataStoreManager.saveMaxFlow(formatDecimal(freeFeevalue.toDouble(),0).toInt())
+                            DataStoreManager.saveMaxFlow(freeFeevalue.roundOff(0).toInt())
                         }
                     },
                     steps = 48,

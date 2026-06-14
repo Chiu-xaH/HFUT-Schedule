@@ -65,7 +65,8 @@ import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.formatDecimal
+
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
@@ -304,7 +305,7 @@ fun GradeItemJxglstuUI(
             value = safelyList.fold(0f) { init,acc -> init + getTotalScore(acc) } safeDiv allTotalCredits
         }
         LaunchedEffect(allAvgScore,allAvgGpa) {
-            onChangeLargeButtonText("平均成绩 ${formatDecimal(allAvgScore.toDouble(),2)} | ${formatDecimal(allAvgGpa.toDouble(),2)}")
+            onChangeLargeButtonText("平均成绩 ${allAvgScore.roundOffString(2)} | ${allAvgGpa.roundOffString(2)}")
         }
 
         Column {
@@ -597,7 +598,7 @@ fun GradeItemUIUniApp(
             }
 
             LaunchedEffect(allAvgScore,allAvgGpa) {
-                onChangeLargeButtonText("平均成绩 ${formatDecimal(allAvgScore.toDouble(),2)} | ${formatDecimal(allAvgGpa.toDouble(),2)}")
+                onChangeLargeButtonText("平均成绩 ${allAvgScore.roundOffString(2)} | ${allAvgGpa.roundOffString(2)}")
             }
 
             Column {
@@ -770,7 +771,7 @@ fun GradeDetailScreen(
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
         LittleDialog(
-            dialogTitle = if(otherAvgScore == 0f) "提示" else "平时因数: ${formatDecimal(examAvgScore.toDouble(),2)} / ${formatDecimal(otherAvgScore.toDouble(),2)}",
+            dialogTitle = if(otherAvgScore == 0f) "提示" else "平时因数: ${examAvgScore.roundOffString(2)} / ${otherAvgScore.roundOffString(2)}",
             onDismissRequest = { showDialog = false },
             onConfirmation = { showDialog = false },
             dialogText = avgContent,
@@ -939,7 +940,7 @@ fun GradeDetailScreen(
                                 headlineContent = {
                                     ScrollText(
                                         text =
-                                            if (factor != 0f) formatDecimal(factor.toDouble(), 2)
+                                            if (factor != 0f) factor.roundOffString(2)
                                             else "未知"
                                     )
                                 },
@@ -1327,7 +1328,7 @@ fun AvgImportance(
     }
 
     LargeCard(
-        title = "分数 ${formatDecimal(allAvgScore.toDouble(),format)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),format)}",
+        title = "分数 ${allAvgScore.roundOffString(format)} 绩点 ${allAvgGpa.roundOffString(format)}",
     ) {
         // 影响(这门课导致的平均成绩变动)
         Row(modifier = Modifier.clickable {
@@ -1338,10 +1339,7 @@ fun AvgImportance(
                 headlineContent = {
                     Text(
                         finalGpa.let { result ->
-                            formatDecimal(
-                                result.toDouble(),
-                                format
-                            ).let { formatResult ->
+                            result.roundOffString(format).let { formatResult ->
                                 if(result > 0) {
                                     "+$formatResult"
                                 } else if(result < 0) {
@@ -1374,10 +1372,7 @@ fun AvgImportance(
                 headlineContent = {
                     Text(
                         finalScore.let { result ->
-                            formatDecimal(
-                                result.toDouble(),
-                                format
-                            ).let { formatResult ->
+                            result.roundOffString(format).let { formatResult ->
                                 if(result > 0) {
                                     "+$formatResult"
                                 } else if(result < 0) {
