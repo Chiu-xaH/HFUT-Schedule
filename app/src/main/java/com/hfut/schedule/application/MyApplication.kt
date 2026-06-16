@@ -125,6 +125,8 @@ class MyApplication : Application() {
                 activity.finish()
             }
         }
+        // 获取当前Activity
+        fun getCurrentActivity() = activities.lastOrNull()
     }
 }
 
