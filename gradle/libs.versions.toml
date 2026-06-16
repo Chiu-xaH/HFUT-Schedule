@@ -52,7 +52,7 @@ profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
 # 聚在工大的底座/骨架，负责整个应用大部分的页面与浮窗管理、容器共享、与外界深度链接的交互等功能
-sharednav = "1.0.0-dev06080100"
+sharednav = "1.0.0-dev06160010"
 tesseract4android = "4.9.0"
 uiautomator = "2.3.0"
 # 非必要不建议动

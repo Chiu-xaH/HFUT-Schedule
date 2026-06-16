@@ -1,10 +1,12 @@
 package com.hfut.schedule.ui.screen.grade.analysis
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -15,9 +17,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -32,6 +38,8 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -72,6 +80,7 @@ fun AverageGradeScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val backDrop = rememberLayerBackdrop()
+    var roundCount by rememberSaveable() { mutableIntStateOf(2) }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -84,20 +93,43 @@ fun AverageGradeScreen(
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
-                /*
                 actions = {
-                    LiquidButton(
-                        onClick = {
-                            showDevelopingToast()
-                        },
-                        backdrop = backDrop,
-                        isCircle = true,
+                    Row(
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
-                        Icon(painterResource(R.drawable.settings),null)
+                        LiquidButton(
+                            enabled = roundCount > 2,
+                            onClick = {
+                                roundCount--
+                            },
+                            backdrop = backDrop,
+                            isCircle = true,
+                        ) {
+                            Icon(painterResource(R.drawable.keyboard_arrow_left),null)
+                        }
+                        Spacer(Modifier.width(BUTTON_PADDING))
+                        LiquidButton(
+                            onClick = {
+                                roundCount = 2
+                            },
+                            backdrop = backDrop,
+                            isCircle = false,
+                        ) {
+                            Text("${roundCount}位小数")
+                        }
+                        Spacer(Modifier.width(BUTTON_PADDING))
+                        LiquidButton(
+                            onClick = {
+                                // 即使两位数字一致，也一定要分出高下吗，你这家伙
+                                roundCount++
+                            },
+                            backdrop = backDrop,
+                            isCircle = true,
+                        ) {
+                            Icon(painterResource(R.drawable.keyboard_arrow_right),null)
+                        }
                     }
                 }
-                 */
             )
         },
     ) { innerPadding ->
@@ -165,7 +197,7 @@ fun AverageGradeScreen(
                         item(key = "total") {
                             DividerTextExpandedWith("平均成绩",false) {
                                 LargeCard(
-                                    title = "分数 ${allAvgScore.roundOffString(2)} 绩点 ${allAvgGpa.roundOffString(2)}",
+                                    title = "分数 ${allAvgScore.roundOffString(roundCount)} 绩点 ${allAvgGpa.roundOffString(roundCount)}",
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                     BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
@@ -179,10 +211,10 @@ fun AverageGradeScreen(
 
                                         TransplantListItem(
                                             trailingContent = {
-                                                Text("占比${(totalCredits/allTotalCredits*100).roundOffString(0)}%")
+                                                Text("占比${(totalCredits/allTotalCredits*100).roundOffString(roundCount)}%")
                                             },
                                             headlineContent = {
-                                                ScrollText("分数 ${avgScore.roundOffString(2)} | 绩点 ${avgGpa.roundOffString(2)} | 学分 $totalCredits")
+                                                ScrollText("分数 ${avgScore.roundOffString(roundCount)} | 绩点 ${avgGpa.roundOffString(roundCount)} | 学分 $totalCredits")
                                             },
                                             overlineContent = { Text(it.term) }
                                         )
@@ -192,7 +224,7 @@ fun AverageGradeScreen(
                             }
                         }
                         item {
-                            DividerText("参与计算的项目")
+                            DividerText("不参与计算的项目")
                         }
                         item {
                             DevelopingIcon()
@@ -244,7 +276,7 @@ fun AverageGradeScreen(
                         item(key = "total") {
                             DividerTextExpandedWith("平均成绩",false) {
                                 LargeCard(
-                                    title = "分数 ${allAvgScore.roundOffString(2)} 绩点 ${allAvgGpa.roundOffString(2)}",
+                                    title = "分数 ${allAvgScore.roundOffString(roundCount)} 绩点 ${allAvgGpa.roundOffString(roundCount)}",
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                     BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
@@ -261,7 +293,7 @@ fun AverageGradeScreen(
                                                 Text("占比${(totalCredits/allTotalCredits*100).roundOffString(0)}%")
                                             },
                                             headlineContent = {
-                                                ScrollText("分数 ${avgScore.roundOffString(2)} | 绩点 ${avgGpa.roundOffString(2)} | 学分 $totalCredits")
+                                                ScrollText("分数 ${avgScore.roundOffString(roundCount)} | 绩点 ${avgGpa.roundOffString(roundCount)} | 学分 $totalCredits")
                                             },
                                             overlineContent = { Text(it.term) }
                                         )
@@ -273,7 +305,7 @@ fun AverageGradeScreen(
 
                         }
                         item {
-                            DividerText("参与计算的项目")
+                            DividerText("不参与计算的项目")
                         }
                         item {
                             DevelopingIcon()

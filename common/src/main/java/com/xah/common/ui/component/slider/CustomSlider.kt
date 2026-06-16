@@ -27,22 +27,95 @@ import androidx.compose.ui.unit.dp
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.safeDiv
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 private val SLIDER_SIZE = 23.dp
 private val SLIDER_HEIGHT = 6.dp
 
+
+/**
+ * 滑杆
+ * @param valueRange 范围，闭合区间，例如 1f..2f
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomSlider(
     value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    onValueChangeFinished: (() -> Unit)? = null,
+    processText : String? = null
+) = CustomSlider(
+    value,
+    valueRange,
+    onValueChange,
+    modifier,
+    onValueChangeFinished,
+    steps = 0,
+    processText
+)
+
+/**
+ * 滑杆
+ * @param valueRange 范围，闭合区间，例如 1f..2f
+ * @param stepPadding 为null则无分割；要求stepPadding必须满足等分区间，例如：1f~2f之间，需要间隔为0.1f,那么就传0.1f，且可以等分区间为10块
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomSlider(
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    onValueChangeFinished: (() -> Unit)? = null,
+    stepPadding : Float? = null,
+    processText : String? = null
+) = CustomSlider(
+    value,
+    valueRange,
+    onValueChange,
+    modifier,
+    onValueChangeFinished,
+    steps = stepPadding?.let {
+        require(it > 0f) {
+            "stepPadding 必须 > 0"
+        }
+
+        val count = (valueRange.endInclusive - valueRange.start) / it
+        val rounded = count.roundToInt()
+
+        require(abs(count - rounded) < 1e-4f) {
+            "stepPadding=$it 无法等分区间 $valueRange"
+        }
+
+        rounded - 1
+    } ?: 0,
+    processText
+)
+
+/**
+ * 滑杆
+ * @param valueRange 范围，闭合区间，例如 1f..2f
+ * @param steps 为0则无分割；参数计算公式：(valueRange.end - valueRange.start) / 间隔 - 1 = steps。例如：1f~2f之间，间隔0.1f，需要划分为(2f-1f)/0.1f-1=10块
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomSlider(
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
     onValueChangeFinished: (() -> Unit)? = null,
     steps: Int = 0,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    showProcessText : Boolean = false,
     processText : String? = null
 ) {
+    require(steps >= 0) {
+        "steps 必须 >= 0"
+    }
+
+    val density = LocalDensity.current
+
     // 监听是否按下
     var isPressed by remember { mutableStateOf(false) }
     val thumbSize by animateFloatAsState(
@@ -54,20 +127,16 @@ fun CustomSlider(
     val shadow by animateDpAsState(
         targetValue = if (!isPressed) APP_HORIZONTAL_DP else 0.dp
     )
-
-
-    val density = LocalDensity.current
     val startPadding by animateDpAsState(
         targetValue = if(value != valueRange.start) {
-            abs( SLIDER_SIZE.value -APP_HORIZONTAL_DP.value* thumbSize).dp
+            abs( SLIDER_SIZE.value - APP_HORIZONTAL_DP.value * thumbSize).dp
         } else APP_HORIZONTAL_DP
     )
     val endPadding by animateDpAsState(
         targetValue = if(value != valueRange.endInclusive) {
-            abs( SLIDER_SIZE.value -APP_HORIZONTAL_DP.value* thumbSize).dp
+            abs( SLIDER_SIZE.value - APP_HORIZONTAL_DP.value * thumbSize).dp
         } else APP_HORIZONTAL_DP
     )
-
 
     Slider(
         value = value,
@@ -93,11 +162,9 @@ fun CustomSlider(
                         shape = shape
                     )
             ) {
-                if(isPressed && showProcessText) {
-                    val percentage = ((value - valueRange.start) safeDiv (valueRange.endInclusive - valueRange.start)) * 100f
+                if(isPressed && processText != null) {
                     Text(
-                        processText ?:
-                         (percentage.toString().substringBefore(".") + "%"),
+                        processText,
                         modifier= Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
@@ -134,9 +201,6 @@ fun CustomSlider(
         },
         steps = steps,
         valueRange = valueRange,
-        modifier = modifier.padding(
-            start = startPadding,
-            end = endPadding,
-        )
+        modifier = modifier.padding(start = startPadding, end = endPadding)
     )
 }

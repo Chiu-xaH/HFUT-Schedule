@@ -136,7 +136,6 @@ fun FocusWidgetSettingsUI(
                         },
                         modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                         valueRange = 0.25f..2f,
-                        showProcessText = true,
                         processText = (textSize*100).roundOffString(0)
                     )
                 }

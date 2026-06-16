@@ -483,9 +483,8 @@ fun SharedAppearanceSettingsScreen(
                                 }
                             },
                             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                            steps = 2,
+                            stepPadding = 1f,
                             valueRange = 0f..3f,
-                            showProcessText = true,
                             processText = d
                         )
                         if(wallpaper == null)
@@ -713,7 +712,7 @@ fun SharedAppearanceSettingsScreen(
                             DataStoreManager.saveTransition(target)
                         }
                     },
-                    steps = transitionLevels.size-2,
+                    stepPadding = 1f,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
                 )
@@ -737,9 +736,10 @@ fun SharedAppearanceSettingsScreen(
 
 
                     if(enableContainerShare) {
+                        val text = remember(containerSharedSpeed) { "${containerSharedSpeed.roundOffString(1)}x" }
                         TransplantListItem(
                             headlineContent = {
-                                Text("动画速率倍数 x${containerSharedSpeed.roundOffString(2)}")
+                                Text("动画速率倍数 $text")
                             },
                             leadingContent = {
                                 Icon(
@@ -757,7 +757,7 @@ fun SharedAppearanceSettingsScreen(
                                 )
                             },
                             supportingContent = {
-                                Text("控制转场动画速率，默认为1x")
+                                Text("控制转场动画速率，默认为1.0x")
                             }
                         )
                         LoopingRectangleCenteredTrail2(AnimationSpecManager.getSharedTween())
@@ -770,9 +770,8 @@ fun SharedAppearanceSettingsScreen(
                             },
                             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                             valueRange = 0.5f..2f,
-                            steps = 29,
-                            showProcessText = true,
-                            processText = containerSharedSpeed.roundOffString(2)
+                            stepPadding = 0.1f,
+                            processText = text
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -936,7 +935,7 @@ private fun ExtensionSample() {
                 Box(
                     modifier = Modifier
                         .align(
-                            if(useDoubleExtension) {
+                            if (useDoubleExtension) {
                                 Alignment.Center
                             } else {
                                 Alignment.CenterStart
@@ -965,7 +964,7 @@ private fun ExtensionSample() {
                 Box(
                     modifier = Modifier
                         .zIndex(-1f)
-                        .pixelExtension(graphicsLayer,rect,true,useDoubleExtension)
+                        .pixelExtension(graphicsLayer, rect, true, useDoubleExtension)
                 )
             }
         }
@@ -982,7 +981,9 @@ private fun ExtensionSample() {
                 .padding(bottom = APP_HORIZONTAL_DP)
         ) {
             Surface(
-                modifier = Modifier.align(Alignment.Center).size(150.dp,150.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(150.dp, 150.dp),
                 color = cardNormalColor(),
                 shape = MaterialTheme.shapes.small
             ) {
@@ -1167,7 +1168,6 @@ fun CalendarUISettings(
                     else it.padding(bottom = APP_HORIZONTAL_DP)
                 },
                 valueRange = 0f..1f,
-                showProcessText = true
             )
         }
         if(!isTiny)
@@ -1178,7 +1178,7 @@ fun CalendarUISettings(
                 Text(
                     stringResource(
                         R.string.appearance_settings_calendar_square_height_title,
-                        calendarSquareHeightNew.roundOffString(1)
+                        calendarSquareHeightNew.roundOffString(0)
                     ))
             },
             supportingContent = {
@@ -1204,8 +1204,7 @@ fun CalendarUISettings(
                 else it.padding(bottom = APP_HORIZONTAL_DP)
             },
             valueRange = 25f..125f,
-            showProcessText = true,
-            steps = 99,
+            stepPadding = 1f,
             processText = calendarSquareHeightNew.roundOffString(1)
         )
         if(!isTiny)
@@ -1237,7 +1236,6 @@ fun CalendarUISettings(
                 else it.padding(bottom = APP_HORIZONTAL_DP)
             },
             valueRange = 0.25f..2f,
-            showProcessText = true,
             processText = (calendarSquareTextSize * 100).roundOffString(0)
         )
         if(!isTiny)
@@ -1266,7 +1264,6 @@ fun CalendarUISettings(
             },
             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
             valueRange = 1f..2f,
-            showProcessText = true,
             processText = calendarSquareTextPadding.roundOffString(2)
         )
     }

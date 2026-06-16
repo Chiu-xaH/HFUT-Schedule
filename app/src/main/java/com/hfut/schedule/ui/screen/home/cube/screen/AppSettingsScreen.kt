@@ -296,7 +296,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                             DataStoreManager.saveMaxFlow(freeFeevalue.roundOff(0).toInt())
                         }
                     },
-                    steps = 48,
+                    stepPadding = 10f,
                     valueRange = 10f..500f,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                 )

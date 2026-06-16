@@ -73,9 +73,11 @@ fun VersionInfo() {
         UpdateItems("重构 动画速率调整为统一的动画速率倍数调整",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("修复 旧课程表在不使用背景的情况下，方格透明度仍生效的Bug")//
         UpdateItems("修复 部分课程从课程表方格进入课程详情后为空的问题")//
-        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)
+        UpdateItems("修复 合工大教务登录超时显示timeout的问题","再次延长超时时间至40s")//
         UpdateItems("优化 部分界面的显示")//
 
+//        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)
+//
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
 //            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
 //            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")

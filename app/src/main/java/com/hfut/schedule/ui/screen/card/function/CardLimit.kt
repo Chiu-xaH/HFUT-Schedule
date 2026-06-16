@@ -113,7 +113,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                 }
                             }
                         },
-                        steps = 18,
+                        stepPadding = 10f,
                         valueRange = 10f..200f,
                     )
                 }
@@ -142,7 +142,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                 }
                             }
                         },
-                        steps = 18,
+                        stepPadding = 10f,
                         valueRange = 10f..200f,
                     )
                 }

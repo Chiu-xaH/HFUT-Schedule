@@ -48,8 +48,6 @@
     <string name="appearance_settings_calendar_background_description">Select a picture as the background of the course schedule and also change the color.</string>
     <string name="appearance_settings_calendar_square_alpha_title">The transparency of square %1$s%%</string>
     <string name="appearance_settings_calendar_square_alpha_description">The smaller the value, the more transparent the grid, buttons and other contents will be.</string>
-    <string name="appearance_settings_old_calendar_square_height_title">The height of square (old) %1$s</string>
-    <string name="appearance_settings_old_calendar_square_height_description">Customize the height of the square (default value is 125)</string>
     <string name="appearance_settings_calendar_square_height_title">The height of square %1$s</string>
     <string name="appearance_settings_calendar_square_height_description">Customize the height of the grid (default value is %1$s); On the course schedule interface, you can temporarily zoom in or out of the height of the squares by pinching with two fingers.</string>
     <string name="appearance_settings_calendar_square_text_size_title">Text size of square %1$s%%</string>
