@@ -74,6 +74,7 @@ fun VersionInfo() {
         UpdateItems("修复 旧课程表在不使用背景的情况下，方格透明度仍生效的Bug")//
         UpdateItems("修复 部分课程从课程表方格进入课程详情后为空的问题")//
         UpdateItems("修复 合工大教务登录超时显示timeout的问题","再次延长超时时间至40s")//
+        UpdateItems("修复 视频UI控件潜在的ANR问题")//
         UpdateItems("优化 部分界面的显示")//
 
 //        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)

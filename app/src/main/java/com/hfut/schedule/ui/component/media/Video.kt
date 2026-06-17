@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ import com.xah.mirror.util.rememberShaderState
 import com.xah.shared.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -60,122 +62,136 @@ fun SimpleVideo(
     loop: Boolean = true,
     aspectRatio: Float? = null
 ) {
-    val mediaPlayer = remember { MediaPlayer() }
-    // 释放
-    DisposableEffect(filePath) {
-        mediaPlayer.setDataSource(filePath)
-        mediaPlayer.isLooping = loop
-        mediaPlayer.setOnPreparedListener { mp ->
-            if (mute) mp.setVolume(0f, 0f)
-            if (autoPlay) mp.start()
-        }
-        mediaPlayer.prepareAsync()
+    val scope = rememberCoroutineScope()
+    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
 
+    DisposableEffect(Unit) {
+        scope.launch (Dispatchers.IO) {
+            mediaPlayer =  MediaPlayer()
+        }
+        // 释放
         onDispose {
             try {
-                mediaPlayer.stop()
+                mediaPlayer?.stop()
             } catch (e: Exception) {
                 LogUtil.error(e)
             }
-            mediaPlayer.release()
+            mediaPlayer?.release()
         }
     }
 
-    var showButton by remember { mutableStateOf(false) }
-    var isPlaying by remember { mutableStateOf(autoPlay) }
-    val blur by animateDpAsState(
-        if(!isPlaying) 10.dp else 0.dp
-    )
-    val scale by animateFloatAsState(
-        if(!isPlaying) 0.8f else 1f
-    )
-    LaunchedEffect(showButton,isPlaying) {
-        if(showButton && isPlaying) {
-            delay(5000L)
-            showButton = false
-        } else if(!isPlaying && !showButton) {
-            showButton = true
-        }
-    }
+    if(mediaPlayer != null) {
+        val backdrop = rememberLayerBackdrop()
+        var showButton by remember { mutableStateOf(false) }
+        var isPlaying by remember { mutableStateOf(autoPlay) }
+        val blur by animateDpAsState(
+            if(!isPlaying) 10.dp else 0.dp
+        )
+        val scale by animateFloatAsState(
+            if(!isPlaying) 0.95f else 1f
+        )
 
-    val backdrop = rememberLayerBackdrop()
-    Box(
-        modifier = modifier.clickable {
-            showButton = !showButton
+        LaunchedEffect (filePath,loop,mute) {
+            mediaPlayer!!.setDataSource(filePath)
+            mediaPlayer!!.isLooping = loop
+            mediaPlayer!!.setOnPreparedListener { mp ->
+                if (mute) {
+                    mp.setVolume(0f, 0f)
+                }
+                if (autoPlay) {
+                    mp.start()
+                }
+            }
+            mediaPlayer!!.prepareAsync()
         }
-    ) {
-        AnimatedVisibility(
-            visible = showButton,
-            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
-            exit = fadeOut(targetAlpha = 1.5f) + fadeOut(),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .zIndex(2f)
-        ) {
-            LiquidButton(
-                onClick = {
-                    if(isPlaying) {
-                        mediaPlayer.pause()
-                    } else {
-                        mediaPlayer.start()
-                        showButton = false
-                    }
-                    isPlaying = mediaPlayer.isPlaying
-                },
-//                surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
-                backdrop = backdrop,
-                isCircle = true,
-            ) {
-                Icon(painterResource(
-                    if(!isPlaying)
-                        R.drawable.play_arrow
-                    else
-                        R.drawable.pause
-                ),null)
+
+        LaunchedEffect(showButton,isPlaying) {
+            if(showButton && isPlaying) {
+                delay(5000L)
+                showButton = false
+            } else if(!isPlaying && !showButton) {
+                showButton = true
             }
         }
-        AndroidView(
-            factory = { ctx ->
-                TextureView(ctx).apply {
-                    surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-                        override fun onSurfaceTextureAvailable(
-                            surfaceTexture: SurfaceTexture,
-                            width: Int,
-                            height: Int
-                        ) {
-                            mediaPlayer.setSurface(Surface(surfaceTexture))
+
+        Box(
+            modifier = modifier.clickable {
+                showButton = !showButton
+            }
+        ) {
+            AnimatedVisibility(
+                visible = showButton,
+                enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+                exit = fadeOut(targetAlpha = 1.5f) + fadeOut(),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .zIndex(2f)
+            ) {
+                LiquidButton(
+                    onClick = {
+                        if(isPlaying) {
+                            mediaPlayer!!.pause()
+                        } else {
+                            mediaPlayer!!.start()
+                            showButton = false
                         }
+                        isPlaying = mediaPlayer!!.isPlaying
+                    },
+//                surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
+                    backdrop = backdrop,
+                    isCircle = true,
+                ) {
+                    Icon(painterResource(
+                        if(!isPlaying)
+                            R.drawable.play_arrow
+                        else
+                            R.drawable.pause
+                    ),null)
+                }
+            }
+            AndroidView(
+                factory = { ctx ->
+                    TextureView(ctx).apply {
+                        surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                            override fun onSurfaceTextureAvailable(
+                                surfaceTexture: SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) {
+                                mediaPlayer!!.setSurface(Surface(surfaceTexture))
+                            }
 
-                        override fun onSurfaceTextureSizeChanged(
-                            surface: SurfaceTexture,
-                            width: Int,
-                            height: Int
-                        ) = Unit
+                            override fun onSurfaceTextureSizeChanged(
+                                surface: SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) = Unit
 
-                        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-                            mediaPlayer.setSurface(null)
-                            return true
+                            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                                mediaPlayer!!.setSurface(null)
+                                return true
+                            }
+
+                            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
                         }
-
-                        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
                     }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .let { m ->
-                    aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
-                }
-                .backDropSource(backdrop)
-                // 深色模式压暗
-                .mask(
-                    color = Color.Black,
-                    targetAlpha = 0.3f,
-                    show = isThemeDark()
-                )
-                .blur(blur)
-                .scaleMirror(scale)
-        )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .let { m ->
+                        aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
+                    }
+                    .backDropSource(backdrop)
+                    // 深色模式压暗
+                    .mask(
+                        color = Color.Black,
+                        targetAlpha = 0.3f,
+                        show = isThemeDark()
+                    )
+                    .blur(blur)
+                    .scaleMirror(scale)
+            )
+        }
     }
 }
 
