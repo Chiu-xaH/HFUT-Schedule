@@ -1,8 +1,8 @@
 package com.hfut.schedule.ui.screen.xwx
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -26,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,7 +40,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -51,9 +47,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.logic.enumeration.getCampusRegion
@@ -69,22 +63,19 @@ import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getXwxPsk
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
-import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.shared.LogUtil
 import dev.chrisbanes.haze.rememberHazeState
@@ -110,9 +101,8 @@ suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
     }
 }
 
-suspend fun checkXwxLogin(vm: XwxViewModel,context : Context) : Boolean = withContext(Dispatchers.IO) {
-    val data = vm.functionsResp.state.first()
-    when(data) {
+suspend fun checkXwxLogin(vm: XwxViewModel) : Boolean = withContext(Dispatchers.IO) {
+    when(vm.functionsResp.state.first()) {
         is UiState.Error<*> -> {
             return@withContext false
         }
@@ -121,10 +111,7 @@ suspend fun checkXwxLogin(vm: XwxViewModel,context : Context) : Boolean = withCo
         }
         else -> {
             // 检查
-            val userInfo = getXwxLogin()
-            if(userInfo == null) {
-                return@withContext false
-            }
+            val userInfo = getXwxLogin() ?: return@withContext false
             vm.functionsResp.clear()
             vm.getFunctions(
                 schoolCode = userInfo.data.schoolCode,
@@ -153,6 +140,7 @@ fun XwxLoginScreen(
     val activity = LocalActivity.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
+    var selectSchoolUi by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -187,19 +175,45 @@ fun XwxLoginScreen(
                 }
             )
         },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = !selectSchoolUi,
+                enter = AppAnimationManager.toBottomAnimation.enter,
+                exit = AppAnimationManager.toBottomAnimation.exit
+            ) {
+                CardListItem(
+                    headlineContent = {
+                        Text("提示")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.info),null)
+                    },
+                    supportingContent = {
+                        Text("校务行有时候登陆不进去并非是软件Bug，是平台本身有时候就会封网，可以稍后再试")
+                    },
+                    cardModifier = Modifier.padding(bottom = APP_HORIZONTAL_DP).navigationBarsPadding(),
+                )
+            }
+        }
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            LoginUI(vm,navController)
+            LoginUI(vm,navController,selectSchoolUi) {
+                selectSchoolUi = it
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
-    var selectSchoolUi by remember { mutableStateOf(false) }
+private fun LoginUI(
+    vm : XwxViewModel,
+    navHostController: NavHostController,
+    selectSchoolUi : Boolean,
+    onSelectSchoolUi : (Boolean) -> Unit
+) {
     var hidden by rememberSaveable { mutableStateOf(true) }
     var password by remember { mutableStateOf("") }
     var username by remember { mutableStateOf(prefs.getString("Username", "") ?: "") }
@@ -245,7 +259,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
     val selectedSchool = schoolCode != -1L
     if(selectSchoolUi) {
         BackHandler {
-            selectSchoolUi = false
+            onSelectSchoolUi(false)
         }
         CommonNetworkScreen(uiState = uiState, onReload = refreshNetwork, loadingText = "正在加载学校列表") {
             val list = (uiState as UiState.Success).data.filter { it.schoolName.contains(school) }
@@ -274,7 +288,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                         modifier = Modifier
                             .clickable {
                                 schoolCode = item.schoolCode
-                                selectSchoolUi = false
+                                onSelectSchoolUi(false)
                             }
                     ) {
                         ColumnVertical(modifier = Modifier.fillMaxWidth()) {
@@ -305,7 +319,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                     Text(if(!selectedSchool)"请选择学校" else "已选(${schoolCode})" )
                 },
                 modifier = Modifier.clickable {
-                    selectSchoolUi = !selectSchoolUi
+                    onSelectSchoolUi(!selectSchoolUi)
                 },
                 cardModifier =  Modifier
                     .padding(horizontal = 25.dp-APP_HORIZONTAL_DP)
@@ -320,7 +334,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                         .padding(horizontal = 25.dp),
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("账号(一般为学号)" ) },
+                    label = { Text("账号(学号)" ) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.medium,
                     colors = textFiledTransplant(),
@@ -343,7 +357,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
                         .padding(horizontal = 25.dp),
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("密码(一般为身份证号后6位)") },
+                    label = { Text("密码(身份证号后6位,带X也算)") },
                     singleLine = true,
                     colors = textFiledTransplant(),
                     visualTransformation = if (hidden) PasswordVisualTransformation()

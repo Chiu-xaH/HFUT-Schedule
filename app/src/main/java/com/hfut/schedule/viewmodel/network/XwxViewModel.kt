@@ -7,6 +7,7 @@ import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
 import com.hfut.schedule.logic.network.repo.XwxRepository
 import com.hfut.schedule.logic.util.network.state.StateHolder
 
+@Deprecated("为KMP适配计划的开始做铺垫，即将被合入至`NetworkViewModel`统一管理")
 class XwxViewModel : ViewModel() {
     val schoolListResp = StateHolder<List<XwxSchoolBean>>()
     suspend fun getSchoolList() = XwxRepository.getSchoolList(schoolListResp)

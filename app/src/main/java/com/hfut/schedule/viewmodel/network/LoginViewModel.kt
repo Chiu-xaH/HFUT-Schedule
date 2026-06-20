@@ -25,6 +25,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 // 8个函数 这里是一切的地基：致敬传奇屎山 当时技术力不够，写的太耦合了，想最大程度保留原代码进行重构，根本无从下手...
+@Deprecated("为KMP适配计划的开始做铺垫，即将被合入至`NetworkViewModel`统一管理")
 class LoginViewModel : ViewModel() {
     private val loginWebVpn = LoginWebVpnServiceCreator.create(WebVpnService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)

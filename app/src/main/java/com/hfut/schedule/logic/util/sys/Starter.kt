@@ -159,6 +159,7 @@ object Starter {
             showToast("启动浏览器失败")
         }
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun refreshLogin(context: Context) {
         val it = Intent(context, MainActivity::class.java).apply {
@@ -169,6 +170,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun goToMain(context: Context) {
         val it = Intent(context, MainActivity::class.java).apply {
@@ -179,6 +181,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun loginGuaGua(context: Context) {
         val it = Intent(context, ShowerActivity::class.java).apply {
@@ -189,6 +192,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun startGuaGua(context: Context) {
         val it = Intent(context, ShowerActivity::class.java).apply {
@@ -199,6 +203,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun loginXwx(context: Context) {
         val it = Intent(context, XwxActivity::class.java).apply {
@@ -209,6 +214,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun startXwx(context: Context) {
         val it = Intent(context, XwxActivity::class.java).apply {
@@ -219,6 +225,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun loginSupabase(context: Context) {
         val it = Intent(context, SupabaseActivity::class.java).apply {
@@ -303,6 +310,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun startSupabase(context: Context) {
         val it = Intent(context, SupabaseActivity::class.java).apply {
@@ -313,6 +321,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun startCard(context: Context) {
         val it = Intent(context, CardActivity::class.java)
@@ -334,6 +343,7 @@ object Starter {
             showToast("启动邮箱应用失败，请向zsh0908@outlook.com发送邮件")
         }
     }
+    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
     fun loginSuccess(context: Context) {
         val it = Intent(context, SuccessActivity::class.java).apply {
@@ -343,6 +353,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+
     @JvmStatic
     fun startFix(context: Context) {
         val it = Intent(context, FixActivity::class.java)
@@ -351,6 +362,7 @@ object Starter {
         }
         context.startActivity(it)
     }
+
     @JvmStatic
     fun openDownloadFolder(activity: Activity) {
         try {

@@ -29,14 +29,14 @@ class MyApplication : Application() {
         context = applicationContext
         // 初始化日志工具
         LogUtil.init(APP_NAME)
-        // 控制SharedNav库的日志
-        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",BuildConfig.DEBUG)
+        // 控制SharedNav库的日志 需要联调排查SharedNav错误时传入debug=BuildConfig.DEBUG，平常时不需要开启日志。要不然Debug包动画有点卡
+        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",false)
         // 注册DeepLink
         DeepLinkRegistry.init(deepLinks)
         GlobalScope.launch {
             // 初始化周数（为课程表服务）
             DateTimeManager.initCurrentWeekValue()
-            // Added by @Junpgle 为实时通知服务，这里不归我管
+            // Added by @Junpgle 为实时通知服务，如需修改代码请找Ta
             if (DataStoreManager.enableLiveCourseReminder.first()) {
                 CourseLiveUpdateScheduler.scheduleAll()
                 CourseLiveUpdateScheduler.showCurrentWindowCourses()
@@ -55,7 +55,7 @@ class MyApplication : Application() {
             override fun onActivityPaused(activity: Activity) {}
 
             override fun onActivityResumed(activity: Activity) {
-                // Added by @Junpgle 为实时通知服务，这里不归我管
+                // Added by @Junpgle 为实时通知服务，如需修改代码请找Ta
                 GlobalScope.launch {
                     if (DataStoreManager.enableLiveCourseReminder.first()) {
                         CourseLiveUpdateScheduler.showCurrentWindowCourses()

@@ -13,6 +13,7 @@ import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
 class SuccessActivity : BaseActivity() {
     @OptIn(ExperimentalSharedTransitionApi::class)
     @SuppressLint("NewApi")

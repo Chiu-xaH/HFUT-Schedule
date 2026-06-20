@@ -173,17 +173,17 @@ fun ClassroomScreen(
 
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
 
-    var date by remember { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
-    var campus by remember { mutableStateOf<Campus?>(getCampus()) }
+    var date by rememberSaveable { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
+    var campus by remember { mutableStateOf(getCampus()) }
     val selectedBuildings = remember { mutableStateListOf<UniAppBuildingBean>() }
     val selectedFloors = remember { mutableStateListOf<Int>() }
-    var input by remember { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf("") }
 
     val refreshNetworkSearch = suspend m@ {
         var jwt = DataStoreManager.uniAppJwt.first()
         if(jwt.isEmpty() || jwt.isEmpty()) {
             val loginResult = UniAppRepository.login()
-            if(loginResult == false) {
+            if(!loginResult) {
                 return@m
             }
             jwt = DataStoreManager.uniAppJwt.first()
@@ -706,7 +706,7 @@ fun ClassroomLessonsScreen(
     roomId : Int,
     name: String
 ) {
-    var showAll by remember { mutableStateOf(false) }
+    var showAll by rememberSaveable { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val semester by produceState<Int?>(initialValue = null) {
@@ -735,7 +735,7 @@ fun ClassroomLessonsScreen(
     }
     val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 
-    var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
+    var today by remember { mutableStateOf(DateTimeManager.getToday()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -770,21 +770,7 @@ fun ClassroomLessonsScreen(
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
                 val list = (uiState as UiState.Success).data
-
                 val scrollState = rememberScrollState()
-                var showBottomSheetDetail by remember { mutableStateOf(false) }
-                var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
-
-                if (showBottomSheetDetail) {
-                    HazeBottomSheet (
-                        onDismissRequest = {
-                            showBottomSheetDetail = false
-                        },
-                        showBottomSheet = showBottomSheetDetail,
-                    ) {
-                        bean?.let { TimeTableDetail(it) }
-                    }
-                }
 
                 val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
                 var currentWeek by rememberSaveable { mutableLongStateOf(1) }
@@ -847,7 +833,7 @@ fun ClassroomLessonsScreen(
                     }
                 }
 
-                var totalDragX by remember { mutableFloatStateOf(0f) }
+                var totalDragX by rememberSaveable { mutableFloatStateOf(0f) }
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
 
                 val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
@@ -858,7 +844,7 @@ fun ClassroomLessonsScreen(
 
                 LaunchedEffect(currentWeek,items) {
                     if(currentWeek > items.size) {
-                        Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
+                        LogUtil.error("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek - 1}]")
                         return@LaunchedEffect
                     } else {
                         val list = items[currentWeek.toInt()-1]

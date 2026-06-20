@@ -41,6 +41,7 @@ import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 import com.xah.floating.util.LocalFloatingController
 import com.xah.mirror.util.ShaderState
+import com.xah.shared.LogUtil
 
 const val timeTextFactor = 0.85
 const val placeTextFactor = 0.9
@@ -71,7 +72,7 @@ fun TimeTable(
 
     val list = remember(items,week) {
         if(week > items.size || week > MyApplication.MAX_WEEK) {
-            Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
+            LogUtil.error("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]")
             emptyList()
         }  else {
             items[week-1]

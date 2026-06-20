@@ -12,6 +12,7 @@ import com.hfut.schedule.ui.screen.xwx.XwxMainScreen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 
+@Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
 class XwxActivity : BaseActivity() {
     @Composable
     override fun UI() {

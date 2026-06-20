@@ -65,6 +65,7 @@ private const val RELEASE_DATE = "2026-06-14"
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
+        // 校务行有时候登陆不进去并非是软件Bug，是平台本身有时候就会封网，可以稍后再试
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
         UpdateItems("新增 深度链接的适配", "供外部应用与网页直接跳转至聚在工大的某些功能")//
         UpdateItems("新增 课程表在有背景时支持容器共享动画")//
@@ -74,7 +75,9 @@ fun VersionInfo() {
         UpdateItems("修复 旧课程表在不使用背景的情况下，方格透明度仍生效的Bug")//
         UpdateItems("修复 部分课程从课程表方格进入课程详情后为空的问题")//
         UpdateItems("修复 合工大教务登录超时显示timeout的问题","再次延长超时时间至40s")//
+        UpdateItems("修复 由于教务系统返回500错误而App内仍清空本地缓存的个人信息数据的Bug")
         UpdateItems("修复 视频UI控件潜在的ANR问题")//
+        UpdateItems("优化 增强了容器共享时的倾斜效果")//
         UpdateItems("优化 部分界面的显示")//
 
 //        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)

@@ -7,7 +7,7 @@ import com.hfut.schedule.logic.network.repo.GuaGuaRepository
 import com.hfut.schedule.logic.network.repo.OthersRepository
 import com.hfut.schedule.logic.util.network.state.StateHolder
 
-// 5个函数
+@Deprecated("为KMP适配计划的开始做铺垫，即将被合入至`NetworkViewModel`统一管理")
 class GuaGuaViewModel : ViewModel() {
     var loginResult = StateHolder<GuaGuaLoginResponse>()
     suspend fun login(phoneNumber : String, password : String) = GuaGuaRepository.guaGuaLogin(phoneNumber,password,loginResult)

@@ -139,7 +139,7 @@ fun CommunityCourseTableUI(
 
     LaunchedEffect(currentWeek,items) {
         if(currentWeek > items.size) {
-            Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
+            LogUtil.error("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]")
             return@LaunchedEffect
         } else {
             val list = items[currentWeek.toInt()-1]

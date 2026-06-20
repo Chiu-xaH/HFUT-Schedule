@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
@@ -24,7 +23,6 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.nav.destination.GradeDestination
-
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.navigation.util.LocalNavController
@@ -79,7 +77,7 @@ fun Grade(
 }
 
 suspend fun goToXwx(viewModel: XwxViewModel, context : Context) {
-    if(!checkXwxLogin(viewModel,context)) {
+    if(!checkXwxLogin(viewModel)) {
         Starter.loginXwx(context)
     } else {
         Starter.startXwx(context)

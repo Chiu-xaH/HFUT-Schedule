@@ -69,7 +69,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostController) {
     val uiState by vm.useCodeResult.state.collectAsState()
-    var successLoad = uiState is UiState.Success
+    val successLoad = uiState is UiState.Success
     var useCode by remember { mutableStateOf("# # #") }
     var showButton = uiState !is UiState.Success
 
