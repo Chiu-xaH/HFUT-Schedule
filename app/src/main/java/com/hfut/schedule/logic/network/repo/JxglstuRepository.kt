@@ -607,7 +607,10 @@ object JxglstuRepository {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    SharedPrefs.saveString("info", response.body()?.string())
+                    if(response.isSuccessful) {
+                        val html = response.body()?.string() ?: return
+                        SharedPrefs.saveString("info",html)
+                    }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

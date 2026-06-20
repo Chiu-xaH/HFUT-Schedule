@@ -123,15 +123,6 @@
             android:exported="true"
             android:label="@string/title_activity_fix"
             android:theme="@style/Theme.App" />
-        <activity
-            android:name=".activity.screen.WidgetConfigureActivity"
-            android:exported="true"
-            android:label="@string/title_activity_widget_configure"
-            android:theme="@style/Theme.App">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
 
         <service
             android:name=".service.tile.LoginHefeiSchoolNetTileService"
