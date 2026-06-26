@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -55,7 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -87,7 +86,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
@@ -117,10 +116,10 @@ fun TransferScreen(
     val scope = rememberCoroutineScope()
     val backDrop = rememberLayerBackdrop()
     val uiState by vm.transferListData.state.collectAsState()
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
 
     val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
-        if(skip && uiState is UiState.Success) {
+        if(skip && uiState is NetworkUiState.Success) {
             return@m
         }
         val cookie = getJxglstuCookie()
@@ -191,7 +190,7 @@ fun TransferScreen(
                         .padding(innerPadding)
                 )
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                    val transferList = (uiState as UiState.Success).data
+                    val transferList = (uiState as NetworkUiState.Success).data
                     LazyColumn {
                         item { InnerPaddingHeight(innerPadding,true) }
                         items(transferList.size, key = { it }) { index ->
@@ -536,7 +535,7 @@ private fun TransferUI(
         }
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as UiState.Success).data
+        val response = (uiState as NetworkUiState.Success).data
         val list = response.data.let {
             if(input.isEmpty() || input.isBlank()) {
                 it
@@ -639,7 +638,7 @@ private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, ph
             vm.postTransferResponse.clear()
             vm.fromCookie.clear()
             vm.getFormCookie(it,batchId,id.toString())
-            val preferCookie = (vm.fromCookie.state.value as? UiState.Success)?.data ?: return@let
+            val preferCookie = (vm.fromCookie.state.value as? NetworkUiState.Success)?.data ?: return@let
             vm.postTransfer("$cookie;$preferCookie",batchId,id.toString(),phoneNumber)
         }
     }
@@ -649,7 +648,7 @@ private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, ph
     }
 
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
-        val msg = (uiState as UiState.Success).data
+        val msg = (uiState as NetworkUiState.Success).data
         StatusIcon(if(msg == "成功" ) R.drawable.check else R.drawable.close,text(msg))
     }
 }

@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.util.text
 import dev.chrisbanes.haze.HazeState
 import kotlin.collections.iterator
@@ -193,9 +193,9 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
         vm.payResultData.clear()
         // 开始
         vm.payStep1(auth,json, payNumber,type)
-        val orderId = (vm.orderIdData.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
+        val orderId = (vm.orderIdData.state.value as? NetworkUiState.Success)?.data ?: return@LaunchedEffect
         vm.payStep2(auth,orderId,type)
-        val map = (vm.uuIdData.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
+        val map = (vm.uuIdData.state.value as? NetworkUiState.Success)?.data ?: return@LaunchedEffect
         var uuid = ""
         var passwordKey = ""
         for((key,value) in map) {
@@ -207,7 +207,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
     }
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = { showToast("禁止刷新") }) {
-        val msg = (uiState as UiState.Success).data
+        val msg = (uiState as NetworkUiState.Success).data
         StatusIcon(R.drawable.send_money, text(msg))
     }
 }

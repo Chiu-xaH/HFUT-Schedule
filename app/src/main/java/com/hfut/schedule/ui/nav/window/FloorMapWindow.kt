@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.BuildingMapFloorBean
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -90,14 +90,14 @@ data class FloorMapWindow(
                                 shape = NoneRoundShape
                             )
 
-                            if(uiState is UiState.Success && controller.current()?.window == this@FloorMapWindow) {
-                                val buildings = (uiState as UiState.Success).data
+                            if(uiState is NetworkUiState.Success && controller.current()?.window == this@FloorMapWindow) {
+                                val buildings = (uiState as NetworkUiState.Success).data
                                 RoomMap(buildings, selectedIds = selectedRooms)
                             }
                         }
 
-                        if(uiState is UiState.Success) {
-                            val buildings = (uiState as UiState.Success).data
+                        if(uiState is NetworkUiState.Success) {
+                            val buildings = (uiState as NetworkUiState.Success).data
                             RowHorizontal(modifier = Modifier.padding(top = APP_HORIZONTAL_DP)) {
                                 NoPadding {
                                     FlowRow(

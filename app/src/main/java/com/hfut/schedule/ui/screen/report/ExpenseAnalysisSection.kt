@@ -17,13 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -65,11 +65,11 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
     LaunchedEffect(Unit) {
         val auth = prefs.getString("auth", "") ?: ""
         if (auth.isNotEmpty()) {
-            if (billState !is UiState.Success) {
+            if (billState !is NetworkUiState.Success) {
                 vm.huiXinBillResult.clear()
                 vm.getCardBill("bearer $auth", 1, 500)
             }
-            if (predictedState !is UiState.Success) {
+            if (predictedState !is NetworkUiState.Success) {
                 vm.cardPredictedResponse.clear()
                 vm.getCardPredicted("bearer $auth")
             }
@@ -78,8 +78,8 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
 
     DividerTextExpandedWith("消费分析") {
         when (billState) {
-            is UiState.Success -> {
-                val allRecords = (billState as UiState.Success).data.records.filter { it.turnoverType == "消费" }
+            is NetworkUiState.Success -> {
+                val allRecords = (billState as NetworkUiState.Success).data.records.filter { it.turnoverType == "消费" }
 
                 val dateRange = remember(semester) { SemesterParser.getSemesterDateRange(semester) }
                 val records = remember(allRecords, semester) {
@@ -286,8 +286,8 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
 
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
-                if (predictedState is UiState.Success) {
-                    val predictData = (predictedState as UiState.Success).data
+                if (predictedState is NetworkUiState.Success) {
+                    val predictData = (predictedState as NetworkUiState.Success).data
                     CustomCard(color = cardNormalColor()) {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             TransplantListItem(
@@ -492,7 +492,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                     )
                 }
             }
-            is UiState.Error -> {
+            is NetworkUiState.Error -> {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(headlineContent = { Text("暂无消费数据") }, supportingContent = { Text("请先在一卡通页面加载数据") })
                 }

@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.network.util.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -56,7 +56,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     }
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data
+        val list = (uiState as NetworkUiState.Success).data
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {

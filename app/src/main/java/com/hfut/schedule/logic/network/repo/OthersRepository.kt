@@ -29,11 +29,10 @@ import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItem
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.network.api.AdmissionService
 import com.hfut.schedule.network.api.DormitoryScore
 import com.hfut.schedule.network.api.HaiLeWashingService
@@ -61,7 +60,6 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.shared.LogUtil
 import kotlinx.coroutines.flow.first
 import org.jsoup.Jsoup
 import java.time.LocalDate
@@ -80,7 +78,7 @@ object OthersRepository {
     private val secondClass = SecondClassServiceCreator.create(SecondClassService::class.java)
     private val hfut = HfutServiceCreator.create(HfutService::class.java)
 
-    suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestState(
+    suspend fun checkPeLogin(cookie : String,holder : UiStateHolder<Boolean>) = launchRequestState(
         holder = holder,
         request = { pe.checkLogin(cookie) },
         transformSuccess = { _, json -> parseCheckPeLogin(json) }
@@ -91,7 +89,7 @@ object OthersRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun checkSecondClassLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestState(
+    suspend fun checkSecondClassLogin(cookie : String,holder : UiStateHolder<Boolean>) = launchRequestState(
         holder = holder,
         request = { secondClass.checkLogin(cookie) },
         transformSuccess = { _, json -> parseCheckSecondClassLogin(json) }
@@ -103,7 +101,7 @@ object OthersRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String,holder : StateHolder<List<ZhiJianCourseItemDto>>) =
+    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String,holder : UiStateHolder<List<ZhiJianCourseItemDto>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -154,7 +152,7 @@ object OthersRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun zhiJianCheckLogin(token : String,holder : StateHolder<Boolean>) =
+    suspend fun zhiJianCheckLogin(token : String,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = { zhiJian.checkLogin(token) },
@@ -166,7 +164,7 @@ object OthersRepository {
         json.contains(getPersonInfo().studentId!!) || json.contains(getPersonInfo().name!!)
     } catch (e : Exception) { throw e }
 
-    suspend fun checkStuLogin(cookie : String,checkStuLoginResp : StateHolder<Boolean>) =
+    suspend fun checkStuLogin(cookie : String,checkStuLoginResp : UiStateHolder<Boolean>) =
         launchRequestState(
             request = { stu.checkLogin(cookie) },
             holder = checkStuLoginResp,
@@ -183,7 +181,7 @@ object OthersRepository {
     suspend fun officeHallSearch(
         text : String,
         page : Int,
-        holder : StateHolder<List<OfficeHallSearchBean>>
+        holder : UiStateHolder<List<OfficeHallSearchBean>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -199,7 +197,7 @@ object OthersRepository {
         GsonInstance.fromJson(json, OfficeHallSearchResponse::class.java).data.records
     } catch (e : Exception) { throw e }
 
-    suspend fun searchTeacher(name: String = "", direction: String = "",teacherSearchData : StateHolder<TeacherResponse>) =
+    suspend fun searchTeacher(name: String = "", direction: String = "",teacherSearchData : UiStateHolder<TeacherResponse>) =
         launchRequestState(
             holder = teacherSearchData,
             request = {
@@ -217,7 +215,7 @@ object OthersRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getAdmissionList(type : AdmissionType, holder : StateHolder<Pair<AdmissionType, Map<String, List<AdmissionMapBean>>>>) =
+    suspend fun getAdmissionList(type : AdmissionType, holder : UiStateHolder<Pair<AdmissionType, Map<String, List<AdmissionMapBean>>>>) =
         launchRequestState(
             holder = holder,
             request = { admission.getList(type.type) },
@@ -229,7 +227,7 @@ object OthersRepository {
         Pair(type, GsonInstance.fromJson(json, AdmissionListResponse::class.java).data.list)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAdmissionDetail(type : AdmissionType, bean : AdmissionMapBean, region: String, holder : StateHolder<AdmissionDetailBean>, tokenHolder : StateHolder<AdmissionTokenResponse>) =
+    suspend fun getAdmissionDetail(type : AdmissionType, bean : AdmissionMapBean, region: String, holder : UiStateHolder<AdmissionDetailBean>, tokenHolder : UiStateHolder<AdmissionTokenResponse>) =
         onListenStateHolderForNetwork(tokenHolder, holder) { token ->
             launchRequestState(
                 holder = holder,
@@ -265,12 +263,12 @@ object OthersRepository {
 
 
 
-    suspend fun getAdmissionToken(holder : StateHolder<AdmissionTokenResponse>) =
+    suspend fun getAdmissionToken(holder : UiStateHolder<AdmissionTokenResponse>) =
         launchRequestState(
             holder = holder,
             request = {
                 val state = holder.state.first()
-                val cookie = if (state !is UiState.Success) {
+                val cookie = if (state !is NetworkUiState.Success) {
                     ""
                 } else {
                     Constant.ADMISSION_COOKIE_HEADER + state.data.cookie
@@ -287,7 +285,7 @@ object OthersRepository {
 
 
 
-    suspend fun searchWorks(keyword: String?, page: Int = 1, type: Int, campus: CampusRegion, workSearchResult : StateHolder<WorkSearchResponse>) =
+    suspend fun searchWorks(keyword: String?, page: Int = 1, type: Int, campus: CampusRegion, workSearchResult : UiStateHolder<WorkSearchResponse>) =
         launchRequestState(
             holder = workSearchResult,
             request = {
@@ -326,7 +324,7 @@ object OthersRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchDormitoryXuanCheng(code : String,dormitoryResult : StateHolder<List<XuanquResponse>>) =
+    suspend fun searchDormitoryXuanCheng(code : String,dormitoryResult : UiStateHolder<List<XuanquResponse>>) =
         launchRequestState(
             holder = dormitoryResult,
             request = { xuanChengDormitory.search(code) },
@@ -347,7 +345,7 @@ object OthersRepository {
     }  catch (e : Exception) { throw e }
 
 
-    suspend fun getHaiLeNear(bean : HaiLeNearPositionRequestDTO, holder : StateHolder<List<HaiLeNearPositionBean>>) =
+    suspend fun getHaiLeNear(bean : HaiLeNearPositionRequestDTO, holder : UiStateHolder<List<HaiLeNearPositionBean>>) =
         launchRequestState(
             holder = holder,
             request = { haiLe.getNearPlaces(bean.toRequestBody()) },
@@ -364,7 +362,7 @@ object OthersRepository {
     } catch (e: Exception) { throw e }
 
 
-    suspend fun getHaiLDeviceDetail(bean : HaiLeDeviceDetailRequest, holder : StateHolder<List<HaiLeDeviceDetailBean>>) =
+    suspend fun getHaiLDeviceDetail(bean : HaiLeDeviceDetailRequest, holder : UiStateHolder<List<HaiLeDeviceDetailBean>>) =
         launchRequestState(
             holder = holder,
             request = { haiLe.getDeviceDetail(bean) },
@@ -383,7 +381,7 @@ object OthersRepository {
     suspend fun getSecondClassActivities(
         cookie: String,
         page: Int = 1,
-        holder : StateHolder<List<SecondClassActivity>>
+        holder : UiStateHolder<List<SecondClassActivity>>
     ) = launchRequestState(
             holder = holder,
             request = { secondClass.getActivities(cookie,page) },
@@ -401,7 +399,7 @@ object OthersRepository {
     } catch (e: Exception) { throw e }
 
 
-    suspend fun getDepartments(holder : StateHolder<List<DepartmentBean>>) =
+    suspend fun getDepartments(holder : UiStateHolder<List<DepartmentBean>>) =
         launchRequestState(
             holder = holder,
             request = { hfut.getDepartments() },

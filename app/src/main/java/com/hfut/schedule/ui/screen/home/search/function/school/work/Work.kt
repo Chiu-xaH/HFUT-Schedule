@@ -49,7 +49,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.WorkSearchType
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
@@ -73,7 +73,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -237,7 +237,7 @@ private fun WorkSearchUI(
         }
 
         CommonNetworkScreen(uiState, onReload = { refreshNetwork(currentPage,page) }) {
-            val response = (uiState as UiState.Success).data
+            val response = (uiState as NetworkUiState.Success).data
             val repos = response.data
             val listState = rememberLazyListState()
             Box(modifier = Modifier.fillMaxSize()) {

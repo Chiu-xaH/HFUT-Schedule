@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -35,7 +35,7 @@ import com.xah.common.ui.component.chart.LineChart
 import com.xah.common.ui.component.chart.PieChart
 import com.xah.common.ui.component.chart.PieChartData
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 @Composable
 fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<Int> = emptyList()) {
@@ -85,8 +85,8 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
 
     DividerTextExpandedWith("生活报表") {
         when (dormitoryInfo) {
-            is UiState.Success -> {
-                val info = (dormitoryInfo as UiState.Success).data
+            is NetworkUiState.Success -> {
+                val info = (dormitoryInfo as NetworkUiState.Success).data
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = { Text("宿舍信息") },
@@ -98,7 +98,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                     )
                 }
             }
-            is UiState.Error -> {
+            is NetworkUiState.Error -> {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(headlineContent = { Text("暂无宿舍信息") }, supportingContent = { Text("请先在宿舍页面加载数据") })
                 }
@@ -111,8 +111,8 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         }
 
         when (dormitoryUsers) {
-            is UiState.Success -> {
-                val users = (dormitoryUsers as UiState.Success).data
+            is NetworkUiState.Success -> {
+                val users = (dormitoryUsers as NetworkUiState.Success).data
                 if (users.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                     CustomCard(color = cardNormalColor()) {
@@ -126,7 +126,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                     }
                 }
             }
-            is UiState.Loading -> {
+            is NetworkUiState.Loading -> {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 CustomCard(color = cardNormalColor()) {
                     LoadingUI()
@@ -136,14 +136,14 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         }
 
         when (weeklyScoresState) {
-            is UiState.Loading -> {
+            is NetworkUiState.Loading -> {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 CustomCard(color = cardNormalColor()) {
                     LoadingUI()
                 }
             }
-            is UiState.Success -> {
-                val data = (weeklyScoresState as UiState.Success).data
+            is NetworkUiState.Success -> {
+                val data = (weeklyScoresState as NetworkUiState.Success).data
                 val weeks = data.weeks
                 val latest = weeks.lastOrNull()
 
@@ -300,7 +300,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                     }
                 }
             }
-            is UiState.Error -> {
+            is NetworkUiState.Error -> {
                 Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(headlineContent = { Text("暂无卫生评分数据") })
@@ -315,18 +315,18 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
 
 @Composable
 private fun SchoolNetUsageReportCard(
-    state: UiState<SchoolNetSemesterUsageResult>
+    state: NetworkUiState<SchoolNetSemesterUsageResult>
 ) {
     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
     when (state) {
-        is UiState.Loading -> {
+        is NetworkUiState.Loading -> {
             CustomCard(color = cardNormalColor()) {
                 LoadingUI()
             }
         }
 
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             val data = state.data
             val records = data.records
             val isAllSemesters = data.semester == 0
@@ -421,7 +421,7 @@ private fun SchoolNetUsageReportCard(
             }
         }
 
-        is UiState.Error -> {
+        is NetworkUiState.Error -> {
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
                     overlineContent = { Text("校园网使用情况") },

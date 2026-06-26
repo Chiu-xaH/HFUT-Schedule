@@ -4,7 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.security.MessageDigest
 
 object AppVersion {

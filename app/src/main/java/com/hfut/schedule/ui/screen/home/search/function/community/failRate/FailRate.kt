@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -82,7 +82,7 @@ fun FailRateScreen(
 
     LaunchedEffect(Unit) {
         // 成功&&first不为null时需要emitPrepare；不成功时需要emitPrepare
-        if(uiState !is UiState.Success || (uiState as? UiState.Success)?.data?.first != null) {
+        if(uiState !is NetworkUiState.Success || (uiState as? NetworkUiState.Success)?.data?.first != null) {
             vm.failRateData.emitPrepare()
         }
     }
@@ -194,7 +194,7 @@ fun ApiToFailRate(
         }
     }
     LaunchedEffect(Unit) {
-        if((uiState as? UiState.Success)?.data?.first == lessonCode) {
+        if((uiState as? NetworkUiState.Success)?.data?.first == lessonCode) {
             return@LaunchedEffect
         }
         refreshNetwork()

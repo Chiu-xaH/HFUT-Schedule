@@ -22,8 +22,8 @@ import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
@@ -40,7 +40,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CommonNetworkScreen(
-    uiState: UiState<*>,
+    uiState: NetworkUiState<*>,
     isFullScreen : Boolean = true,
     modifier: Modifier = if(isFullScreen) Modifier.fillMaxSize() else Modifier,
     loadingText : String? = null,
@@ -60,13 +60,13 @@ fun CommonNetworkScreen(
 
     when (uiState) {
         // 准备状态UI 例如手动搜索时第一次什么也不显示
-        UiState.Prepare -> {
+        NetworkUiState.Prepare -> {
             prepareContent?.let {
                 CenterScreen { it() }
             }
         }
         // 错误UI 数据解析使用了TRY CATCH,数据解析错误时跳转到这里（待开发） 或者网络请求失败
-        is UiState.Error -> {
+        is NetworkUiState.Error -> {
             val e = uiState.exception
             val codeInt = uiState.code
             val ui =  @Composable {
@@ -182,7 +182,7 @@ fun CommonNetworkScreen(
             }
         }
         // 加载UI
-        UiState.Loading -> {
+        NetworkUiState.Loading -> {
             val ui = @Composable {
                 LoadingUI(loadingText)
             }
@@ -195,25 +195,25 @@ fun CommonNetworkScreen(
             }
         }
         // 主UI
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             successContent()
         }
     }
 }
 
 suspend fun <T> onListenStateHolder(
-    response : StateHolder<T>,
+    response : UiStateHolder<T>,
     onError : ((Int?, Throwable?) -> Unit)? = null,
     onSuccess : suspend (T) -> Unit
 ) = withContext(Dispatchers.Main) {
     // 只收集第一次流
-    val state = response.state.first { it !is UiState.Loading }
+    val state = response.state.first { it !is NetworkUiState.Loading }
     when (state) {
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             val data = state.data
             onSuccess(data)
         }
-        is UiState.Error -> {
+        is NetworkUiState.Error -> {
             val codeInt = state.code
             val e = state.exception
             if(onError == null) {
@@ -254,27 +254,27 @@ suspend fun <T> onListenStateHolder(
 
 
 suspend fun <T,F> onListenStateHolderForNetwork(
-    response : StateHolder<T>,
-    resultHolder : StateHolder<F>?,
+    response : UiStateHolder<T>,
+    resultHolder : UiStateHolder<F>?,
     onSuccess : suspend (T) -> Unit
 ) = withContext(Dispatchers.IO) {
     // 只收集第一次流
     val state = response.state.first()
     when (state) {
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             val data = state.data
             onSuccess(data)
         }
-        is UiState.Error -> {
+        is NetworkUiState.Error -> {
             val codeInt = state.code
             val e = state.exception
             resultHolder?.emitError(e,codeInt) ?: e?.message?.let { showToast(it) }
         }
-        is UiState.Loading -> {
+        is NetworkUiState.Loading -> {
             val t = "本操作依赖于上一网络请求，上一网络请求处于加载状态"
             resultHolder?.emitError(Exception(t),LISTEN_ERROR_CODE) ?: showToast(t)
         }
-        is UiState.Prepare -> {
+        is NetworkUiState.Prepare -> {
             val t = "本操作依赖于上一网络请求，上一网络请求处于未发起"
             resultHolder?.emitError(Exception(t),LISTEN_ERROR_CODE) ?: showToast(t)
         }

@@ -48,7 +48,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -87,7 +87,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -307,11 +307,11 @@ fun FocusCard(
                 if(showWeather) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
-                        visible = uiStateWarn is UiState.Success,
+                        visible = uiStateWarn is NetworkUiState.Success,
                         exit = AppAnimationManager.fadeAnimation.exit,
                         enter = AppAnimationManager.fadeAnimation.enter
                     ) {
-                        val list = (uiStateWarn as UiState.Success).data
+                        val list = (uiStateWarn as NetworkUiState.Success).data
                         AnimatedVisibility(
                             visible = list.isNotEmpty(),
                             exit = AppAnimationManager.fadeAnimation.exit,

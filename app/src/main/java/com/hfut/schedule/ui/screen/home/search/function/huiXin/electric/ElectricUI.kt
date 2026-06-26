@@ -67,7 +67,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -97,7 +97,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -744,7 +744,7 @@ fun ElectricHefei(
     }
     val buildingResponse by vm.hefeiBuildingsResp.state.collectAsState()
     val getBuildings = suspend m@ {
-        if(buildingResponse is UiState.Success) {
+        if(buildingResponse is NetworkUiState.Success) {
             return@m
         }
         val auth = prefs.getString("auth","")
@@ -769,7 +769,7 @@ fun ElectricHefei(
     LaunchedEffect(finalRegion) {
         finalRegion?.let { final ->
             getBuildings()
-            val data = (buildingResponse as? UiState.Success)?.data ?: return@LaunchedEffect
+            val data = (buildingResponse as? NetworkUiState.Success)?.data ?: return@LaunchedEffect
             val bean = data.find {
                 val name = it.name
                 val isCampus = name.startsWith(campus.description)
@@ -819,15 +819,15 @@ fun ElectricHefei(
         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
         onClick = { showRoom = !showRoom },
         leadingIcon = {
-            if(roomResponse is UiState.Loading) {
+            if(roomResponse is NetworkUiState.Loading) {
                 LoadingIcon()
             }
         },
-        enabled = roomResponse is UiState.Success,
+        enabled = roomResponse is NetworkUiState.Success,
         label = {
             Text(
                 if(showRoom) {
-                    if(roomResponse is UiState.Loading) {
+                    if(roomResponse is NetworkUiState.Loading) {
                         "载入房间列表"
                     } else {
                         "选择房间"
@@ -841,7 +841,7 @@ fun ElectricHefei(
                 enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
                 exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
             ) {
-                val list = (roomResponse as? UiState.Success)?.data
+                val list = (roomResponse as? NetworkUiState.Success)?.data
                 list?.let {
                     WheelPicker(
                         data = it,

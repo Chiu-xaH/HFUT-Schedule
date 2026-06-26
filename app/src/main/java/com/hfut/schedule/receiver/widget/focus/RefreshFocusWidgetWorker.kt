@@ -7,7 +7,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.util.concurrent.TimeUnit
 
 class RefreshFocusWidgetWorker(

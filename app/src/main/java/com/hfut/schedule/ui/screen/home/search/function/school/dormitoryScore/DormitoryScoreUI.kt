@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -55,7 +55,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -97,13 +97,13 @@ fun DormitoryScoreScreen(
     }
 
     val refreshNetwork : suspend () -> Unit = m@ {
-        if(dormitoryInfoUiState is UiState.Success) {
+        if(dormitoryInfoUiState is NetworkUiState.Success) {
             return@m
         }
         prefs.getString("TOKEN","")?.let {
             vm.dormitoryFromCommunityResp.clear()
             vm.getDormitory(it)
-            if(vm.dormitoryFromCommunityResp.state.first() is UiState.Success) {
+            if(vm.dormitoryFromCommunityResp.state.first() is NetworkUiState.Success) {
                 vm.getDormitoryInfo(it)
             }
         }
@@ -157,7 +157,7 @@ fun DormitoryScoreScreen(
                 InnerPaddingHeight(innerPadding,true)
                 DividerTextExpandedWith("寝室信息") {
                     CommonNetworkScreen(dormitoryUiState,isFullScreen = false, onReload = refreshNetwork) {
-                        val data = (dormitoryUiState as UiState.Success).data
+                        val data = (dormitoryUiState as NetworkUiState.Success).data
                         CustomCard(color = cardNormalColor()) {
                             Column {
                                 TransplantListItem(
@@ -169,7 +169,7 @@ fun DormitoryScoreScreen(
                                 )
                                 PaddingHorizontalDivider()
                                 CommonNetworkScreen(dormitoryInfoUiState,isFullScreen = false, onReload = refreshNetwork) {
-                                    val data2 = (dormitoryInfoUiState as UiState.Success).data
+                                    val data2 = (dormitoryInfoUiState as NetworkUiState.Success).data
                                     Column {
                                         for(i in data2) {
                                             TransplantListItem(
@@ -193,7 +193,7 @@ fun DormitoryScoreScreen(
                 }
                 DividerTextExpandedWith("卫生评分") {
                     CommonNetworkScreen(dormitoryScoreUiState,isFullScreen = false, onReload = refreshNetworkScore) {
-                        val data = (dormitoryScoreUiState as UiState.Success).data
+                        val data = (dormitoryScoreUiState as NetworkUiState.Success).data
                         Column {
                             if(data.isEmpty()) {
                                 EmptyIcon("未查询到评分")

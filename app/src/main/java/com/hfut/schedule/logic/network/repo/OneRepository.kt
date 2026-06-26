@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.model.one.ClassroomBean
 import com.hfut.schedule.logic.model.one.ClassroomResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.OneService
@@ -20,7 +20,7 @@ import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,7 +29,7 @@ import retrofit2.Response
 object OneRepository {
     private val one = OneServiceCreator.create(OneService::class.java)
 
-    suspend fun getPay(holder : StateHolder<PayData>) = launchRequestState(
+    suspend fun getPay(holder : UiStateHolder<PayData>) = launchRequestState(
         holder = holder,
         request = { one.getPay(getPersonInfo().studentId) },
         transformSuccess = { _, json -> parsePayFee(json) }
@@ -39,7 +39,7 @@ object OneRepository {
         GsonInstance.fromJson(result, PayResponse::class.java).data ?: throw Exception("数据为空")
     } catch (e : Exception) { throw e }
 
-    suspend fun getMailURL(token : String,holder : StateHolder<MailResponse>)  =
+    suspend fun getMailURL(token : String,holder : UiStateHolder<MailResponse>)  =
         launchRequestState(
             holder = holder,
             request = {
@@ -59,7 +59,7 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun getClassroomInfo(code : String,token : String,holder : StateHolder<List<ClassroomBean>>)  =
+    suspend fun getClassroomInfo(code : String,token : String,holder : UiStateHolder<List<ClassroomBean>>)  =
         launchRequestState(
             holder = holder,
             request = { one.getClassroomInfo(code, token) },
@@ -73,7 +73,7 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun getBuildings(campus : Campus, token : String, holder: StateHolder<Pair<Campus, List<BuildingBean>>>)  =
+    suspend fun getBuildings(campus : Campus, token : String, holder: UiStateHolder<Pair<Campus, List<BuildingBean>>>)  =
         launchRequestState(
             holder = holder,
             request = {
@@ -94,7 +94,7 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun checkOneLogin(token : String,holder : StateHolder<Boolean>) = launchRequestState(
+    suspend fun checkOneLogin(token : String,holder : UiStateHolder<Boolean>) = launchRequestState(
         holder = holder,
         request = { one.checkLogin(token) },
         transformSuccess = { _, json -> parseCheckOneLogin(json) }

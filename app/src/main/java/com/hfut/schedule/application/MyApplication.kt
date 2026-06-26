@@ -14,7 +14,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.deepLinks
 import com.xah.navigation.registry.DeepLinkRegistry
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

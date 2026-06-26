@@ -16,8 +16,8 @@ import com.hfut.schedule.logic.model.huixin.PayStep2Response
 import com.hfut.schedule.logic.model.huixin.PayStep3Response
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.HuiXinService
@@ -43,7 +43,7 @@ object HuiXinRepository {
         auth : String,
         page : Int,
         size : Int = Constant.DEFAULT_PAGE_SIZE,
-        holder : StateHolder<BillBean>
+        holder : UiStateHolder<BillBean>
     ) = launchRequestState(
         holder = holder,
         request = { huiXin.Cardget(auth, page, size.toString()) },
@@ -71,7 +71,7 @@ object HuiXinRepository {
         })
     }
 
-    suspend fun checkHuiXinLogin(auth : String,holder : StateHolder<Boolean>)= launchRequestState(
+    suspend fun checkHuiXinLogin(auth : String,holder : UiStateHolder<Boolean>)= launchRequestState(
         holder = holder,
         request = { huiXin.checkLogin(auth) },
         transformSuccess = { _, json -> parseCheckLHuiXinLogin(json) }
@@ -85,7 +85,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw  e }
 
-    suspend fun huiXinSingleLogin(studentId : String,password: String,holder : StateHolder<String>) {
+    suspend fun huiXinSingleLogin(studentId : String,password: String,holder : UiStateHolder<String>) {
         launchRequestState(
             holder = holder,
             request = { huiXin.login(studentId = studentId, password = password) },
@@ -102,7 +102,7 @@ object HuiXinRepository {
         throw  e
     }
 
-    suspend fun payStep1(auth: String, json: String, pay : Float, type: FeeType, holder : StateHolder<String>) =
+    suspend fun payStep1(auth: String, json: String, pay : Float, type: FeeType, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -132,7 +132,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun payStep2(auth: String, orderId : String, type : FeeType, holder : StateHolder<Map<String, String>>) =
+    suspend fun payStep2(auth: String, orderId : String, type : FeeType, holder : UiStateHolder<Map<String, String>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -162,7 +162,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: FeeType, holder : StateHolder<String>) =
+    suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: FeeType, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -192,7 +192,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun changeLimit(auth: String, json: JsonObject, holder : StateHolder<String>) =
+    suspend fun changeLimit(auth: String, json: JsonObject, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.changeLimit(auth, json) },
@@ -203,7 +203,7 @@ object HuiXinRepository {
         GsonInstance.fromJson(json, ChangeLimitResponse::class.java).msg
     } catch (e : Exception) { throw e }
 
-    suspend fun searchDate(auth : String, timeFrom : String, timeTo : String,holder : StateHolder<Float>) =
+    suspend fun searchDate(auth : String, timeFrom : String, timeTo : String,holder : UiStateHolder<Float>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.searchDate(auth, timeFrom, timeTo) },
@@ -219,7 +219,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun searchBills(auth : String, info: String,page : Int,holder : StateHolder<BillBean>) =
+    suspend fun searchBills(auth : String, info: String,page : Int,holder : UiStateHolder<BillBean>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -241,7 +241,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getMonthBills(auth : String, dateStr: String,holder : StateHolder<List<BillMonth>>) =
+    suspend fun getMonthBills(auth : String, dateStr: String,holder : UiStateHolder<List<BillMonth>>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.getMonthYue(auth, dateStr) },
@@ -267,7 +267,7 @@ object HuiXinRepository {
     suspend fun getHefeiRooms(
         auth: String,
         building: String?,
-        holder: StateHolder<List<HuiXinHefeiBuildingBean>>
+        holder: UiStateHolder<List<HuiXinHefeiBuildingBean>>
     ) = launchRequestState(
         request = {
             huiXin.getFee(
@@ -360,8 +360,8 @@ object HuiXinRepository {
 
     suspend fun getCardPredicted(
         auth: String,
-        huiXinBillResult : StateHolder<BillBean>,
-        cardPredictedResponse : StateHolder<TotalResult>
+        huiXinBillResult : UiStateHolder<BillBean>,
+        cardPredictedResponse : UiStateHolder<TotalResult>
     ) = withContext(Dispatchers.IO) {
         suspend fun reloadAllBills(origin: BillBean) {
             huiXinBillResult.clear()
@@ -369,11 +369,11 @@ object HuiXinRepository {
 
             val newState = huiXinBillResult.state.first()
             when (newState) {
-                is UiState.Error -> {
+                is NetworkUiState.Error -> {
                     cardPredictedResponse.emitError(newState.exception, newState.code)
                 }
 
-                is UiState.Success -> {
+                is NetworkUiState.Success -> {
                     try {
                         val data = getConsumptionResult(newState.data)
                         cardPredictedResponse.emitData(data)
@@ -391,7 +391,7 @@ object HuiXinRepository {
         val currentState = huiXinBillResult.state.first()
 
         when (currentState) {
-            is UiState.Success -> {
+            is NetworkUiState.Success -> {
                 val data = currentState.data
                 if (data.size != data.total) {
                     reloadAllBills(data)
@@ -402,7 +402,7 @@ object HuiXinRepository {
                 // 第一次加载，拉取一条记录获取总数
                 getCardBill(auth, page = 1, size = 1, huiXinBillResult)
                 val stateAfterInit = huiXinBillResult.state.first()
-                if (stateAfterInit is UiState.Success) {
+                if (stateAfterInit is NetworkUiState.Success) {
                     reloadAllBills(stateAfterInit.data)
                 }
             }

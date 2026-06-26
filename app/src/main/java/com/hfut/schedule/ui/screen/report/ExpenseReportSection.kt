@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -25,7 +25,7 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
     val uiState by vm.cardPredictedResponse.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = rN@ {
-        if (uiState is UiState.Success) return@rN
+        if (uiState is NetworkUiState.Success) return@rN
         val auth = prefs.getString("auth", "")
         if (auth.isNullOrEmpty()) return@rN
         vm.cardPredictedResponse.clear()
@@ -36,8 +36,8 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
 
     DividerTextExpandedWith("消费报表", false) {
         when (uiState) {
-            is UiState.Success -> {
-                val data = (uiState as UiState.Success).data
+            is NetworkUiState.Success -> {
+                val data = (uiState as NetworkUiState.Success).data
 
 
                 CustomCard(color = cardNormalColor()) {
@@ -52,7 +52,7 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
                     )
                 }
             }
-            is UiState.Error -> {
+            is NetworkUiState.Error -> {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(headlineContent = { Text("暂无消费数据") }, supportingContent = { Text("请先在一卡通页面加载数据") })
                 }

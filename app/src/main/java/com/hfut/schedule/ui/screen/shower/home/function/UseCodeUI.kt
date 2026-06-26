@@ -42,7 +42,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.largeCardColor
@@ -69,9 +69,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostController) {
     val uiState by vm.useCodeResult.state.collectAsState()
-    val successLoad = uiState is UiState.Success
+    val successLoad = uiState is NetworkUiState.Success
     var useCode by remember { mutableStateOf("# # #") }
-    var showButton = uiState !is UiState.Success
+    var showButton = uiState !is NetworkUiState.Success
 
     val scale = animateFloatAsState(
         targetValue = if (!successLoad) 0.9f else 1f, // 按下时为0.9，松开时为1
@@ -106,8 +106,8 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
     }
 
     LaunchedEffect(uiState) {
-        if (uiState is UiState.Success) {
-            val response = (uiState as UiState.Success).data
+        if (uiState is NetworkUiState.Success) {
+            val response = (uiState as NetworkUiState.Success).data
             response.let {
                 useCode = it
             }
@@ -223,7 +223,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
         Column (modifier = Modifier.height(350.dp)) {
             HazeBottomSheetTopBar("修改使用码", isPaddingStatusBar = false)
             CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
-                val msg = (uiState as UiState.Success).data
+                val msg = (uiState as NetworkUiState.Success).data
                 if(msg.contains("成功") == true) {
                     StatusIcon(R.drawable.check,text("成功修改为 $password"))
                 } else if(msg == "密码错误")  {

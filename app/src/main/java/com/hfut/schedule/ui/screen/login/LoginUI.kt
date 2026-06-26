@@ -75,7 +75,7 @@ import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -111,7 +111,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
@@ -211,9 +211,9 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
     val w by vm.webVpnTicket.state.collectAsState()
 
     val refresh = if(GlobalStateHolder.webVpn) {
-        w is UiState.Loading
+        w is NetworkUiState.Loading
     } else {
-        jSessionId is UiState.Loading
+        jSessionId is NetworkUiState.Loading
     }
     if(refresh) {
         CircularProgressIndicator()
@@ -225,7 +225,7 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
         val cookies = if(GlobalStateHolder.webVpn) Constant.WEBVPN_COOKIE_HEADER + webVpnCookie else {
-            (jSessionId as? UiState.Success)?.data?.jSession
+            (jSessionId as? NetworkUiState.Success)?.data?.jSession
         }
 
         // webVpn开关变化时重载
@@ -746,7 +746,7 @@ private fun TwoTextField(
                 onReload = { },
                 loadingText = "正在检查是否需要图片验证码"
             ) {
-                val useCaptcha = (jSession as UiState.Success).data.needCaptcha
+                val useCaptcha = (jSession as NetworkUiState.Success).data.needCaptcha
                 if (useCaptcha) {
                     Column {
                         Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))

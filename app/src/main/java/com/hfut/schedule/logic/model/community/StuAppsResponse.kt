@@ -4,7 +4,7 @@ import android.content.Context
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.network.util.GsonInstance
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 
 data class StuAppsResponse(

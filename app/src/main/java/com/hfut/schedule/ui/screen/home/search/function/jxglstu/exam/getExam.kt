@@ -11,7 +11,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext

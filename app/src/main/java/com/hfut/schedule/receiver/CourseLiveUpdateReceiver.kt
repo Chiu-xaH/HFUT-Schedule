@@ -6,7 +6,7 @@ import android.content.Intent
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

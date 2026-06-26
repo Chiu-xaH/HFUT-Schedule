@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.AcademicType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.network.util.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -90,7 +90,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 totalPage = null
                 refreshNetwork()
             }) {
-                val data = (uiState as UiState.Success).data
+                val data = (uiState as NetworkUiState.Success).data
                 val list = data.news
                 val listState = rememberLazyListState()
                 LaunchedEffect(pagerPage) {

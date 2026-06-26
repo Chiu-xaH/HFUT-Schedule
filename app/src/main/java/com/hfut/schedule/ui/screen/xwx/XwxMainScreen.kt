@@ -53,7 +53,7 @@ import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.xwx.XwxLoginInfo
 import com.hfut.schedule.logic.model.xwx.XwxLoginResponseBody
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -77,7 +77,7 @@ import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -103,10 +103,10 @@ suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
 
 suspend fun checkXwxLogin(vm: XwxViewModel) : Boolean = withContext(Dispatchers.IO) {
     when(vm.functionsResp.state.first()) {
-        is UiState.Error<*> -> {
+        is NetworkUiState.Error<*> -> {
             return@withContext false
         }
-        is UiState.Success<*> -> {
+        is NetworkUiState.Success<*> -> {
             return@withContext true
         }
         else -> {
@@ -120,7 +120,7 @@ suspend fun checkXwxLogin(vm: XwxViewModel) : Boolean = withContext(Dispatchers.
             )
             val result = vm.functionsResp.state.first()
             when(result) {
-                is UiState.Success<*> -> {
+                is NetworkUiState.Success<*> -> {
                     return@withContext true
                 }
                 else ->  {
@@ -249,7 +249,7 @@ private fun LoginUI(
     }
     val uiState by vm.schoolListResp.state.collectAsState()
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
         refreshNetwork()
@@ -262,7 +262,7 @@ private fun LoginUI(
             onSelectSchoolUi(false)
         }
         CommonNetworkScreen(uiState = uiState, onReload = refreshNetwork, loadingText = "正在加载学校列表") {
-            val list = (uiState as UiState.Success).data.filter { it.schoolName.contains(school) }
+            val list = (uiState as NetworkUiState.Success).data.filter { it.schoolName.contains(school) }
             LazyColumn {
                 item {
                     CustomTextField (
@@ -390,16 +390,16 @@ private fun LoginUI(
                         vm.login(schoolCode,username,password)
                         val result = vm.loginResp.state.first()
                         when(result) {
-                            is UiState.Error<*> -> {
+                            is NetworkUiState.Error<*> -> {
                                 showToast("登陆失败")
                             }
-                            is UiState.Loading -> {
+                            is NetworkUiState.Loading -> {
                                 showToast("操作过快，正在加载")
                             }
-                            is UiState.Prepare -> {
+                            is NetworkUiState.Prepare -> {
                                 showToast("操作过快")
                             }
-                            is UiState.Success<*> -> {
+                            is NetworkUiState.Success<*> -> {
                                 showToast("登陆成功")
                                 navHostController.navigateAndClear(XwxScreen.HOME.name)
                             }

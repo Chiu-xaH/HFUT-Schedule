@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Language
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 object LanguageHelper {
     private fun getCurrentAppLanguageTag(context: Context): String? {

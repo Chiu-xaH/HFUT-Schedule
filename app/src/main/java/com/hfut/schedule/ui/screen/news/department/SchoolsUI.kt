@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.Starter
 
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -37,7 +37,7 @@ fun SchoolsUI(vm : NetWorkViewModel,innerPadding : PaddingValues? = null) {
     val scope = rememberCoroutineScope()
 
     val refreshNetwork = suspend {
-        if(uiState !is UiState.Success) {
+        if(uiState !is NetworkUiState.Success) {
             vm.getDepartments()
         }
     }
@@ -47,7 +47,7 @@ fun SchoolsUI(vm : NetWorkViewModel,innerPadding : PaddingValues? = null) {
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val result = (uiState as UiState.Success).data
+        val result = (uiState as NetworkUiState.Success).data
         LazyColumn {
             item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
             items(result.size, key = {  result[it].name }) { index ->

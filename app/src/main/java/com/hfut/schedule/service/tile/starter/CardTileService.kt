@@ -7,7 +7,7 @@ import android.service.quicksettings.TileService
 import android.widget.Toast
 import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.logic.util.sys.Starter.startActivitySafely
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 class CardTileService : TileService() {
     override fun onClick() {

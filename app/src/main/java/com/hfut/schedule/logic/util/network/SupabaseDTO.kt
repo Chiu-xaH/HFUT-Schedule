@@ -12,7 +12,7 @@ import com.hfut.schedule.logic.util.sys.fromUTC
 import com.hfut.schedule.logic.util.sys.toUTC
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 // 转换层
 fun supabaseEventDtoToEntity(dto : SupabaseEventOutput) : SupabaseEventEntity = with(dto) {

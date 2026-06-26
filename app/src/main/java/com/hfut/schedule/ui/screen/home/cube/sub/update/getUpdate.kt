@@ -2,23 +2,23 @@ package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatchFile
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 suspend fun getUpdates(vm : NetWorkViewModel) : GiteeReleaseResponse? = withContext(Dispatchers.IO) {
-    val update = vm.giteeUpdatesResp.state.first { it !is UiState.Loading }
+    val update = vm.giteeUpdatesResp.state.first { it !is NetworkUiState.Loading }
     return@withContext when(update) {
-        is UiState.Error -> {
+        is NetworkUiState.Error -> {
             GiteeReleaseResponse(name = "检查更新错误 ${update.code}", "无法检查更新 请留意软件内提醒\n" + update.exception?.let { getKeyStackTraceDesc(it) } ,emptyList())
         }
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             val data = update.data
             if(data.name == AppVersion.getVersionName()) {
                 null
@@ -35,7 +35,7 @@ suspend fun getUpdates(vm : NetWorkViewModel) : GiteeReleaseResponse? = withCont
 suspend fun getPatchVersions(vm : NetWorkViewModel) : List<Patch> = withContext(Dispatchers.IO) {
     val update = vm.giteeUpdatesResp.state.first()
     return@withContext try {
-         if(update is UiState.Success) {
+         if(update is NetworkUiState.Success) {
             val data = update.data.assets.filter { it.name.endsWith(".patch") }
             data.mapNotNull { e ->
                 parsePatchFile(e.name)

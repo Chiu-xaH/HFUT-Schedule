@@ -7,7 +7,7 @@ import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 fun getEvents(vm: NetWorkViewModel) : List<SupabaseEventsInput> {
     val json = vm.supabaseGetEventsResp.value

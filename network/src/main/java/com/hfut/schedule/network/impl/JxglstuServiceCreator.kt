@@ -1,15 +1,19 @@
 package com.hfut.schedule.network.impl
 
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.allowAutoRedirect
+import com.hfut.schedule.network.util.timeoutMaxValue
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object JxglstuServiceCreator {
 
-    val Client = OkHttpClient.Builder()
-        .followRedirects(false)
-        .followSslRedirects(false)
+object JxglstuServiceCreator {
+    private const val MAX_WAIT_TIME_SEC = 20L
+
+    val client = OkHttpClient.Builder()
+        .allowAutoRedirect(false)
+        .timeoutMaxValue(MAX_WAIT_TIME_SEC)
         .build()
 
     private fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
@@ -21,7 +25,7 @@ object JxglstuServiceCreator {
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(Client)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

@@ -44,7 +44,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.QWeatherNowBean
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
@@ -282,7 +282,7 @@ fun CampusMapScreen(
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data
+        val list = (uiState as NetworkUiState.Success).data
         LazyColumn {
             item { InnerPaddingHeight(innerPadding,true) }
             items(list.size,key = { list[it].building.id} ) { index ->
@@ -331,7 +331,7 @@ fun WeatherScreen(vm: NetWorkViewModel) {
     val uiState by vm.qWeatherResult.state.collectAsState()
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
 
-    val loading = uiState !is UiState.Success
+    val loading = uiState !is NetworkUiState.Success
     val refreshNetwork: suspend () -> Unit = {
         val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
         if(!showWeather) {
@@ -353,8 +353,8 @@ fun WeatherScreen(vm: NetWorkViewModel) {
     var data by remember { mutableStateOf( QWeatherNowBean("XX","XX","晴","X风","X","XX","XXX")) }
 
     LaunchedEffect(uiState) {
-        if (uiState is UiState.Success) {
-            val response = (uiState as UiState.Success).data
+        if (uiState is NetworkUiState.Success) {
+            val response = (uiState as NetworkUiState.Success).data
             data = response
         }
     }
@@ -428,8 +428,8 @@ fun WeatherScreen(vm: NetWorkViewModel) {
                 }
             }
         }
-        if (uiStateWarn is UiState.Success) {
-            val list = (uiStateWarn as UiState.Success).data
+        if (uiStateWarn is NetworkUiState.Success) {
+            val list = (uiStateWarn as NetworkUiState.Success).data
             if(list.isNotEmpty()) {
                 DividerTextExpandedWith("气象预警") {
                     Column {

@@ -50,7 +50,7 @@ import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.sys.showToast
@@ -94,7 +94,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
     }
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
-        val response = (uiState as UiState.Success).data
+        val response = (uiState as NetworkUiState.Success).data
         StatusIcon(if(response.contains("成功")) R.drawable.check else R.drawable.close,text(response))
     }
 }

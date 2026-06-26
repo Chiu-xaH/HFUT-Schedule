@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -78,7 +78,7 @@ fun ClassroomScreen2(
 
     val refreshNetwork : suspend(Boolean) -> Unit = m@ { skip : Boolean ->
         val campus = campusList[pagerState.currentPage]
-        if(skip && uiState is UiState.Success && (uiState as UiState.Success).data.first == campus) return@m
+        if(skip && uiState is NetworkUiState.Success && (uiState as NetworkUiState.Success).data.first == campus) return@m
         val token = prefs.getString("bearer","")
         token?.let {
             vm.admissionListResp.clear()
@@ -88,7 +88,7 @@ fun ClassroomScreen2(
     LaunchedEffect(pagerState.currentPage) {
         refreshNetwork(true)
     }
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
@@ -117,7 +117,7 @@ fun ClassroomScreen2(
             RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).padding(innerPadding).zIndex(1f))
             HorizontalPager(pagerState) { pager ->
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                    val list = (uiState as UiState.Success).data.second
+                    val list = (uiState as NetworkUiState.Success).data.second
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         modifier = Modifier.padding(horizontal = 10.dp),
@@ -187,7 +187,7 @@ fun ClassroomDetailScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.hazeSource(hazeState).fillMaxSize()) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val list = (uiState as UiState.Success).data.sortedBy { it.floor.toString() + it.nameZh }
+                val list = (uiState as NetworkUiState.Success).data.sortedBy { it.floor.toString() + it.nameZh }
                 LazyColumn() {
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size) { index ->

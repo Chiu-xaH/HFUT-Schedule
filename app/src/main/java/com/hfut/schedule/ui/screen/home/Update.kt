@@ -6,7 +6,7 @@ import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -21,7 +21,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -75,14 +75,14 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         launch {
             // 教务是否能够登录
             vm.getStudentId(cookie)
-            var studentId = (vm.studentId.state.value as? UiState.Success)?.data
+            var studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
             if(studentId == null) {
                 // 切换到WEBVPN模式尝试
                 GlobalStateHolder.webVpn = true
                 JxglstuRepository.updateServices()
                 cookie = Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
                 vm.getStudentId(cookie)
-                studentId = (vm.studentId.state.value as? UiState.Success)?.data
+                studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
                 if(studentId == null) {
                     // WebVpn也不行，复原
                     GlobalStateHolder.webVpn = false
@@ -130,7 +130,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         launch {
             val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
             val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
-            if(showWeather && state  !is UiState.Success) {
+            if(showWeather && state  !is NetworkUiState.Success) {
                 vm.getWeatherWarn(getCampusRegion())
             }
         }
@@ -139,14 +139,14 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
             launch { vm.downloadHoliday() }
         }
         launch {
-            if(vm.wxPersonInfoResponse.state.first() is UiState.Success) {
+            if(vm.wxPersonInfoResponse.state.first() is NetworkUiState.Success) {
                 return@launch
             }
             // 检查指尖工大是否失效
             val auth = DataStoreManager.wxAuth.first()
             if(auth.contains("Bearer")) {
                 vm.wxGetPersonInfo(auth)
-                val bean = (vm.wxPersonInfoResponse.state.value as? UiState.Success)?.data
+                val bean = (vm.wxPersonInfoResponse.state.value as? NetworkUiState.Success)?.data
                 if(bean == null) {
                     // 重新登陆
                     val newAuth = refreshWxAuth(vm) ?: return@launch
@@ -171,7 +171,7 @@ private suspend fun refreshWxAuth(vm: NetWorkViewModel) : String? = withContext(
     vm.wxLoginResponse.clear()
     vm.wxLogin()
     when(vm.wxLoginResponse.state.first()) {
-        is UiState.Success<*> ->  return@withContext DataStoreManager.wxAuth.first()
+        is NetworkUiState.Success<*> ->  return@withContext DataStoreManager.wxAuth.first()
         else -> return@withContext null
     }
 }
@@ -190,19 +190,19 @@ suspend fun updateCourses(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
             }
         }
 
-    if(vm.studentId.state.first() !is UiState.Success) {
+    if(vm.studentId.state.first() !is NetworkUiState.Success) {
         vm.getStudentId(cookie)
     }
-    val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@withContext
-    if(vm.bizTypeIdResponse.state.first() !is UiState.Success) {
+    val studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data ?: return@withContext
+    if(vm.bizTypeIdResponse.state.first() !is NetworkUiState.Success) {
         vm.getBizTypeId(cookie,studentId)
     }
-    val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@withContext
+    val bizTypeId = (vm.bizTypeIdResponse.state.value as? NetworkUiState.Success)?.data ?: return@withContext
     vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
-    val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@withContext
+    val lessonResponse = (vm.lessonIds.state.value as? NetworkUiState.Success)?.data ?: return@withContext
     vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
     vm.getDatum(cookie,lessonResponse.lessonIds)
-    val datum = (vm.datumData.state.value as? UiState.Success)?.data ?: return@withContext
+    val datum = (vm.datumData.state.value as? NetworkUiState.Success)?.data ?: return@withContext
     LargeStringDataManager.save(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()),datum)
 }
 

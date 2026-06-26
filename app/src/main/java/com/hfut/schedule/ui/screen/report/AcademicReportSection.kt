@@ -21,7 +21,7 @@ import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.flow.first
@@ -46,7 +46,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     var initialSemesterSet by remember { mutableStateOf(false) }
 
     val refreshNetwork: suspend () -> Unit = m@ {
-        if (uiState is UiState.Success) return@m
+        if (uiState is NetworkUiState.Success) return@m
         var cookie = DataStoreManager.uniAppJwt.first()
         if (cookie.isEmpty()) {
             if (!UniAppRepository.login()) return@m
@@ -61,7 +61,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     DividerTextExpandedWith("学业报表") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
             Column {
-                val gradeMap = (uiState as UiState.Success).data
+                val gradeMap = (uiState as NetworkUiState.Success).data
                 val allTermList = remember(gradeMap) {
                     gradeMap.toList().sortedByDescending { it.first }.mapNotNull { (term, items) ->
                         val filtered = items.filter { !(it.passed && it.gp == 0.0) && it.finalGrade != null }

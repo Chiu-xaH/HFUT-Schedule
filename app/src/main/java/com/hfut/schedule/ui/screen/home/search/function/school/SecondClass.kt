@@ -33,7 +33,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -139,7 +139,7 @@ fun SecondClassScreen(
                 .fillMaxSize()
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val list = (uiState as UiState.Success).data
+                val list = (uiState as NetworkUiState.Success).data
                 Box(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(state = listState) {
                         item { InnerPaddingHeight(innerPadding,true) }

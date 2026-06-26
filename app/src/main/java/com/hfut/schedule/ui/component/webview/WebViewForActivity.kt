@@ -41,7 +41,7 @@ import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.TransparentSystemBars2
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.net.HttpURLConnection
 import java.net.URL
 

@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -90,15 +90,16 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.util.NoneRoundShape
+import com.xah.common.ui.shader.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.container.component.base.sharedContainer
-import com.xah.mirror.util.ShaderState
+
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -233,7 +234,7 @@ fun ZhiJianCourseTableUI(
     val placeTextSize = textSize * placeTextFactor
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data
+        val list = (uiState as NetworkUiState.Success).data
         fun refreshUI() {
             // 清空
             if(showAll) {

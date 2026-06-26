@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.logic.enumeration.PostMode
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
@@ -48,8 +48,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.ShaderState
-import com.xah.mirror.util.rememberShaderState
+
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -182,7 +182,7 @@ private fun SurveyAllButton(
             onClick = {
                 // 未评教的教师们
                 scope.launch(Dispatchers.IO) {
-                    val list = (surveyListData as UiState.Success).data.flatMap { it.lessonSurveyTasks }.filter { it.submitted == false }
+                    val list = (surveyListData as NetworkUiState.Success).data.flatMap { it.lessonSurveyTasks }.filter { it.submitted == false }
                     if(list.isEmpty()) {
                         showToast("无未完成的评教")
                         refresh()
@@ -201,7 +201,7 @@ private fun SurveyAllButton(
                         // 获取下一个教师
                         refreshOne(task.id)
                         val bean = vm.surveyData.state.first()
-                        if(bean !is UiState.Success) {
+                        if(bean !is NetworkUiState.Success) {
                             showToast("逻辑出错(可能是教务系统反爬机制)")
                             failedNum++
                             continue
@@ -227,7 +227,7 @@ private fun SurveyAllButton(
             },
             isCircle = loading,
             backdrop = backDrop,
-            enabled = surveyListData is UiState.Success && !loading
+            enabled = surveyListData is NetworkUiState.Success && !loading
         ) {
             if(loading) {
                 LoadingIcon()

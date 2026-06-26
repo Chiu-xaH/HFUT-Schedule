@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -118,7 +118,7 @@ private fun CourseSurveyListUI(
     innerPadding : PaddingValues
 ) {
     val uiState by vm.surveyListData.state.collectAsState()
-    val list = (uiState as UiState.Success).data
+    val list = (uiState as NetworkUiState.Success).data
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var data by remember { mutableStateOf<forStdLessonSurveySearchVms?>(null) }

@@ -38,11 +38,11 @@ import com.hfut.schedule.logic.model.community.StuAppsResponse
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.hfut.schedule.network.api.CommunityService
@@ -61,7 +61,7 @@ import kotlinx.coroutines.ensureActive
 object CommunityRepository {
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
 
-    suspend fun loginCommunity(ticket : String,holder : StateHolder<String>) = launchRequestState(
+    suspend fun loginCommunity(ticket : String,holder : UiStateHolder<String>) = launchRequestState(
         holder = holder,
         request = { community.login(ticket) },
         transformSuccess = { _, json -> parseCommunity(json) }
@@ -82,7 +82,7 @@ object CommunityRepository {
         throw e
     }
 
-    suspend fun searchFailRate(token : String, name: String, page : Int,code : String?,holder : StateHolder<Pair<String?,List<FailRateRecord>>>) =
+    suspend fun searchFailRate(token : String, name: String, page : Int,code : String?,holder : UiStateHolder<Pair<String?,List<FailRateRecord>>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -102,14 +102,14 @@ object CommunityRepository {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun checkCommunityLogin(token: String,holder : StateHolder<Boolean>) =
+    suspend fun checkCommunityLogin(token: String,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = { community.getExam(token) },
             transformSuccess = { _, _ -> true }
         )
 
-    suspend fun getGrade(token: String, year : String, term : String,holder : StateHolder<GradeResult>) =
+    suspend fun getGrade(token: String, year : String, term : String,holder : UiStateHolder<GradeResult>) =
         launchRequestState(
             holder = holder,
             request = { community.getGrade(token, year, term) },
@@ -123,7 +123,7 @@ object CommunityRepository {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAvgGrade(token: String,holder : StateHolder<AvgResult>) = launchRequestState(
+    suspend fun getAvgGrade(token: String,holder : UiStateHolder<AvgResult>) = launchRequestState(
         holder = holder,
         request = { community.getAvgGrade(token) },
         transformSuccess = { _, json -> parseAvgGradeFromCommunity(json) }
@@ -136,7 +136,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAllAvgGrade(token: String,holder : StateHolder<List<GradeAllResult>>) =
+    suspend fun getAllAvgGrade(token: String,holder : UiStateHolder<List<GradeAllResult>>) =
         launchRequestState(
             holder = holder,
             request = { community.getAllAvgGrade(token) },
@@ -150,7 +150,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchBooks(token: String, name: String, page: Int,holder : StateHolder<List<LibRecord>>) =
+    suspend fun searchBooks(token: String, name: String, page: Int,holder : UiStateHolder<List<LibRecord>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -170,7 +170,7 @@ object CommunityRepository {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getBookPosition(token: String,callNo: String,holder : StateHolder<List<BookPositionBean>>) =
+    suspend fun getBookPosition(token: String,callNo: String,holder : UiStateHolder<List<BookPositionBean>>) =
         launchRequestState(
             holder = holder,
             request = { community.getBookPosition(token, callNo) },
@@ -207,7 +207,7 @@ object CommunityRepository {
         })
     }
 
-    suspend fun getDormitory(token : String,holder : StateHolder<DormitoryBean>) =
+    suspend fun getDormitory(token : String,holder : UiStateHolder<DormitoryBean>) =
         launchRequestState(
             holder = holder,
             request = { community.getDormitory(token) },
@@ -222,7 +222,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getDormitoryInfo(token : String, dormitoryFromCommunityResp : StateHolder<DormitoryBean>, dormitoryInfoFromCommunityResp : StateHolder<List<DormitoryUser>>) =
+    suspend fun getDormitoryInfo(token : String, dormitoryFromCommunityResp : UiStateHolder<DormitoryBean>, dormitoryInfoFromCommunityResp : UiStateHolder<List<DormitoryUser>>) =
         onListenStateHolderForNetwork(
             dormitoryFromCommunityResp,
             dormitoryInfoFromCommunityResp
@@ -245,7 +245,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun addFriendApply(token : String, username : String,holder : StateHolder<String>) =
+    suspend fun addFriendApply(token : String, username : String,holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -262,7 +262,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getApplying(token : String,holder : StateHolder<List<ApplyingLists?>>) =
+    suspend fun getApplying(token : String,holder : UiStateHolder<List<ApplyingLists?>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -280,7 +280,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getMaps(token : String,holder : StateHolder<List<MapBean>>) = launchRequestState(
+    suspend fun getMaps(token : String,holder : UiStateHolder<List<MapBean>>) = launchRequestState(
         holder = holder,
         request = { community.getCampusMap(token) },
         transformSuccess = { _, json -> parseMaps(json) }
@@ -293,7 +293,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getStuApps(token : String,holder : StateHolder<List<StuAppBean>>) =
+    suspend fun getStuApps(token : String,holder : UiStateHolder<List<StuAppBean>>) =
         launchRequestState(
             holder = holder,
             request = { community.getStuApps(token) },
@@ -310,7 +310,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getBus(token : String,holder : StateHolder<List<BusBean>>) = launchRequestState(
+    suspend fun getBus(token : String,holder : UiStateHolder<List<BusBean>>) = launchRequestState(
         holder = holder,
         request = { community.getBus(token) },
         transformSuccess = { _, json -> parseBus(json) }
@@ -324,7 +324,7 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun communityBooks(token : String, type : LibraryItems, page : Int = 1, booksChipData : StateHolder<List<BorrowRecords>>) =
+    suspend fun communityBooks(token : String, type : LibraryItems, page : Int = 1, booksChipData : UiStateHolder<List<BorrowRecords>>) =
         launchRequestState(
             holder = booksChipData,
             request = {
@@ -359,7 +359,7 @@ object CommunityRepository {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getToday(token : String,holder : StateHolder<TodayResult>) = launchRequestState(
+    suspend fun getToday(token : String,holder : UiStateHolder<TodayResult>) = launchRequestState(
         holder = holder,
         request = { community.getToday(token) },
         transformSuccess = { _, json -> parseTodayFromCommunity(json) }
@@ -392,7 +392,7 @@ object CommunityRepository {
         token : String,
         week : Int? = null,
         semester : String? = null,
-        holder : StateHolder<List<DormitoryScoreBean>>
+        holder : UiStateHolder<List<DormitoryScoreBean>>
     ) = launchRequestState(
         holder = holder,
         request = { community.getDormitoryScoreDetail(token, week, semester) },
@@ -403,7 +403,7 @@ object CommunityRepository {
         token : String,
         semester : String,
         semesterInt : Int,
-        holder : StateHolder<DormitoryWeeklyScores>,
+        holder : UiStateHolder<DormitoryWeeklyScores>,
     ) {
         val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
         val cached = LargeStringDataManager.read(cacheKey)

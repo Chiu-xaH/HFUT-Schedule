@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseFailRateDTOList
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -52,7 +52,7 @@ fun FailRateUI(
     val navController = LocalNavController.current
     val uiState by vm.failRateData.state.collectAsState()
     val listState = rememberLazyListState()
-    val list = (uiState as UiState.Success).data.second.let {
+    val list = (uiState as NetworkUiState.Success).data.second.let {
         filterCode?.let { _ ->
             it.filter { record -> record.courseMetaId == filterCode }
         } ?: it

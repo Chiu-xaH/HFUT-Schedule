@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -64,7 +63,7 @@ import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -103,8 +102,8 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.safeDiv
 import com.sharednav.common.util.NoneRoundShape
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -479,7 +478,7 @@ fun GradeItemJxglstuUI(
             vm.getGradeFromJxglstu(cookie,null)
         }
     }
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
 
     LaunchedEffect(Unit) {
         if(refreshing) {
@@ -498,7 +497,7 @@ fun GradeItemJxglstuUI(
             .padding(innerPadding)
             .align(Alignment.TopCenter))
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val gradeList = (uiState as UiState.Success).data
+            val gradeList = (uiState as NetworkUiState.Success).data
             ui(gradeList)
         }
     }
@@ -532,7 +531,7 @@ fun GradeItemUIUniApp(
         vm.getUniAppGrades(cookie)
     }
 
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
 
     LaunchedEffect(Unit) {
         if(refreshing) {
@@ -561,7 +560,7 @@ fun GradeItemUIUniApp(
                 .align(Alignment.TopCenter)
         )
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val gradeList = (uiState as UiState.Success).data.toList().sortedByDescending { it.first }
+            val gradeList = (uiState as NetworkUiState.Success).data.toList().sortedByDescending { it.first }
             val safelyList = remember(gradeList) {
                 gradeList
                     .associate { it.first to it.second }

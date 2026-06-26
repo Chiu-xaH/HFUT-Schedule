@@ -11,13 +11,13 @@ import com.hfut.schedule.logic.network.impl.LoginServiceCreator
 import com.hfut.schedule.network.impl.LoginWebVpnServiceCreator
 import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -33,11 +33,11 @@ class LoginViewModel : ViewModel() {
     val code = MutableLiveData<String?>()
     val location = MutableLiveData<String>()
 
-    val jSessionId = StateHolder<CasGetFlavorBean>() // JSESSION
+    val jSessionId = UiStateHolder<CasGetFlavorBean>() // JSESSION
     suspend fun getKey() = CasLoginRepository.getEncryptKey(jSessionId)
 
     //  execution,SESSION
-    val executionAndSession = StateHolder<Pair<String, String>>()
+    val executionAndSession = UiStateHolder<Pair<String, String>>()
     suspend fun getCookie() = CasLoginRepository.getCasCookie(executionAndSession)
 
 
@@ -108,7 +108,7 @@ class LoginViewModel : ViewModel() {
             }
         }
 
-    val webVpnTicket = StateHolder<String>()
+    val webVpnTicket = UiStateHolder<String>()
     suspend fun getKeyWebVpn() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
         val call = loginWebVpn.getKeyWebVpn("${Constant.WEBVPN_COOKIE_HEADER}${ticket}")
         call.enqueue(object : Callback<ResponseBody> {
@@ -127,7 +127,7 @@ class LoginViewModel : ViewModel() {
         })
     }
 
-    val status = StateHolder<Boolean>()
+    val status = UiStateHolder<Boolean>()
     suspend fun putKey(ticket : String) = launchRequestState(
         holder = status ,
         request = { loginWebVpn.putKey(Constant.WEBVPN_COOKIE_HEADER + ticket) },

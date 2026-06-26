@@ -38,7 +38,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnC
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hjq.device.compat.DeviceOs
 import com.xah.navigation.controller.NavigationController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 
 object Starter {

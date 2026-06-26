@@ -16,7 +16,7 @@ import com.hfut.schedule.receiver.CourseLiveUpdateReceiver
 import com.hfut.schedule.service.CourseLiveUpdateService
 import com.hfut.schedule.ui.nav.destination.CourseLiveUpdateDetailDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

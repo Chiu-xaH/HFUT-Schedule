@@ -37,7 +37,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -63,7 +63,7 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -125,11 +125,11 @@ private fun BorrowUI(
 ) {
     val uiState by vm.libraryBorrowedResp.state.collectAsState()
     val refreshNetwork = suspend m@ {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@m
         }
         val token = prefs.getString(LIBRARY_TOKEN,"") ?: return@m
-        val pageSize = (vm.libraryStatusResp.state.value as? UiState.Success)?.data?.borrowCount
+        val pageSize = (vm.libraryStatusResp.state.value as? NetworkUiState.Success)?.data?.borrowCount
         vm.libraryBorrowedResp.clear()
         vm.getBorrowed(token,1,null,pageSize ?: Constant.DEFAULT_PAGE_SIZE)
     }
@@ -138,7 +138,7 @@ private fun BorrowUI(
     }
 
     CommonNetworkScreen(uiState, onReload =  refreshNetwork) {
-        val list = (uiState as UiState.Success).data.sortedByDescending { it.createdTime }
+        val list = (uiState as NetworkUiState.Success).data.sortedByDescending { it.createdTime }
         val analysis = list.map { l -> statusList.find { e -> e.status == l.status } }
         val totalCount = analysis.size
         val returnedCount = analysis.filter { it == BorrowedStatus.RETURNED }.size

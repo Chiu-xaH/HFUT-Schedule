@@ -74,6 +74,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.util.NoneRoundShape
+import com.xah.common.ui.shader.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
@@ -81,9 +82,9 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
-import com.xah.mirror.util.ShaderState
+
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 

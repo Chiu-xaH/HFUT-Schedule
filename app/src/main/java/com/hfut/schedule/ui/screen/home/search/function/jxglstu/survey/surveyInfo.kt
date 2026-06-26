@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.network.util.StatusCode
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -82,7 +82,7 @@ private fun SurveyList(
     onResult : () -> Unit
 ) {
     val uiState by vm.surveyData.state.collectAsState()
-    val bean = (uiState as UiState.Success).data
+    val bean = (uiState as NetworkUiState.Success).data
     var postMode by remember { mutableStateOf(PostMode.HIGH) }
     var showDialog by remember { mutableStateOf(false) }
     var showTextField by remember { mutableStateOf(false) }
@@ -211,7 +211,7 @@ suspend fun postSurvey(
     teacherName : String? = null
 ) : Boolean = withContext(Dispatchers.IO) {
     // 主线程监听 StateFlow
-    val token = vm.surveyToken.state.first() as? UiState.Success
+    val token = vm.surveyToken.state.first() as? NetworkUiState.Success
     token ?: return@withContext false
     val cookie = getJxglstuCookie()
     val result = vm.postSurvey("$cookie;${token.data}", postResult(mode, bean, comment,teacherId))

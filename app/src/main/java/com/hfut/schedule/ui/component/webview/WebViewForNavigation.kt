@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
 import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
 import java.net.URL

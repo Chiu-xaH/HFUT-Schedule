@@ -5,7 +5,7 @@ import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.api.AcademicService
 import com.hfut.schedule.network.api.AcademicXCService
 import com.hfut.schedule.network.api.NewsService
@@ -44,7 +44,7 @@ object NewsRepository {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : StateHolder<List<NewsResponse>>) =
+    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : UiStateHolder<List<NewsResponse>>) =
         launchRequestState(
             holder = newsXuanChengResult,
             request = {
@@ -67,7 +67,7 @@ object NewsRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademicXC(type: AcademicXCType, page: Int = 1, holder : StateHolder<List<NewsResponse>>) =
+    suspend fun getAcademicXC(type: AcademicXCType, page: Int = 1, holder : UiStateHolder<List<NewsResponse>>) =
         launchRequestState(
             holder = holder,
             request = { academicXC.getNews(type.type, page) },
@@ -117,7 +117,7 @@ object NewsRepository {
         newsList
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademic(type: AcademicType, totalPage : Int? = null, page: Int = 1, holder : StateHolder<AcademicNewsResponse>) =
+    suspend fun getAcademic(type: AcademicType, totalPage : Int? = null, page: Int = 1, holder : UiStateHolder<AcademicNewsResponse>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -152,7 +152,7 @@ object NewsRepository {
         AcademicNewsResponse(news = newsList, totalPage = maxPage)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchNews(title : String,page: Int = 1,newsResult : StateHolder<List<NewsResponse>>) =
+    suspend fun searchNews(title : String,page: Int = 1,newsResult : UiStateHolder<List<NewsResponse>>) =
         launchRequestState(
             holder = newsResult,
             request = { news.searchNews(CryptoUtil.encodeToBase64(title), page) },

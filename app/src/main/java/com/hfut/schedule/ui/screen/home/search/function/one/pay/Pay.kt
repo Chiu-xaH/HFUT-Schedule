@@ -36,7 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.PayData
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
@@ -136,7 +136,7 @@ fun FeeScreen(
 @Composable
 fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     val uiState by vm.payFeeResponse.state.collectAsState()
-    var successLoad = uiState is UiState.Success
+    var successLoad = uiState is NetworkUiState.Success
     var data by remember { mutableStateOf(PayData("0.00","0.00","0.00","0.00","0.00")) }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -162,7 +162,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     }
     LaunchedEffect(uiState) {
         if(successLoad) {
-            data = (uiState as UiState.Success).data
+            data = (uiState as NetworkUiState.Success).data
         }
     }
     LaunchedEffect(Unit) {

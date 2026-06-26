@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -37,7 +37,7 @@ import com.xah.common.ui.component.chart.RadarData
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -202,7 +202,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
     DividerTextExpandedWith("学业分析") {
         CommonNetworkScreen(uiState, onReload = null, isFullScreen = false) {
             Column {
-                val gradeMap = (uiState as UiState.Success).data
+                val gradeMap = (uiState as NetworkUiState.Success).data
                 val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
 
                 val grades = remember(gradeMap, semester) {

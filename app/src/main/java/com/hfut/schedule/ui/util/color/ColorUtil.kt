@@ -21,7 +21,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.materialkolor.ktx.themeColors
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.io.File
 import kotlin.math.abs
 

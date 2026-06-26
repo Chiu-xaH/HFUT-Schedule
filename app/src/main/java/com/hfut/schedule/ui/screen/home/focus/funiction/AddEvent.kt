@@ -106,7 +106,7 @@ import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.model.uniapp.UniAppCampus
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -1138,7 +1138,7 @@ private fun BuildingsSelector(
 
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
     val refreshNetworkChips = suspend m@ {
-        if(chipsUiState is UiState.Success) {
+        if(chipsUiState is NetworkUiState.Success) {
             return@m
         }
         var jwt = DataStoreManager.uniAppJwt.first()
@@ -1222,8 +1222,8 @@ private fun BuildingsSelector(
                 }
                 return
             }
-            if(chipsUiState is UiState.Success) {
-                val buildingList = (chipsUiState as UiState.Success).data
+            if(chipsUiState is NetworkUiState.Success) {
+                val buildingList = (chipsUiState as NetworkUiState.Success).data
                     .filter {
                         when(campus) {
                             Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
@@ -1249,10 +1249,10 @@ private fun BuildingsSelector(
             }
         }
         // 建筑
-        if(chipsUiState is UiState.Loading) {
+        if(chipsUiState is NetworkUiState.Loading) {
             BottomTip("正在获取建筑列表")
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP*3))
-        } else if(chipsUiState is UiState.Error) {
+        } else if(chipsUiState is NetworkUiState.Error) {
             BottomTip("获取建筑列表失败")
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP*3))
         }

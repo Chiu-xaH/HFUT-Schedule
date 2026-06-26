@@ -32,7 +32,7 @@ import com.hfut.schedule.logic.network.interceptor.GoToInterceptorState
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.isNotBadRequest
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -60,13 +60,14 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safe
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.shader.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.floating.util.LocalFloatingController
-import com.xah.mirror.util.ShaderState
+
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -246,7 +247,7 @@ fun JxglstuCourseTableUI(
                        } else {
                            // 检测智慧社区可用性
                            vm.checkCommunityLogin(communityAuth)
-                           val result = (vm.checkCommunityResponse.state.value as? UiState.Success)?.data
+                           val result = (vm.checkCommunityResponse.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新智慧社区")
                                return@community
@@ -264,7 +265,7 @@ fun JxglstuCourseTableUI(
                            loginHuiXIn(cookies, vm)
                        } else {
                            vm.checkHuiXinLogin(auth)
-                           val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
+                           val result = (vm.huiXinCheckLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新慧新易校")
                                return@huiXin
@@ -287,7 +288,7 @@ fun JxglstuCourseTableUI(
                            loginOne(cookies,vm)
                        } else {
                            vm.checkOneLogin(token)
-                           val result = (vm.checkOneLoginResp.state.value as? UiState.Success)?.data
+                           val result = (vm.checkOneLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新信息门户")
                                return@one
@@ -307,7 +308,7 @@ fun JxglstuCourseTableUI(
                        } else {
                            // 检测学工系统可用性
                            vm.checkStuLogin(auth)
-                           val result =  (vm.checkStuLoginResp.state.value as? UiState.Success)?.data
+                           val result =  (vm.checkStuLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新学工平台")
                                return@stu
@@ -328,7 +329,7 @@ fun JxglstuCourseTableUI(
                        } else {
                            // 检测可用性
                            vm.checkLibraryLogin(auth)
-                           val result =  (vm.checkLibraryLoginResp.state.value as? UiState.Success)?.data
+                           val result =  (vm.checkLibraryLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新图书馆")
                                return@library
@@ -349,7 +350,7 @@ fun JxglstuCourseTableUI(
                        } else {
                            // 检测可用性
                            vm.zhiJianCheckLogin(auth)
-                           val result = (vm.zhiJianCheckLoginResp.state.value as? UiState.Success)?.data
+                           val result = (vm.zhiJianCheckLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新指间工大")
                                return@zhiJian
@@ -369,7 +370,7 @@ fun JxglstuCourseTableUI(
                        } else {
                            // 检测可用性
                            vm.checkPeLogin(auth)
-                           val result = (vm.checkPeLoginResp.state.value as? UiState.Success)?.data
+                           val result = (vm.checkPeLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新体测平台")
                                return@pe
@@ -389,7 +390,7 @@ fun JxglstuCourseTableUI(
                        } else {
                            // 检测可用性
                            vm.checkSecondClassLogin(auth)
-                           val result = (vm.checkSecondClassLoginResp.state.value as? UiState.Success)?.data
+                           val result = (vm.checkSecondClassLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新第二课堂")
                                return@second
@@ -432,7 +433,7 @@ fun JxglstuCourseTableUI(
                }
                cookie?: return@jxglstu
                vm.getStudentId(cookie)
-               val studentId = (vm.studentId.state.value as? UiState.Success)?.data
+               val studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
                if(studentId == null) {
                    showToast("获取studentId失败 请在聚焦界面下拉刷新")
                    loadingJxglstu = false
@@ -445,7 +446,7 @@ fun JxglstuCourseTableUI(
                    }
                }
                vm.getBizTypeId(cookie,studentId)
-               val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data
+               val bizTypeId = (vm.bizTypeIdResponse.state.value as? NetworkUiState.Success)?.data
                if(bizTypeId == null) {
                    showToast("获取bizTypeId失败 请在聚焦界面下拉刷新")
                    loadingJxglstu = false
@@ -453,10 +454,10 @@ fun JxglstuCourseTableUI(
                }
                launch {
                    vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
-                   val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@launch
+                   val lessonResponse = (vm.lessonIds.state.value as? NetworkUiState.Success)?.data ?: return@launch
                    vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
                    vm.getDatum(cookie,lessonResponse.lessonIds)
-                   val datum = (vm.datumData.state.value as? UiState.Success)?.data
+                   val datum = (vm.datumData.state.value as? NetworkUiState.Success)?.data
                    if(datum == null) {
                        showToast("数据为空,尝试刷新")
                    }

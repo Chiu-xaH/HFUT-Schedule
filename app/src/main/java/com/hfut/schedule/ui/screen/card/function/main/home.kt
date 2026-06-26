@@ -53,7 +53,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -92,7 +92,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -103,8 +103,8 @@ import kotlinx.coroutines.launch
 fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialValue = "--") {
     var total = 0.0
     try {
-        val uiState = vm.huiXinBillResult.state.first { it !is UiState.Loading }
-        if(uiState is UiState.Success) {
+        val uiState = vm.huiXinBillResult.state.first { it !is NetworkUiState.Loading }
+        if(uiState is NetworkUiState.Success) {
             val list = uiState.data.records
             for (item in list) {
                 val get = item.jndatetimeStr

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
@@ -50,7 +50,7 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
     HorizontalPager(state = pagerState) { pager ->
         val campus = t[pager]
         CommonNetworkScreen(uiState = uiState, onReload = refreshNetwork, isFullScreen = false) {
-            val list = (uiState as UiState.Success).data
+            val list = (uiState as NetworkUiState.Success).data
             // 从list里取出符合条件的一项
             val bean = list.find { it.name.contains(campus.description) } ?: return@CommonNetworkScreen
             val cUrl = bean.currentMap

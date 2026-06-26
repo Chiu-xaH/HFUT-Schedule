@@ -86,7 +86,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.ktx.darken
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 

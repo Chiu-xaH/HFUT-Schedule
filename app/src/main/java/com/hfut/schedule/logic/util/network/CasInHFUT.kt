@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.util.network
 
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import org.jsoup.Jsoup
 
 // HFUT Central Authentication Service 统一认证登录

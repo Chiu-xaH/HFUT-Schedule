@@ -22,7 +22,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -79,10 +79,10 @@ data class CourseSearchApiDestination(
                     },
                     actions = {
                         val canNotUse = courseName == null && code == null
-                        val enabled = uiState is UiState.Success && !canNotUse
+                        val enabled = uiState is NetworkUiState.Success && !canNotUse
                         val dest = remember(enabled) {
                             if(enabled) {
-                                val data = (uiState as UiState.Success).data
+                                val data = (uiState as NetworkUiState.Success).data
                                 val term = if(data.isNotEmpty()) {
                                     data[0].semester.id
                                 } else {

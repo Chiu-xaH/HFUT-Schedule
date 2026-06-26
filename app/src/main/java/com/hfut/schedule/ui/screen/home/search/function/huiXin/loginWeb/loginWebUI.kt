@@ -49,7 +49,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -76,8 +76,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -183,16 +183,16 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     LaunchedEffect(Unit) {
         vm.loginSchoolNetResponse.emitPrepare()
     }
-    val loadingLogin = uiState is UiState.Loading
+    val loadingLogin = uiState is NetworkUiState.Loading
 
     LaunchedEffect(uiState) {
         when(uiState) {
-            is UiState.Error -> {
+            is NetworkUiState.Error -> {
                 textLogin = "登录失败"
                 textLogout = "注销失败"
             }
-            is UiState.Success -> {
-                val data = (uiState as UiState.Success).data
+            is NetworkUiState.Success -> {
+                val data = (uiState as NetworkUiState.Success).data
                 if(data) {
                     textLogin = "已登录"
                     textLogout = "注销"

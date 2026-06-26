@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.SupabaseLoginResponse
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -37,7 +37,7 @@ suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, n
     vm.supabaseLoginWithPassword(password)
     val result = vm.supabaseLoginResp.state.first()
     when(result) {
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             // 保存
             async {
                 launch { DataStoreManager.saveSupabaseRefreshToken(result.data.refreshToken) }
@@ -48,7 +48,7 @@ suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, n
                 showToast("登录成功")
             }
         }
-        is UiState.Error<*> -> showToast("密码错误或未注册")
+        is NetworkUiState.Error<*> -> showToast("密码错误或未注册")
         else -> {}
     }
 
@@ -88,7 +88,7 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
         }
         // 使用刷新登录
         vm.supabaseLoginWithRefreshToken(refreshToken)
-        val login = (vm.supabaseLoginResp.state.value as? UiState.Success)?.data
+        val login = (vm.supabaseLoginResp.state.value as? NetworkUiState.Success)?.data
         if(login == null) {
             // 只能使用密码登录法
             showToast("自动刷新登录失败，请前往选项中选手动刷新登陆状态")
@@ -106,11 +106,11 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
 
     val status = vm.supabaseCheckResp.state.first()
     when(status) {
-        is UiState.Success -> {
+        is NetworkUiState.Success -> {
             // 已经检查过
             return@withContext true
         }
-        is UiState.Error -> {
+        is NetworkUiState.Error -> {
             // Token不对或过期
             return@withContext tryLogin()
         }
@@ -120,10 +120,10 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
             vm.supabaseCheckJwt(jwt)
             val check2 = vm.supabaseCheckResp.state.first()
             when(check2) {
-                is UiState.Success -> {
+                is NetworkUiState.Success -> {
                     return@withContext true
                 }
-                is UiState.Error -> {
+                is NetworkUiState.Error -> {
                     // Token不对或过期
                     return@withContext tryLogin()
                 }

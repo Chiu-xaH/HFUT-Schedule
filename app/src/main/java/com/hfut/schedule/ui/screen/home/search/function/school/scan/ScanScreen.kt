@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.core.net.toUri
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.parseQRCode
 import com.hfut.schedule.logic.util.parse.isWifiContent
 import com.hfut.schedule.logic.util.parse.parseWifiQrCode
@@ -62,7 +62,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -135,7 +135,7 @@ fun ScanScreen(
                                         vm.wxLoginCasResponse.clear()
                                         vm.wxLoginCas(auth!!, resultText)
                                         val loginResult =
-                                            (vm.wxLoginCasResponse.state.value as? UiState.Success)?.data
+                                            (vm.wxLoginCasResponse.state.value as? NetworkUiState.Success)?.data
                                         if (loginResult == null) {
                                             showToast("登陆失败")
                                             resultText = ""
@@ -149,7 +149,7 @@ fun ScanScreen(
                                             } else {
                                                 vm.wxConfirmLogin(auth!!, uuid)
                                                 val confirmResult =
-                                                    (vm.wxConfirmLoginResponse.state.value as? UiState.Success)?.data
+                                                    (vm.wxConfirmLoginResponse.state.value as? NetworkUiState.Success)?.data
                                                 if (confirmResult == null) {
                                                     showToast("登陆中途失败")
                                                     resultText = ""

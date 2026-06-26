@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.model.huixin.ReturnCard
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
-
+@Deprecated("使用GlobalStateHolder替代")
 class UIViewModel : ViewModel()  {
     var cardValue by mutableStateOf<ReturnCard?>(null)
     var electricValue = MutableLiveData<String?>()

@@ -77,7 +77,7 @@ import com.hfut.schedule.logic.model.uniapp.UniAppCampus
 import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
 import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomLesson
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
@@ -131,7 +131,7 @@ import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -254,8 +254,8 @@ fun ClassroomScreen(
                             item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                         }
                         // 建筑选择（可多选） 多个Chip
-                        if(chipsUiState is UiState.Success) {
-                            val buildingList = (chipsUiState as UiState.Success).data.filter {
+                        if(chipsUiState is NetworkUiState.Success) {
+                            val buildingList = (chipsUiState as NetworkUiState.Success).data.filter {
                                 when(campus) {
                                     Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
                                     Campus.TXL -> UniAppCampus.TXL.code == it.campusAssoc
@@ -375,7 +375,7 @@ private fun EmptyClassroomScreen(
     val navTopController = LocalNavController.current
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
     val refreshNetworkChips = suspend m@ {
-        if(chipsUiState is UiState.Success) {
+        if(chipsUiState is NetworkUiState.Success) {
             return@m
         }
         var jwt = DataStoreManager.uniAppJwt.first()
@@ -443,7 +443,7 @@ private fun EmptyClassroomScreen(
         .padding(bottom = APP_HORIZONTAL_DP)
     Box(modifier = Modifier.fillMaxSize()) {
         CommonNetworkScreen(itemsUiState, onReload = refreshNetworkItems) {
-            val list = (itemsUiState as UiState.Success).data
+            val list = (itemsUiState as NetworkUiState.Success).data
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = listState) {
                     item { InnerPaddingHeight(innerPadding,true) }
@@ -646,11 +646,11 @@ private fun SearchClassroomScreen(
     val navTopController = LocalNavController.current
     val uiState by vm.uniAppSearchClassroomsResp.state.collectAsState()
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Loading) {
+        if(uiState is NetworkUiState.Loading) {
             vm.uniAppSearchClassroomsResp.emitPrepare()
         }
     }
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = refreshNetwork)
     val listState = rememberLazyListState()
     Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
@@ -663,7 +663,7 @@ private fun SearchClassroomScreen(
                 .padding(innerPadding)
         )
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-            val list = (uiState as UiState.Success).data
+            val list = (uiState as NetworkUiState.Success).data
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = listState) {
                     item { InnerPaddingHeight(innerPadding,true) }
@@ -769,7 +769,7 @@ fun ClassroomLessonsScreen(
             }
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val list = (uiState as UiState.Success).data
+                val list = (uiState as NetworkUiState.Success).data
                 val scrollState = rememberScrollState()
 
                 val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)

@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.library.LibraryStatusResponse
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.api.LibraryService
 import com.hfut.schedule.network.impl.LibraryServiceCreator
 import com.hfut.schedule.network.util.Constant
@@ -24,7 +24,7 @@ object LibraryRepository {
         library.check()
     }
 
-    suspend fun checkLibraryLogin(token : String,holder : StateHolder<Boolean>) =
+    suspend fun checkLibraryLogin(token : String,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = { library.checkLogin(token) },
@@ -39,7 +39,7 @@ object LibraryRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getStatus(token : String,holder : StateHolder<LibraryStatus>) = launchRequestState(
+    suspend fun getStatus(token : String,holder : UiStateHolder<LibraryStatus>) = launchRequestState(
         holder = holder,
         request = { library.getStatus(auth = token) },
         transformSuccess = { _, json -> parseLibraryStatus(json) }
@@ -87,7 +87,7 @@ object LibraryRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = Constant.DEFAULT_PAGE_SIZE, holder : StateHolder<List<LibraryBorrowedBean>>) =
+    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = Constant.DEFAULT_PAGE_SIZE, holder : UiStateHolder<List<LibraryBorrowedBean>>) =
         launchRequestState(
             holder = holder,
             request = { library.getBorrowed(token, page, status?.status, pageSize = pageSize) },
@@ -101,7 +101,7 @@ object LibraryRepository {
     suspend fun search(
         page : Int,
         keyword : String,
-        holder : StateHolder<List<LibrarySearchBean>>
+        holder : UiStateHolder<List<LibrarySearchBean>>
     ) = launchRequestState(
         holder = holder,
         request = {

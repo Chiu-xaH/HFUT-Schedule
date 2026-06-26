@@ -24,7 +24,7 @@ import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramResponse
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -39,7 +39,7 @@ import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import retrofit2.awaitResponse
 
 object UniAppRepository {
@@ -101,7 +101,7 @@ object UniAppRepository {
     suspend fun getClassmates(
         lessonId : String,
         token : String ,
-        holder : StateHolder<List<UniAppClassmatesBean>>
+        holder : UiStateHolder<List<UniAppClassmatesBean>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getClassmates(lessonId, token) },
@@ -141,7 +141,7 @@ object UniAppRepository {
 
     suspend fun getGrades(
         token : String ,
-        holder : StateHolder<Map<String, List<UniAppGradeBean>>>
+        holder : UiStateHolder<Map<String, List<UniAppGradeBean>>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getGrades(token) },
@@ -186,7 +186,7 @@ object UniAppRepository {
         token : String,
         page : Int ,
         keyword : String = "",
-        holder : StateHolder<List<UniAppSearchProgramBean>>
+        holder : UiStateHolder<List<UniAppSearchProgramBean>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -209,7 +209,7 @@ object UniAppRepository {
     suspend fun getProgramById(
         id : Int,
         token: String,
-        holder : StateHolder<ProgramSearchBean>
+        holder : UiStateHolder<ProgramSearchBean>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getProgramById(id, token) },
@@ -223,7 +223,7 @@ object UniAppRepository {
 
     suspend fun getBuildings(
         token : String,
-        holder : StateHolder<List<UniAppBuildingBean>>
+        holder : UiStateHolder<List<UniAppBuildingBean>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getBuildings(token) },
@@ -250,7 +250,7 @@ object UniAppRepository {
         buildings : List<Int>?,
         floors : List<Int>?,
         token : String,
-        holder : StateHolder<List<UniAppEmptyClassroomBean>>
+        holder : UiStateHolder<List<UniAppEmptyClassroomBean>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -280,7 +280,7 @@ object UniAppRepository {
         input : String,
         token : String,
         page : Int,
-        holder : StateHolder<List<UniAppSearchClassroomBean>>
+        holder : UiStateHolder<List<UniAppSearchClassroomBean>>
     ) = launchRequestState(
         request = {
             uniApp.searchClassrooms(
@@ -301,7 +301,7 @@ object UniAppRepository {
         semester: Int,
         roomId : Int,
         token : String,
-        holder : StateHolder<List<UniAppClassroomLessonBean>>
+        holder : UiStateHolder<List<UniAppClassroomLessonBean>>
     ) = launchRequestState(
         request = { uniApp.getClassroomLessons(semester, roomId, token) },
         holder = holder,

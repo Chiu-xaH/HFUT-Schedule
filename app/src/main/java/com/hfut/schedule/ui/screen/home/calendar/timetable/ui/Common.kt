@@ -37,11 +37,12 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.sharednav.common.util.NoneRoundShape
+import com.xah.common.ui.shader.ShaderState
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 import com.xah.floating.util.LocalFloatingController
-import com.xah.mirror.util.ShaderState
-import com.xah.shared.LogUtil
+
+import com.xah.common.logic.util.LogUtil
 
 const val timeTextFactor = 0.85
 const val placeTextFactor = 0.9

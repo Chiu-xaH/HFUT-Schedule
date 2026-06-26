@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.home.calendar.common
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,16 +34,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.mirror.shader.glassLayer
-import com.xah.mirror.shader.smallStyle
-import com.xah.mirror.util.ShaderState
+import com.xah.common.ui.shader.ShaderState
+import com.xah.common.ui.shader.style.smallStyle
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import java.time.LocalDate
 

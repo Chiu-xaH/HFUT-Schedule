@@ -17,7 +17,7 @@ import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.state.GlobalStateHolder.postedUse
 import com.xah.navigation.registry.DeepLinkRegistry
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

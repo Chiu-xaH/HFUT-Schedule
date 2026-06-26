@@ -44,7 +44,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -96,8 +96,8 @@ fun CourseSearchScreen(
     var semester by rememberSaveable { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
-            val data = (uiState as UiState.Success).data
+        if(uiState is NetworkUiState.Success) {
+            val data = (uiState as NetworkUiState.Success).data
             if(data.isEmpty()) {
                 return@LaunchedEffect
             }
@@ -110,7 +110,7 @@ fun CourseSearchScreen(
     }
 
     val refreshNetwork : suspend (Boolean) -> Unit = m@ { skip ->
-        if(uiState is UiState.Success && skip) return@m
+        if(uiState is NetworkUiState.Success && skip) return@m
         if(semester == null) return@m
         val cookie = getJxglstuCookie() ?: return@m
 
@@ -126,10 +126,10 @@ fun CourseSearchScreen(
 
     LaunchedEffect(uiState) {
         showSearch = when(uiState) {
-            is UiState.Loading -> false
-            is UiState.Error -> true
-            is UiState.Prepare -> true
-            is UiState.Success -> false
+            is NetworkUiState.Loading -> false
+            is NetworkUiState.Error -> true
+            is NetworkUiState.Prepare -> true
+            is NetworkUiState.Success -> false
         }
     }
 
@@ -158,7 +158,7 @@ fun CourseSearchScreen(
                             val courseCodeNil = courseId.let { it.ifEmpty { null } }
                             val courseNameNil = courseName.let { it.ifEmpty { null } }
                             val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
-                            val enabled = uiState is UiState.Success && !canNotUse
+                            val enabled = uiState is NetworkUiState.Success && !canNotUse
 
                             val dest = remember(enabled) {
                                 if(enabled) {
@@ -167,7 +167,7 @@ fun CourseSearchScreen(
                                         classNameNil,
                                         courseCodeNil,
                                         courseNameNil,
-                                        (uiState as UiState.Success).data
+                                        (uiState as NetworkUiState.Success).data
                                     )
                                 } else {
                                     null
@@ -206,7 +206,7 @@ fun CourseSearchScreen(
                                     },
                                     shape = CircleShape,
                                     isCircle = false,
-                                    enabled = uiState is UiState.Success && !canNotUse,
+                                    enabled = uiState is NetworkUiState.Success && !canNotUse,
                                     backdrop = backdrop
                                 ) {
                                     Text("显示搜索框")

@@ -26,7 +26,7 @@ import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 

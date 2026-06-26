@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.GithubIssueBean
 import com.hfut.schedule.logic.model.GithubIssueLabel
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
@@ -175,7 +175,7 @@ fun TrackScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        if(uiState !is UiState.Error) {
+                        if(uiState !is NetworkUiState.Error) {
                             Row {
                                 LiquidButton(
                                     backdrop = backdrop,
@@ -209,7 +209,7 @@ fun TrackScreen(
                         }
                     }
                 )
-                if(uiState is UiState.Error) {
+                if(uiState is NetworkUiState.Error) {
                     ContributeButtons()
                 }
             }
@@ -222,7 +222,7 @@ fun TrackScreen(
                 .fillMaxSize()
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val list = (uiState as UiState.Success).data
+                val list = (uiState as NetworkUiState.Success).data
                     .sortedByDescending { it.updatedTime }
                     .filter {
                         if(!displayAll) it.getStateOpen() else true

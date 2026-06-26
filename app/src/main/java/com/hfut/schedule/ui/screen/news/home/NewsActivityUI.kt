@@ -50,7 +50,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
@@ -92,7 +92,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -336,7 +336,7 @@ fun TotalNewsScreen(
             }
         }
         // 过滤处理
-        val source = (uiState as UiState.Success).data
+        val source = (uiState as NetworkUiState.Success).data
         val list = if (mFilteredHosts.isEmpty()) {
             source
         } else {

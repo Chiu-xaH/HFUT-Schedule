@@ -34,7 +34,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.FriendsList
 import com.hfut.schedule.logic.model.community.FriendsResopnse
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -181,7 +181,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             )
         }
         CommonNetworkScreen(uiStateAdd, isFullScreen = false, onReload = { showToast("禁止刷新") }) {
-            val msg = (uiStateAdd as UiState.Success).data
+            val msg = (uiStateAdd as NetworkUiState.Success).data
             BottomTip(str = msg)
         }
     }
@@ -206,7 +206,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
 
     DividerTextExpandedWith(text = "申请列表(同意后对方可查看你的课表)") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val applyList = (uiState as UiState.Success).data
+            val applyList = (uiState as NetworkUiState.Success).data
             Column {
                 for(i in applyList.indices) {
                     CardListItem(

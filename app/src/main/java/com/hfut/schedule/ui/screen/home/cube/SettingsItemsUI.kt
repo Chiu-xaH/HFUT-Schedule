@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication.Companion.context
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
@@ -186,7 +186,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
     val uiState by vm.giteeUpdatesResp.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
         refreshNetwork()
@@ -284,14 +284,14 @@ fun UpdateContents(vm : NetWorkViewModel) {
         vm.getUpdateContents()
     }
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
         refreshNetwork()
     }
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data.sortedBy {
+        val list = (uiState as NetworkUiState.Success).data.sortedBy {
             val tinyList = it.name.split(".")
             val v1 = tinyList[0].toInt()
             val v2 = tinyList[1].toInt()

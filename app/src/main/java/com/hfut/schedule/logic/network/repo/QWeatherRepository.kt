@@ -10,14 +10,14 @@ import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.network.api.QWeatherService
 import com.hfut.schedule.network.impl.QWeatherServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 
 object QWeatherRepository {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
-    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : StateHolder<List<QWeatherWarnBean>>) =
+    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<List<QWeatherWarnBean>>) =
         launchRequestState(
             holder = weatherWarningData,
             request = { qWeather.getWeatherWarn(locationID = getLocation(campus)) },
@@ -29,7 +29,7 @@ object QWeatherRepository {
         GsonInstance.fromJson(json, QWeatherWarnResponse::class.java).warning
     } catch (e : Exception) { throw e }
 
-    suspend fun getWeather(campus: CampusRegion, qWeatherResult : StateHolder<QWeatherNowBean>) =
+    suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNowBean>) =
         launchRequestState(
             holder = qWeatherResult,
             request = { qWeather.getWeather(locationID = getLocation(campus)) },

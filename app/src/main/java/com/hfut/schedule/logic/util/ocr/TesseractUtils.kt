@@ -6,7 +6,7 @@ import android.util.Log
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.io.File
 
 object TesseractUtils {

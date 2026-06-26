@@ -1,18 +1,17 @@
 package com.hfut.schedule.network.util
 
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 object WebVpnConvertor {
-    private val key = "wrdvpnisthebest!".toByteArray(Charsets.UTF_8)
-    private val iv = "wrdvpnisthebest!".toByteArray(Charsets.UTF_8)
+    private val keyAndIv = "wrdvpnisthebest!".toByteArray(Charsets.UTF_8)
 
     private fun getCiphertext(plaintext: String): String {
         val cipher = Cipher.getInstance("AES/CFB/NoPadding")
-        val secretKey = SecretKeySpec(key, "AES")
-        val ivSpec = IvParameterSpec(iv)
+        val secretKey = SecretKeySpec(keyAndIv, "AES")
+        val ivSpec = IvParameterSpec(keyAndIv)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
         val encrypted = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
         return encrypted.joinToString("") { "%02x".format(it) }
@@ -20,8 +19,8 @@ object WebVpnConvertor {
 
     private fun getPlaintext(ciphertext: String): String {
         val cipher = Cipher.getInstance("AES/CFB/NoPadding")
-        val secretKey = SecretKeySpec(key, "AES")
-        val ivSpec = IvParameterSpec(iv)
+        val secretKey = SecretKeySpec(keyAndIv, "AES")
+        val ivSpec = IvParameterSpec(keyAndIv)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
         val bytes = ciphertext.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
         val decrypted = cipher.doFinal(bytes)
@@ -40,7 +39,7 @@ object WebVpnConvertor {
         val cph = getCiphertext(domain)
         val path = hostParts.drop(1).joinToString("/")
 
-        val keyHex = iv.joinToString("") { "%02x".format(it) }
+        val keyHex = keyAndIv.joinToString("") { "%02x".format(it) }
 
         Constant.WEBVPN_URL + "$protocol$port/$keyHex$cph/$path"
     } catch (e : Exception) {

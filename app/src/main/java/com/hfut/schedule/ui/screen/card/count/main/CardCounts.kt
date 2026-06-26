@@ -46,7 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.BillMonth
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -143,7 +143,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
         }
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data
+        val list = (uiState as NetworkUiState.Success).data
         val filteredList = withoutMonthBills(list)
         //填充界面
         Box(modifier = Modifier.fillMaxSize()) {

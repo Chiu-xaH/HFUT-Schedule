@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.IBinder
 import com.hfut.schedule.logic.util.network.toTimestamp
 import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
-import com.xah.shared.Course
-import com.xah.shared.IJxglstuAidlInterface
-import com.xah.shared.JxglstuCourseGroup
+import com.xah.common.logic.model.Course
+import com.xah.common.logic.IJxglstuAidlInterface
+import com.xah.common.logic.model.JxglstuCourseGroup
 
 
 class RemoteService : Service() {

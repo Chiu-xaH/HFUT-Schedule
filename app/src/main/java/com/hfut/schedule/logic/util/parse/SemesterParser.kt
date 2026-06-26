@@ -5,7 +5,7 @@ import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.flow.first
 
 object SemesterParser {

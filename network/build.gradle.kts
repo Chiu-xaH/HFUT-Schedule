@@ -43,5 +43,5 @@ dependencies {
     implementation(libs.gson)
     // 用于和风天气密钥生成的JWT
     implementation(libs.eddsa)
-    implementation(project(":shared"))
+    implementation(project(":common-logic"))
 }

@@ -23,7 +23,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,10 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.special.layerGlass
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
@@ -58,13 +54,11 @@ import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
-import com.xah.mirror.shader.glassLayer
-import com.xah.mirror.shader.largeStyle
-import com.xah.mirror.util.ShaderState
 import com.xah.navigation.util.LocalNavControllerSafely
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.safeDiv
+import com.xah.common.ui.shader.ShaderState
+import com.xah.common.ui.shader.style.largeStyle
 import com.xah.container.util.LocalSharedRegistrySafely
-import com.xah.floating.util.LocalFloatingControllerSafely
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.atan2

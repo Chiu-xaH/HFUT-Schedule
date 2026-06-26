@@ -148,7 +148,7 @@ dependencies {
     androidTestImplementation(libs.androidx.benchmark.macro.junit4)
     androidTestImplementation(libs.androidx.uiautomator)
     // 内存泄漏
-//    debugImplementation(libs.leakcanary)
+    debugImplementation(libs.leakcanary)
     // 测试
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
@@ -159,6 +159,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.extensions)
+    // 协程
+    implementation(libs.kotlinx.coroutines.core)
     // 动画
     implementation(libs.androidx.animation.graphics.android)
     implementation(libs.androidx.animation)
@@ -231,8 +233,6 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     // 生物识别 指纹
     // implementation(libs.androidx.biometric)
-    // 镜面效果
-    implementation(libs.mirror)
     // 设备识别
     implementation(libs.devicecompat)
     /** 导航&容器共享&浮窗体系模块
@@ -249,10 +249,10 @@ dependencies {
     } else {
         implementation(libs.sharednav)
     }
-    // 通用UI模块
-    implementation implementation(project(':common'))
-    // 共用模块
-    implementation implementation(project(':shared'))
+    // 共用UI模块
+    implementation implementation(project(':common-ui'))
+    // 共用逻辑模块
+    implementation implementation(project(':common-logic'))
     // 消费预测
     implementation implementation(project(':forecast'))
     // 网络

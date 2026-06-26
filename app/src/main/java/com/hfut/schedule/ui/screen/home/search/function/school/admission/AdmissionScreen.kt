@@ -40,7 +40,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -111,14 +111,14 @@ fun AdmissionListUI(
     val uiState by vm.admissionListResp.state.collectAsState()
     val refreshNetwork : suspend(Boolean) -> Unit = m@ { skip : Boolean ->
         val type = pageList[pagerState.currentPage]
-        if(skip && uiState is UiState.Success && (uiState as UiState.Success).data.first == type) return@m
+        if(skip && uiState is NetworkUiState.Success && (uiState as NetworkUiState.Success).data.first == type) return@m
         vm.admissionListResp.clear()
         vm.getAdmissionList(type)
     }
     LaunchedEffect(pagerState.currentPage) {
         refreshNetwork(true)
     }
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
@@ -131,7 +131,7 @@ fun AdmissionListUI(
             RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f))
             HorizontalPager(pagerState) { page ->
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                    val list = (uiState as UiState.Success).data.second.entries.toList()
+                    val list = (uiState as NetworkUiState.Success).data.second.entries.toList()
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP),
@@ -218,7 +218,7 @@ fun AdmissionRegionScreen(
             val typeE = AdmissionType.entries.find { it.description == typeStr }!!
             val region = data.key
             CommonNetworkScreen(uiState, onReload = { refreshNetwork(typeE,bean,region)}) {
-                val data = (uiState as UiState.Success).data
+                val data = (uiState as NetworkUiState.Success).data
 
                 LazyColumn(modifier = Modifier.hazeSource(hazeState)) {
                     item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }

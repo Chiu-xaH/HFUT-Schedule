@@ -4,6 +4,7 @@ baseline = "1.4.1"
 androidliquidglass = "1.0.0"
 devicecompat = "2.6"
 glance = "1.1.1"
+kotlinxCoroutinesCore = "1.11.0"
 leakcanaryAndroid = "2.14"
 # 3.0.0-beta05 3.0.0-alpha03 不要升级版本
 materialKolor = "3.0.0-beta05"
@@ -42,7 +43,6 @@ material = "1.0.5"
 # 还是动了，需要用其中最新的API实现形状插值，妈的真SB，全屏可滚动内容在BottomSheet中滑动到顶或者底时会顿一下，弄个BottomSheet总特么改
 # 整个聚在工大随material3升级的时候BottomSheet大改了两次，非必要千万不要再升级了，不想来第三次重适配了
 material3 = "1.5.0-alpha12"
-mirror = "0.1-alpha08"
 # Nav2就是一坨答辩，尽管再封装了一次，也只勉强用了 4.17 4.18 4.19 三个大版本，随着SharedNav的开发完成，Nav2在项目中的占比很小了，只剩下一小部分负责管理平切场景的导航（带BottomBar的页面），等后续SharedNav继续迭代接管此功能就可以删了
 #navigationCompose = "2.7.5" # 2.9.1 2.7.5
 navigationComposeVersion = "2.7.0-alpha07" # 2.9.0-beta04
@@ -78,6 +78,7 @@ androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", versi
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 devicecompat = { module = "com.github.getActivity:DeviceCompat", version.ref = "devicecompat" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 liquid-glass = { module = "io.github.kyant0:backdrop", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
@@ -103,7 +104,7 @@ androidx-material = { module = "androidx.compose.material:material", version.ref
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 #androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
-mirror = { module = "com.github.Chiu-xaH:Mirror-Android", version.ref = "mirror" }
+#mirror = { module = "com.github.Chiu-xaH:Mirror-Android", version.ref = "mirror" }
 navigation2 = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }

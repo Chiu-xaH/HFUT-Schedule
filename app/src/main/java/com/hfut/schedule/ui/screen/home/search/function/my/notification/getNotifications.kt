@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.screen.home.search.function.my.notification
 
 import com.hfut.schedule.logic.model.Notifications
 import com.hfut.schedule.logic.util.network.MyApiParse.getMy
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 
 //解析通知

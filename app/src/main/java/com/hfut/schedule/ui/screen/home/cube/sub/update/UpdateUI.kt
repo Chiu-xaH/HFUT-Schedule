@@ -47,7 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -70,7 +70,7 @@ import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -216,14 +216,14 @@ fun UpdateUI(
     viewModel: UpdateViewModel = viewModel<UpdateViewModel>(key = "update")
 ) {
     val updateState = vm.giteeUpdatesResp.state.collectAsState()
-    val canDownload = updateState.value is UiState.Success
+    val canDownload = updateState.value is NetworkUiState.Success
     val context = LocalContext.current
     val downloadState by viewModel.downloadState.collectAsState()
     var expandItems by remember { mutableStateOf(false) }
     val uiState by vm.giteeApkSizeResp.state.collectAsState()
 
     LaunchedEffect(update) {
-        if(uiState is UiState.Success)
+        if(uiState is NetworkUiState.Success)
             return@LaunchedEffect
         update?.name?.let {
             vm.giteeApkSizeResp.clear()
@@ -298,10 +298,10 @@ fun UpdateUI(
                         text =
                             stringResource(
                                 R.string.settings_update_button_download,
-                                if (uiState is UiState.Success) {
+                                if (uiState is NetworkUiState.Success) {
                                     stringResource(
                                         R.string.settings_update_button_download_file_size,
-                                        (uiState as UiState.Success).data.roundOffString(2)
+                                        (uiState as NetworkUiState.Success).data.roundOffString(2)
                                     )
                                 } else ""
                             ),
@@ -498,7 +498,7 @@ fun PatchUpdateUI(
     val uiStatePatch by vm.giteePatchSizeResp.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        if(uiStatePatch is UiState.Success)
+        if(uiStatePatch is NetworkUiState.Success)
             return@LaunchedEffect
         vm.giteePatchSizeResp.clear()
         vm.getGiteePatchSize(patch)
@@ -547,10 +547,10 @@ fun PatchUpdateUI(
                                         stringResource(R.string.settings_update_patch_button__download_to_latest)
                                 }
                             }${
-                                if(uiStatePatch is UiState.Success) {
+                                if(uiStatePatch is NetworkUiState.Success) {
                                     stringResource(
                                         R.string.settings_update_button_download_file_size,
-                                        (uiStatePatch as UiState.Success).data.roundOffString(2)
+                                        (uiStatePatch as NetworkUiState.Success).data.roundOffString(2)
                                     )
                                 } else ""  
                             }",

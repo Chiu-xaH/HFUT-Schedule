@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.xah.forecast.model.network.BillRecordBean
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -70,7 +70,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
         vm.huiXinBillResult.clear()
         vm.getCardBill("bearer $auth",page)
     }
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
@@ -98,7 +98,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val data = (uiState as UiState.Success).data
+        val data = (uiState as NetworkUiState.Success).data
         val list = data.records.sortedByDescending {
             if(sorted) {
                 it.jndatetimeStr

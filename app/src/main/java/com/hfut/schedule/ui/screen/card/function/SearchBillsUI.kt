@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
@@ -130,7 +130,7 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
                 if(!startUse) startUse = true
 
-                val response = (uiState as UiState.Success).data
+                val response = (uiState as NetworkUiState.Success).data
                 val list = response.records
                 list.let {
                     if(it.isEmpty()) {

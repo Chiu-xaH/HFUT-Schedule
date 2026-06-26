@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayRecord
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -72,8 +72,8 @@ fun SchoolNetHistoryUsage(vm: NetWorkViewModel) {
     val monthPayState by vm.schoolNetMonthPayResp.state.collectAsState()
 
     LaunchedEffect(monthPayState) {
-        if (monthPayState is UiState.Error) {
-            val msg = (monthPayState as UiState.Error).exception?.message.orEmpty()
+        if (monthPayState is NetworkUiState.Error) {
+            val msg = (monthPayState as NetworkUiState.Error).exception?.message.orEmpty()
             if (msg.contains("登录态已失效") && !isFirstQuery) {
                 vm.loginAndGetSchoolNetMonthPay(selectedYear)
             }
@@ -154,7 +154,7 @@ fun SchoolNetHistoryUsage(vm: NetWorkViewModel) {
                         )
                     }
                 ) {
-                    val data = (monthPayState as UiState.Success).data
+                    val data = (monthPayState as NetworkUiState.Success).data
                     MonthPayContent(data)
                 }
             }

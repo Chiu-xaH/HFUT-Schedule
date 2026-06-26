@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -42,7 +42,7 @@ fun TeacherListUI(
     filterName : String? = null,
 ) {
     val uiState by vm.teacherSearchData.state.collectAsState()
-    val dataList = (uiState as UiState.Success).data.teacherData.let {
+    val dataList = (uiState as NetworkUiState.Success).data.teacherData.let {
         filterName?.let { t ->
             it.filter { it.name == t }
         } ?: it

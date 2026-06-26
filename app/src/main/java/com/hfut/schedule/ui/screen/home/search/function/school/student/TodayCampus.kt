@@ -38,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.getTodayCampusApps
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
@@ -176,13 +176,13 @@ fun StuAppsScreen(
     val uiState by vm.stuAppsResponse.state.collectAsState()
     val localList = remember { getTodayCampusApps(context) }
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
         refreshNetwork()
     }
     val l = localList.flatMap { it.apps }.map { it.openUrl.substringAfter("stu.hfut.edu.cn/").substringBefore("?")  }
-    val dataCommunity = (uiState as? UiState.Success)?.data?.filter {
+    val dataCommunity = (uiState as? NetworkUiState.Success)?.data?.filter {
         val filteredUrl = it.url?.substringAfter("stu.hfut.edu.cn/")?.substringBefore("?")
         it.name.contains(input) && (filteredUrl !in l)
     }

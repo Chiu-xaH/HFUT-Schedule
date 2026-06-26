@@ -19,7 +19,7 @@ import com.hfut.schedule.logic.util.network.makeRequest
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.network.util.GsonInstance
@@ -32,12 +32,12 @@ import retrofit2.Response
 object SupabaseRepository {
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
 
-    suspend fun getTodayVisit(holder : StateHolder<Int>) = launchRequestState(
+    suspend fun getTodayVisit(holder : UiStateHolder<Int>) = launchRequestState(
         holder = holder,
         request = { supabase.getTodayVisitCount() },
         transformSuccess = { _, body -> parseTodayVisit(body) }
     )
-    suspend fun getUserCount(holder : StateHolder<Int>) = launchRequestState(
+    suspend fun getUserCount(holder : UiStateHolder<Int>) = launchRequestState(
         holder = holder,
         request = { supabase.getUserCount() },
         transformSuccess = { _, body -> parseTodayVisit(body) }
@@ -52,7 +52,7 @@ object SupabaseRepository {
         supabaseRegResp
     )
 
-    suspend fun supabaseLoginWithPassword(password : String,holder : StateHolder<SupabaseLoginResponse>) =
+    suspend fun supabaseLoginWithPassword(password : String,holder : UiStateHolder<SupabaseLoginResponse>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -64,7 +64,7 @@ object SupabaseRepository {
             transformSuccess = { _, json -> parseRefreshTokenSupabase(json) }
         )
 
-    suspend fun supabaseLoginWithRefreshToken(refreshToken : String,holder : StateHolder<SupabaseLoginResponse>) =
+    suspend fun supabaseLoginWithRefreshToken(refreshToken : String,holder : UiStateHolder<SupabaseLoginResponse>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -81,7 +81,7 @@ object SupabaseRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun supabaseDel(jwt : String,id : Int,holder : StateHolder<Boolean>) =
+    suspend fun supabaseDel(jwt : String,id : Int,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -133,14 +133,14 @@ object SupabaseRepository {
         })
     }
 
-    suspend fun supabaseGetEventCount(jwt: String,holder : StateHolder<String?>) =
+    suspend fun supabaseGetEventCount(jwt: String,holder : UiStateHolder<String?>) =
         launchRequestState(
             holder = holder,
             request = { supabase.getEventCount(authorization = "Bearer $jwt") },
             transformSuccess = { _, body -> body }
         )
 
-    suspend fun supabaseGetEventLatest(jwt: String,holder : StateHolder<Boolean>) =
+    suspend fun supabaseGetEventLatest(jwt: String,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -163,7 +163,7 @@ object SupabaseRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun supabaseGetMyEvents(holder : StateHolder<List<SupabaseEventsInput>>) =
+    suspend fun supabaseGetMyEvents(holder : UiStateHolder<List<SupabaseEventsInput>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -177,13 +177,13 @@ object SupabaseRepository {
     } catch(e : Exception) { throw e }
 
 
-    suspend fun supabaseCheckJwt(jwt: String,holder : StateHolder<Boolean>) = launchRequestState(
+    suspend fun supabaseCheckJwt(jwt: String,holder : UiStateHolder<Boolean>) = launchRequestState(
         holder = holder,
         request = { supabase.checkToken(authorization = "Bearer $jwt") },
         transformSuccess = { _, _ -> true }
     )
 
-    suspend fun supabaseUpdateEvent(jwt: String, id: Int, body : Map<String,Any>,holder : StateHolder<Boolean>) =
+    suspend fun supabaseUpdateEvent(jwt: String, id: Int, body : Map<String,Any>,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = {

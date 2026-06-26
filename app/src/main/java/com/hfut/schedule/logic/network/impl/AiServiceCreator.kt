@@ -1,14 +1,14 @@
 package com.hfut.schedule.logic.network.impl
 
 import com.hfut.schedule.logic.enumeration.ChatModel
+import com.hfut.schedule.network.util.allowAutoRedirect
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object AiServiceCreator {
     val client = OkHttpClient.Builder()
-        .followRedirects(false)
-        .followSslRedirects(false)
+        .allowAutoRedirect(false)
         .build()
 
     private fun getRetrofit(model : ChatModel): Retrofit {

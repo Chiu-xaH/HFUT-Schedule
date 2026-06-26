@@ -17,7 +17,7 @@ import com.hfut.schedule.logic.model.xwx.isXwxRequestSuccessful
 import com.hfut.schedule.network.api.XwxService
 import com.hfut.schedule.network.impl.XwxServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.GsonInstance
@@ -29,7 +29,7 @@ object XwxRepository {
     private val xwx = XwxServiceCreator.create(XwxService::class.java)
 
     suspend fun getSchoolList(
-        holder: StateHolder<List<XwxSchoolBean>>
+        holder: UiStateHolder<List<XwxSchoolBean>>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.getSchoolList() },
@@ -48,7 +48,7 @@ object XwxRepository {
         schoolCode : Long,
         username : String,
         password : String,
-        holder : StateHolder<Boolean>
+        holder : UiStateHolder<Boolean>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.login(XwxLoginRequest(schoolCode = schoolCode, userId = username,password = password)) },
@@ -75,7 +75,7 @@ object XwxRepository {
         schoolCode : Long,
         username : String,
         token : String,
-        holder : StateHolder<List<XwxFunction>>
+        holder : UiStateHolder<List<XwxFunction>>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.getFunctions(token,XwxFunctionsRequest(schoolCode = schoolCode,userId = username),) },
@@ -96,7 +96,7 @@ object XwxRepository {
         filePropertyType : Int,
         fileProperty : String,
         token : String,
-        holder : StateHolder<Bitmap>
+        holder : UiStateHolder<Bitmap>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.getDocPreview(token,XwxDocPreviewRequest(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },

@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.BillMonth
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -104,7 +104,7 @@ private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
             }
         }
 
-        val list = (uiState as UiState.Success).data.records
+        val list = (uiState as NetworkUiState.Success).data.records
         if(list.isEmpty()) {
             CenterScreen {
                 EmptyIcon()
@@ -130,7 +130,7 @@ private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues
     val uiState by vm.cardPredictedResponse.state.collectAsState()
 
     var refreshNetwork : suspend () -> Unit = rN@ {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@rN
         }
         val auth = prefs.getString("auth","")
@@ -141,7 +141,7 @@ private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "正在拉取全部账单") {
-        val data = (uiState as UiState.Success).data
+        val data = (uiState as NetworkUiState.Success).data
         val day = data.day
         val dayList = day.analyzeData.statisticalData.toList()
         LazyVerticalGrid(
@@ -194,7 +194,7 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
     val uiState by vm.cardPredictedResponse.state.collectAsState()
 
     var refreshNetwork : suspend () -> Unit = rN@ {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@rN
         }
         val auth = prefs.getString("auth","")
@@ -205,7 +205,7 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork,loadingText = "正在拉取全部账单") {
-        val data = (uiState as UiState.Success).data
+        val data = (uiState as NetworkUiState.Success).data
         val month = data.month
         val monthList = month.analyzeData.statisticalData.toList()
 
@@ -256,7 +256,7 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
 private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState : PagerState) {
     val uiState by vm.cardPredictedResponse.state.collectAsState()
     var refreshNetwork : suspend () -> Unit = rN@ {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@rN
         }
         val auth = prefs.getString("auth","")
@@ -268,7 +268,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
     }
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork,loadingText = "正在拉取全部账单") {
-        val data = (uiState as UiState.Success).data
+        val data = (uiState as NetworkUiState.Success).data
         val day = data.day
         val month = data.month
         val dayList = day.analyzeData.statisticalData.toList()

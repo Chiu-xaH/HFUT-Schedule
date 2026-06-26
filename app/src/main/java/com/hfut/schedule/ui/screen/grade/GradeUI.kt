@@ -39,7 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -227,7 +227,7 @@ fun GradeScreen(
                 GradeDataOrigin.UNI_APP -> {
                     // 等待加载完毕
                     val uiState by vm.uniAppGradesResp.state.collectAsState()
-                    uiState is UiState.Success<*>
+                    uiState is NetworkUiState.Success<*>
                 }
             }
             val display2 = if(displayCompactly) {

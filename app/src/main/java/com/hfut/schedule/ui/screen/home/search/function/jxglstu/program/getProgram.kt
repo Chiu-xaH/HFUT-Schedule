@@ -3,7 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 import com.hfut.schedule.logic.model.jxglstu.PlanCourses
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 
 fun planCoursesTransform(planCourses : PlanCourses) : ProgramPartThree? = try {

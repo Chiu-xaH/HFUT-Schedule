@@ -5,10 +5,10 @@ import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.OPERATION_FAST_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UNKNOWN_ERROR_CODE
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -49,7 +49,7 @@ private fun <T> parseResponse(responseBody: String?): T? {
 }
 
 suspend fun <T> launchRequestState(
-    holder: StateHolder<T>,
+    holder: UiStateHolder<T>,
     request: suspend () -> Call<ResponseBody>,
     transformSuccess: suspend (Headers, String) -> T,
     transformRedirect: ((Headers) -> T)? = null
@@ -91,7 +91,7 @@ suspend fun <T> launchRequestState(
 }
 // 空响应
 suspend fun <T> launchRequestState(
-    holder: StateHolder<T>,
+    holder: UiStateHolder<T>,
     request: suspend () -> Call<Void>,
     transformSuccess: suspend (Headers) -> T,
     transformRedirect: ((Headers) -> T)? = null

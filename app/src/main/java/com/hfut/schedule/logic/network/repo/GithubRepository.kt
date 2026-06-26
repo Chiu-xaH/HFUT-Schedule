@@ -15,7 +15,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.api.GiteeService
@@ -54,7 +54,7 @@ object GithubRepository {
         })
     }
 
-    suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : StateHolder<ProgramSearchBean>) =
+    suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : UiStateHolder<ProgramSearchBean>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -72,7 +72,7 @@ object GithubRepository {
         GsonInstance.fromJson(json,ProgramSearchResponse::class.java).data
     } catch (e : Exception) { throw e }
 
-    suspend fun getProgramList(campus : CampusRegion,holder : StateHolder<List<ProgramListBean>>) =
+    suspend fun getProgramList(campus : CampusRegion,holder : UiStateHolder<List<ProgramListBean>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -91,7 +91,7 @@ object GithubRepository {
         data
     } catch (e : Exception) { throw e }
 
-    suspend fun getStarNum(githubStarsData : StateHolder<Int>) = launchRequestState(
+    suspend fun getStarNum(githubStarsData : UiStateHolder<Int>) = launchRequestState(
         holder = githubStarsData,
         request = { github.getRepoInfo() },
         transformSuccess = { _, json -> parseGithubStarNum(json) }
@@ -102,7 +102,7 @@ object GithubRepository {
         GsonInstance.fromJson(json,GithubBean::class.java).stargazers_count
     } catch (e : Exception) { throw e }
 
-    suspend fun getUpdateContents(holder : StateHolder<List<GithubFolderBean>>) =
+    suspend fun getUpdateContents(holder : UiStateHolder<List<GithubFolderBean>>) =
         launchRequestState(
             holder = holder,
             request = { github.getFolderContent() },
@@ -130,7 +130,7 @@ object GithubRepository {
     }
 
 
-    suspend fun getUpdateFileSize(fileName : String,holder : StateHolder<Double>) =
+    suspend fun getUpdateFileSize(fileName : String,holder : UiStateHolder<Double>) =
         launchRequestState(
             holder = holder,
             request = { gitee.download(fileName) },
@@ -143,7 +143,7 @@ object GithubRepository {
         contentLength.toDouble() / (1024 * 1024)
     } catch (e: Exception) { throw e }
 
-    suspend fun getUpdate(holder : StateHolder<GiteeReleaseResponse>) = launchRequestState(
+    suspend fun getUpdate(holder : UiStateHolder<GiteeReleaseResponse>) = launchRequestState(
         request = { gitee.getUpdate() },
         holder = holder,
         transformSuccess = { _, json -> parseGiteeUpdates(json) }
@@ -160,7 +160,7 @@ object GithubRepository {
         GiteeReleaseResponse(versionName,data.body,list)
     } catch (e : Exception) { throw e }
 
-    suspend fun getIssues(page : Int,holder : StateHolder<List<GithubIssueBean>>) = launchRequestState(
+    suspend fun getIssues(page : Int,holder : UiStateHolder<List<GithubIssueBean>>) = launchRequestState(
         request = { github.getIssues(page) },
         holder = holder,
         transformSuccess = { _, json -> parseGithubIssues(json) }
@@ -182,7 +182,7 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getBuildingMaps(holder : StateHolder<List<BuildingMapResponseBean>>) = launchRequestState(
+    suspend fun getBuildingMaps(holder : UiStateHolder<List<BuildingMapResponseBean>>) = launchRequestState(
         request = { githubRaw.getBuildingMaps() },
         holder = holder,
         transformSuccess = { _, json -> parseBuildingMaps(json) }
@@ -193,7 +193,7 @@ object GithubRepository {
         GsonInstance.fromJson(json,listType) as List<BuildingMapResponseBean>
     } catch (e : Exception) { throw e }
 
-    suspend fun getFloorXml(filename : String,holder : StateHolder<FloorMap>) = launchRequestState(
+    suspend fun getFloorXml(filename : String,holder : UiStateHolder<FloorMap>) = launchRequestState(
         request = { githubRaw.getFloorXml(filename) },
         holder = holder,
         transformSuccess = { _, xml -> parseFloorXml(xml) }

@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -42,7 +42,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.rememberShaderState
+
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -101,13 +101,13 @@ fun ClassmatesScreen(
                 vm.wxGetClassmates(auth)
             }
             LaunchedEffect(Unit) {
-                if(uiState is UiState.Success) {
+                if(uiState is NetworkUiState.Success) {
                     return@LaunchedEffect
                 }
                 refreshNetwork()
             }
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val bean = (uiState as UiState.Success).data
+                val bean = (uiState as NetworkUiState.Success).data
                 val list = bean.records.sortedBy {
                     if(nameSort){
                         null

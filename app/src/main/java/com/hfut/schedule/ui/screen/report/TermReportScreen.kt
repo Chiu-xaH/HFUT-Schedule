@@ -51,7 +51,7 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.PartyPlace
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -73,7 +73,7 @@ import com.xah.common.ui.component.status.LoadingScreen
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -239,8 +239,8 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     var isGraduating by remember { mutableStateOf(false) }
     val gradeState by vm.uniAppGradesResp.state.collectAsState()
     val allSemesters = remember(gradeState) {
-        if (gradeState is UiState.Success) {
-            (gradeState as UiState.Success).data.keys.mapNotNull {
+        if (gradeState is NetworkUiState.Success) {
+            (gradeState as NetworkUiState.Success).data.keys.mapNotNull {
                 SemesterParser.parseSemester(it)
             }
         } else emptyList()

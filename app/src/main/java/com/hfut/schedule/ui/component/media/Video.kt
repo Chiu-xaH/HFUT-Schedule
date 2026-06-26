@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -38,10 +37,9 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.shader.scaleMirror
-import com.xah.mirror.style.mask
-import com.xah.mirror.util.rememberShaderState
-import com.xah.shared.LogUtil
+import com.xah.common.ui.shader.style.scaleMirror
+import com.xah.common.ui.style.mask
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

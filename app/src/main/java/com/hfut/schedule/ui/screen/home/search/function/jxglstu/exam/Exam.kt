@@ -57,7 +57,7 @@ import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

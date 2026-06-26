@@ -8,7 +8,7 @@ import android.widget.Toast
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.util.sys.Starter.startActivitySafely
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 open class BaseDestinationTileService(
     private val destination: NavDestination

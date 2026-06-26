@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -72,9 +72,9 @@ fun MainHost(
                     launch {  loginVm.getKey() }
                     launch {
                         loginVm.getTicket()
-                        val cookie = (loginVm.webVpnTicket.state.value as? UiState.Success)?.data ?: return@launch
+                        val cookie = (loginVm.webVpnTicket.state.value as? NetworkUiState.Success)?.data ?: return@launch
                         loginVm.putKey(cookie)
-                        val status = (loginVm.status.state.value as? UiState.Success)?.data ?: return@launch
+                        val status = (loginVm.status.state.value as? NetworkUiState.Success)?.data ?: return@launch
                         if(status) {
                             loginVm.getKeyWebVpn()
                         }

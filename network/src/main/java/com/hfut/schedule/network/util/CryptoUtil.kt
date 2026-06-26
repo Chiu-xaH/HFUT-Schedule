@@ -2,7 +2,7 @@ package com.hfut.schedule.network.util
 
 import android.util.Base64
 import com.hfut.schedule.network.util.Constant
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.spec.X509EncodedKeySpec

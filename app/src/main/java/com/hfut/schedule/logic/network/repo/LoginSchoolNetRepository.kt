@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.network.repo
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.LoginSchoolNetService
 import com.hfut.schedule.network.impl.LoginHefeiSchoolNetServiceCreator
@@ -21,7 +21,7 @@ object LoginSchoolNetRepository {
     private val loginWeb = LoginXcSchoolNetServiceCreator.create(LoginSchoolNetService::class.java)
     private val loginWeb2 = LoginXcSchoolNetServiceCreator2.create(LoginSchoolNetService::class.java)
 
-    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : StateHolder<Boolean>) =
+    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().studentId?.let { uid ->
                 getCardPsk()?.let { pwd ->
@@ -62,7 +62,7 @@ object LoginSchoolNetRepository {
                 }
             }
         }
-    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : StateHolder<Boolean>) =
+    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().studentId?.let { uid ->
                 getCardPsk()?.let { pwd ->
@@ -110,13 +110,13 @@ object LoginSchoolNetRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getWebInfo(infoWebValue : StateHolder<WebInfo>) = launchRequestState(
+    suspend fun getWebInfo(infoWebValue : UiStateHolder<WebInfo>) = launchRequestState(
         holder = infoWebValue,
         request = { loginWeb.getInfo() },
         transformSuccess = { _, json -> parseWebInfo(json) }
     )
 
-    suspend fun getWebInfo2(infoWebValue : StateHolder<WebInfo>) = launchRequestState(
+    suspend fun getWebInfo2(infoWebValue : UiStateHolder<WebInfo>) = launchRequestState(
         holder = infoWebValue,
         request = { loginWeb2.getInfo() },
         transformSuccess = { _, json -> parseWebInfo(json) }

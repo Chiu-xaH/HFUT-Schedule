@@ -50,7 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.rememberShaderState
+
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -153,7 +153,7 @@ fun BusScreen(
         ) {
             val uiState by vm.busResponse.state.collectAsState()
             val refreshNetwork : suspend () -> Unit = m@ {
-                if(uiState is UiState.Success) {
+                if(uiState is NetworkUiState.Success) {
                     return@m
                 }
                 prefs.getString("TOKEN","")?.let {
@@ -165,7 +165,7 @@ fun BusScreen(
                 refreshNetwork()
             }
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val list = (uiState as UiState.Success).data.filter {
+                val list = (uiState as NetworkUiState.Success).data.filter {
                     it.from.contains(startInput) && it.to.contains(endInput)
                 }
                 LazyColumn {

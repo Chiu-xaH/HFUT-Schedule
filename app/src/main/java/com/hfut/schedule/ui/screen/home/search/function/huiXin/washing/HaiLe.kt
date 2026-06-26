@@ -42,7 +42,7 @@ import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
@@ -97,7 +97,7 @@ fun HaiLeWashingScreen(
     val uiState by vm.haiLeNearPositionResp.state.collectAsState()
     var page by rememberSaveable { mutableIntStateOf(1) }
     val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
-        if(skip && uiState is UiState.Success) {
+        if(skip && uiState is NetworkUiState.Success) {
             return@m
         }
         vm.haiLeNearPositionResp.clear()
@@ -109,7 +109,7 @@ fun HaiLeWashingScreen(
         )
     }
 
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
@@ -160,7 +160,7 @@ fun HaiLeWashingScreen(
                 HorizontalPager(state = pagerState) { pager ->
                     val campus = t[pager]
                     CommonNetworkScreen(uiState = uiState, onReload = { refreshNetwork(false) }) {
-                        val list = (uiState as UiState.Success).data
+                        val list = (uiState as NetworkUiState.Success).data
                             .filter {
                                 when(campus) {
                                     Campus.XC -> it.address.contains("宣州区薰化路301号")
@@ -265,7 +265,7 @@ fun HaiLeDetailScreen(
         )
     }
 
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             refreshNetwork()
@@ -308,7 +308,7 @@ fun HaiLeDetailScreen(
                     val type = t[pager]
 
                     CommonNetworkScreen(uiState = uiState, onReload = refreshNetwork) {
-                        val list = (uiState as UiState.Success).data.sortedBy { it.name }
+                        val list = (uiState as NetworkUiState.Success).data.sortedBy { it.name }
                         val listState = rememberLazyListState()
 
                         Box(modifier = Modifier.fillMaxSize()) {

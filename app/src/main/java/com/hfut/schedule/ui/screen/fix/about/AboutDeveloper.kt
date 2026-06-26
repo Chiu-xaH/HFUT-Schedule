@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
@@ -112,8 +112,8 @@ fun About(vm : NetWorkViewModel) {
     var starsNum by remember { mutableStateOf<String?>(null) }
     val uiState by vm.githubStarsData.state.collectAsState()
     LaunchedEffect(uiState) {
-        if(uiState is UiState.Success) {
-            starsNum = (uiState as UiState.Success).data.toString()
+        if(uiState is NetworkUiState.Success) {
+            starsNum = (uiState as NetworkUiState.Success).data.toString()
         }
     }
     val scope = rememberCoroutineScope()
@@ -230,7 +230,7 @@ fun About(vm : NetWorkViewModel) {
                         TransplantListItem(
                             modifier = Modifier.weight(.5f),
                             headlineContent = {
-                                Text("${(todayVisitCount as? UiState.Success)?.data ?: "--"}")
+                                Text("${(todayVisitCount as? NetworkUiState.Success)?.data ?: "--"}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.leaderboard),null)
@@ -242,7 +242,7 @@ fun About(vm : NetWorkViewModel) {
                         TransplantListItem(
                             modifier = Modifier.weight(.5f),
                             headlineContent = {
-                                Text("${(userCount as? UiState.Success)?.data ?: "--"}")
+                                Text("${(userCount as? NetworkUiState.Success)?.data ?: "--"}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.group),null)

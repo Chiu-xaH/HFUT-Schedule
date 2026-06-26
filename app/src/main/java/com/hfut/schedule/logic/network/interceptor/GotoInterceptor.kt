@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.network.interceptor
 
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 

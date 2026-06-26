@@ -43,7 +43,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.util.rememberShaderState
+
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -189,7 +189,7 @@ fun ProgramSearchScreen(
         ) {
             Column {
                 CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-                    val programList = (uiState as UiState.Success).data
+                    val programList = (uiState as NetworkUiState.Success).data
                     val listState = rememberLazyListState()
 
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -240,7 +240,7 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, id : Int, ifSaved: Boolean, 
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "培养方案较大 加载中") {
-        val bean = (uiState as UiState.Success).data
+        val bean = (uiState as NetworkUiState.Success).data
         ProgramSearchChildrenUI(bean,hazeState,vm,ifSaved)
     }
 }

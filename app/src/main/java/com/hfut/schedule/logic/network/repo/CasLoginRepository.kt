@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.network.impl.LoginServiceCreator
 import com.hfut.schedule.logic.network.impl.OneGotoServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.api.LoginService
 import com.hfut.schedule.network.impl.LoginGetCookieServiceCreator
 import com.hfut.schedule.network.util.Constant
@@ -57,7 +57,7 @@ object CasLoginRepository {
         )
     }
 
-    suspend fun getCasCookie(execution : StateHolder<Pair<String, String>>) = launchRequestState(
+    suspend fun getCasCookie(execution : UiStateHolder<Pair<String, String>>) = launchRequestState(
         holder = execution,
         request = {
             getCookie.getCookie(
@@ -77,7 +77,7 @@ object CasLoginRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getEncryptKey(jSessionId : StateHolder<CasGetFlavorBean>) = launchRequestState(
+    suspend fun getEncryptKey(jSessionId : UiStateHolder<CasGetFlavorBean>) = launchRequestState(
         holder = jSessionId,
         request = { getAESKey.getKey() },
         transformSuccess = { headers, json -> parseKey(headers, json) }

@@ -5,13 +5,13 @@ import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPaySummary
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.network.api.SchoolNetSelfService
 import com.hfut.schedule.network.impl.SchoolNetSelfServiceCreator
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -36,7 +36,7 @@ object SchoolNetSelfRepository {
 
     suspend fun loginAndGetMonthPay(
         year: Int,
-        holder: StateHolder<SchoolNetMonthPayResult>
+        holder: UiStateHolder<SchoolNetMonthPayResult>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -53,7 +53,7 @@ object SchoolNetSelfRepository {
 
     suspend fun getMonthPayAfterLogin(
         year: Int,
-        holder: StateHolder<SchoolNetMonthPayResult>
+        holder: UiStateHolder<SchoolNetMonthPayResult>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -293,7 +293,7 @@ object SchoolNetSelfRepository {
 
     suspend fun loginAndGetSemesterUsage(
         semester: Int,
-        holder: StateHolder<SchoolNetSemesterUsageResult>
+        holder: UiStateHolder<SchoolNetSemesterUsageResult>
     ) {
         lateinit var ctx: SemesterUsageQueryContext
         launchRequestState(
@@ -333,7 +333,7 @@ object SchoolNetSelfRepository {
 
     suspend fun loginAndGetAllSemestersUsage(
         allSemesters: List<Int>,
-        holder: StateHolder<SchoolNetSemesterUsageResult>
+        holder: UiStateHolder<SchoolNetSemesterUsageResult>
     ) {
         lateinit var ctx: AllSemesterUsageQueryContext
         launchRequestState(

@@ -21,7 +21,7 @@ import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.receiver.UpdateReceiver
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.io.File
 
 object AppDownloadManager {

@@ -17,7 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -38,7 +38,7 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
 
     LaunchedEffect(Unit) {
         val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "") ?: ""
-        if (token.isNotEmpty() && libraryStatus !is UiState.Success) {
+        if (token.isNotEmpty() && libraryStatus !is NetworkUiState.Success) {
             vm.libraryStatusResp.clear()
             vm.getLibraryStatus(token)
         }
@@ -57,8 +57,8 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
         }
 
         when (libraryStatus) {
-            is UiState.Success -> {
-                val status = (libraryStatus as UiState.Success).data
+            is NetworkUiState.Success -> {
+                val status = (libraryStatus as NetworkUiState.Success).data
 
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
@@ -117,8 +117,8 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
                 }
 
                 when (borrowedBooks) {
-                    is UiState.Success -> {
-                        val books = (borrowedBooks as UiState.Success).data
+                    is NetworkUiState.Success -> {
+                        val books = (borrowedBooks as NetworkUiState.Success).data
                         if (books.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                             CustomCard(color = cardNormalColor()) {
@@ -147,7 +147,7 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
                     else -> {}
                 }
             }
-            is UiState.Error -> {
+            is NetworkUiState.Error -> {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = { Text("加载失败") },

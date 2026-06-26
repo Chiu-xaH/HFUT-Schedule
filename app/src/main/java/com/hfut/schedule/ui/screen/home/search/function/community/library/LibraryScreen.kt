@@ -57,7 +57,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibrarySearchPositionBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -293,7 +293,7 @@ private fun SearchScreenCommunity(
         if(!startUse) {
             vm.libraryData.emitPrepare()
             startUse = true
-        } else if(uiState !is UiState.Success) {
+        } else if(uiState !is NetworkUiState.Success) {
             refreshNetwork(page)
         }
     }
@@ -312,7 +312,7 @@ private fun SearchScreenCommunity(
     }
 
     CommonNetworkScreen(uiState, onReload = { refreshNetwork(page) }, prepareContent = { PrepareSearchIcon() }) {
-        val books = (uiState as UiState.Success).data
+        val books = (uiState as NetworkUiState.Success).data
         val listState = rememberLazyListState()
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -376,7 +376,7 @@ private fun DetailBookUI(vm: NetWorkViewModel, callNo : String) {
     }
     DividerTextExpandedWith("索书号 $callNo") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork,isFullScreen = false) {
-            val list = (uiState as UiState.Success).data
+            val list = (uiState as NetworkUiState.Success).data
             LazyColumn {
                 items(list.size) { index ->
                     val item = list[index]
@@ -421,20 +421,20 @@ fun LibraryMineUI(
     val uiState by vm.libraryStatusResp.state.collectAsState()
 
     val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
-        if(skip && uiState is UiState.Success) {
+        if(skip && uiState is NetworkUiState.Success) {
             return@m
         }
         val token = prefs.getString(LIBRARY_TOKEN,"")
         token?.let {
             vm.libraryStatusResp.clear()
             vm.getLibraryStatus(it)
-            val pageSize = (vm.libraryStatusResp.state.value as? UiState.Success)?.data?.borrowCount ?: return@m
+            val pageSize = (vm.libraryStatusResp.state.value as? NetworkUiState.Success)?.data?.borrowCount ?: return@m
             vm.libraryBorrowedResp.clear()
             vm.getBorrowed(token,1,null,pageSize)
         }
     }
     val uiStateBorrowed by vm.libraryBorrowedResp.state.collectAsState()
-    val list = (uiStateBorrowed as? UiState.Success)?.data?.sortedByDescending { it.createdTime }
+    val list = (uiStateBorrowed as? NetworkUiState.Success)?.data?.sortedByDescending { it.createdTime }
     val analysis = list?.map { l ->
         BorrowedStatus.entries.find { e ->
             e.status == l.status
@@ -448,15 +448,15 @@ fun LibraryMineUI(
         ?.minByOrNull { it.returnTime!! }
 
     LaunchedEffect(Unit) {
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
         refreshNetwork(false)
     }
 
-    val loading = uiState !is UiState.Success
-    val response = (uiState as? UiState.Success)?.data ?: LibraryStatus()
-    val refreshing = uiState is UiState.Loading
+    val loading = uiState !is NetworkUiState.Success
+    val response = (uiState as? NetworkUiState.Success)?.data ?: LibraryStatus()
+    val refreshing = uiState is NetworkUiState.Loading
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             refreshNetwork(false)
@@ -701,7 +701,7 @@ private fun SearchScreenLibrary(
         if(!startUse) {
             vm.librarySearchResp.emitPrepare()
             startUse = true
-        } else if(uiState !is UiState.Success) {
+        } else if(uiState !is NetworkUiState.Success) {
             refreshNetwork(page)
         }
     }
@@ -746,7 +746,7 @@ private fun SearchScreenLibrary(
     }
 
     CommonNetworkScreen(uiState, onReload = { refreshNetwork(page) }, prepareContent = { PrepareSearchIcon() }) {
-        val books = (uiState as UiState.Success).data
+        val books = (uiState as NetworkUiState.Success).data
         val listState = rememberLazyListState()
 
         Box(modifier = Modifier.fillMaxSize()) {

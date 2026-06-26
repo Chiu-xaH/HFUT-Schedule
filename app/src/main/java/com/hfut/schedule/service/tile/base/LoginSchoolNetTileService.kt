@@ -9,17 +9,17 @@ import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
-import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileService() {
 
-    private val loginSchoolNetResponse = StateHolder<Boolean>()
+    private val loginSchoolNetResponse = UiStateHolder<Boolean>()
 
     override fun onTileAdded() {
         super.onTileAdded()

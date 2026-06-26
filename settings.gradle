@@ -30,8 +30,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "肥工课程表"
 include ':app'
-include ':common'
+include ':common-ui'
 include ':forecast'
 include ':baselineProfile'
 include ':network'
-include ':shared'
+include ':common-logic'

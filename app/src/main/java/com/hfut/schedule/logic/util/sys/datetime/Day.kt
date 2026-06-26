@@ -5,7 +5,7 @@ import com.hfut.schedule.logic.util.network.MyApiParse.getAPICelebration
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.time.LocalDate
 import java.time.Period
 

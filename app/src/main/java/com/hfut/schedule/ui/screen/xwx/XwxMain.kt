@@ -42,7 +42,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.logic.model.xwx.XwxLoginInfo
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
@@ -60,7 +60,7 @@ import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +96,7 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
 
     LaunchedEffect(savedInfo) {
         vm.docPreviewResp.emitPrepare()
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
         refreshNetwork()
@@ -132,7 +132,7 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
 
             DividerTextExpandedWith("功能") {
                 CommonNetworkScreen(uiState = uiState, isFullScreen = false, onReload = { }) {
-                    val list = (uiState as UiState.Success).data
+                    val list = (uiState as NetworkUiState.Success).data
                     CustomCard(
                         color = cardNormalColor()
                     ) {
@@ -174,7 +174,7 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
 
                 }
             ) {
-                val bitmap = (previewUiState as UiState.Success).data
+                val bitmap = (previewUiState as NetworkUiState.Success).data
                 DividerTextExpandedWith("预览") {
                     Box(
                         modifier = Modifier

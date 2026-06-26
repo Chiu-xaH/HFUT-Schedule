@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response

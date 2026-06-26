@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,7 +45,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
 import com.hfut.schedule.logic.model.jxglstu.ProgramModule
 import com.hfut.schedule.logic.model.jxglstu.ProgramPerformanceDetailItem
 import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.util.GsonInstance
@@ -75,7 +74,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.common.logic.safeDiv
+import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.status.LoadingScreen
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
@@ -89,7 +88,7 @@ import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -287,7 +286,7 @@ private fun ProgramPerformance(
 ) {
     val uiState by vm.programPerformanceData.state.collectAsState()
     val data by produceState<ProgramBean?>(initialValue = null) {
-        if(!ifSaved || uiState is UiState.Success) {
+        if(!ifSaved || uiState is NetworkUiState.Success) {
             onListenStateHolder(vm.programPerformanceData) { data ->
                 value = data
             }
@@ -309,7 +308,7 @@ private fun ProgramPerformance(
     val loading = data == null
 
     val refreshNetwork: suspend () -> Unit = s@{
-        if(uiState is UiState.Success) {
+        if(uiState is NetworkUiState.Success) {
             return@s
         }
         val cookie = getJxglstuCookie()

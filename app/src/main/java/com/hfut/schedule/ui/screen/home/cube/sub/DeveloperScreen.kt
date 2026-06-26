@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.CasInHFUT
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -236,7 +236,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
         DividerTextExpandedWith("教务系统 重要参数(修改Cookies后自动获取)") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 CommonNetworkScreen(studentId, onReload = null, isFullScreen = false) {
-                    val data = (studentId as UiState.Success).data.toString()
+                    val data = (studentId as NetworkUiState.Success).data.toString()
                     TransplantListItem(
                         headlineContent = { Text("StudentID") },
                         supportingContent = {
@@ -252,7 +252,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
                 }
                 PaddingHorizontalDivider()
                 CommonNetworkScreen(bizTypeId, onReload = null, isFullScreen = false) {
-                    val data = (bizTypeId as UiState.Success).data.toString()
+                    val data = (bizTypeId as NetworkUiState.Success).data.toString()
                     TransplantListItem(
                         headlineContent = { Text("BizTypeID") },
                         supportingContent = {

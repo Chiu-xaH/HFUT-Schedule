@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -102,7 +102,7 @@ fun MailUI(vm: NetWorkViewModel) {
     val context = LocalContext.current
     DividerTextExpandedWith (getSchoolEmail() ?: MyApplication.EMAIL) {
         CommonNetworkScreen(uiState, loadingText = "正在登录邮箱", isFullScreen = false, onReload = refreshNetwork) {
-            val response = (uiState as UiState.Success).data
+            val response = (uiState as NetworkUiState.Success).data
             Column {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                     LargeButton(

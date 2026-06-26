@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.util.parse
 
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import java.math.BigDecimal
 import java.math.RoundingMode
 

@@ -16,7 +16,7 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.text
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 
 /**
  * 桌面长按图标快捷菜单

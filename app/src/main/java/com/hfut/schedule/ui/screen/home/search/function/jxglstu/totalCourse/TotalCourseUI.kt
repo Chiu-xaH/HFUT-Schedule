@@ -54,7 +54,7 @@ import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -130,7 +130,7 @@ fun CourseTotalUI(
     if(dataSource != TotalCourseDataSource.SEARCH && !ifSaved) {
         LaunchedEffect(Unit) {
             val term = SemesterParser.getSemester()
-            val skip = (vm.courseBookResponse.state.first() as? UiState.Success)?.data?.first == term
+            val skip = (vm.courseBookResponse.state.first() as? NetworkUiState.Success)?.data?.first == term
             if(skip) {
                 return@LaunchedEffect
             }
@@ -769,7 +769,7 @@ fun ClassmatesScreen(
                 uiState = uiState,
                 onReload = refreshNetwork,
             ) {
-                val list = (uiState as UiState.Success).data
+                val list = (uiState as NetworkUiState.Success).data
 
                 if(list.isEmpty()) {
                     CenterScreen {

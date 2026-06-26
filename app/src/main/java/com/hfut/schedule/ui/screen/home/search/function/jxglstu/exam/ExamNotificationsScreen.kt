@@ -34,7 +34,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
 import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.AcademicXCType
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -128,7 +128,7 @@ fun ExamNotificationsScreen(
                         }
 
                         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                            val list = (uiState as UiState.Success).data
+                            val list = (uiState as NetworkUiState.Success).data
                             val listState = rememberLazyListState()
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn(state = listState) {

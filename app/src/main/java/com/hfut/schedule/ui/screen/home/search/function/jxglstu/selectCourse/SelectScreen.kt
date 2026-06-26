@@ -77,7 +77,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.network.util.StatusCode
-import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
@@ -126,7 +126,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.util.NoneRoundShape
-import com.xah.shared.LogUtil
+import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -149,7 +149,7 @@ fun SelectCourseScreen(
     }
     val uiState by vm.selectCourseData.state.collectAsState()
     val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
-        if(skip && uiState is UiState.Success) {
+        if(skip && uiState is NetworkUiState.Success) {
             return@m
         }
         val cookie = getJxglstuCookie()
@@ -163,7 +163,7 @@ fun SelectCourseScreen(
         vm.selectCourseData.clear()
         vm.getSelectCourse(cookie)
     }
-    val refreshing = uiState is UiState.Loading
+    val refreshing = uiState is NetworkUiState.Loading
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             refreshNetwork(false)
@@ -423,7 +423,7 @@ private fun SelectCourseList(
  ) {
     val navController = LocalNavController.current
     val uiState by vm.selectCourseData.state.collectAsState()
-    val list = (uiState as UiState.Success).data
+    val list = (uiState as NetworkUiState.Success).data
     var input by remember { mutableStateOf("") }
 
     val ui = @Composable {
@@ -559,7 +559,7 @@ private fun SelectCourseList(
 @Composable
 private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState,innerPadding: PaddingValues,refreshCount : Int) {
     val uiState by vm.selectCourseInfoData.state.collectAsState()
-    val list = (uiState as UiState.Success).data
+    val list = (uiState as NetworkUiState.Success).data
         .let {
             if(search.isEmpty() || search.isBlank()) {
                 it
@@ -697,7 +697,7 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
         val cookie = getJxglstuCookie() ?: return@m
         vm.requestIdData.clear()
         vm.getRequestID(cookie,lessonId,courseId, type)
-        val result = (vm.requestIdData.state.value as? UiState.Success)?.data ?: return@m
+        val result = (vm.requestIdData.state.value as? NetworkUiState.Success)?.data ?: return@m
         vm.selectResultData.clear()
         vm.postSelect(cookie,result)
     }
@@ -707,7 +707,7 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
     val uiState by vm.selectResultData.state.collectAsState()
     Column {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
-            val data = (uiState as UiState.Success).data
+            val data = (uiState as NetworkUiState.Success).data
             ColumnVertical(modifier = Modifier.fillMaxWidth()) {
                 Icon( if(data.first) painterResource(R.drawable.check) else painterResource(R.drawable.close), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
                 Text(text = data.second, color = MaterialTheme.colorScheme.primary)
@@ -918,7 +918,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
 
     val state = rememberLazyListState()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val lists = (uiState as UiState.Success).data
+        val lists = (uiState as NetworkUiState.Success).data
         var showBottomSheet_info by remember { mutableStateOf(false) }
         if (showBottomSheet_info) {
             HazeBottomSheet (

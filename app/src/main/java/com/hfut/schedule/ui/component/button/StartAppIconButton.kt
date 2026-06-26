@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.kyant.backdrop.Backdrop
-import com.xah.mirror.util.ShaderState
+
 
 
 @Composable
