@@ -43,11 +43,17 @@ import androidx.compose.ui.unit.dp
 
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.repository.ElectricHistoryRepository
+import com.hfut.schedule.logic.database.util.ElectricBalanceParser
+import com.hfut.schedule.logic.database.util.ElectricMeterKeyFactory
 import com.hfut.schedule.logic.database.util.insertSafely
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.logic.network.exception.EmptyElectricResponseException
+import com.hfut.schedule.logic.network.exception.ElectricResponseReadException
+import com.hfut.schedule.logic.network.util.ElectricFeeResponseClassifier
 import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -89,13 +95,14 @@ import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -350,58 +357,162 @@ suspend fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel) = wit
     }
 }
 
-suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
-    val useHefei = DataStoreManager.useHefeiElectric.first()
-    val auth = prefs.getString("auth","")
-    if(useHefei) {
-        val bean = DataStoreManager.getHefeiElectric()
-        if(bean == null) {
-            vmUI.electricValue.value = "--"
-            saveString("memoryEle","0.0")
-            return@withContext
-        }
-        async { vm.getFee("bearer $auth", FeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = bean.roomNumber, building = bean.buildingNumber) }.await()
-        async {
-            Handler(Looper.getMainLooper()).post{
-                vm.hefeiElectric.observeForever { result ->
-                    if (result?.contains("success") == true) {
-                        try {
-                            val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
-                            for ((_, value) in data) {
+suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) {
+    try {
+        val useHefei = DataStoreManager.useHefeiElectric.first()
+        val auth = prefs.getString("auth","")
+        if(useHefei) {
+            val bean = DataStoreManager.getHefeiElectric()
+            if(bean == null) {
+                withContext(Dispatchers.Main.immediate) {
+                    vmUI.electricValue.value = "--"
+                }
+                saveString("memoryEle","0.0")
+                return
+            }
+            val queryBuildingNumber = bean.buildingNumber
+            val queryRoomNumber = bean.roomNumber
+            val queryRoomName = bean.name
+            if (queryBuildingNumber.isBlank() || queryRoomNumber.isBlank() || queryRoomName.isBlank()) {
+                LogUtil.error("自动电费查询：合肥寝室配置不完整")
+                return
+            }
+            try {
+                val result = withTimeoutOrNull(15_000L.milliseconds) {
+                    vm.queryElectricFee(
+                        auth = "bearer $auth",
+                        type = FeeType.ELECTRIC_HEFEI_UNDERGRADUATE,
+                        room = queryRoomNumber,
+                        building = queryBuildingNumber
+                    )
+                }
+                if (result == null) {
+                    LogUtil.error("自动电费查询超时")
+                    return
+                }
+                if (!ElectricFeeResponseClassifier.isBusinessSuccess(result)) {
+                    LogUtil.error("自动电费查询业务失败")
+                    return
+                }
+                try {
+                        val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
+                        if (data.isEmpty()) {
+                            LogUtil.error("自动电费查询未返回余额数据")
+                            return
+                        }
+                        var hasValidBalance = false
+                        for ((_, value) in data) {
+                            val balance = ElectricBalanceParser.parseHefeiBalance(value)
+                            if (balance == null) {
+                                LogUtil.error("自动电费查询：合肥余额解析失败")
+                                continue
+                            }
+                            hasValidBalance = true
+                            withContext(Dispatchers.Main.immediate) {
                                 vmUI.electricValue.value = value
-                                saveString("memoryEle",vmUI.electricValue.value)
                             }
-                        } catch (e:Exception) {
-                            LogUtil.error(e)
+                            DataStoreManager.saveHefeiElectricFee(value)
+                            saveString("memoryEle",value)
+                            val meterKey = ElectricMeterKeyFactory.hefei(queryBuildingNumber, queryRoomNumber)
+                            ElectricHistoryRepository.recordSnapshot(
+                                meterKey = meterKey,
+                                campusRegion = CampusRegion.HEFEI.description,
+                                roomName = queryRoomName,
+                                balance = balance
+                            )
                         }
+                        if (!hasValidBalance) {
+                            LogUtil.error("自动电费查询：合肥所有余额均解析失败")
+                        }
+                    } catch (e:Exception) {
+                        if (e is CancellationException) throw e
+                        LogUtil.error(e)
                     }
-                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: EmptyElectricResponseException) {
+                LogUtil.error(e, "自动电费查询：服务器未返回数据")
+            } catch (e: ElectricResponseReadException) {
+                LogUtil.error(e, "自动电费查询：响应读取失败")
+            } catch (e: Exception) {
+                LogUtil.error(e)
             }
-        }
-    } else {
-        val BuildingsNumber = prefs.getString("BuildNumber", "0")
-        val RoomNumber = prefs.getString("RoomNumber", "")
-        val EndNumber = prefs.getString("EndNumber", "")
+        } else {
+            DataStoreManager.migrateXuanchengElectricIfNeeded()
+            val bean = DataStoreManager.getXuanchengElectric()
+            if (bean == null) {
+                withContext(Dispatchers.Main.immediate) {
+                    vmUI.electricValue.value = "--"
+                }
+                saveString("memoryEle","0.0")
+                return
+            }
 
-        var input = "300$BuildingsNumber$RoomNumber$EndNumber"
-        async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
-        async {
-            Handler(Looper.getMainLooper()).post{
-                vm.electricData.observeForever { result ->
-                    if (result?.contains("success") == true) {
-                        try {
-                            val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
-                            for ((_, value) in data) {
-                                vmUI.electricValue.value = value.substringAfter("剩余金额:").toDouble().roundOffString(2)
-                                saveString("memoryEle",vmUI.electricValue.value)
-                            }
-                        } catch (e:Exception) {
-                            LogUtil.error(e)
-                        }
-                    }
+            val input = "300${bean.buildingNumber}${bean.roomNumber}${bean.endNumber}"
+            try {
+                val result = withTimeoutOrNull(15_000L.milliseconds) {
+                    vm.queryElectricFee(
+                        auth = "bearer $auth",
+                        type = FeeType.ELECTRIC_XUANCHENG,
+                        room = input
+                    )
                 }
+                if (result == null) {
+                    LogUtil.error("自动电费查询超时")
+                    return
+                }
+                if (!ElectricFeeResponseClassifier.isBusinessSuccess(result)) {
+                    LogUtil.error("自动电费查询业务失败")
+                    return
+                }
+                try {
+                    val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
+                    if (data.isEmpty()) {
+                        LogUtil.error("自动电费查询未返回余额数据")
+                        return
+                    }
+                    var hasValidBalance = false
+                    for ((_, value) in data) {
+                        val balance = ElectricBalanceParser.parseXuanchengBalance(value)
+                        if (balance == null) {
+                            LogUtil.error("自动电费查询：宣城余额解析失败")
+                            continue
+                        }
+                        hasValidBalance = true
+                        val parsedFee = balance.roundOffString(2)
+                        withContext(Dispatchers.Main.immediate) {
+                            vmUI.electricValue.value = parsedFee
+                        }
+                        saveString("memoryEle",parsedFee)
+                        val meterKey = ElectricMeterKeyFactory.xuancheng(input)
+                        ElectricHistoryRepository.recordSnapshot(
+                            meterKey = meterKey,
+                            campusRegion = CampusRegion.XUANCHENG.description,
+                            roomName = bean.name,
+                            balance = balance
+                        )
+                    }
+                    if (!hasValidBalance) {
+                        LogUtil.error("自动电费查询：宣城所有余额均解析失败")
+                    }
+                } catch (e:Exception) {
+                    if (e is CancellationException) throw e
+                    LogUtil.error(e)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: EmptyElectricResponseException) {
+                LogUtil.error(e, "自动电费查询：服务器未返回数据")
+            } catch (e: ElectricResponseReadException) {
+                LogUtil.error(e, "自动电费查询：响应读取失败")
+            } catch (e: Exception) {
+                LogUtil.error(e)
             }
         }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        LogUtil.error(e, "自动电费查询初始化失败")
     }
 }
 
@@ -572,4 +683,3 @@ fun ChangeCourseUI(
         }
     }
 }
-

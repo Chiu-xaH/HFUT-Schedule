@@ -34,10 +34,142 @@ import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
+import com.hfut.schedule.logic.network.exception.ElectricResponseReadException
+import com.hfut.schedule.logic.network.exception.EmptyElectricResponseException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 object HuiXinRepository {
     private val huiXin = HuiXinServiceCreator.create(HuiXinService::class.java)
+
+    private data class FeeRequestParams(
+        val feeItemId: Int,
+        val campus: String?,
+        val level: String?,
+        val room: String?,
+        val phoneNumber: String?,
+        val building: String?
+    )
+
+    private fun buildFeeParams(
+        type: FeeType,
+        room: String?,
+        phoneNumber: String?,
+        building: String?
+    ): FeeRequestParams {
+        val feeItemId = type.code
+        val campus = when (type) {
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1sh"
+            else -> null
+        }
+        val levels = when (type) {
+            FeeType.NET_XUANCHENG -> "0"
+            FeeType.ELECTRIC_XUANCHENG -> null
+            FeeType.SHOWER_XUANCHENG -> "1"
+            FeeType.SHOWER_HEFEI -> "未适配"
+            FeeType.WASHING_HEFEI -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1"
+        }
+        val rooms = when (type) {
+            FeeType.NET_XUANCHENG -> null
+            FeeType.ELECTRIC_XUANCHENG -> room
+            FeeType.SHOWER_XUANCHENG -> null
+            FeeType.SHOWER_HEFEI -> null
+            FeeType.WASHING_HEFEI -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> room
+        }
+        val phoneNumbers = when (type) {
+            FeeType.NET_XUANCHENG -> null
+            FeeType.ELECTRIC_XUANCHENG -> null
+            FeeType.SHOWER_XUANCHENG -> phoneNumber
+            FeeType.SHOWER_HEFEI -> phoneNumber
+            FeeType.WASHING_HEFEI -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> null
+        }
+        val buildings = when (type) {
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> building
+            else -> null
+        }
+        return FeeRequestParams(feeItemId, campus, levels, rooms, phoneNumbers, buildings)
+    }
+
+    /**
+     * Suspend API that returns the raw response body for a single fee query.
+     * Each call creates an independent Retrofit Call, so concurrent requests
+     * cannot interfere with each other.
+     *
+     * @return response body string (non-null, non-blank)
+     * @throws retrofit2.HttpException on HTTP non-2xx responses
+     * @throws java.io.IOException on empty body or body read failure
+     * @throws Exception on network failure
+     */
+    suspend fun queryFeeRaw(
+        auth: String,
+        type: FeeType,
+        room: String? = null,
+        phoneNumber: String? = null,
+        building: String? = null
+    ): String {
+        val params = buildFeeParams(type, room, phoneNumber, building)
+        return kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+            val call = huiXin.getFee(
+                auth = auth,
+                typeId = params.feeItemId,
+                room = params.room,
+                level = params.level,
+                phoneNumber = params.phoneNumber,
+                type = "IEC",
+                campus = params.campus,
+                building = params.building
+            )
+
+            continuation.invokeOnCancellation {
+                call.cancel()
+            }
+
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (!continuation.isActive) return
+
+                    if (!response.isSuccessful) {
+                        continuation.resumeWithException(
+                            HttpException(response)
+                        )
+                        return
+                    }
+
+                    val body = try {
+                        response.body()?.string()
+                    } catch (e: Exception) {
+                        continuation.resumeWithException(
+                            ElectricResponseReadException(e)
+                        )
+                        return
+                    }
+
+                    if (body.isNullOrBlank()) {
+                        continuation.resumeWithException(
+                            EmptyElectricResponseException()
+                        )
+                        return
+                    }
+
+                    continuation.resume(body)
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    if (!continuation.isActive) return
+                    if (call.isCanceled) return
+                    continuation.resumeWithException(t)
+                }
+            })
+        }
+    }
 
     suspend fun getCardBill(
         auth : String,
@@ -295,49 +427,16 @@ object HuiXinRepository {
         electricData : MutableLiveData<String?>,
         showerData : MutableLiveData<String?>
     ) {
-
-        val feeItemId = type.code
-        val campus = when(type) {
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1sh"
-            else -> null
-        }
-        val levels = when(type) {
-            FeeType.NET_XUANCHENG -> "0"
-            FeeType.ELECTRIC_XUANCHENG -> null
-            FeeType.SHOWER_XUANCHENG -> "1"
-            FeeType.SHOWER_HEFEI -> "未适配"
-            FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1"
-        }
-        val rooms = when(type) {
-            FeeType.NET_XUANCHENG -> null
-            FeeType.ELECTRIC_XUANCHENG -> room
-            FeeType.SHOWER_XUANCHENG -> null
-            FeeType.SHOWER_HEFEI -> null
-            FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> room
-        }
-        val phoneNumbers = when(type) {
-            FeeType.NET_XUANCHENG -> null
-            FeeType.ELECTRIC_XUANCHENG -> null
-            FeeType.SHOWER_XUANCHENG -> phoneNumber
-            FeeType.SHOWER_HEFEI -> phoneNumber
-            FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> null
-        }
-        val buildings = when(type) {
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> building
-            else -> null
-        }
+        val params = buildFeeParams(type, room, phoneNumber, building)
         val call = huiXin.getFee(
             auth = auth,
-            typeId = feeItemId,
-            room = rooms,
-            level = levels,
-            phoneNumber = phoneNumbers,
+            typeId = params.feeItemId,
+            room = params.room,
+            level = params.level,
+            phoneNumber = params.phoneNumber,
             type = "IEC",
-            campus = campus,
-            building = buildings
+            campus = params.campus,
+            building = params.building
         )
 
         call.enqueue(object : Callback<ResponseBody> {

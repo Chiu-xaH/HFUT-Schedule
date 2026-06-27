@@ -5,6 +5,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.dao.CustomEventDao
+import com.hfut.schedule.logic.database.dao.ElectricBalanceRecordDao
 import com.hfut.schedule.logic.database.dao.FriendDao
 import com.hfut.schedule.logic.database.dao.ShowerLabelDao
 import com.hfut.schedule.logic.database.dao.SpecialWorkDayDao
@@ -61,6 +62,25 @@ private val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("DROP TABLE IF EXISTS `course`")
     }
 }
+private val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS electric_balance_record (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                meterKey TEXT NOT NULL,
+                campusRegion TEXT NOT NULL,
+                roomName TEXT NOT NULL,
+                remainingBalance REAL NOT NULL,
+                sampledAt INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+        db.execSQL(
+            "CREATE INDEX IF NOT EXISTS index_electric_balance_record_meterKey_sampledAt ON electric_balance_record(meterKey, sampledAt)"
+        )
+    }
+}
 
 object DataBaseManager {
     private val db: AppDataBase by lazy {
@@ -72,7 +92,8 @@ object DataBaseManager {
             MIGRATION_1_2,
             MIGRATION_2_3,
             MIGRATION_3_4,
-            MIGRATION_4_5
+            MIGRATION_4_5,
+            MIGRATION_5_6
         ).build()
     }
 
@@ -81,4 +102,5 @@ object DataBaseManager {
     val specialWorkDayDao: SpecialWorkDayDao by lazy { db.specialWorkDayDao() }
     val webUrlDao: WebURLDao by lazy { db.webUrlDao() }
     val friendDao: FriendDao by lazy { db.friendDao() }
+    val electricBalanceRecordDao: ElectricBalanceRecordDao by lazy { db.electricBalanceRecordDao() }
 }

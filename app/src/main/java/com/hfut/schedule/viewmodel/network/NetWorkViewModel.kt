@@ -418,6 +418,27 @@ class NetWorkViewModel() : ViewModel() {
     val hefeiElectric = MutableLiveData<String?>()
     fun getFee(auth: String,type : FeeType,room : String? = null,phoneNumber : String? = null,building : String? = null) = HuiXinRepository.getFee(auth,type,room,phoneNumber, building,hefeiElectric,infoValue, electricData, showerData)
 
+    /**
+     * Suspend API for electric fee queries. Each call gets its own Retrofit Call,
+     * so concurrent requests for different rooms cannot interfere.
+     *
+     * @return response body string (non-null, non-blank)
+     * @throws retrofit2.HttpException on HTTP non-2xx
+     * @throws java.io.IOException on empty body or read failure
+     * @throws Exception on network failure
+     */
+    suspend fun queryElectricFee(
+        auth: String,
+        type: FeeType,
+        room: String? = null,
+        building: String? = null
+    ): String = HuiXinRepository.queryFeeRaw(
+        auth = auth,
+        type = type,
+        room = room,
+        building = building
+    )
+
     val guaGuaUserInfo = MutableLiveData<String?>()
     fun getGuaGuaUserInfo() = GuaGuaRepository.getGuaGuaUserInfo(guaGuaUserInfo)
 

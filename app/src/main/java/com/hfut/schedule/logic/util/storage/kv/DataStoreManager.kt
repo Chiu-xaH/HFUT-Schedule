@@ -82,6 +82,12 @@ object DataStoreManager : IDataStore {
         val roomNumber : String,
         val name : String
     )
+    data class XuanchengElectricStorage(
+        val buildingNumber : String,
+        val roomNumber : String,
+        val endNumber : String,
+        val name : String
+    )
 
     enum class ShowTeacherConfig(override val code : Int,override val label: UiText) : BaseChoice {
         ONLY_MULTI(0,res(R.string.appearance_settings_choice_display_teachers_only_multi)),
@@ -130,6 +136,10 @@ object DataStoreManager : IDataStore {
     private val HEFEI_ELECTRIC = stringPreferencesKey("hefei_electric")
     private val HEFEI_ELECTRIC_FEE = stringPreferencesKey("hefei_electric_fee")
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
+    private val XUANCHENG_ELECTRIC_BUILDING_NUMBER = stringPreferencesKey("xuancheng_electric_building_number")
+    private val XUANCHENG_ELECTRIC_ROOM_NUMBER = stringPreferencesKey("xuancheng_electric_room_number")
+    private val XUANCHENG_ELECTRIC_END_NUMBER = stringPreferencesKey("xuancheng_electric_end_number")
+    private val XUANCHENG_ELECTRIC_NAME = stringPreferencesKey("xuancheng_electric_name")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
     private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
@@ -196,6 +206,10 @@ object DataStoreManager : IDataStore {
     private suspend fun saveHefeiBuildingNumber(value: String) = saveValue(HEFEI_BUILDING_NUMBER, value)
     private suspend fun saveHefeiElectricName(value: String) = saveValue(HEFEI_ELECTRIC, value)
     private suspend fun saveHefeiRoomNumber(value: String) = saveValue(HEFEI_ROOM_NUMBER, value)
+    private suspend fun saveXuanchengBuildingNumber(value: String) = saveValue(XUANCHENG_ELECTRIC_BUILDING_NUMBER, value)
+    private suspend fun saveXuanchengRoomNumber(value: String) = saveValue(XUANCHENG_ELECTRIC_ROOM_NUMBER, value)
+    private suspend fun saveXuanchengEndNumber(value: String) = saveValue(XUANCHENG_ELECTRIC_END_NUMBER, value)
+    private suspend fun saveXuanchengElectricName(value: String) = saveValue(XUANCHENG_ELECTRIC_NAME, value)
     suspend fun saveHefeiElectricFee(value: String) = saveValue(HEFEI_ELECTRIC_FEE, value)
     suspend fun saveApiKey(value: String) = saveValue(API_KEY, value)
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
@@ -218,6 +232,14 @@ object DataStoreManager : IDataStore {
             launch { saveHefeiRoomNumber(roomNumber) }
             launch { saveHefeiBuildingNumber(buildingNumber) }
             launch { saveHefeiElectricName(name) }
+        }
+    }
+    suspend fun saveXuanchengElectric(bean : XuanchengElectricStorage)  = withContext(Dispatchers.IO) {
+        with(bean) {
+            launch { saveXuanchengBuildingNumber(buildingNumber) }
+            launch { saveXuanchengRoomNumber(roomNumber) }
+            launch { saveXuanchengEndNumber(endNumber) }
+            launch { saveXuanchengElectricName(name) }
         }
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
@@ -295,6 +317,17 @@ object DataStoreManager : IDataStore {
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
+    val xuanchengElectric: Flow<XuanchengElectricStorage?> = dataStore.data.map { preferences ->
+        val buildingNumber = preferences[XUANCHENG_ELECTRIC_BUILDING_NUMBER] ?: EMPTY_STRING
+        val roomNumber = preferences[XUANCHENG_ELECTRIC_ROOM_NUMBER] ?: EMPTY_STRING
+        val endNumber = preferences[XUANCHENG_ELECTRIC_END_NUMBER] ?: EMPTY_STRING
+        val name = preferences[XUANCHENG_ELECTRIC_NAME] ?: EMPTY_STRING
+        if (buildingNumber == EMPTY_STRING || roomNumber == EMPTY_STRING || endNumber == EMPTY_STRING || name == EMPTY_STRING) {
+            null
+        } else {
+            XuanchengElectricStorage(buildingNumber, roomNumber, endNumber, name)
+        }
+    }
     val termStartDate = getFlow(TERM_START_DATE, getDefaultStartTerm())
     suspend fun getHefeiElectric(): HefeiElectricStorage? = withContext(Dispatchers.IO) {
         val hefeiBuildingNumber = hefeiBuildingNumber.first()
@@ -304,6 +337,31 @@ object DataStoreManager : IDataStore {
             return@withContext null
         }
         return@withContext HefeiElectricStorage(hefeiBuildingNumber, hefeiRoomNumber, hefeiElectric)
+    }
+    suspend fun getXuanchengElectric(): XuanchengElectricStorage? = withContext(Dispatchers.IO) {
+        xuanchengElectric.first()
+    }
+
+    suspend fun migrateXuanchengElectricIfNeeded() = withContext(Dispatchers.IO) {
+        if (getXuanchengElectric() != null) return@withContext
+
+        val sp = SharedPrefs.prefs
+        val buildingNumber = sp.getString("BuildNumber", null)
+            ?.takeIf { it.isNotBlank() && it != "0" }
+            ?: return@withContext
+        val roomNumber = sp.getString("RoomNumber", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: return@withContext
+        val endNumber = sp.getString("EndNumber", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: return@withContext
+        val roomName = sp.getString("RoomText", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: "${buildingNumber}号楼${roomNumber}寝室"
+
+        saveXuanchengElectric(
+            XuanchengElectricStorage(buildingNumber, roomNumber, endNumber, roomName)
+        )
     }
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
 

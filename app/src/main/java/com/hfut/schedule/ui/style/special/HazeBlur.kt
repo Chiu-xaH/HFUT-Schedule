@@ -251,6 +251,7 @@ fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeSt
 fun HazeBottomSheet(
     showBottomSheet : Boolean,
     onDismissRequest : () -> Unit,
+    sheetGesturesEnabled : Boolean = true,
     content : @Composable () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -266,6 +267,7 @@ fun HazeBottomSheet(
         sheetState = sheetState,
         dragHandle = null,
         containerColor = MaterialTheme.colorScheme.surface,
+        sheetGesturesEnabled = sheetGesturesEnabled,
         shape = bottomSheetRound(sheetState, isFullScreen)
     ) {
         Column(modifier = Modifier

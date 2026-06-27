@@ -1,9 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.electric
 
-
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -44,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -57,9 +57,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.database.repository.ElectricHistoryRepository
+import com.hfut.schedule.logic.database.util.ElectricBalanceParser
+import com.hfut.schedule.logic.database.util.ElectricMeterKeyFactory
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampus
@@ -67,14 +71,15 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.logic.network.exception.EmptyElectricResponseException
+import com.hfut.schedule.logic.network.exception.ElectricResponseReadException
+import com.hfut.schedule.logic.network.util.ElectricFeeResponseClassifier
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.HefeiElectricStorage
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.getHefeiElectric
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
@@ -85,6 +90,7 @@ import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.MenuChip
@@ -95,16 +101,22 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.ElectricHistoryViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.async
+import retrofit2.HttpException
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
+private const val ELECTRIC_QUERY_TIMEOUT_MS = 15_000L
 
 
 private fun getUrl(page : Int) : String {
@@ -132,32 +144,38 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     )
     val auth = prefs.getString("auth","")
 
-    val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
-    var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
-    val SavedRoomNumber = prefs.getString("RoomNumber", "")
-    var RoomNumber by remember { mutableStateOf(SavedRoomNumber ?: "") }
-    val SavedEndNumber = prefs.getString("EndNumber", "")
-    var EndNumber by remember { mutableStateOf(SavedEndNumber ?: "") }
+    var buildingsNumber by remember { mutableStateOf("") }
+    var roomNumber by remember { mutableStateOf("") }
+    var endNumber by remember { mutableStateOf("") }
+    var restoredXuanchengElectric by remember { mutableStateOf(false) }
 
     var region by remember { mutableStateOf("选择南北") }
-
-    var input = "300$BuildingsNumber$RoomNumber$EndNumber"
 
     var showitem by remember { mutableStateOf(false) }
     var showitem2 by remember { mutableStateOf(false) }
     var showitem3 by remember { mutableStateOf(false) }
     var showitem4 by remember { mutableStateOf(false) }
 
-    var Result by remember { mutableStateOf("") }
-    var Result2 by remember { mutableStateOf("") }
+    // Xuancheng display state — all set in coroutine, never in Composition
+    var xuanchengRoomCodeText by remember { mutableStateOf("") }
+    var xuanchengBalanceText by remember { mutableStateOf("") }
+    var xuanchengResultVisible by remember { mutableStateOf(false) }
+    var xuanchengQueryLoading by remember { mutableStateOf(false) }
 
     var showAdd by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    var show by remember { mutableStateOf(false) }
-
     var json by remember { mutableStateOf("") }
+
+    // Xuancheng success context
+    var queriedMeterKey by remember { mutableStateOf<String?>(null) }
+    var queriedRoomName by remember { mutableStateOf("") }
+
+    // Query jobs for cancellation on rapid re-click
+    var xuanchengQueryJob by remember { mutableStateOf<Job?>(null) }
+    var xuanchengRequestId by remember { mutableLongStateOf(0L) }
+
     if (showBottomSheet) {
 
         HazeBottomSheet (
@@ -168,7 +186,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
                 ) {
                     HazeBottomSheetTopBar("支付订单确认", isPaddingStatusBar = false)
-                    val roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
+                    val roomInfo by remember { mutableStateOf("${buildingsNumber}号楼${roomNumber}寝室${region}") }
                     val int by remember { mutableStateOf(payNumber.toFloat()) }
                     if(int > 0) {
                         PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC_XUANCHENG,hazeState)
@@ -177,12 +195,31 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         }
     }
 
-    region = when(EndNumber) {
-        "11"-> if(BuildingsNumber.toInt() > 5 )"南边照明" else "南边"
+    region = when(endNumber) {
+        "11"-> if(buildingsNumber.toIntOrNull() ?: 0 > 5 )"南边照明" else "南边"
         "12" -> "南边空调"
-        "21" -> if(BuildingsNumber.toInt() > 5 )"北边照明" else "北边"
+        "21" -> if(buildingsNumber.toIntOrNull() ?: 0 > 5 )"北边照明" else "北边"
         "22" -> "北边空调"
         else -> "选择南北"
+    }
+    LaunchedEffect(Unit) {
+        try {
+            DataStoreManager.migrateXuanchengElectricIfNeeded()
+
+            val saved = DataStoreManager.getXuanchengElectric() ?: return@LaunchedEffect
+            buildingsNumber = saved.buildingNumber
+            roomNumber = saved.roomNumber
+            endNumber = saved.endNumber
+            queriedMeterKey = ElectricMeterKeyFactory.xuancheng(
+                "300${saved.buildingNumber}${saved.roomNumber}${saved.endNumber}"
+            )
+            queriedRoomName = saved.name
+            restoredXuanchengElectric = true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            LogUtil.error(e, "恢复宣城电费配置失败")
+        }
     }
 
     var showDialog2 by remember { mutableStateOf(false) }
@@ -284,89 +321,340 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
     menuOffset?.let {
         DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {
-            DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
+            DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { buildingsNumber =  "1"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
+            DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  buildingsNumber =  "2"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
+            DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  buildingsNumber =  "3"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
+            DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  buildingsNumber =  "4"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
+            DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  buildingsNumber =  "5"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
+            DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  buildingsNumber =  "6"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
+            DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  buildingsNumber =  "7"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
+            DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  buildingsNumber =  "8"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
+            DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  buildingsNumber =  "9"
                 showitem = false})
-            DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
+            DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  buildingsNumber = "10"
                 showitem = false})
         }
         DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = it) {
-            DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
+            DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { endNumber = "11"
                 showitem2 = false})
-            DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
+            DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { endNumber = "12"
                 showitem2 = false})
-            DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
+            DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { endNumber = "21"
                 showitem2 = false})
-            DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
+            DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { endNumber = "22"
                 showitem2 = false})
         }
         DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }, offset = it) {
-            DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
+            DropdownMenuItem(text = { Text(text = "南边") }, onClick = { endNumber = "11"
                 showitem3 = false })
-            DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
+            DropdownMenuItem(text = { Text(text = "北边") }, onClick = { endNumber = "21"
                 showitem3 = false })
         }
     }
 
     val scope = rememberCoroutineScope()
-    fun searchHefei() {
-        scope.launch {
-            val data = getHefeiElectric()
-            if(data == null) {
-                showToast("无")
-                return@launch
-            }
-            show = false
-            async { reEmptyLiveDta(vm.hefeiElectric) }.await()
-            async { vm.getFee("bearer $auth", FeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = data.roomNumber, building = data.buildingNumber) }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.hefeiElectric.observeForever { result ->
-                        if (result?.contains("success") == true) {
-                            try {
-                                val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
-                                val data = jsons.showData
-                                for ((_, value) in data) {
-                                    scope.launch {
-                                        DataStoreManager.saveHefeiElectricFee(value)
-                                        show = true
-                                    }
-                                }
-                            } catch (e : Exception) {
-                                LogUtil.error(e)
-                                showToast("错误")
-                            }
-//                                                    val jsonObject = JSONObject(result)
-//                                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
-//                                                    dataObject.put("myCustomInfo", "房间：$input")
-//                                                    json = dataObject.toString()
-//                                                    show = false
-                        }
+
+    // Hefei success context and state
+    var hefeiQueriedMeterKey by remember { mutableStateOf<String?>(null) }
+    var hefeiQueriedRoomName by remember { mutableStateOf("") }
+    var hefeiResultVisible by remember { mutableStateOf(false) }
+    var hefeiQueryLoading by remember { mutableStateOf(false) }
+    var hefeiQueryJob by remember { mutableStateOf<Job?>(null) }
+    var hefeiRequestId by remember { mutableLongStateOf(0L) }
+    var showHistoryPage by remember { mutableStateOf(false) }
+    var historyPageTab by remember { mutableIntStateOf(pagerState.currentPage) }
+    val hefeiHistoryViewModel = viewModel<ElectricHistoryViewModel>(key = "electric_history_hefei")
+    val xuanchengHistoryViewModel = viewModel<ElectricHistoryViewModel>(key = "electric_history_xuancheng")
+
+    fun searchXuancheng() {
+        xuanchengQueryJob?.cancel()
+        val requestId = ++xuanchengRequestId
+        xuanchengQueryJob = scope.launch {
+            if (requestId == xuanchengRequestId) xuanchengQueryLoading = true
+            showitem4 = false
+            // Snapshot immutable params
+            val queryBuildingsNumber = buildingsNumber
+            val queryRoomNumber = roomNumber
+            val queryEndNumber = endNumber
+            val queryRegion = region
+            val queryInput = "300$queryBuildingsNumber$queryRoomNumber$queryEndNumber"
+            val queryRoomName = "${queryBuildingsNumber}号楼${queryRoomNumber}寝室${queryRegion}"
+
+            try {
+                val result = withTimeoutOrNull(ELECTRIC_QUERY_TIMEOUT_MS.milliseconds) {
+                    vm.queryElectricFee(
+                        auth = "bearer $auth",
+                        type = FeeType.ELECTRIC_XUANCHENG,
+                        room = queryInput
+                    )
+                }
+                if (requestId != xuanchengRequestId) return@launch
+                if (result == null) {
+                    showToast("查询超时，请稍后重试")
+                    return@launch
+                }
+                if (!ElectricFeeResponseClassifier.isBusinessSuccess(result)) {
+                    showToast("未能获取电费信息")
+                    LogUtil.error("电费接口业务失败")
+                    return@launch
+                }
+                try {
+                    val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
+                    val data = jsons.showData
+                    if (data.isEmpty()) {
+                        if (requestId == xuanchengRequestId) showToast("未获取到电费数据")
+                        return@launch
                     }
+                    var hasValidBalance = false
+                    for ((_, value) in data) {
+                        val balance = ElectricBalanceParser.parseXuanchengBalance(value)
+                        if (balance == null) {
+                            LogUtil.error("宣城余额解析失败")
+                            continue
+                        }
+                        if (requestId != xuanchengRequestId) return@launch
+                        hasValidBalance = true
+                        val meterKey = ElectricMeterKeyFactory.xuancheng(queryInput)
+                        val displayRoomCode = value.substringBefore("剩余金额").replace(":", "").trim()
+                        val displayBalance = balance.roundOffString(2)
+                        xuanchengRoomCodeText = displayRoomCode
+                        xuanchengBalanceText = displayBalance
+                        xuanchengResultVisible = true
+                        queriedMeterKey = meterKey
+                        queriedRoomName = queryRoomName
+                        DataStoreManager.saveXuanchengElectric(
+                            DataStoreManager.XuanchengElectricStorage(
+                                buildingNumber = queryBuildingsNumber,
+                                roomNumber = queryRoomNumber,
+                                endNumber = queryEndNumber,
+                                name = queryRoomName
+                            )
+                        )
+                        // Re-check before suspend call
+                        if (requestId != xuanchengRequestId) return@launch
+                        ElectricHistoryRepository.recordSnapshot(
+                            meterKey = meterKey,
+                            campusRegion = CampusRegion.XUANCHENG.description,
+                            roomName = queryRoomName,
+                            balance = balance
+                        )
+                    }
+                    if (!hasValidBalance && requestId == xuanchengRequestId) {
+                        showToast("未能解析电费余额")
+                        return@launch
+                    }
+                } catch (e : CancellationException) {
+                    throw e
+                } catch (e : Exception) {
+                    if (requestId != xuanchengRequestId) return@launch
+                    LogUtil.error(e)
+                    showToast("解析错误")
+                }
+                if (requestId != xuanchengRequestId) return@launch
+                try {
+                    val jsonObject = JSONObject(result)
+                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+                    dataObject.put("myCustomInfo", "房间：$queryInput")
+                    val paymentJson = dataObject.toString()
+                    if (requestId != xuanchengRequestId) return@launch
+                    json = paymentJson
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    if (requestId != xuanchengRequestId) return@launch
+                    LogUtil.error(e)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: HttpException) {
+                if (requestId != xuanchengRequestId) return@launch
+                val msg = when (e.code()) {
+                    401, 403 -> "登录状态已失效，请重新登录"
+                    else -> "服务器错误：${e.code()}"
+                }
+                showToast(msg)
+                LogUtil.error(e)
+            } catch (e: EmptyElectricResponseException) {
+                if (requestId != xuanchengRequestId) return@launch
+                showToast("服务器未返回电费数据")
+                LogUtil.error(e)
+            } catch (e: ElectricResponseReadException) {
+                if (requestId != xuanchengRequestId) return@launch
+                showToast("电费数据读取失败")
+                LogUtil.error(e)
+            } catch (e: java.io.IOException) {
+                if (requestId != xuanchengRequestId) return@launch
+                showToast("网络连接失败")
+                LogUtil.error(e)
+            } catch (e: Exception) {
+                if (requestId != xuanchengRequestId) return@launch
+                LogUtil.error(e)
+                showToast("电费查询失败")
+            } finally {
+                if (requestId == xuanchengRequestId) {
+                    xuanchengQueryLoading = false
+                    xuanchengQueryJob = null
                 }
             }
         }
     }
+
+    fun searchHefei() {
+        hefeiQueryJob?.cancel()
+        val requestId = ++hefeiRequestId
+        hefeiQueryJob = scope.launch {
+            if (requestId == hefeiRequestId) hefeiQueryLoading = true
+            try {
+                val data = getHefeiElectric()
+                if (data == null) {
+                    if (requestId == hefeiRequestId) showToast("请先选择寝室")
+                    return@launch
+                }
+                val queryBuildingNumber = data.buildingNumber
+                val queryRoomNumber = data.roomNumber
+                val queryRoomName = data.name
+                if (
+                    queryBuildingNumber.isBlank() ||
+                    queryRoomNumber.isBlank() ||
+                    queryRoomName.isBlank()
+                ) {
+                    if (requestId == hefeiRequestId) showToast("寝室配置不完整，请重新选择")
+                    return@launch
+                }
+                val queryMeterKey = ElectricMeterKeyFactory.hefei(
+                    queryBuildingNumber,
+                    queryRoomNumber
+                )
+                val result = withTimeoutOrNull(ELECTRIC_QUERY_TIMEOUT_MS.milliseconds) {
+                    vm.queryElectricFee(
+                        auth = "bearer $auth",
+                        type = FeeType.ELECTRIC_HEFEI_UNDERGRADUATE,
+                        room = queryRoomNumber,
+                        building = queryBuildingNumber
+                    )
+                }
+                if (requestId != hefeiRequestId) return@launch
+                if (result == null) {
+                    showToast("查询超时，请稍后重试")
+                    return@launch
+                }
+                if (!ElectricFeeResponseClassifier.isBusinessSuccess(result)) {
+                    showToast("未能获取电费信息")
+                    LogUtil.error("电费接口业务失败")
+                    return@launch
+                }
+                try {
+                    val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
+                    val showData = jsons.showData
+                    if (showData.isEmpty()) {
+                        if (requestId == hefeiRequestId) showToast("未获取到电费数据")
+                        return@launch
+                    }
+                    var hasValidBalance = false
+                    for ((_, value) in showData) {
+                        val balance = ElectricBalanceParser.parseHefeiBalance(value)
+                        if (balance == null) {
+                            LogUtil.error("合肥余额解析失败")
+                            continue
+                        }
+                        if (requestId != hefeiRequestId) return@launch
+                        hasValidBalance = true
+                        hefeiResultVisible = true
+                        hefeiQueriedMeterKey = queryMeterKey
+                        hefeiQueriedRoomName = queryRoomName
+                        DataStoreManager.saveHefeiElectricFee(value)
+                        // Re-check after suspend call
+                        if (requestId != hefeiRequestId) return@launch
+                        ElectricHistoryRepository.recordSnapshot(
+                            meterKey = queryMeterKey,
+                            campusRegion = CampusRegion.HEFEI.description,
+                            roomName = queryRoomName,
+                            balance = balance
+                        )
+                    }
+                    if (!hasValidBalance && requestId == hefeiRequestId) {
+                        showToast("未能解析电费余额")
+                        return@launch
+                    }
+                } catch (e : CancellationException) {
+                    throw e
+                } catch (e : Exception) {
+                    if (requestId != hefeiRequestId) return@launch
+                    LogUtil.error(e)
+                    showToast("解析错误")
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: HttpException) {
+                if (requestId != hefeiRequestId) return@launch
+                val msg = when (e.code()) {
+                    401, 403 -> "登录状态已失效，请重新登录"
+                    else -> "服务器错误：${e.code()}"
+                }
+                showToast(msg)
+                LogUtil.error(e)
+            } catch (e: EmptyElectricResponseException) {
+                if (requestId != hefeiRequestId) return@launch
+                showToast("服务器未返回电费数据")
+                LogUtil.error(e)
+            } catch (e: ElectricResponseReadException) {
+                if (requestId != hefeiRequestId) return@launch
+                showToast("电费数据读取失败")
+                LogUtil.error(e)
+            } catch (e: java.io.IOException) {
+                if (requestId != hefeiRequestId) return@launch
+                showToast("网络连接失败")
+                LogUtil.error(e)
+            } catch (e: Exception) {
+                if (requestId != hefeiRequestId) return@launch
+                showToast("电费查询失败")
+                LogUtil.error(e)
+            } finally {
+                if (requestId == hefeiRequestId) {
+                    hefeiQueryLoading = false
+                    hefeiQueryJob = null
+                }
+            }
+        }
+    }
+
+    // Auto-query once on page entry if config is complete
+    var hasAutoQueried by remember { mutableStateOf(false) }
+    LaunchedEffect(restoredXuanchengElectric, pagerState.currentPage) {
+        if (hasAutoQueried) return@LaunchedEffect
+        when (pagerState.currentPage) {
+            HEFEI_TAB -> {
+                hasAutoQueried = true
+                searchHefei()
+            }
+            XUANCHENG_TAB -> {
+                if (!restoredXuanchengElectric) return@LaunchedEffect
+                hasAutoQueried = true
+                if (buildingsNumber.isNotBlank() && roomNumber.isNotBlank() && endNumber.isNotBlank()) {
+                    searchXuancheng()
+                }
+            }
+        }
+    }
+
     Column(modifier = Modifier) {
-        HazeBottomSheetTopBar("寝室电费" , isPaddingStatusBar = false) {
+        HazeBottomSheetTopBar(if(showHistoryPage) "余额记录" else "寝室电费" , isPaddingStatusBar = false) {
+            if(showHistoryPage) {
+                IconButton(onClick = { showHistoryPage = false }) {
+                    Icon(painter = painterResource(R.drawable.arrow_back), contentDescription = "back")
+                }
+            } else {
                 Row() {
                     if(showitem4)
-                        IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
+                        IconButton(onClick = {roomNumber = roomNumber.replaceFirst(".$".toRegex(), "")}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                     FilledTonalIconButton(onClick = {
                         when(pagerState.currentPage) {
@@ -374,41 +662,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                 searchHefei()
                             }
                             XUANCHENG_TAB -> {
-                                scope.launch {
-                                    show = false
-                                    async {
-                                        showitem4 = false
-                                        reEmptyLiveDta(vm.electricData)
-                                        SharedPrefs.saveString("BuildNumber", BuildingsNumber)
-                                        SharedPrefs.saveString("EndNumber", EndNumber)
-                                        SharedPrefs.saveString("RoomNumber", RoomNumber)
-                                        SharedPrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
-                                    }.await()
-                                    async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
-                                    async {
-                                        Handler(Looper.getMainLooper()).post{
-                                            vm.electricData.observeForever { result ->
-                                                if (result?.contains("success") == true) {
-                                                    try {
-                                                        val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
-                                                        val data = jsons.showData
-                                                        for ((_, value) in data) {
-                                                            Result = value
-                                                        }
-                                                    } catch (e : Exception) {
-                                                        LogUtil.error(e)
-                                                        showToast("错误")
-                                                    }
-                                                    val jsonObject = JSONObject(result)
-                                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
-                                                    dataObject.put("myCustomInfo", "房间：$input")
-                                                    json = dataObject.toString()
-                                                    show = false
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                searchXuancheng()
                             }
                         }
                     }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
@@ -423,31 +677,50 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                         Text("官方充值")
                     }
                 }
+            }
         }
-        if (BuildingsNumber == "0") BuildingsNumber = ""
-        LaunchedEffect(pagerState.currentPage) {
-            show = false
+        if (buildingsNumber == "0") buildingsNumber = ""
+        if(!showHistoryPage) {
+            // Pager switch does NOT clear either campus result
+            CustomTabRow(pagerState,titles)
         }
-        CustomTabRow(pagerState,titles)
+        ShareTwoContainer2D(
+            modifier = Modifier.fillMaxWidth(),
+            show = showHistoryPage,
+            defaultContent = {
         Column(
         ) {
             HorizontalPager(state = pagerState) { page ->
                 when(page) {
                     HEFEI_TAB -> {
-                        Column {
-                            ElectricHefei(vm,show) {
-                                searchHefei()
+                        LazyColumn {
+                            item {
+                                ElectricHefei(
+                                    vm,
+                                    hefeiResultVisible,
+                                    hefeiQueryLoading,
+                                    hefeiQueriedMeterKey,
+                                    hefeiQueriedRoomName,
+                                    hefeiHistoryViewModel,
+                                    onOpenRecords = {
+                                        historyPageTab = HEFEI_TAB
+                                        showHistoryPage = true
+                                    }
+                                ) {
+                                    searchHefei()
+                                }
                             }
                         }
                     }
                     XUANCHENG_TAB -> {
-                        Column {
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+                        LazyColumn {
+                            item {
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
                                 MenuChip(
-                                    label = { Text(text = "楼栋 $BuildingsNumber") },
+                                    label = { Text(text = "楼栋 $buildingsNumber") },
                                 ) {
                                     menuOffset = it
                                     showitem = true
@@ -461,10 +734,10 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                 ) {
                                     menuOffset = it
                                     when {
-                                        BuildingsNumber.toIntOrNull() != null -> {
+                                        buildingsNumber.toIntOrNull() != null -> {
                                             when {
-                                                BuildingsNumber.toInt() > 5 -> showitem2 = true
-                                                BuildingsNumber.toInt() in 1..5 -> showitem3 = true
+                                                buildingsNumber.toInt() > 5 -> showitem2 = true
+                                                buildingsNumber.toInt() in 1..5 -> showitem3 = true
                                             }
                                         }
                                         else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
@@ -474,15 +747,12 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                 Spacer(modifier = Modifier.width(10.dp))
                                 AssistChip(
                                     onClick = { showitem4 = !showitem4 },
-                                    label = { Text(text = "寝室 ${RoomNumber}") },
+                                    label = { Text(text = "寝室 $roomNumber") },
                                     //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                                 )
                             }
-
-                            // Spacer(modifier = Modifier.height(7.dp))
-
-//充值界面
-//        Spacer(modifier = Modifier.height(7.dp))
+                            }
+                            item {
                             AnimatedVisibility(
                                 visible = showitem4,
                                 enter = slideInVertically(
@@ -497,35 +767,29 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             ){
                                 Row (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
                                     OutlinedCard{
-                                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                            item {
-                                                Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
-                                            }
-                                            item {
-                                                LazyRow {
-                                                    items(5) { items ->
-                                                        IconButton(onClick = {
-                                                            if (RoomNumber.length < 3)
-                                                                RoomNumber += items.toString()
-                                                            else Toast.makeText(
-                                                                MyApplication.context,
-                                                                "三位数",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
-                                                        }) { Text(text = items.toString()) }
-                                                    }
+                                        Column(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                            Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
+                                            LazyRow {
+                                                items(5) { items ->
+                                                    IconButton(onClick = {
+                                                        if (roomNumber.length < 3)
+                                                            roomNumber += items.toString()
+                                                        else Toast.makeText(
+                                                            MyApplication.context,
+                                                            "三位数",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }) { Text(text = items.toString()) }
                                                 }
                                             }
-                                            item {
-                                                LazyRow {
-                                                    items(5) { items ->
-                                                        val num = items + 5
-                                                        IconButton(onClick = {
-                                                            if (RoomNumber.length < 3)
-                                                                RoomNumber += num
-                                                            else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
-                                                        }) { Text(text = num.toString()) }
-                                                    }
+                                            LazyRow {
+                                                items(5) { items ->
+                                                    val num = items + 5
+                                                    IconButton(onClick = {
+                                                        if (roomNumber.length < 3)
+                                                            roomNumber += num
+                                                        else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
+                                                    }) { Text(text = num.toString()) }
                                                 }
                                             }
                                         }
@@ -533,26 +797,18 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     }
                                 }
                             }
-
-                            if(Result.contains("剩余金额")){
-                                Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
-                                Result2 = Result2.replace(":","")
-                                Result = Result.substringBefore("剩余金额").replace(":","")
-                                show = true
-
-                            } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
-
-
+                            }
+                            item {
                             DividerTextExpandedWith(text = "查询结果",openBlurAnimation = false) {
                                 LoadingLargeCard(
-                                    title = if(!show)"￥XX.XX"
+                                    title = if(!xuanchengResultVisible)"￥XX.XX"
                                     else
-                                        "￥${Result2.substringAfter(" ").toDouble().roundOffString(2)}",
-                                    loading = !show ,
+                                        "￥${xuanchengBalanceText}",
+                                    loading = xuanchengQueryLoading ,
                                     prepare = true,
                                     rightTop = {
                                         FilledTonalButton(
-                                            enabled = show,
+                                            enabled = xuanchengResultVisible,
                                             onClick = {
                                                 if(showAdd && payNumber != "")
                                                     showBottomSheet = true
@@ -569,13 +825,15 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     }
                                 ) {
                                     TransplantListItem(
-                                        overlineContent = {Text( text = if(!show)"房间号 " + " 300XXXXX1" else "房间号 " + Result.substringAfter(" ")  )},
-                                        headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
+                                        overlineContent = {Text( text = if(!xuanchengResultVisible)"房间号 " + " 300XXXXX1" else "房间号 $xuanchengRoomCodeText" )},
+                                        headlineContent = { (if(!xuanchengResultVisible)"X号楼XXX寝室方向设施" else queriedRoomName.ifEmpty { null })?.let { Text(text = it) } },
                                         leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP/2))
                             }
+                            }
+                            item {
                             DividerTextExpandedWith("使用说明", defaultIsExpanded = false) {
                                 CustomCard(
                                     color = cardNormalColor()
@@ -604,6 +862,18 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     )
                                 }
                             }
+                            }
+                            item {
+                            ElectricHistorySection(
+                                meterKey = queriedMeterKey,
+                                roomName = queriedRoomName,
+                                viewModel = xuanchengHistoryViewModel,
+                                onOpenRecords = {
+                                    historyPageTab = XUANCHENG_TAB
+                                    showHistoryPage = true
+                                }
+                            )
+                            }
                         }
                     }
                 }
@@ -612,6 +882,13 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 .height(APP_HORIZONTAL_DP)
                 .navigationBarsPadding())
         }
+            },
+            secondContent = {
+            ElectricBalanceRecordPage(
+                viewModel = if(historyPageTab == HEFEI_TAB) hefeiHistoryViewModel else xuanchengHistoryViewModel
+            )
+            }
+        )
     }
 }
 
@@ -623,7 +900,12 @@ private enum class ExpandState {
 @Composable
 fun ElectricHefei(
     vm : NetWorkViewModel,
-    show : Boolean,
+    hefeiResultVisible : Boolean,
+    hefeiQueryLoading : Boolean,
+    hefeiQueriedMeterKey : String?,
+    hefeiQueriedRoomName : String,
+    hefeiHistoryViewModel: ElectricHistoryViewModel,
+    onOpenRecords: () -> Unit,
     search : () -> Unit
 ) {
     var expandState by remember { mutableStateOf(ExpandState.NONE) }
@@ -858,7 +1140,7 @@ fun ElectricHefei(
         }
     )
     var useLocal by remember { mutableStateOf(false) }
-    val savedData by produceState<HefeiElectricStorage?>(initialValue = null, key1 = show) {
+    val savedData by produceState<HefeiElectricStorage?>(initialValue = null, key1 = hefeiResultVisible) {
         value = getHefeiElectric()
     }
 
@@ -891,12 +1173,12 @@ fun ElectricHefei(
     val result by DataStoreManager.hefeiElectricFee.collectAsState(initial = "XX.XX")
     DividerTextExpandedWith("查询结果",openBlurAnimation = false) {
         LoadingLargeCard(
-            title = if(!show)"￥XX.XX" else "￥$result",
-            loading = !show ,
+            title = if(!hefeiResultVisible)"￥XX.XX" else "￥$result",
+            loading = hefeiQueryLoading ,
             prepare = true,
             rightTop = {
                 FilledTonalButton(
-                    enabled = show,
+                    enabled = hefeiResultVisible,
                     onClick = {
                         showToast("正在开发")
                     }
@@ -918,6 +1200,13 @@ fun ElectricHefei(
         }
         BottomTip("快速充值开发中 请先使用官方充值")
     }
+
+    ElectricHistorySection(
+        meterKey = hefeiQueriedMeterKey,
+        roomName = hefeiQueriedRoomName,
+        viewModel = hefeiHistoryViewModel,
+        onOpenRecords = onOpenRecords
+    )
 }
 
 private fun getBuildingStr(content : Int, campus : Campus) : String {
