@@ -65,6 +65,7 @@ fun LineChart(
     val xAxisHeight = if (showLabel) 36.dp else 0.dp
     val chartTopPadding = if (showLabel) 8.dp else 0.dp
     val chartHorizontalPadding = if (showLabel) 24.dp else 0.dp
+    val selectedPointCenterColor = MaterialTheme.colorScheme.surface
     var selectedIndex by remember(data) { mutableIntStateOf(-1) }
 
     ColumnVertical {
@@ -204,6 +205,36 @@ fun LineChart(
                         radius = 2.dp.toPx(),
                         center = point,
                         style = Stroke(width = 1.dp.toPx())
+                    )
+                }
+                if (selectedIndex in points.indices) {
+                    val selectedPoint = points[selectedIndex]
+                    drawLine(
+                        color = lineColor.copy(alpha = 0.35f),
+                        start = Offset(selectedPoint.x, chartTop),
+                        end = Offset(selectedPoint.x, chartBottom),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                    drawCircle(
+                        color = lineColor.copy(alpha = 0.18f),
+                        radius = 11.dp.toPx(),
+                        center = selectedPoint
+                    )
+                    drawCircle(
+                        color = selectedPointCenterColor,
+                        radius = 7.dp.toPx(),
+                        center = selectedPoint
+                    )
+                    drawCircle(
+                        color = lineColor,
+                        radius = 7.dp.toPx(),
+                        center = selectedPoint,
+                        style = Stroke(width = 2.dp.toPx())
+                    )
+                    drawCircle(
+                        color = lineColor,
+                        radius = 3.dp.toPx(),
+                        center = selectedPoint
                     )
                 }
             }
