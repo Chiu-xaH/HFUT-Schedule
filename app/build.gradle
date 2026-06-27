@@ -250,13 +250,13 @@ dependencies {
         implementation(libs.sharednav)
     }
     // 共用UI模块
-    implementation implementation(project(':common-ui'))
+    implementation(project(':common-ui'))
     // 共用逻辑模块
-    implementation implementation(project(':common-logic'))
+    implementation(project(':common-logic'))
     // 消费预测
-    implementation implementation(project(':forecast'))
+    implementation(project(':forecast'))
     // 网络
-    implementation implementation(project(':network'))
+    implementation(project(':network'))
     // 基准文件模块
     baselineProfile project(":baselineProfile")
 }
