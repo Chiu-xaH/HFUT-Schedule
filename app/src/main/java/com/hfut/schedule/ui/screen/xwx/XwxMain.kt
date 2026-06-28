@@ -44,23 +44,29 @@ import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.logic.model.xwx.XwxLoginInfo
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
+import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.viewmodel.network.XwxViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -73,29 +79,30 @@ import java.util.UUID
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
+fun XwxMainScreen(vm: NetWorkViewModel) {
     val activity = LocalActivity.current
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val uiState by vm.functionsResp.state.collectAsState()
+    val uiState by vm.xwxFunctionsResp.state.collectAsState()
     val savedInfo by produceState<XwxLoginInfo?>(initialValue = null) {
         value = getXwxLogin()
     }
+    val navController = LocalNavController.current
 
-    val previewUiState by vm.docPreviewResp.state.collectAsState()
+    val previewUiState by vm.xwxDocPreviewResp.state.collectAsState()
 
     val refreshNetwork = suspend m@ {
         if(savedInfo == null) {
             return@m
         }
-        vm.functionsResp.clear()
-        vm.getFunctions(savedInfo!!.data.schoolCode,savedInfo!!.data.userId,savedInfo!!.token)
+        vm.xwxFunctionsResp.clear()
+        vm.getXwxFunctions(savedInfo!!.data.schoolCode,savedInfo!!.data.userId,savedInfo!!.token)
     }
 
     LaunchedEffect(savedInfo) {
-        vm.docPreviewResp.emitPrepare()
+        vm.xwxDocPreviewResp.emitPrepare()
         if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
@@ -113,11 +120,7 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
                     colors = topBarTransplantColor(),
                     title = { Text("校务行") },
                     navigationIcon = {
-                        IconButton(onClick = {
-                            activity?.finish()
-                        }) {
-                            Icon(painterResource(R.drawable.arrow_back), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                        }
+                        TopBarNavigationIcon()
                     }
                 )
             }
@@ -146,8 +149,8 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
                                             return@m
                                         }
                                         val f = item.filePropertyType.toIntOrNull() ?: return@m
-                                        vm.docPreviewResp.clear()
-                                        vm.getDocPreview(
+                                        vm.xwxDocPreviewResp.clear()
+                                        vm.getXwxDocPreview(
                                             savedInfo!!.data.schoolCode,
                                             savedInfo!!.data.userId,
                                             f,
@@ -232,7 +235,11 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
                             Text("刷新或重新登录校务行")
                         },
                         modifier = Modifier.clickable {
-                            navHostController.navigate(XwxScreen.LOGIN.name)
+                            navController.push(
+                                destination = XiaoWuXingLoginDestination,
+                                effect = JumpTransitionEffectWallpaper(),
+                                launchMode = LaunchMode.Replace()
+                            )
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.rotate_right),null)

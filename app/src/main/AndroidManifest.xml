@@ -56,11 +56,6 @@
         <profileable android:shell="true" />
 
         <activity
-            android:name=".activity.screen.XwxActivity"
-            android:exported="true"
-            android:label="@string/title_activity_xwx"
-            android:theme="@style/Theme.App.Starting" />
-        <activity
             android:name=".activity.util.WebViewActivity"
             android:exported="false"
             android:label="@string/title_activity_web_view"

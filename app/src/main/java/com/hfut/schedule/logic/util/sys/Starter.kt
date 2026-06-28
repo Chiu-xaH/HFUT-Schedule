@@ -3,7 +3,6 @@ package com.hfut.schedule.logic.util.sys
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
-import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -13,9 +12,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
 import android.service.quicksettings.TileService
-import android.util.Log
 import androidx.core.net.toUri
-import androidx.core.service.quicksettings.TileServiceCompat.startActivityAndCollapse
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
@@ -23,22 +20,19 @@ import com.hfut.schedule.activity.screen.FixActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.SupabaseActivity
-import com.hfut.schedule.activity.screen.XwxActivity
 import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
-import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
-import com.hfut.schedule.ui.util.webview.getPureUrl
-
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hjq.device.compat.DeviceOs
-import com.xah.navigation.controller.NavigationController
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.controller.NavigationController
 
 
 object Starter {
@@ -197,28 +191,6 @@ object Starter {
     fun startGuaGua(context: Context) {
         val it = Intent(context, ShowerActivity::class.java).apply {
             putExtra("FIRST",ShowerScreen.HOME.name)
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun loginXwx(context: Context) {
-        val it = Intent(context, XwxActivity::class.java).apply {
-            putExtra("FIRST",XwxScreen.LOGIN.name)
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun startXwx(context: Context) {
-        val it = Intent(context, XwxActivity::class.java).apply {
-            putExtra("FIRST",XwxScreen.HOME.name)
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }

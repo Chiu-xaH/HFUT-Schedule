@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -66,7 +65,6 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -119,7 +117,6 @@ fun GradeScreen(
     }
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
-    val viewModel = viewModel { XwxViewModel() }
     var input by remember { mutableStateOf("") }
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -133,6 +130,8 @@ fun GradeScreen(
             .collect { collapsedFraction -> isNavigationIconVisible = collapsedFraction < 0.5f }
     }
         var buttonText by rememberSaveable { mutableStateOf<String>(AverageGradeDestination.TITLE.asString(context)) }
+
+    val navController = LocalNavController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -179,7 +178,7 @@ fun GradeScreen(
                                 onClick = {
                                     scope.launch {
                                         loading = true
-                                        goToXwx(viewModel,context)
+                                        goToXwx(vm,navController)
                                         loading = false
                                     }
                                 } ,

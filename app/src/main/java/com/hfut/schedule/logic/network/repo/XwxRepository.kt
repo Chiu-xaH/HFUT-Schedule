@@ -84,7 +84,7 @@ object XwxRepository {
     @JvmStatic
     private fun parseFunctions(json : String) : List<XwxFunction> = try {
         val result = GsonInstance.fromJson(json, XwxFunctionsResponseBody::class.java)
-        if(isXwxRequestSuccessful(result.code) == false) {
+        if(!isXwxRequestSuccessful(result.code)) {
             throw Exception("登录状态失效")
         }
         result.result.data

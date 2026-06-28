@@ -1,5 +1,6 @@
 package com.hfut.schedule.viewmodel.network
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -99,11 +100,14 @@ import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
 import com.hfut.schedule.logic.network.repo.SchoolNetSelfRepository
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
+import com.hfut.schedule.logic.model.xwx.XwxFunction
+import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
 import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.OneRepository
 import com.hfut.schedule.logic.network.repo.OthersRepository
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.network.repo.WxRepository
+import com.hfut.schedule.logic.network.repo.XwxRepository
 
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.util.Constant
@@ -597,5 +601,17 @@ class NetWorkViewModel() : ViewModel() {
 
     val uniAppClassroomLessonsResp = UiStateHolder<List<UniAppClassroomLessonBean>>()
     suspend fun getClassroomLessons(semester: Int, roomId : Int, token : String) = UniAppRepository.getClassroomLessons(semester,roomId,token,uniAppClassroomLessonsResp)
+
+    val xwxSchoolListResp = UiStateHolder<List<XwxSchoolBean>>()
+    suspend fun getXwxSchoolList() = XwxRepository.getSchoolList(xwxSchoolListResp)
+
+    val xwxLoginResp = UiStateHolder<Boolean>()
+    suspend fun loginXwx(schoolCode : Long, username : String, password : String) = XwxRepository.login(schoolCode,username,password,xwxLoginResp)
+
+    val xwxFunctionsResp = UiStateHolder<List<XwxFunction>>()
+    suspend fun getXwxFunctions(schoolCode : Long, username : String, token : String) = XwxRepository.getFunctions(schoolCode,username,token,xwxFunctionsResp)
+
+    val xwxDocPreviewResp = UiStateHolder<Bitmap>()
+    suspend fun getXwxDocPreview(schoolCode : Long, username : String, filePropertyType : Int, fileProperty : String, token : String) = XwxRepository.getDocPreview(schoolCode, username, filePropertyType, fileProperty, token, xwxDocPreviewResp)
 }
 

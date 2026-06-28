@@ -213,7 +213,7 @@ fun SearchScreen(
                 SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb(vmUI, false, vm,hazeState) },isHigh = true),
                 SearchAppBean(5,"${context.getString(R.string.navigation_label_school_email)} 校园邮箱" , { Mail(vm,hazeState) }),
                 SearchAppBean(6,"${ExamDestination.TITLE.asString(context)}安排 教务处考试安排 ${context.getString(R.string.navigation_label_exam_news)}" , { Exam() }, ExamDestination(null).key),
-                SearchAppBean(7,"${GradeDestination.TITLE.asString(context)}", { Grade(ifSaved) }, GradeDestination(ifSaved).key),
+                SearchAppBean(7,"${GradeDestination.TITLE.asString(context)}", { Grade(vm,ifSaved) }, GradeDestination(ifSaved).key),
                 SearchAppBean(8,"${FailRateDestination.title.asString(context)}", { FailRate() }, FailRateDestination.key),
                 SearchAppBean(9,"${TermCoursesDestination.TITLE.asString(context)} 教材 课本", { CourseTotal(ifSaved) }, TermCoursesDestination(ifSaved,"SEARCH").key),
                 SearchAppBean(10,"${PersonInfoDestination.title.asString(context)}", { PersonUI() }, PersonInfoDestination.key),

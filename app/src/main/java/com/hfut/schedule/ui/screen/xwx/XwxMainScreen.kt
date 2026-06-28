@@ -57,9 +57,11 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -68,16 +70,20 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
+import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
+import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getXwxPsk
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
-import com.hfut.schedule.viewmodel.network.XwxViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -101,8 +107,8 @@ suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
     }
 }
 
-suspend fun checkXwxLogin(vm: XwxViewModel) : Boolean = withContext(Dispatchers.IO) {
-    when(vm.functionsResp.state.first()) {
+suspend fun checkXwxLogin(vm: NetWorkViewModel) : Boolean = withContext(Dispatchers.IO) {
+    when(vm.xwxFunctionsResp.state.first()) {
         is NetworkUiState.Error<*> -> {
             return@withContext false
         }
@@ -112,13 +118,13 @@ suspend fun checkXwxLogin(vm: XwxViewModel) : Boolean = withContext(Dispatchers.
         else -> {
             // 检查
             val userInfo = getXwxLogin() ?: return@withContext false
-            vm.functionsResp.clear()
-            vm.getFunctions(
+            vm.xwxFunctionsResp.clear()
+            vm.getXwxFunctions(
                 schoolCode = userInfo.data.schoolCode,
                 username = userInfo.data.userId,
                 token = userInfo.token
             )
-            val result = vm.functionsResp.state.first()
+            val result = vm.xwxFunctionsResp.state.first()
             when(result) {
                 is NetworkUiState.Success<*> -> {
                     return@withContext true
@@ -134,8 +140,7 @@ suspend fun checkXwxLogin(vm: XwxViewModel) : Boolean = withContext(Dispatchers.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun XwxLoginScreen(
-    vm: XwxViewModel,
-    navController : NavHostController
+    vm: NetWorkViewModel,
 ) {
     val activity = LocalActivity.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -149,7 +154,7 @@ fun XwxLoginScreen(
                 colors = topBarTransplantColor(),
                 title = {
                     Text(
-                        text = "登录", modifier = Modifier.padding(start = 10.dp)
+                        text = "校务行-登录", modifier = Modifier.padding(start = 10.dp)
                     )
                 },
                 actions = {
@@ -162,16 +167,7 @@ fun XwxLoginScreen(
                     }
                 },
                 navigationIcon  = {
-                    Column(modifier = Modifier
-                        .padding(horizontal = APP_HORIZONTAL_DP)
-                        .padding(start = 3.5.dp)) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = "校务行",
-                            fontSize = 38.sp,
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    }
+                    TopBarNavigationIcon()
                 }
             )
         },
@@ -199,7 +195,7 @@ fun XwxLoginScreen(
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            LoginUI(vm,navController,selectSchoolUi) {
+            LoginUI(vm,selectSchoolUi) {
                 selectSchoolUi = it
             }
         }
@@ -209,11 +205,12 @@ fun XwxLoginScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoginUI(
-    vm : XwxViewModel,
-    navHostController: NavHostController,
+    vm : NetWorkViewModel,
     selectSchoolUi : Boolean,
     onSelectSchoolUi : (Boolean) -> Unit
 ) {
+    val navController = LocalNavController.current
+
     var hidden by rememberSaveable { mutableStateOf(true) }
     var password by remember { mutableStateOf("") }
     var username by remember { mutableStateOf(prefs.getString("Username", "") ?: "") }
@@ -244,10 +241,10 @@ private fun LoginUI(
         }
     }
     val refreshNetwork = suspend {
-        vm.schoolListResp.clear()
-        vm.getSchoolList()
+        vm.xwxSchoolListResp.clear()
+        vm.getXwxSchoolList()
     }
-    val uiState by vm.schoolListResp.state.collectAsState()
+    val uiState by vm.xwxSchoolListResp.state.collectAsState()
     LaunchedEffect(Unit) {
         if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
@@ -386,9 +383,9 @@ private fun LoginUI(
                 enabled = selectedSchool,
                 onClick = {
                     scope.launch {
-                        vm.loginResp.clear()
-                        vm.login(schoolCode,username,password)
-                        val result = vm.loginResp.state.first()
+                        vm.xwxLoginResp.clear()
+                        vm.loginXwx(schoolCode,username,password)
+                        val result = vm.xwxLoginResp.state.first()
                         when(result) {
                             is NetworkUiState.Error<*> -> {
                                 showToast("登陆失败")
@@ -401,7 +398,11 @@ private fun LoginUI(
                             }
                             is NetworkUiState.Success<*> -> {
                                 showToast("登陆成功")
-                                navHostController.navigateAndClear(XwxScreen.HOME.name)
+                                navController.push(
+                                    destination = XiaoWuXingDestination,
+                                    effect = JumpTransitionEffectWallpaper(),
+                                    launchMode = LaunchMode.Replace()
+                                )
                             }
                         }
                     }

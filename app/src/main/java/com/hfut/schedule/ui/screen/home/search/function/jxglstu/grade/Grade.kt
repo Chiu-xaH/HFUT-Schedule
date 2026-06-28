@@ -17,16 +17,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.nav.destination.GradeDestination
+import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
+import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
-import com.hfut.schedule.viewmodel.network.XwxViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.navigation.controller.NavigationController
 import kotlinx.coroutines.launch
 
 
@@ -34,10 +36,10 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun Grade(
+    vm : NetWorkViewModel,
     ifSaved : Boolean,
 )  {
     val navController = LocalNavController.current
-    val viewModel = viewModel { XwxViewModel() }
     var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -59,7 +61,7 @@ fun Grade(
                 onClick = {
                     scope.launch {
                         loading = true
-                        goToXwx(viewModel,context)
+                        goToXwx(vm,navController)
                         loading = false
                     }
                 },
@@ -76,10 +78,10 @@ fun Grade(
     )
 }
 
-suspend fun goToXwx(viewModel: XwxViewModel, context : Context) {
+suspend fun goToXwx(viewModel: NetWorkViewModel, navController : NavigationController) {
     if(!checkXwxLogin(viewModel)) {
-        Starter.loginXwx(context)
+        navController.push(XiaoWuXingLoginDestination)
     } else {
-        Starter.startXwx(context)
+        navController.push(XiaoWuXingDestination)
     }
 }
