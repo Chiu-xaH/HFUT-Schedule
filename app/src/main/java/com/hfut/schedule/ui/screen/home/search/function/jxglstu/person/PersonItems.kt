@@ -461,7 +461,15 @@ private fun PersonItems(
                     },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已过 ${DateTimeManager.getPercent(startDate,endDate).roundOffString(1)}%")
+                            val precent = DateTimeManager.getPercent(startDate,endDate)
+                            val str = if(precent in 0.0 ..< 1.0) {
+                                "已过 ${DateTimeManager.getPercent(startDate,endDate).roundOffString(1)}%"
+                            } else if(precent < 0f) {
+                                "待入学"
+                            } else {
+                                "已毕业"
+                            }
+                            Text(text = str)
                         } else { null }
                     },
                     modifier = Modifier.clickable {
@@ -679,6 +687,11 @@ data class PersonInfo(val name : String?,
     fun getNameFinally(): String {
         return this.name ?: prefs.getString("Username",null) ?: "游客"
     }
+
+    /**
+     * 是否是游客，登陆成功之后回保存学号，没登陆成功过就是游客
+     */
+    fun isAnonymous() = getStudentIdFinally() == null
 }
 
 

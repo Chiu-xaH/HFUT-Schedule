@@ -2,6 +2,11 @@ package com.hfut.schedule.ui.screen.home.search.function.my.webLab
 
 import android.util.Patterns
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -50,22 +55,33 @@ import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.isInGraduation
+import com.hfut.schedule.logic.util.sys.datetime.isInLanding
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
+import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
+import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
+import com.hfut.schedule.ui.screen.home.search.function.other.life.HuoZaiFeiXuan
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -77,6 +93,8 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.ShimmerAngle
+import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
@@ -330,6 +348,7 @@ fun NotificationBoxScreen(
         saveString("Notifications", getNotifications().size.toString())
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navController = LocalNavController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -358,10 +377,66 @@ fun NotificationBoxScreen(
             // TODO 解耦给云端共建
             LabUI()
             // TODO 新增
-//            DividerTextExpandedWith("使用技巧") {
-//            }
-//            DividerTextExpandedWith("提案板") {
-//            }
+            DividerTextExpandedWith("探索") {
+                val angle by rememberInfiniteTransition()
+                    .animateFloat(
+                        initialValue = 0f,
+                        targetValue = 360f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(
+                                durationMillis = 10000,
+                                easing = LinearEasing
+                            )
+                        )
+                    )
+                CardListItem(
+                    headlineContent = { Text("使用技巧") },
+                    supportingContent = {
+                        Text("探索聚在工大的更多用法")
+                    },
+                    leadingContent = {
+                        BrushIcon(SettingsTipsDestination.icon, angle = angle)
+                    },
+                    modifier = Modifier.clickable {
+                        navController.push(SettingsTipsDestination)
+                    },
+//                    cardModifier = Modifier.shimmerEffect(angle = ShimmerAngle.START_TO_END)
+                )
+                CardListItem(
+                    headlineContent = { Text("关于本应用") },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.github),null)
+                    },
+                    modifier = Modifier.clickable {
+                        navController.push(SettingsAboutDeveloperDestination)
+                    }
+                )
+                CardListItem(
+                    headlineContent = { Text("本版本新特性") },
+                    leadingContent = {
+                        Icon(painterResource(VersionInfoDestination.icon),null)
+                    },
+                    modifier = Modifier.clickable {
+                        navController.push(VersionInfoDestination)
+                    }
+                )
+                // TODO 导航到使用技巧
+            }
+            if(isInLanding()) {
+                DividerTextExpandedWith("初来乍到") {
+                    HuoZaiFeiXuan()
+                }
+            }
+            if(isInGraduation()) {
+                DividerTextExpandedWith("毕业季") {
+                    CardListItem(
+                        headlineContent = { Text("数据备份") },
+                        modifier = Modifier.clickable {
+                            navController.push(SettingsBackupDestination)
+                        }
+                    )
+                }
+            }
             InnerPaddingHeight(innerPadding,false)
         }
     }

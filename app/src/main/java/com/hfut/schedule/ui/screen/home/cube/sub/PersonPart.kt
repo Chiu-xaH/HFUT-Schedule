@@ -57,13 +57,15 @@ fun PersonPart() {
                         Row {
                             ColumnVertical {
                                 if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                                    Text(text = stringResource(
-                                        R.string.settings_person_info_tag_normal,
-                                        DateTimeManager.getPercent(
-                                            startDate,
-                                            endDate
-                                        ).roundOffString(1)
-                                    ))
+                                    val precent = DateTimeManager.getPercent(startDate,endDate)
+                                    val str = if(precent in 0.0 ..< 1.0) {
+                                        "已过 ${DateTimeManager.getPercent(startDate,endDate).roundOffString(1)}%"
+                                    } else if(precent < 0f) {
+                                        "待入学"
+                                    } else {
+                                        "已毕业"
+                                    }
+                                    Text(text = str)
                                 } else { null }
                             }
                         }

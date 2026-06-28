@@ -80,17 +80,10 @@ fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campu
     CampusRegion.HEFEI -> "101220101"
 }
 
-/*
-天气 预警   ->    天气
-
-校园地图 楼层导向     ->     校园
-
-外部应用 新生      ->       外部
- */
 @Composable
-fun StarterScreen() {
-    val context = LocalContext.current
+fun HuoZaiFeiXuan() {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     CardListItem(
         headlineContent = {
@@ -108,6 +101,20 @@ fun StarterScreen() {
             }
         }
     )
+}
+
+/*
+天气 预警   ->    天气
+
+校园地图 楼层导向     ->     校园
+
+外部应用 新生      ->       外部
+ */
+@Composable
+fun StarterScreen() {
+    val context = LocalContext.current
+
+    HuoZaiFeiXuan()
     CardListItem(
         headlineContent = { Text(Starter.AppPackages.ANHUI_HALL.appName) },
         supportingContent = {

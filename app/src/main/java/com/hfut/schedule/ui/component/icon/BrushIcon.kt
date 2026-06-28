@@ -12,12 +12,24 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 
+val rainbowBrush = Brush.sweepGradient(
+    colors = listOf(
+        Color(0xFFE53935), // 红
+        Color(0xFFFB8C00), // 橙
+        Color(0xFFFDD835), // 黄
+        Color(0xFF43A047), // 绿
+        Color(0xFF1E88E5), // 蓝
+        Color(0xFF8E24AA), // 紫
+        Color(0xFFE53935), // 闭环
+    )
+)
+
 @Composable
 fun BrushIcon(
     icon: Int,
-    brush : Brush,
     modifier: Modifier = Modifier,
-    angle : Float = 0f
+    brush : Brush = rainbowBrush,
+    angle : Float = 90f
 ) {
     Icon(
         painter = painterResource(icon),

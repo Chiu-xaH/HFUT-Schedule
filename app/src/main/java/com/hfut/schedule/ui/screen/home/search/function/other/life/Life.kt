@@ -101,8 +101,6 @@ fun Life() {
 //                                )
 //                            )
                         BrushIcon(
-                            brush = brush,
-                            angle = 90f,
                             icon = R.drawable.kid_star,
                             modifier = Modifier.size(20.dp)
                         )

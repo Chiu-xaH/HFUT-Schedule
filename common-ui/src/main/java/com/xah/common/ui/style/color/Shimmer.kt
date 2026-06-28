@@ -23,7 +23,9 @@ enum class ShimmerAngle(val angle : Float) {
     START_TO_END(0F),START_TOP_TO_BOTTOM_END(45F)
 }
 
-// 0f 从左向右  从左上向右下 135
+/**
+ * 从左到右，高光扫描效果
+ */
 @Composable
 fun Modifier.shimmerEffect(
     angle: ShimmerAngle = ShimmerAngle.START_TOP_TO_BOTTOM_END,

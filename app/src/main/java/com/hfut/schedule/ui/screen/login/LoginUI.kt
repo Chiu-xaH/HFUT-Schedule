@@ -92,6 +92,7 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
+import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.card.function.main.RefreshHuiXin
@@ -250,9 +251,6 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
     }
 }
 
-
-fun isAnonymity() : Boolean = getPersonInfo().name == null
-
 private const val TAB_LOGIN = 0
 private const val TAB_SETTRINGS = 1
 
@@ -276,222 +274,228 @@ fun LoginScreen(
     val jxglstuStatus by produceState<Int?>(initialValue = null) {
         value = networkVm.checkJxglstuCanUse()
     }
-    val showTip = username.startsWith(DateTimeManager.Date_yyyy) && isAnonymity()
+    // 学号以今年开头，且首次登陆
+    val showTip = username.startsWith(DateTimeManager.Date_yyyy) && getPersonInfo().isAnonymous()
     val showTip2 = jxglstuStatus != null && jxglstuStatus!! >= 400
     var tab by remember { mutableIntStateOf(TAB_LOGIN) }
     val context = LocalContext.current
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        topBar = {
-            LargeTopAppBar(
-                scrollBehavior = scrollBehavior,
-                colors = topBarTransplantColor(),
-                title = {
-                    ScrollText(text = "CAS登录" + if(GlobalStateHolder.webVpn) " (WebVpn)" else "")
-                        },
-                actions = {
-                    Row {
-                        IconButton(
-                            onClick = { tab = TAB_LOGIN },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = if(tab == TAB_LOGIN) {
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                } else {
-                                    Color. Unspecified
-                                }
-                            ),
-                        ) {
-                            Icon(painterResource(R.drawable.login),null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(25.5.dp))
-                        }
-                        val hasNotice = showTip || showTip2
-                        Box() {
-                            if(hasNotice) {
-                                Badge(
-//                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.zIndex(1f).align(Alignment.TopEnd).padding(1.5.dp)
-                                ) {
-                                    val l = listOf(showTip,showTip2)
-                                    Text(l.filter { it==true }.size.toString())
-                                }
-                            }
+    Box() {
+        if(showTip) {
+            Party()
+        }
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            topBar = {
+                LargeTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = {
+                        ScrollText(text = "CAS登录" + if(GlobalStateHolder.webVpn) " (WebVpn)" else "")
+                    },
+                    actions = {
+                        Row {
                             IconButton(
-                                onClick = { tab = TAB_SETTRINGS },
+                                onClick = { tab = TAB_LOGIN },
                                 colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = if(tab == TAB_SETTRINGS) {
+                                    containerColor = if(tab == TAB_LOGIN) {
                                         MaterialTheme.colorScheme.secondaryContainer
                                     } else {
                                         Color. Unspecified
-                                    },
+                                    }
                                 ),
                             ) {
-                                Icon(
-                                    painterResource(R.drawable.settings),
-                                    null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
+                                Icon(painterResource(R.drawable.login),null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(25.5.dp))
+                            }
+                            val hasNotice = showTip || showTip2
+                            Box() {
+                                if(hasNotice) {
+                                    Badge(
+//                                    containerColor = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.zIndex(1f).align(Alignment.TopEnd).padding(1.5.dp)
+                                    ) {
+                                        val l = listOf(showTip,showTip2)
+                                        Text(l.filter { it==true }.size.toString())
+                                    }
+                                }
+                                IconButton(
+                                    onClick = { tab = TAB_SETTRINGS },
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        containerColor = if(tab == TAB_SETTRINGS) {
+                                            MaterialTheme.colorScheme.secondaryContainer
+                                        } else {
+                                            Color. Unspecified
+                                        },
+                                    ),
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.settings),
+                                        null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+
+                            IconButton(onClick = {
+                                Starter.startFix(context)
+                            }) {
+                                Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                             }
                         }
-
+                    },
+                    navigationIcon  = {
                         IconButton(onClick = {
-                            Starter.startFix(context)
+                            activity?.finish()
                         }) {
-                            Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
-                    }
-                },
-                navigationIcon  = {
-                    IconButton(onClick = {
-                        activity?.finish()
-                    }) {
-                        Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                    }
-                },
-                modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer )
-            )
-        },
-        bottomBar = bottom@ {
-            Column (modifier = Modifier.bottomBarBlur(hazeState, color = MaterialTheme.colorScheme.surfaceContainer)) {
-                Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                if(tab == TAB_SETTRINGS) {
-                    LargeButton(
-                        onClick = {
-                            tab = when(tab) {
-                                TAB_LOGIN -> TAB_SETTRINGS
-                                else -> TAB_LOGIN
-                            }
-                        },
-                        text = "回到登录页面",
-                        modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
-                        icon = R.drawable.login,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                } else {
-                    val text =
+                    },
+                    modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer )
+                )
+            },
+            bottomBar = bottom@ {
+                Column (modifier = Modifier.bottomBarBlur(hazeState, color = MaterialTheme.colorScheme.surfaceContainer)) {
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                    if(tab == TAB_SETTRINGS) {
+                        LargeButton(
+                            onClick = {
+                                tab = when(tab) {
+                                    TAB_LOGIN -> TAB_SETTRINGS
+                                    else -> TAB_LOGIN
+                                }
+                            },
+                            text = "回到登录页面",
+                            modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
+                            icon = R.drawable.login,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    } else {
+                        val text =
 
-                        if(showTip && showTip2) {
-                            "两条重要提示"
-                        } else if(showTip) {
-                            "新生登录前须知"
-                        } else if(showTip2) {
-                            "教务系统无法联通"
-                        } else {
-                            "选项"
-                        }
-                    LargeButton(
-                        onClick = {
-                            tab = when(tab) {
-                                TAB_LOGIN -> TAB_SETTRINGS
-                                else -> TAB_LOGIN
+                            if(showTip && showTip2) {
+                                "两条重要提示"
+                            } else if(showTip) {
+                                "欢迎新生来到HFUT! 请阅读登录前须知"
+                            } else if(showTip2) {
+                                "教务系统无法联通"
+                            } else {
+                                "选项"
                             }
-                        },
-                        text = text,
-                        modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
-                        icon = if(!showTip && !showTip2) R.drawable.settings else R.drawable.notifications,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-            }
-        }
-    ) {innerPadding ->
-        Box (modifier = Modifier
-            .fillMaxSize()
-            .hazeSource(hazeState)) {
-            AnimatedVisibility(
-                visible = tab == TAB_LOGIN,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    TwoTextField(vm,innerPadding,username) {
-                        username = it
+                        LargeButton(
+                            onClick = {
+                                tab = when(tab) {
+                                    TAB_LOGIN -> TAB_SETTRINGS
+                                    else -> TAB_LOGIN
+                                }
+                            },
+                            text = text,
+                            modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
+                            icon = if(!showTip && !showTip2) R.drawable.settings else R.drawable.notifications,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
                     }
                 }
             }
-            AnimatedVisibility(
-                visible = tab == TAB_SETTRINGS,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Column (modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    InnerPaddingHeight(innerPadding,true)
-                    DividerTextExpandedWith("状态") {
-                        CustomCard(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surface,
-                        ) {
-                            val status = if(jxglstuStatus == null) {
-                                CheckResult(null,"正在检查",null)
-                            } else if(jxglstuStatus!! < 400) {
-                                CheckResult(true,"状态正常,可直接登录",jxglstuStatus)
-                            } else if(jxglstuStatus!! in 500 until 600) {
-                                CheckResult(false,"教务系统拒绝响应,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后,或打开跳过教务系统",jxglstuStatus)
-                            } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
-                                CheckResult(false,"教务系统封网,请换为校园网重新使用或打开外地访问",jxglstuStatus)
-                            } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
-                                CheckResult(false,"连接失败,设备无网络或对方服务器存在问题丢包,尝试重新进入此页面",jxglstuStatus)
-                            } else {
-                                CheckResult(false,"状态码 $jxglstuStatus",jxglstuStatus)
-                            }
-                            TransplantListItem(
-                                supportingContent = { Text(status.text ) },
-                                modifier = Modifier.clickable {
-                                    Starter.startWlanSettings(context)
-                                },
-                                headlineContent = {
-                                    Text("教务系统联通状态")
-                                },
-                                leadingContent = {
-                                    when(status.can) {
-                                        null -> LoadingIcon()
-                                        true -> Icon(painterResource(R.drawable.check_circle),null)
-                                        false -> {
+        ) {innerPadding ->
+            Box (modifier = Modifier
+                .fillMaxSize()
+                .hazeSource(hazeState)) {
+
+                AnimatedVisibility(
+                    visible = tab == TAB_LOGIN,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                        TwoTextField(vm,innerPadding,username) {
+                            username = it
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = tab == TAB_SETTRINGS,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Column (modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                        InnerPaddingHeight(innerPadding,true)
+                        DividerTextExpandedWith("状态") {
+                            CustomCard(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.surface,
+                            ) {
+                                val status = if(jxglstuStatus == null) {
+                                    CheckResult(null,"正在检查",null)
+                                } else if(jxglstuStatus!! < 400) {
+                                    CheckResult(true,"状态正常,可直接登录",jxglstuStatus)
+                                } else if(jxglstuStatus!! in 500 until 600) {
+                                    CheckResult(false,"教务系统拒绝响应,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后,或打开跳过教务系统",jxglstuStatus)
+                                } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
+                                    CheckResult(false,"教务系统封网,请换为校园网重新使用或打开外地访问",jxglstuStatus)
+                                } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
+                                    CheckResult(false,"连接失败,设备无网络或对方服务器存在问题丢包,尝试重新进入此页面",jxglstuStatus)
+                                } else {
+                                    CheckResult(false,"状态码 $jxglstuStatus",jxglstuStatus)
+                                }
+                                TransplantListItem(
+                                    supportingContent = { Text(status.text ) },
+                                    modifier = Modifier.clickable {
+                                        Starter.startWlanSettings(context)
+                                    },
+                                    headlineContent = {
+                                        Text("教务系统联通状态")
+                                    },
+                                    leadingContent = {
+                                        when(status.can) {
+                                            null -> LoadingIcon()
+                                            true -> Icon(painterResource(R.drawable.check_circle),null)
+                                            false -> {
+                                                BadgedBox(
+                                                    badge = {
+                                                        Badge()
+                                                    },
+                                                    content = {
+                                                        Icon(painterResource(R.drawable.link_off),null)
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                )
+                                if(showTip) {
+                                    PaddingHorizontalDivider()
+                                    TransplantListItem(
+                                        supportingContent = { Text("新生需先在网页教务系统或信息门户登录过(点击跳转网页)，确认账号已可以使用，才能正常使用本App") },
+                                        headlineContent = { Text("致新生") },
+                                        leadingContent = {
                                             BadgedBox(
                                                 badge = {
                                                     Badge()
                                                 },
                                                 content = {
-                                                    Icon(painterResource(R.drawable.link_off),null)
+                                                    Icon(painterResource(R.drawable.check_circle), null)
                                                 }
                                             )
-                                        }
-                                    }
+                                        },
+                                        modifier = Modifier.clickable {
+                                            Starter.startWebUrlOuter(context,Constant.CAS_LOGIN_URL)
+                                        },
+                                    )
                                 }
-                            )
-                            if(showTip) {
-                                PaddingHorizontalDivider()
-                                TransplantListItem(
-                                    supportingContent = { Text("新生需先在网页教务系统或信息门户登录过(点击跳转网页),确认账号已可以使用,如您已登陆过可忽略") },
-                                    headlineContent = { Text("致新生") },
-                                    leadingContent = {
-                                        BadgedBox(
-                                            badge = {
-                                                Badge()
-                                            },
-                                            content = {
-                                                Icon(painterResource(R.drawable.check_circle), null)
-                                            }
-                                        )
-                                    },
-                                    modifier = Modifier.clickable {
-                                        Starter.startWebUrlOuter(context,Constant.CAS_LOGIN_URL)
-                                    },
-                                )
                             }
                         }
-                    }
-                    DividerTextExpandedWith("选项") {
-                        CustomCard(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surface,
-                        ) {
-                            RefreshHuiXin(networkVm,true)
-                            PaddingHorizontalDivider()
-                            RefreshUniApp(true)
-                            PaddingHorizontalDivider()
+                        DividerTextExpandedWith("选项") {
+                            CustomCard(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.surface,
+                            ) {
+                                RefreshHuiXin(networkVm,true)
+                                PaddingHorizontalDivider()
+                                RefreshUniApp(true)
+                                PaddingHorizontalDivider()
 //                            TransplantListItem(
 //                                supportingContent = { Text("自授权登录") },
 //                                headlineContent = { Text("借助扫码登陆通道，自己为自己授权登录") },
@@ -514,110 +518,111 @@ fun LoginScreen(
 //                                },
 //                            )
 //                            PaddingHorizontalDivider()
-                            if(!GlobalStateHolder.webVpn) {
-                                TransplantListItem(
-                                    supportingContent = { Text("打开开关后,将跳过教务系统而登录,用于离校且教务封网的情况下需刷新其他平台") },
-                                    headlineContent = { Text("跳过教务系统") },
-                                    modifier = Modifier.clickable {
-                                        scope.launch {
-                                            GlobalStateHolder.excludeJxglstu = !GlobalStateHolder.excludeJxglstu
-                                            refresh(vm)
-                                        }
-                                    },
-                                    leadingContent = {
-                                        Icon(painterResource(R.drawable.arrow_split),null)
-                                    },
-                                    trailingContent = {
-                                        Switch(checked = GlobalStateHolder.excludeJxglstu,onCheckedChange = { ch ->
+                                if(!GlobalStateHolder.webVpn) {
+                                    TransplantListItem(
+                                        supportingContent = { Text("打开开关后,将跳过教务系统而登录,用于离校且教务封网的情况下需刷新其他平台") },
+                                        headlineContent = { Text("跳过教务系统") },
+                                        modifier = Modifier.clickable {
                                             scope.launch {
                                                 GlobalStateHolder.excludeJxglstu = !GlobalStateHolder.excludeJxglstu
                                                 refresh(vm)
                                             }
-                                        })
+                                        },
+                                        leadingContent = {
+                                            Icon(painterResource(R.drawable.arrow_split),null)
+                                        },
+                                        trailingContent = {
+                                            Switch(checked = GlobalStateHolder.excludeJxglstu,onCheckedChange = { ch ->
+                                                scope.launch {
+                                                    GlobalStateHolder.excludeJxglstu = !GlobalStateHolder.excludeJxglstu
+                                                    refresh(vm)
+                                                }
+                                            })
+                                        },
+                                    )
+                                    PaddingHorizontalDivider()
+                                }
+
+                                TransplantListItem(
+                                    headlineContent = { Text("外地访问(WebVpn)") },
+                                    supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
+                                    leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
+                                    trailingContent = {
+                                        Switch(checked = GlobalStateHolder.webVpn,onCheckedChange = { ch -> GlobalStateHolder.webVpn = !GlobalStateHolder.webVpn })
+                                    },
+                                    modifier = Modifier.clickable { GlobalStateHolder.webVpn = !GlobalStateHolder.webVpn },
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text("修改密码") },
+                                    supportingContent = { Text("修改或重置CAS统一认证密码")},
+                                    leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            Starter.startWebUrlInner(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
+                                        }
                                     },
                                 )
                                 PaddingHorizontalDivider()
+                                CheckExistUI(networkVm)
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             }
-
-                            TransplantListItem(
-                                headlineContent = { Text("外地访问(WebVpn)") },
-                                supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
-                                leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
-                                trailingContent = {
-                                    Switch(checked = GlobalStateHolder.webVpn,onCheckedChange = { ch -> GlobalStateHolder.webVpn = !GlobalStateHolder.webVpn })
-                                },
-                                modifier = Modifier.clickable { GlobalStateHolder.webVpn = !GlobalStateHolder.webVpn },
-                            )
-                            PaddingHorizontalDivider()
-                            TransplantListItem(
-                                headlineContent = { Text("修改密码") },
-                                supportingContent = { Text("修改或重置CAS统一认证密码")},
-                                leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
-                                modifier = Modifier.clickable {
-                                    scope.launch {
-                                        Starter.startWebUrlInner(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
-                                    }
-                                },
-                            )
-                            PaddingHorizontalDivider()
-                            CheckExistUI(networkVm)
-                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
                         }
-                    }
-                    DividerTextExpandedWith("范围") {
-                        CustomCard(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surface,
-                        ) {
-                            Text("当前登录将刷新如下平台", modifier = Modifier.padding(start = APP_HORIZONTAL_DP, top = APP_HORIZONTAL_DP-CARD_NORMAL_DP))
-                            val list = listOf(
-                                CasPlatform("教务系统",canWebVpn = true,canWithoutJxglstu = false, canWithJxglstu = true,maybeUnlinked = true),
-                                CasPlatform("信息门户", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
-                                CasPlatform("智慧社区", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
-                                CasPlatform("学工系统", canWebVpn = false, canWithoutJxglstu = true,canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
-                                CasPlatform("慧新易校",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
-                                CasPlatform("指间工大", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
-                                CasPlatform("体测平台",canWebVpn = false, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
-                                CasPlatform("WebVpn",canWebVpn = true, canWithoutJxglstu = false,canWithJxglstu = false, maybeUnlinked = false),
-                                CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
-                                CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
-                            )
-                            LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP/2)) {
-                                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                items(list.size) { index ->
-                                    val item = list[index]
-                                    val enabled =
-                                        if(GlobalStateHolder.webVpn) {
-                                            item.canWebVpn
-                                        } else if(GlobalStateHolder.excludeJxglstu) {
-                                            item.canWithoutJxglstu
-                                        } else {
-                                            item.canWithJxglstu
+                        DividerTextExpandedWith("范围") {
+                            CustomCard(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.surface,
+                            ) {
+                                Text("当前登录将刷新如下平台", modifier = Modifier.padding(start = APP_HORIZONTAL_DP, top = APP_HORIZONTAL_DP-CARD_NORMAL_DP))
+                                val list = listOf(
+                                    CasPlatform("教务系统",canWebVpn = true,canWithoutJxglstu = false, canWithJxglstu = true,maybeUnlinked = true),
+                                    CasPlatform("信息门户", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                    CasPlatform("智慧社区", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                    CasPlatform("学工系统", canWebVpn = false, canWithoutJxglstu = true,canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                    CasPlatform("慧新易校",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
+                                    CasPlatform("指间工大", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                    CasPlatform("体测平台",canWebVpn = false, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
+                                    CasPlatform("WebVpn",canWebVpn = true, canWithoutJxglstu = false,canWithJxglstu = false, maybeUnlinked = false),
+                                    CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
+                                    CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
+                                )
+                                LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP/2)) {
+                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                    items(list.size) { index ->
+                                        val item = list[index]
+                                        val enabled =
+                                            if(GlobalStateHolder.webVpn) {
+                                                item.canWebVpn
+                                            } else if(GlobalStateHolder.excludeJxglstu) {
+                                                item.canWithoutJxglstu
+                                            } else {
+                                                item.canWithJxglstu
+                                            }
+                                        AssistChip(
+                                            onClick = {},
+                                            enabled = enabled,
+                                            leadingIcon = {
+                                                Icon(
+                                                    painterResource(
+                                                        if(enabled) R.drawable.check
+                                                        else R.drawable.close
+                                                    ),
+                                                    null,
+                                                )
+                                            },
+                                            label = { Text(item.name) }
+                                        )
+                                        if(index != list.size-1) {
+                                            Spacer(Modifier.width(CARD_NORMAL_DP*2))
                                         }
-                                    AssistChip(
-                                        onClick = {},
-                                        enabled = enabled,
-                                        leadingIcon = {
-                                            Icon(
-                                                painterResource(
-                                                    if(enabled) R.drawable.check
-                                                    else R.drawable.close
-                                                ),
-                                                null,
-                                            )
-                                        },
-                                        label = { Text(item.name) }
-                                    )
-                                    if(index != list.size-1) {
-                                        Spacer(Modifier.width(CARD_NORMAL_DP*2))
                                     }
+                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                 }
-                                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                             }
                         }
+                        Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
+                        InnerPaddingHeight(innerPadding,false)
                     }
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
-                    InnerPaddingHeight(innerPadding,false)
                 }
             }
         }
@@ -811,7 +816,7 @@ private fun TwoTextField(
                 .padding(horizontal = APP_HORIZONTAL_DP),
             horizontalArrangement = Arrangement.Center
         ) {
-            if(isAnonymity()) {
+            if(false) {
                 LargeButton(
                     onClick = {
                         val cookie = prefs.getString("LOGIN_FLAVORING", "")

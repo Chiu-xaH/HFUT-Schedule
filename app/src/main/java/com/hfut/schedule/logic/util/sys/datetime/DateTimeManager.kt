@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.safeDiv
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
@@ -234,6 +235,7 @@ object DateTimeManager {
             val currentYearMonth = YearMonth.now()
             inputYearMonth == currentYearMonth
         } catch (e: Exception) {
+            LogUtil.error(e)
             false // 格式错误时返回 false
         }
     }

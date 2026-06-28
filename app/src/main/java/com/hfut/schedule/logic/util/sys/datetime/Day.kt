@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.util.sys.datetime
 
-import androidx.collection.LruCache
 import com.hfut.schedule.logic.util.network.MyApiParse.getAPICelebration
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.screen.home.getHolidays
@@ -56,8 +55,43 @@ fun isUserBirthday() : Boolean = getBirthday()?.let {
         )
     )
 } == true
-// 毕业季
-fun isInGraduation() : Boolean = getGraduationYear()?.let { DateTimeManager.isCurrentMonth("$it-06") } == true
+// 新生landing期 7~9月
+fun isInLanding() : Boolean {
+    val sId = getPersonInfo().getStudentIdFinally()
+    if(sId?.startsWith(DateTimeManager.Date_yyyy) == true) {
+        val year = sId.substring(0,4)
+        return year.let {
+            DateTimeManager.isCurrentMonth("$it-07")
+                    || DateTimeManager.isCurrentMonth("$it-08")
+                    || DateTimeManager.isCurrentMonth("$it-09")
+                    || DateTimeManager.isCurrentMonth("$it-10")
+        }
+    } else {
+        return false
+    }
+}
+// 大学阶段：未入学 学中 已毕业
+enum class UniversityPeriod {
+    READY,GOING,GRADUATED
+}
+fun getUniversityPeriod() : UniversityPeriod? {
+    val info = getPersonInfo()
+    try {
+        val precent = DateTimeManager.getPercentTime(info.startDate!!,info.endDate!!)
+        return if(precent in 0.0..<1.0) {
+            UniversityPeriod.GOING
+        } else if(precent < 0f) {
+            UniversityPeriod.READY
+        } else {
+            UniversityPeriod.GRADUATED
+        }
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return null
+    }
+}
+// 毕业季 5~6月
+fun isInGraduation() : Boolean = getGraduationYear()?.let { DateTimeManager.isCurrentMonth("$it-05") || DateTimeManager.isCurrentMonth("$it-06") } == true
 // APP周年
 fun isAppBirthday() : Boolean = DateTimeManager.isTodayAnniversary(DateTimeManager.APP_BIRTHDAY.substringAfter("-"))
 // 节假日
@@ -78,14 +112,23 @@ fun getCelebration() : Celebration {
     if(isUserBirthday()) {
         return Celebration(true,"生日快乐",2L)
     }
-    if(isInGraduation()) {
-        return Celebration(true,"毕业季",0L)
-    }
     if(isAppBirthday()) {
         return Celebration(true,"${getAppAge()}周年",0L)
     }
     getTodayHoliday()?.let {
         return Celebration(true,it,0L)
+    }
+    when(getUniversityPeriod()) {
+        UniversityPeriod.READY -> {
+            return Celebration(true,"迎新季",0L)
+        }
+        UniversityPeriod.GRADUATED -> {
+            return Celebration(true,"欢迎回来",0L)
+        }
+        else -> Unit
+    }
+    if(isInGraduation()) {
+        return Celebration(true,"毕业季",0L)
     }
     if(getAPICelebration()) {
         return Celebration(true,null,1L)
