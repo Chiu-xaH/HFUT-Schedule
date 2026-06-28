@@ -122,6 +122,16 @@ import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.URL
 
+private fun saveInput(
+    studentId : String,
+    pwd : String
+) {
+    //保存账密
+    saveString("Username",studentId)
+    saveString("Password",pwd)
+}
+
+
 //登录方法，auto代表前台调用
 private fun loginClick(
     context: Context,
@@ -140,11 +150,6 @@ private fun loginClick(
 
     //登陆判定机制
     scope.launch {
-        launch {
-            //保存账密
-            saveString("Username",username)
-            saveString("Password",inputAES)
-        }
         async {
             //登录
             if (username.length != 10)
@@ -171,6 +176,7 @@ private fun loginClick(
                                 StatusCode.OK.code.toString() -> {
                                     if(GlobalStateHolder.excludeJxglstu) {
                                         onResult("登陆成功")
+                                        saveInput(username,inputAES)
                                         Starter.loginSuccess(context)
                                     } else if(!GlobalStateHolder.webVpn) {
                                         onResult("请输入正确的账号")
@@ -178,6 +184,7 @@ private fun loginClick(
                                     } else {
                                         onResult("登陆成功")
                                         vm.loginJxglstu()
+                                        saveInput(username,inputAES)
                                         Starter.loginSuccess(context)
                                     }
                                 }
@@ -185,6 +192,7 @@ private fun loginClick(
                                     when {
                                         vm.location.value.toString().contains("ticket") -> {
                                             onResult("登陆成功")
+                                            saveInput(username,inputAES)
                                             Starter.loginSuccess(context)
                                         }
                                         else -> {

@@ -48,7 +48,7 @@ object UniAppRepository {
 
     suspend fun login() : Boolean {
         try {
-            val sId = getPersonInfo().studentId
+            val sId = getPersonInfo().getStudentIdFinally()
             val pwd = getJxglstuPassword()
             if(pwd == null || sId == null) {
                 showToast("$FAILED_TEXT(游客)")

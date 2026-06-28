@@ -449,10 +449,6 @@ fun WeatherScreen(vm: NetWorkViewModel) {
         }
         Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
         BottomTip("天气数据源为和风天气")
-
-        DividerTextExpandedWith(text = "校园地图") {
-            SchoolMapScreen(vm)
-        }
         DividerTextExpandedWith(text = TermReportDestination.title.asString()) {
             val navController = LocalNavController.current
             CardListItem(
@@ -473,12 +469,15 @@ fun WeatherScreen(vm: NetWorkViewModel) {
                     )
                 },
                 supportingContent = {
-                    Text("开启您的学期总结")
+                    Text("开启你的学期总结")
                 },
                 modifier = Modifier.clickable {
                     navController.push(TermReportDestination)
                 }
             )
+        }
+        DividerTextExpandedWith(text = "校园地图") {
+            SchoolMapScreen(vm)
         }
     }
 }

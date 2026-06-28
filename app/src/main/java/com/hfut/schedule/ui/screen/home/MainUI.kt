@@ -343,7 +343,7 @@ fun MainScreen(
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val useCustomBackground = customBackground != ""
     val context = LocalContext.current
-    var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
+    var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().getStudentIdFinally() ?: "") }
     // 捏合手势
     val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 

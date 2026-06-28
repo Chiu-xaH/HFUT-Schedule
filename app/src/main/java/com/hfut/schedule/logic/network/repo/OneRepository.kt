@@ -31,7 +31,7 @@ object OneRepository {
 
     suspend fun getPay(holder : UiStateHolder<PayData>) = launchRequestState(
         holder = holder,
-        request = { one.getPay(getPersonInfo().studentId) },
+        request = { one.getPay(getPersonInfo().getStudentIdFinally()) },
         transformSuccess = { _, json -> parsePayFee(json) }
     )
     @JvmStatic

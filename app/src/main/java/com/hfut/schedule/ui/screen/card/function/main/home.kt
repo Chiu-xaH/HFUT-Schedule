@@ -169,7 +169,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     val str by loadTodayPay(vm)
 
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
-    var name by remember { mutableStateOf(cardValue?.name ?: getPersonInfo().name) }
+    var name by remember { mutableStateOf(cardValue?.name ?: getPersonInfo().getNameFinally()) }
     var nows by remember { mutableStateOf(cardValue?.now ?: prefs.getString("card_now","00")) }
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
@@ -180,7 +180,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
-        name = cardValue?.name ?: getPersonInfo().name
+        name = cardValue?.name ?: getPersonInfo().getNameFinally()
         nows = cardValue?.now ?: prefs.getString("card_now","00")
         settles = cardValue?.settle ?: prefs.getString("card_settle","00")
     }

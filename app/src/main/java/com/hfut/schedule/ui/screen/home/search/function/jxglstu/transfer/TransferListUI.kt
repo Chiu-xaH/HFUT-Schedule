@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
 import android.annotation.SuppressLint
+import android.widget.Space
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -59,7 +61,9 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -351,6 +355,17 @@ fun TransferDetailScreen(
                                 backdrop = backDrop
                                 ) {
                                 Text("我的申请")
+                            }
+                            Spacer(modifier = Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                onClick = {
+                                    // TODO 图片形式保存
+                                    showDevelopingToast()
+                                },
+                                isCircle = true,
+                                backdrop = backDrop
+                            ) {
+                                Icon(painterResource(R.drawable.ios_share),null)
                             }
                         }
                     }

@@ -174,7 +174,7 @@ private fun PersonItems(
 
     val info = getPersonInfo()
 
-    val studentnumber = info.studentId
+    val studentnumber = info.getStudentIdFinally()
     val name = info.name
     val chineseid = info.chineseID
 
@@ -672,7 +672,14 @@ data class PersonInfo(val name : String?,
                       val address: String?,
                       val postalCode: String? // 邮编
 
-)
+) {
+    fun getStudentIdFinally(): String? {
+        return this.studentId ?: prefs.getString("Username",null)
+    }
+    fun getNameFinally(): String {
+        return this.name ?: prefs.getString("Username",null) ?: "游客"
+    }
+}
 
 
 fun getPersonInfo() : PersonInfo {
@@ -695,11 +702,7 @@ fun getPersonInfo() : PersonInfo {
         }
 
         val benorsshuo =infoMap[elements?.get(8)?.text()]
-        var department =infoMap[elements?.get(10)?.text()]
-        if (department != null) {
-            if(department.contains("("))department = department.substringBefore("(")
-            if(department.contains("（"))department = department.substringBefore("（")
-        }
+        val department =infoMap[elements?.get(10)?.text()]?.substringBefore("（")
         val zhuanye =infoMap[elements?.get(12)?.text()]
         val classes =infoMap[elements?.get(16)?.text()]
         val school =infoMap[elements?.get(18)?.text()]

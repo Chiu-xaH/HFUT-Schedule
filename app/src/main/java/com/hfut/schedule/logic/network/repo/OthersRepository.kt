@@ -161,7 +161,7 @@ object OthersRepository {
 
     @JvmStatic
     private fun parseZhiJianCheckLogin(json : String) : Boolean = try {
-        json.contains(getPersonInfo().studentId!!) || json.contains(getPersonInfo().name!!)
+        json.contains(getPersonInfo().getStudentIdFinally()!!) || json.contains(getPersonInfo().name!!)
     } catch (e : Exception) { throw e }
 
     suspend fun checkStuLogin(cookie : String,checkStuLoginResp : UiStateHolder<Boolean>) =
@@ -173,7 +173,7 @@ object OthersRepository {
 
     @JvmStatic
     private fun parseCheckStuLogin(json : String) = try {
-        val sId = getPersonInfo().studentId ?: throw Exception("无学号")
+        val sId = getPersonInfo().getStudentIdFinally() ?: throw Exception("无学号")
         json.contains(sId)
     } catch (e : Exception) { throw e }
 

@@ -154,19 +154,15 @@ fun CourseSearchScreen(
                         Row(modifier = Modifier
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .animateContentSize()) {
-                            val classNameNil = className.let { it.ifEmpty { null } }
-                            val courseCodeNil = courseId.let { it.ifEmpty { null } }
-                            val courseNameNil = courseName.let { it.ifEmpty { null } }
-                            val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
-                            val enabled = uiState is NetworkUiState.Success && !canNotUse
+                            val enabled = uiState is NetworkUiState.Success
 
                             val dest = remember(enabled) {
                                 if(enabled) {
                                     CourseSearchTableDestination(
                                         semester,
-                                        classNameNil,
-                                        courseCodeNil,
-                                        courseNameNil,
+                                        className.let { it.ifEmpty { null } },
+                                        courseId.let { it.ifEmpty { null } },
+                                        courseName.let { it.ifEmpty { null } },
                                         (uiState as NetworkUiState.Success).data
                                     )
                                 } else {
@@ -206,7 +202,7 @@ fun CourseSearchScreen(
                                     },
                                     shape = CircleShape,
                                     isCircle = false,
-                                    enabled = uiState is NetworkUiState.Success && !canNotUse,
+//                                    enabled = uiState is NetworkUiState.Success && !canNotUse,
                                     backdrop = backdrop
                                 ) {
                                     Text("显示搜索框")

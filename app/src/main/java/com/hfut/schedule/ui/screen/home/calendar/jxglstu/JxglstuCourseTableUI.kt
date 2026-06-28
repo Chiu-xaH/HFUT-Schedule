@@ -93,7 +93,7 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
 }
 
 suspend fun loginHuiXin(vm: NetWorkViewModel) {
-    val username = getPersonInfo().studentId ?: return
+    val username = getPersonInfo().getStudentIdFinally() ?: return
     val password = getCardPsk() ?: return
     vm.huiXinLoginResp.clear()
     vm.huiXinSingleLogin(username,password)

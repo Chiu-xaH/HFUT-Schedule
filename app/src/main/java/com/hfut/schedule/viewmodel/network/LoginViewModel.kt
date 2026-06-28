@@ -30,7 +30,9 @@ class LoginViewModel : ViewModel() {
     private val loginWebVpn = LoginWebVpnServiceCreator.create(WebVpnService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)
 
+    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
     val code = MutableLiveData<String?>()
+    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
     val location = MutableLiveData<String>()
 
     val jSessionId = UiStateHolder<CasGetFlavorBean>() // JSESSION
@@ -40,7 +42,7 @@ class LoginViewModel : ViewModel() {
     val executionAndSession = UiStateHolder<Pair<String, String>>()
     suspend fun getCookie() = CasLoginRepository.getCasCookie(executionAndSession)
 
-
+    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
     var ticketStValue = MutableLiveData<String?>()
     suspend fun login(username : String, password : String, keys : String, imageCode : String) =
         onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->

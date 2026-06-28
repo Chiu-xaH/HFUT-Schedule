@@ -68,7 +68,7 @@ object SchoolNetSelfRepository {
     )
 
     private suspend fun doLoginAndFetch(year: Int): retrofit2.Call<okhttp3.ResponseBody> {
-        val account = getPersonInfo().studentId ?: throw Exception("未获取到学号")
+        val account = getPersonInfo().getStudentIdFinally() ?: throw Exception("未获取到学号")
         val rawPassword = getCardPsk() ?: throw Exception("未获取到校园卡密码")
 
         val loginPageHtml = service.getLoginPage()

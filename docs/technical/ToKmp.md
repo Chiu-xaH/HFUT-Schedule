@@ -15,8 +15,9 @@
 2. 探索skia shader在KMP的适配写法（参考AndroidLiquidGlass库）
 3. SharedNav适配KMP
 4. 模块整理：shared模块改名common-logic(已完成)，common模块改名common-ui(已完成)，新建network-api模块，承载repo和解析层。network改成network-core，model整理，RepoInf
-5。 所有页面管理归一化(Card、Shower、Xwx、Supabase、回归SharedNav管理，WebView、Fix、WidgetConfig仍保持，Success并入主逻辑) ，完成后对Starter类进行重构
+5. 所有页面管理归一化(Card、Shower、Xwx、Supabase、回归SharedNav管理，WebView、Fix、WidgetConfig仍保持，Success并入主逻辑) ，完成后对Starter类进行重构
 6. 彻底去掉SP
+7. 彻底去掉LiveData
 ### 开始改造
 1. 所有依赖中，能适配KMP的，换为**同版本号**的KMP依赖。不能适配KMP的，如果是自己的库就适配，不是自己的库就在iOS端找平替库，独自实现，不要影响到安卓端
 2. 传统View替换为Compose，不能替换的各自实现（目前大头就剩WebView) 

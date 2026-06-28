@@ -95,9 +95,9 @@ data class SupabaseEventForkOutput(
 
 
 data class SupabaseUsageEntity(
-    @SerializedName("user_name") val username : String = getPersonInfo().name ?: "游客",
+    @SerializedName("user_name") val username : String = getPersonInfo().getNameFinally(),
     @SerializedName("system_version") val systemVersion : Int = AppVersion.sdkInt,
-    @SerializedName("student_id") val studentID : String = getPersonInfo().studentId ?: "空",
+    @SerializedName("student_id") val studentID : String = getPersonInfo().getStudentIdFinally() ?: "空",
     @SerializedName("campus") val campus : String = getPersonInfo().campus ?: "空",
     @SerializedName("department") val department : String = getPersonInfo().department ?: "空",
     @SerializedName("app_version_name") val appVersionName : String = AppVersion.getVersionName(),

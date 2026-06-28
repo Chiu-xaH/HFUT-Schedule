@@ -171,7 +171,7 @@ private fun hit(current : String,target : String) : Boolean = current.contains(t
 private fun parseLoginStu(headers: Headers,json: String?) =  try {
     if(json == null) throw Exception("无内容")
 
-    val sId = getPersonInfo().studentId ?: throw Exception("无学号")
+    val sId = getPersonInfo().getStudentIdFinally() ?: throw Exception("无学号")
     if(!json.contains(sId)) throw Exception("登陆失败")
     val cookie = headers["Set-Cookie"] ?: throw Exception("解析失败")
 

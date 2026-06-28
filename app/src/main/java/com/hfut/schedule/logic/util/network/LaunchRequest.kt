@@ -19,6 +19,7 @@ import retrofit2.awaitResponse
 
 //引入接口
 // 通用的网络请求方法，支持自定义的操作
+@Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
 fun <T> makeRequest(
     call: Call<ResponseBody>,
     liveData: (MutableLiveData<T>)? = null,

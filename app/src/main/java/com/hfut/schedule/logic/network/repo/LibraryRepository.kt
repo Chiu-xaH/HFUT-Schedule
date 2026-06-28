@@ -33,7 +33,7 @@ object LibraryRepository {
     @JvmStatic
     private fun parseCheckLibraryLogin(json : String) : Boolean {
         try {
-            val sId = getPersonInfo().studentId ?: return false
+            val sId = getPersonInfo().getStudentIdFinally() ?: return false
             val name = getPersonInfo().name ?: return false
             return json.contains(sId) || json.contains(name)
         } catch (e : Exception) { throw e }

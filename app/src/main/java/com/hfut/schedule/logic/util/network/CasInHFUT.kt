@@ -4,18 +4,8 @@ import com.xah.common.logic.util.LogUtil
 import org.jsoup.Jsoup
 
 // HFUT Central Authentication Service 统一认证登录
+@Deprecated("不需要这个类了，里面的逻辑可以转移到该去的地方")
 object CasInHFUT {
-    // cookie 模块
-    // studentId 模块
-    // bizTypeId 模块
-    // WEBVPN 模块
-//    var studentId : Int? = null
-//    var bizTypeId : Int? = null
-//    var jSessionId : String? = null
-//    var sessionId : String? = null
-//    var loginFlavoring : String? = null
-//    fun getCasCookies() : String = jSessionId + sessionId + loginFlavoring
-
     fun getBizTypeId(html : String) : Int? {
         val doc = Jsoup.parse(html)
         try {

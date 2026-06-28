@@ -37,19 +37,19 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     var showBottomSheet by remember { mutableStateOf(false) }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
-    when(getCampusRegion()) {
-        CampusRegion.HEFEI -> {
-            TransplantListItem(
-                headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text = "-- GiB") },
-                overlineContent = { if(!card) ScrollText(text = "-- MiB") else ScrollText(text = stringResource(R.string.navigation_label_school_net))},
-                leadingContent = { Icon(
-                    painterResource(R.drawable.net),
-                    contentDescription = "Localized description",
-                ) },
-                modifier = Modifier.clickable { showBottomSheet = true }
-            )
-        }
-        CampusRegion.XUANCHENG -> {
+//    when(getCampusRegion()) {
+//        CampusRegion.HEFEI -> {
+//            TransplantListItem(
+//                headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text = "-- GiB") },
+//                overlineContent = { if(!card) ScrollText(text = "-- MiB") else ScrollText(text = stringResource(R.string.navigation_label_school_net))},
+//                leadingContent = { Icon(
+//                    painterResource(R.drawable.net),
+//                    contentDescription = "Localized description",
+//                ) },
+//                modifier = Modifier.clickable { showBottomSheet = true }
+//            )
+//        }
+//        CampusRegion.XUANCHENG -> {
             var showPercent by remember { mutableStateOf(true) }
             LaunchedEffect(Unit) {
                 showPercent = true
@@ -75,8 +75,8 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
                 ) },
                 modifier = Modifier.clickable { showBottomSheet = true }
             )
-        }
-    }
+//        }
+//    }
 
 
     if (showBottomSheet) {

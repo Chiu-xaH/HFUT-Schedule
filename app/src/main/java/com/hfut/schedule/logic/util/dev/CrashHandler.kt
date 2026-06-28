@@ -56,7 +56,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
                 软件版本: ${AppVersion.getVersionName()} (${AppVersion.getVersionCode()})
                 系统版本: ${AppVersion.sdkInt}
                 时间: ${dateTime.format(DateTimeManager.formatterAll)}
-                用户: ${getPersonInfo().studentId ?: "游客"}
+                用户: ${getPersonInfo().getStudentIdFinally() ?: "游客"}
                 ${getKeyStackTraceDesc(throwable)}
                 堆栈: ${throwable.stackTraceToString()}
             """.trimIndent()

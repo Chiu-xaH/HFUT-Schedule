@@ -13,6 +13,7 @@ import com.xah.navigation.component.NavigationBackHandler
 import com.xah.navigation.util.LocalNavControllerSafely
 
 @OptIn(ExperimentalSharedTransitionApi::class)
+@Deprecated("Navigation2将被抛弃，请使用SharedNav库管理嵌套导航（目前SharedNav正在开发此功能）")
 fun NavGraphBuilder.nav2Composable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),

@@ -52,7 +52,7 @@ fun PersonPart() {
             CustomCard(color = MaterialTheme.colorScheme.secondaryContainer) {
                 TransplantListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-                    headlineContent = { Text(text = getPersonInfo().name ?: stringResource(R.string.settings_person_info_default_name))  },
+                    headlineContent = { Text(text = getPersonInfo().getNameFinally())  },
                     trailingContent = {
                         Row {
                             ColumnVertical {
@@ -86,7 +86,7 @@ fun PersonPart() {
                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                 ) {
                     Column {
-                        getPersonInfo().studentId?.let{
+                        getPersonInfo().getStudentIdFinally()?.let{
                             Row {
                                 TransplantListItem(
                                     overlineContent = { Text(text = stringResource(R.string.settings_person_info_student_id_description)) },

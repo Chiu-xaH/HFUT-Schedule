@@ -23,7 +23,7 @@ object LoginSchoolNetRepository {
 
     suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
-            getPersonInfo().studentId?.let { uid ->
+            getPersonInfo().getStudentIdFinally()?.let { uid ->
                 getCardPsk()?.let { pwd ->
                     when (campus) {
                         CampusRegion.HEFEI -> {
@@ -64,7 +64,7 @@ object LoginSchoolNetRepository {
         }
     suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
-            getPersonInfo().studentId?.let { uid ->
+            getPersonInfo().getStudentIdFinally()?.let { uid ->
                 getCardPsk()?.let { pwd ->
                     when (campus) {
                         CampusRegion.HEFEI -> {
