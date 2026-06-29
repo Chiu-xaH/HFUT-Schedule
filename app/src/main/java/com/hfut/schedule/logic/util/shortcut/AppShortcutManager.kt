@@ -10,10 +10,10 @@ import androidx.core.net.toUri
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
-import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
+import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.text
 import com.xah.common.logic.util.LogUtil
@@ -45,13 +45,10 @@ object AppShortcutManager {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setClassName(
                 BuildConfig.APPLICATION_ID,
-                CardActivity::class.java.name
+                MainActivity::class.java.name
             )
-            addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_SINGLE_TOP
-            )
+            putExtra("route", SchoolCardDestination::class.java.name)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
         return ShortcutConfig(

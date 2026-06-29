@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.nav.destination.OfficeHallDestination
 import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
+import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.nav.destination.SecondClassDestination
 import com.hfut.schedule.ui.nav.destination.SelectCoursesDestination
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
@@ -207,7 +208,7 @@ fun SearchScreen(
     var funcMaps by remember(vm, ifSaved, vmUI, navController, hazeState) {
         mutableStateOf(
             listOf(
-                SearchAppBean(1,"${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 ${context.getString(R.string.navigation_label_school_card)}" , { SchoolCardItem(vmUI, true) }, isHigh = true),
+                SearchAppBean(1,"${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 ${context.getString(R.string.navigation_label_school_card)}" , { SchoolCardItem(vmUI, false) }, isHigh = true, route = SchoolCardDestination.key),
                 SearchAppBean(2,"${ScanQrCodeDestination.title.asString(context)} 扫码 指尖工大 CAS统一认证登录", { Scan() }, ScanQrCodeDestination.key,isHigh = true),
                 SearchAppBean(3,"${context.getString(R.string.navigation_label_dormitory_electricity_bill)} 缴费 ${context.getString(R.string.navigation_label_hui_xin)}" , { Electric(vm, false, vmUI,hazeState) },isHigh = true),
                 SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb(vmUI, false, vm,hazeState) },isHigh = true),

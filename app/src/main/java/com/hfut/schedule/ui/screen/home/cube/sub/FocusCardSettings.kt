@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -88,6 +89,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.container.component.base.SharedContainer
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -271,12 +273,6 @@ fun FocusCard(
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = cardNormalColor(),
-            shape = NoneRoundShape,
-            modifier = Modifier.sharedContainer(
-                key = LifeDestination.key,
-                MaterialTheme.shapes.medium,
-                cardNormalColor()
-            ),
         ) {
             Column() {
                 if(showCard || showToday)
@@ -303,7 +299,7 @@ fun FocusCard(
                                 LoginWeb(vmUI,true,vm,hazeState)
                             }
                     }
-
+                Special(vmUI)
                 if(showWeather) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
@@ -318,19 +314,28 @@ fun FocusCard(
                             enter = AppAnimationManager.fadeAnimation.enter
                         ) {
                             with(list[0]) {
-                                TransplantListItem(
-                                    headlineContent = { Text(title) },
-                                    overlineContent = { Text(typeName)},
-                                    leadingContent = { Icon(painterResource(R.drawable.temp_preferences_eco),null)},
-                                    modifier = Modifier.clickable {
-                                        navController.push(LifeDestination)
-                                    },
-                                )
+                                SharedContainer(
+                                    key = LifeDestination.key,
+                                    shape = MaterialTheme.shapes.medium.copy(
+                                        topStart = CornerSize(0.dp),
+                                        topEnd = CornerSize(0.dp),
+                                    ),
+                                    containerColor = cardNormalColor()
+                                ) {
+                                    TransplantListItem(
+                                        colors = cardNormalColor(),
+                                        headlineContent = { Text(title) },
+                                        overlineContent = { Text(typeName)},
+                                        leadingContent = { Icon(painterResource(R.drawable.temp_preferences_eco),null)},
+                                        modifier = Modifier.clickable {
+                                            navController.push(LifeDestination)
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
                 }
-                Special(vmUI)
             }
         }
 }

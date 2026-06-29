@@ -15,7 +15,6 @@ import android.service.quicksettings.TileService
 import androidx.core.net.toUri
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
-import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.activity.screen.FixActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
@@ -290,15 +289,6 @@ object Starter {
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-        }
-        context.startActivity(it)
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun startCard(context: Context) {
-        val it = Intent(context, CardActivity::class.java)
-        if (context !is Activity) {
-            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(it)
     }

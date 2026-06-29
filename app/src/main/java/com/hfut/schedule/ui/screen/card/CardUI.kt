@@ -36,6 +36,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.card.bill.main.BillScreen
 import com.hfut.schedule.ui.screen.card.count.BillAnalysisScreen
@@ -143,11 +144,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     colors = topBarTransplantColor(),
                     title = { Text("一卡通") },
                     navigationIcon = {
-                        IconButton(onClick = {
-                            context?.finish()
-                        }) {
-                            Icon(painterResource(R.drawable.arrow_back), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                        }
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         if(bottomBarItems == CardBarItems.BILLS) {

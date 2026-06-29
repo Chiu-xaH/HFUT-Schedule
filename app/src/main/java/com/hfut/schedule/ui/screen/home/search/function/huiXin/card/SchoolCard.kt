@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -36,13 +37,18 @@ import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.sharednav.common.util.NoneRoundShape
+import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
-
+fun SchoolCardItem(vmUI : UIViewModel,isFromFocus : Boolean) {
+    val navController = LocalNavController.current
     val interactionSource2 = remember { MutableInteractionSource() }
     val isPressed2 by interactionSource2.collectIsPressedAsState()
     val scale2 = animateFloatAsState(
@@ -61,9 +67,10 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
 
     val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     TransplantListItem(
+        colors = cardNormalColor(),
         headlineContent = {
             ScrollText(
-                text = if(cardBool)"￥$text" else "${context.getString(R.string.navigation_label_school_card)} ￥$text",
+                text = "￥$text",
                 color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                     if(text!!.length <= 4){
                         MaterialTheme.colorScheme.error
@@ -71,7 +78,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
                 } else LocalContentColor. current
             )
         },
-        overlineContent = { if(cardBool) {
+        overlineContent = {
             ScrollText(
                 if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                     if(text!!.length <= 4){
@@ -84,43 +91,57 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
                     } else LocalContentColor.current
                 } else LocalContentColor. current
             )
-        }
-
-                          },
-        leadingContent = { Icon(
-            painterResource(R.drawable.credit_card),
-            contentDescription = "Localized description",
-            tint = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                if(text!!.length <= 4){
-                    MaterialTheme.colorScheme.error
-                } else LocalContentColor.current
-            } else LocalContentColor. current
-            ) },
+        },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.credit_card),
+                contentDescription = "Localized description",
+                tint = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
+                    if(text!!.length <= 4) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        LocalContentColor.current
+                    }
+                } else {
+                    LocalContentColor. current
+                }
+            )
+        },
         trailingContent={
-            if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                if(showAdd || !cardBool || text!!.length <= 4)
+            if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login) && (showAdd || text!!.length <= 4)) {
                 FilledTonalIconButton(
                     modifier = Modifier
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
-                    onClick = { Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL) },
-//                    colors =  if(text!!.length <= 4) {
-//                        IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-//                    } else IconButtonDefaults.filledTonalIconButtonColors()
-                ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
+                    onClick = {
+                        Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL)
+                    },
+                ) {
+                    Icon(
+                        painterResource(R.drawable.add),
+                        contentDescription = "Localized description"
+                    )
+                }
             }
         },
-//        colors = (
-//            if (text != null && text != "未登录") {
-//                if(text!!.length <= 4){
-//                    MaterialTheme.colorScheme.errorContainer
-//                } else null
-//            } else null
-//        ),
-        modifier = Modifier.clickable {
-            Starter.startCard(context)
-        }
+        modifier = Modifier
+            .let {
+                if(isFromFocus) {
+                    it.sharedContainer(
+                        SchoolCardDestination.key,
+                        shape = NoneRoundShape.copy(
+                            topStart = MaterialTheme.shapes.medium.topStart,
+                        ),
+                        containerColor = cardNormalColor()
+                    )
+                } else {
+                    it
+                }
+            }
+            .clickable {
+                navController.push(SchoolCardDestination)
+            }
     )
 }
 
@@ -134,7 +155,7 @@ fun TodayInfo(bean : TodayResult) {
         with(todayExam) {
             courseName?.let {
                 CardListItem(
-                    headlineContent = { Text(text = it.toString()) },
+                    headlineContent = { Text(text = it) },
                     overlineContent = { Text(text = "$startTime~$endTime") },
                     supportingContent = { Text(text = place.toString())},
                     leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
@@ -144,7 +165,7 @@ fun TodayInfo(bean : TodayResult) {
         with(todayCourse) {
             courseName?.let {
                 CardListItem(
-                    headlineContent = { Text(text = it.toString()) },
+                    headlineContent = { Text(text = it) },
                     overlineContent = { Text(text = "$startTime~$endTime  $place")},
                     supportingContent = { className?.let { Text(text = it) } },
                     leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
@@ -154,7 +175,7 @@ fun TodayInfo(bean : TodayResult) {
         with(bookLending) {
             bookName?.let {
                 CardListItem(
-                    headlineContent = { Text(text = it.toString()) },
+                    headlineContent = { Text(text = it) },
                     supportingContent = { Text(text = "归还时间 $returnTime") },
                     overlineContent = { Text(text = "借阅于 $outTime\n应还于 $dueTime")},
                     leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = "")},
@@ -164,7 +185,7 @@ fun TodayInfo(bean : TodayResult) {
         with(todayActivity) {
             activityName?.let {
                 CardListItem(
-                    headlineContent = { Text(text = it.toString()) },
+                    headlineContent = { Text(text = it) },
                     overlineContent = { Text(text = startTime.toString()) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
                 )

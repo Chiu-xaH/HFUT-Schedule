@@ -66,11 +66,6 @@
             android:label="@string/title_activity_supabase"
             android:theme="@style/Theme.App" />
         <activity
-            android:name=".activity.screen.CardActivity"
-            android:exported="true"
-            android:label="@string/title_activity_card"
-            android:theme="@style/Theme.App" />
-        <activity
             android:name=".activity.screen.SuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"
