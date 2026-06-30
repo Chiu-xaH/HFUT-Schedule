@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -35,11 +34,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
@@ -69,7 +66,6 @@ import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.container.component.base.SharedContainer
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingScreen
@@ -461,10 +457,10 @@ private fun PersonItems(
                     },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            val precent = DateTimeManager.getPercent(startDate,endDate)
-                            val str = if(precent in 0.0 ..< 1.0) {
-                                "已过 ${DateTimeManager.getPercent(startDate,endDate).roundOffString(1)}%"
-                            } else if(precent < 0f) {
+                            val percent = DateTimeManager.getPercent(startDate,endDate)
+                            val str = if(percent in 0.0 ..< 1.0) {
+                                "已过 ${(percent*100).roundOffString(1)}%"
+                            } else if(percent < 0f) {
                                 "待入学"
                             } else {
                                 "已毕业"

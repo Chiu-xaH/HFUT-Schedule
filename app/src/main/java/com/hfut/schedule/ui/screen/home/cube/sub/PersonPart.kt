@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.other.AppVersion
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -57,10 +56,10 @@ fun PersonPart() {
                         Row {
                             ColumnVertical {
                                 if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                                    val precent = DateTimeManager.getPercent(startDate,endDate)
-                                    val str = if(precent in 0.0 ..< 1.0) {
-                                        "已过 ${DateTimeManager.getPercent(startDate,endDate).roundOffString(1)}%"
-                                    } else if(precent < 0f) {
+                                    val percent = DateTimeManager.getPercent(startDate,endDate)
+                                    val str = if(percent in 0.0 ..< 1.0) {
+                                        "已过 ${(percent*100).roundOffString(1)}%"
+                                    } else if(percent < 0f) {
                                         "待入学"
                                     } else {
                                         "已毕业"

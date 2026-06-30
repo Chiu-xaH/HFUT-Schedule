@@ -92,14 +92,14 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
                     )
                     val percent = DateTimeManager.getPercent(startDate,endDate)
 
-                    if(percent < 0) {
+                    if(percent < 0.0) {
                         // 未开始
                         TransplantListItem(
                             headlineContent = { Text("${DateTimeManager.daysBetween(startDate)}天后") },
                             overlineContent = { Text("未开学")},
                             modifier = Modifier.weight(.5f)
                         )
-                    } else if(percent >= 100.toDouble()) {
+                    } else if(percent >= 1.0) {
                         // 已结束
                         TransplantListItem(
                             headlineContent = { Text("本学期已结束")},
@@ -107,7 +107,7 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
                         )
                     } else {
                         TransplantListItem(
-                            headlineContent = { Text("${percent.roundOffString(1)}%") },
+                            headlineContent = { Text("${(percent*100).roundOffString(1)}%") },
                             overlineContent = { Text("已过")},
                             modifier = Modifier.weight(.5f)
                         )

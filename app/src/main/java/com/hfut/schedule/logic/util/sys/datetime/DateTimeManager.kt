@@ -108,7 +108,7 @@ object DateTimeManager {
         val totalDays = endDate.toEpochDay() - startDate.toEpochDay()
         val pastDays = today.toEpochDay() - startDate.toEpochDay()
         // 计算百分比
-        val percentage = (pastDays.toDouble() safeDiv totalDays.toDouble()) * 100
+        val percentage = pastDays.toDouble() safeDiv totalDays.toDouble()
         return percentage
     }
     //计算目前已经过了多久

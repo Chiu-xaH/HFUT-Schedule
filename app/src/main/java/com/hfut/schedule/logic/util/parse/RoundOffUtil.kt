@@ -25,7 +25,8 @@ fun Double.roundOff(weiShu: Int): Double {
 fun Float.roundOffString(weiShu : Int) : String {
     return try {
         roundOffBd(weiShu).toString()
-    } catch (_ : Exception) {
+    } catch (e : Exception) {
+        LogUtil.error(e)
         "0"
     }
 }
@@ -33,7 +34,8 @@ fun Float.roundOffString(weiShu : Int) : String {
 fun Double.roundOffString(weiShu : Int) : String {
     return try {
         roundOffBd(weiShu).toString()
-    } catch (_ : Exception) {
+    } catch (e : Exception) {
+        LogUtil.error(e)
         "0"
     }
 }
