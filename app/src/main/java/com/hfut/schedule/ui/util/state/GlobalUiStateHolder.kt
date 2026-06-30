@@ -45,8 +45,10 @@ import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 
-// 跨Activity的类UiViewModel
-object GlobalStateHolder {
+/**
+ * 全局共享的UI变量放在这里
+ */
+object GlobalUiStateHolder {
     var postedUse = false
     var excludeJxglstu by mutableStateOf(false)
     var refreshImageCode by mutableIntStateOf(1)

@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
@@ -84,7 +84,7 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
     } else {
         Constant.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
-    if(!needLogin || GlobalStateHolder.globalWebVpn == true) {
+    if(!needLogin || GlobalUiStateHolder.globalWebVpn == true) {
         Starter.startWebUrlInner(context,finalUrl,name,null, OfficeHallDestination.icon)
     } else {
         Starter.startWebUrlOuter(context,finalUrl)

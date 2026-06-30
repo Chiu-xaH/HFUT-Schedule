@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -94,7 +94,7 @@ fun WebVpnScreen(
     val pagerState = rememberPagerState { 2 }
     val scope = rememberCoroutineScope()
 
-    val webVpn = GlobalStateHolder.webVpn
+    val webVpn = GlobalUiStateHolder.webVpn
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -361,7 +361,7 @@ fun WebVpnScreen(
 //}
 
 suspend fun getWebVpnCookie() : String? =
-    if(GlobalStateHolder.webVpn) {
+    if(GlobalUiStateHolder.webVpn) {
         val webVpnCookie = withContext(Dispatchers.IO) {
             DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         }
@@ -389,11 +389,11 @@ suspend fun autoWebVpnForNews(
 private fun EnableGlobalWebVpn(
     webVpn : Boolean
 ) {
-    val enable = GlobalStateHolder.globalWebVpn
+    val enable = GlobalUiStateHolder.globalWebVpn
     val context = LocalContext.current
 
     fun switch() {
-        GlobalStateHolder.globalWebVpn = !GlobalStateHolder.globalWebVpn
+        GlobalUiStateHolder.globalWebVpn = !GlobalUiStateHolder.globalWebVpn
     }
 
     CardListItem(

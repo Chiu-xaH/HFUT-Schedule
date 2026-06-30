@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.shader.ShaderState
@@ -235,7 +235,7 @@ fun JxglstuCourseTableUI(
                        return@async
                    }
                    val cookies =  "$casCookies;$tgcCookie"
-                   val useWebVpn = webVpn && !GlobalStateHolder.excludeJxglstu
+                   val useWebVpn = webVpn && !GlobalUiStateHolder.excludeJxglstu
                    // 智慧社区
                    launch community@ {
                        if(useWebVpn) {
@@ -270,7 +270,7 @@ fun JxglstuCourseTableUI(
                                LogUtil.debug("无需刷新慧新易校")
                                return@huiXin
                            } else {
-                               if(useWebVpn || GlobalStateHolder.excludeJxglstu) {
+                               if(useWebVpn || GlobalUiStateHolder.excludeJxglstu) {
                                    loginHuiXin(vm)
                                } else {
                                    loginHuiXIn(cookies,vm)
@@ -421,14 +421,14 @@ fun JxglstuCourseTableUI(
                withTimeoutOrNull(10*1000) {
                    job.await()
                }
-               if(GlobalStateHolder.excludeJxglstu) {
+               if(GlobalUiStateHolder.excludeJxglstu) {
                    loadingJxglstu = false
                }
                onEnabled(true)
            }
            // 教务系统
            launch(Dispatchers.IO) jxglstu@ {
-               if(GlobalStateHolder.excludeJxglstu) {
+               if(GlobalUiStateHolder.excludeJxglstu) {
                    return@jxglstu
                }
                cookie?: return@jxglstu

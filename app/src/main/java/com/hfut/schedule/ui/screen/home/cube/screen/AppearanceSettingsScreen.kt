@@ -265,6 +265,7 @@ fun SharedAppearanceSettingsScreen(
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
         val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+        val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
         val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
 //        val enableKeepPreviousPage by DataStoreManager.enableKeepPreviousPage.collectAsState(initial = false)
@@ -788,7 +789,7 @@ fun SharedAppearanceSettingsScreen(
                         }
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text(text = "视差效果") },
+                            headlineContent = { Text(text = "倾斜效果") },
                             supportingContent = {
                                 Text("过渡时容器带有倾斜的视差效果")
                             },
@@ -800,6 +801,21 @@ fun SharedAppearanceSettingsScreen(
                                 })
                             },
                             leadingContent = { Icon(painterResource(R.drawable.ic_360), contentDescription = "Localized description") },
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(text = "二次形变") },
+                            supportingContent = {
+                                Text("过渡时容器先变为圆形，再变为最终形状")
+                            },
+                            trailingContent = {
+                                Switch(checked = enableQuadraticCornerLerp, onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveQuadraticCornerLerp(!enableQuadraticCornerLerp)
+                                    }
+                                })
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.shapes), contentDescription = "Localized description") },
                         )
                         PaddingHorizontalDivider()
 

@@ -18,7 +18,7 @@ import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.logic.util.LogUtil
@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 
 suspend fun getJxglstuCookie() : String? {
     var cookie : String?
-    if(GlobalStateHolder.webVpn) {
+    if(GlobalUiStateHolder.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         cookie = Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
@@ -78,14 +78,14 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
             var studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
             if(studentId == null) {
                 // 切换到WEBVPN模式尝试
-                GlobalStateHolder.webVpn = true
+                GlobalUiStateHolder.webVpn = true
                 JxglstuRepository.updateServices()
                 cookie = Constant.WEBVPN_COOKIE_HEADER + webVpnCookie
                 vm.getStudentId(cookie)
                 studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
                 if(studentId == null) {
                     // WebVpn也不行，复原
-                    GlobalStateHolder.webVpn = false
+                    GlobalUiStateHolder.webVpn = false
                     JxglstuRepository.updateServices()
                     return@launch
                 }
@@ -180,7 +180,7 @@ private suspend fun refreshWxAuth(vm: NetWorkViewModel) : String? = withContext(
 suspend fun updateCourses(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
     val webVpnCookie = DataStoreManager.webVpnCookies.first { it.isNotEmpty() }
 
-    val cookie = if (!GlobalStateHolder.webVpn) {
+    val cookie = if (!GlobalUiStateHolder.webVpn) {
             prefs.getString("redirect", "") ?: return@withContext
         } else {
             if(webVpnCookie.isEmpty()) {

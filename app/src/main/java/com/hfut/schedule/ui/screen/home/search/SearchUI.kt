@@ -135,7 +135,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Tea
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.navigation.util.LocalNavController
@@ -185,7 +185,7 @@ fun MutableList<SearchAppBean>.reorderByIdsStr(idOrder: String): MutableList<Sea
     } catch (e: Exception) {
         LogUtil.error(e)
         // 出错时恢复默认顺序
-        reorderByIds(GlobalStateHolder.funcDefault.map { it.id })
+        reorderByIds(GlobalUiStateHolder.funcDefault.map { it.id })
     }
 }
 

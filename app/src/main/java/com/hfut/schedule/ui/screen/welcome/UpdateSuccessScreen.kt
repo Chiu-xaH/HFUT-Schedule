@@ -72,7 +72,7 @@ import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode

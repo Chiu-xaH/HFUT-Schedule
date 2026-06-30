@@ -26,7 +26,7 @@ import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
@@ -51,7 +51,7 @@ object DataStoreManager : IDataStore {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
     private val dataStore = MyApplication.context.dataStore
 
-    val SEARCH_DEFAULT_STR = GlobalStateHolder.funcDefault.map { it.id }.joinToString(",")
+    val SEARCH_DEFAULT_STR = GlobalUiStateHolder.funcDefault.map { it.id }.joinToString(",")
     val SHORTCUT_DEFAULT_STR = AppShortcutManager.getStorageStr()
 
     private const val EMPTY_STRING = ""
@@ -131,6 +131,7 @@ object DataStoreManager : IDataStore {
     private val HEFEI_ELECTRIC_FEE = stringPreferencesKey("hefei_electric_fee")
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
+    private val QUADRATIC_CORNER_LERP = booleanPreferencesKey("quadratic_corner_lerp")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
     private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
     private val CONTAINER_TILT = booleanPreferencesKey("container_tilt")
@@ -200,6 +201,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveApiKey(value: String) = saveValue(API_KEY, value)
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
+    suspend fun saveQuadraticCornerLerp(value: Boolean) = saveValue(QUADRATIC_CORNER_LERP, value)
     suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
     suspend fun saveSharedNavSpeedRadio(value: Float) = saveValue(SHARED_NAV_SPEED_RADIO, value)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
@@ -276,6 +278,7 @@ object DataStoreManager : IDataStore {
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val sharedNavSpeedRadio = getFlow(SHARED_NAV_SPEED_RADIO,1f)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
+    val enableQuadraticCornerLerp = getFlow(QUADRATIC_CORNER_LERP, false)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
 //    val enableShowOutOfDateEvent = getFlow(SHOW_OUT_OF_DATE_EVENT, false)

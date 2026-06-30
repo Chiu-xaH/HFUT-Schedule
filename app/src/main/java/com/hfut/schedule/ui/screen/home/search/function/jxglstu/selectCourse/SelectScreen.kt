@@ -105,7 +105,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.util.NoneRoundShape
@@ -162,7 +162,7 @@ fun SelectCourseScreen(
     })
     val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val url = if(GlobalStateHolder.webVpn) Constant.JXGLSTU_WEBVPN_URL else Constant.JXGLSTU_URL + "for-std/course-table"
+    val url = if(GlobalUiStateHolder.webVpn) Constant.JXGLSTU_WEBVPN_URL else Constant.JXGLSTU_URL + "for-std/course-table"
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {

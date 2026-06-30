@@ -5,14 +5,19 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.model.AppStatus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.ui.nav.deepLinks
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.GlobalScope
@@ -42,6 +47,18 @@ class MyApplication : Application() {
                 CourseLiveUpdateScheduler.showCurrentWindowCourses()
             }
         }
+        // 监听应用前后台变化
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            object : DefaultLifecycleObserver {
+                override fun onStart(owner: LifecycleOwner) {
+                    GlobalEventHolder.appStatus.emit(AppStatus.FOREGROUND)
+                }
+
+                override fun onStop(owner: LifecycleOwner) {
+                    GlobalEventHolder.appStatus.emit(AppStatus.BACKGROUND)
+                }
+            }
+        )
         // 监听Activity栈
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(a: Activity, b: Bundle?) {

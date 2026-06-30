@@ -170,7 +170,7 @@ import com.hfut.schedule.ui.util.color.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -324,7 +324,7 @@ fun MainScreen(
         }
         // 等待加载完毕可切换标签
         if(isLogin) {
-            if(!GlobalStateHolder.webVpn) ifSaved = false
+            if(!GlobalUiStateHolder.webVpn) ifSaved = false
         }
     }
 
@@ -476,7 +476,7 @@ fun MainScreen(
                                     } else {
                                         Spacer(modifier = Modifier.width(7.5.dp))
                                         Text(
-                                            text = if (GlobalStateHolder.webVpn) "WebVpn" else "已登录",
+                                            text = if (GlobalUiStateHolder.webVpn) "WebVpn" else "已登录",
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
@@ -960,7 +960,7 @@ fun MainScreen(
                                     showAll,
                                     vm,
                                     innerPadding,
-                                    if (isLogin) GlobalStateHolder.webVpn else false,
+                                    if (isLogin) GlobalUiStateHolder.webVpn else false,
                                     isLogin,
                                     { newDate -> today = newDate },
                                     today,
@@ -1104,7 +1104,7 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
         reorderByIds(order)
     } catch (e: Exception) {
         LogUtil.error(e)
-        reorderByIds(GlobalStateHolder.funcDefault.map { it.id })
+        reorderByIds(GlobalUiStateHolder.funcDefault.map { it.id })
     }
 }
 
@@ -1113,9 +1113,9 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
 fun SearchEditScreen() {
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val funcMaps by produceState(initialValue = GlobalStateHolder.funcMaps, key1 = searchSort, key2 = GlobalStateHolder.funcMaps) {
+    val funcMaps by produceState(initialValue = GlobalUiStateHolder.funcMaps, key1 = searchSort, key2 = GlobalUiStateHolder.funcMaps) {
         if(searchSort.isNotEmpty() && searchSort.isNotBlank()) {
-            value = GlobalStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
+            value = GlobalUiStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
         }
     }
     val scope = rememberCoroutineScope()
@@ -1149,7 +1149,7 @@ fun SearchEditScreen() {
             onDismissRequest = { showDialog = false },
             onConfirmation = {
                 scope.launch {
-                    DataStoreManager.saveSearchSort(GlobalStateHolder.funcDefault.map { it.id })
+                    DataStoreManager.saveSearchSort(GlobalUiStateHolder.funcDefault.map { it.id })
                     showDialog = false
                     showToast("已恢复")
                 }

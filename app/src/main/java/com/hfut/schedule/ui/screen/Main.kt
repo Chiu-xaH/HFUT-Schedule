@@ -33,11 +33,13 @@ import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.sharednav.common.helper.AnimationSpecManager
 import com.sharednav.common.helper.ScreenCornerHelper
+import com.xah.common.logic.util.LogUtil
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
@@ -114,6 +116,7 @@ fun MainHost(
     val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
     val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
     val sharedNavSpeedRadio by DataStoreManager.sharedNavSpeedRadio.collectAsState(initial = 1f)
+    val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
 
     // 动态ShortCut添加（长按图标菜单）
     LaunchedEffect(shortcutSort) {
@@ -159,6 +162,10 @@ fun MainHost(
 
             LaunchedEffect(enableContainerShare) {
                 registry.enabled = enableContainerShare
+            }
+
+            LaunchedEffect(enableQuadraticCornerLerp) {
+                registry.enforceQuadraticCornerLerp = enableQuadraticCornerLerp
             }
 
             LaunchedEffect(enableLiquidGlass) {

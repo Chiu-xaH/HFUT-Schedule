@@ -87,7 +87,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
-import com.hfut.schedule.ui.util.state.GlobalStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -326,8 +326,8 @@ fun TotalNewsScreen(
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val mFilteredHosts = remember(GlobalStateHolder.globalWebVpn) {
-            if (GlobalStateHolder.globalWebVpn) {
+        val mFilteredHosts = remember(GlobalUiStateHolder.globalWebVpn) {
+            if (GlobalUiStateHolder.globalWebVpn) {
                 filteredHosts.map {
                     WebVpnConvertor.getWebVpnUrl(it)
                 }
