@@ -1067,12 +1067,8 @@ fun CalendarUISettings(
     }
     // 更新壁纸
     LaunchedEffect(customBackground) {
-        wallpaper = if(isTiny) {
-            null
-        } else {
-            withContext(Dispatchers.IO) {
-                loadBitmap(File(customBackground))
-            }
+        wallpaper = withContext(Dispatchers.IO) {
+            loadBitmap(File(customBackground))
         }
     }
 
@@ -1145,10 +1141,6 @@ fun CalendarUISettings(
                         ) {
                             Icon(painterResource(R.drawable.wallpaper),null)
                         }
-//                        FilledTonalIconButton(
-//
-//                        ) {
-//                        }
                     }
                 }
             )

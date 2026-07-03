@@ -179,7 +179,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
             }
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_calendar_half_title)) {
-            CalendarSettingsUI(false)
+            CalendarSettingsUI()
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_preferences_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
@@ -538,10 +538,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
     }
 }
 @Composable
-fun CalendarSettingsUI(
-    isInBottomSheet : Boolean ,
-) {
-    val containerColor = if(isInBottomSheet) cardNormalColor() else MaterialTheme.colorScheme.surface
+fun CalendarSettingsUI() {
     val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
     val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemesterWithoutSuspend())
@@ -565,87 +562,85 @@ fun CalendarSettingsUI(
         ) { showSelectDateDialog = false }
 
 
-    CustomCard(color = containerColor) {
-        if(!isInBottomSheet) {
-            TransplantListItem(
-                headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_title)) },
-                supportingContent = {
-                    Text(text =
-                        if(defaultCalendar == CourseType.COMMUNITY.code)
-                            stringResource(R.string.app_settings_default_calendar_community_description)
-                        else if(defaultCalendar == CourseType.UNI_APP.code)
-                            stringResource(R.string.app_settings_default_calendar_uni_app_description)
-                        else
-                            stringResource(R.string.app_settings_default_calendar_jxglstu_description)
-                    )
-                },
-                leadingContent = { Icon(
-                    painterResource(R.drawable.calendar),
-                    contentDescription = "Localized description"
-                ) },
-            )
-
-            val options = remember {
-                listOf(
-                    CourseType.UNI_APP,
-                    CourseType.JXGLSTU,
-                    CourseType.COMMUNITY
+    CustomCard(color = MaterialTheme.colorScheme.surface) {
+        TransplantListItem(
+            headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_title)) },
+            supportingContent = {
+                Text(text =
+                    if(defaultCalendar == CourseType.COMMUNITY.code)
+                        stringResource(R.string.app_settings_default_calendar_community_description)
+                    else if(defaultCalendar == CourseType.UNI_APP.code)
+                        stringResource(R.string.app_settings_default_calendar_uni_app_description)
+                    else
+                        stringResource(R.string.app_settings_default_calendar_jxglstu_description)
                 )
-            }
+            },
+            leadingContent = { Icon(
+                painterResource(R.drawable.calendar),
+                contentDescription = "Localized description"
+            ) },
+        )
 
-            CustomSingleChoiceRow(
-                options = options,
-                selected = defaultCalendar,
-                modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-            ) {
-                scope.launch {
-                    DataStoreManager.saveDefaultCalendar(it)
-                }
-            }
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = {
-                    Text(stringResource(R.string.app_settings_display_teachers_title))
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.group), null)
-                },
+        val options = remember {
+            listOf(
+                CourseType.UNI_APP,
+                CourseType.JXGLSTU,
+                CourseType.COMMUNITY
             )
-            CustomSingleChoiceRow<ShowTeacherConfig>(
-                selected = enableCalendarShowTeacher,
-                modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-            ) {
-                scope.launch {
-                    DataStoreManager.saveCalendarShowTeacher(it)
-                }
-            }
+        }
 
-            PaddingHorizontalDivider()
-            TransplantListItem(
-                headlineContent = {
-                    Text(stringResource(R.string.app_settings_merge_conflict_calendar_squares_title))
-                },
-                supportingContent = {
-                    Text(stringResource(R.string.app_settings_merge_conflict_calendar_square_description))
-                },
-                modifier = Modifier.clickable {
+        CustomSingleChoiceRow(
+            options = options,
+            selected = defaultCalendar,
+            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+        ) {
+            scope.launch {
+                DataStoreManager.saveDefaultCalendar(it)
+            }
+        }
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text(stringResource(R.string.app_settings_display_teachers_title))
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.group), null)
+            },
+        )
+        CustomSingleChoiceRow<ShowTeacherConfig>(
+            selected = enableCalendarShowTeacher,
+            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+        ) {
+            scope.launch {
+                DataStoreManager.saveCalendarShowTeacher(it)
+            }
+        }
+
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text(stringResource(R.string.app_settings_merge_conflict_calendar_squares_title))
+            },
+            supportingContent = {
+                Text(stringResource(R.string.app_settings_merge_conflict_calendar_square_description))
+            },
+            modifier = Modifier.clickable {
+                scope.launch {
+                    DataStoreManager.saveMergeSquare(!enableMergeSquare)
+                }
+            },
+            trailingContent = {
+                Switch(checked = enableMergeSquare, onCheckedChange = {
                     scope.launch {
                         DataStoreManager.saveMergeSquare(!enableMergeSquare)
                     }
-                },
-                trailingContent = {
-                    Switch(checked = enableMergeSquare, onCheckedChange = {
-                        scope.launch {
-                            DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                        }
-                    })
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.arrow_split), null)
-                },
-            )
-            PaddingHorizontalDivider()
-        }
+                })
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.arrow_split), null)
+            },
+        )
+        PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = { Text(text = stringResource(R.string.app_settings_current_term_title)) },
             supportingContent = {
@@ -664,10 +659,23 @@ fun CalendarSettingsUI(
                 Text(text = stringResource(R.string.app_settings_auto_calculate_term_description))
             },
             trailingContent = {
-                Switch(checked = autoTerm, onCheckedChange = { scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }})
+                Switch(
+                    checked = autoTerm,
+                    onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveAutoTerm(!autoTerm)
+                            reverseGetSemester(DateTimeManager.Date_yyyy_MM)?.let { DataStoreManager.saveAutoTermValue(it) }
+                        }
+                    }
+                )
             },
             modifier = Modifier.clickable {
-                scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }
+                scope.launch {
+                    scope.launch {
+                        DataStoreManager.saveAutoTerm(!autoTerm)
+                        reverseGetSemester(DateTimeManager.Date_yyyy_MM)?.let { DataStoreManager.saveAutoTermValue(it) }
+                    }
+                }
             }
         )
         if(!autoTerm) {
@@ -727,9 +735,6 @@ fun CalendarSettingsUI(
                 showSelectDateDialog = true
             }
         )
-    }
-    if(isInBottomSheet) {
-        BottomTip(stringResource(R.string.app_settings_tips_start_date_of_term))
     }
 }
 

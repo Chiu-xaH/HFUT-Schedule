@@ -19,6 +19,7 @@ object GlobalEventHolder {
 
     // 前台、后台
     val appStatusChanged = EventFlow<AppStatus>()
+    // 调休日设置
     val specialWorkDayChanged = EventFlow<Unit>()
     /**
      * //  发射

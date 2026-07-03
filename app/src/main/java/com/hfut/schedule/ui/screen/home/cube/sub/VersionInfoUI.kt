@@ -65,7 +65,7 @@ fun VersionInfo() {
         UpdateItems("新增 新生首次登录输入学号后的礼花动效")//
 //        UpdateItems("新增 支持将转专业列表生成长截图并保存")
         UpdateItems("新增 容器共享二次形变效果","位于 选项-外观-动效-二次形变",to = To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("重构 若干代码，使一卡通、校务行、呱呱物联、共建平台适配新转场动画")
+        UpdateItems("重构 若干代码，使一卡通、校务行、呱呱物联、共建平台适配新转场动画")//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
 //        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)

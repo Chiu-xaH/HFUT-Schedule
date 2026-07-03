@@ -157,15 +157,6 @@ fun XwxLoginScreen(
                         text = "校务行-登录", modifier = Modifier.padding(start = 10.dp)
                     )
                 },
-                actions = {
-                    Row {
-                        IconButton(onClick = {
-                            activity?.finish()
-                        }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                },
                 navigationIcon  = {
                     TopBarNavigationIcon()
                 }

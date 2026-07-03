@@ -371,7 +371,6 @@ fun About(vm : NetWorkViewModel) {
                             launch {
                                 showToast("已退出APP")
                                 MyApplication.exitAppSafely()
-//                                    activity?.finish()
                             }
                         }
                     },

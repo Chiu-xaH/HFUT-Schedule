@@ -25,12 +25,10 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,7 +62,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
+import com.hfut.schedule.ui.nav.destination.CalendarConfigDestination
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.status.LoadingUI
@@ -73,6 +71,8 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
+import com.xah.navigation.anim.effect.ScaleTransitionEffect
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
@@ -91,6 +91,7 @@ enum class CourseType(override val code : Int,override val label: UiText): BaseC
 fun MultiScheduleSettings(
     ifSaved : Boolean,
     select : Int,
+    onDismissed : () -> Unit,
     onSelectedChange : (Int) -> Unit,
     onShowUiSettings  : (Boolean) -> Unit,
     vm : NetWorkViewModel,
@@ -116,7 +117,6 @@ fun MultiScheduleSettings(
     }
 
     var showBottomSheet_loading by remember { mutableStateOf(false) }
-    var showBottomSheet_settings by remember { mutableStateOf(false) }
 
     if (showBottomSheet_loading) {
         HazeBottomSheet (
@@ -132,20 +132,8 @@ fun MultiScheduleSettings(
             }
         }
     }
-    if (showBottomSheet_settings) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_settings = false },
-            showBottomSheet = showBottomSheet_settings,
-        ) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                HazeBottomSheetTopBar("学期切换", isPaddingStatusBar = false)
-                CalendarSettingsUI(true)
-                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-            }
-        }
-    }
+
+    val navController = LocalNavController.current
 
     val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
@@ -153,10 +141,7 @@ fun MultiScheduleSettings(
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
-            Row() {
-                FilledTonalButton(onClick = { onShowUiSettings(true) }) {
-                    Text("外观")
-                }
+            Row {
                 FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
                     Icon(painterResource(id = R.drawable.add), contentDescription = "")
                 }
@@ -263,13 +248,26 @@ fun MultiScheduleSettings(
         DividerTextExpandedWith(text = "操作") {
             CustomCard (color = cardNormalColor()){
                 TransplantListItem(
-                    headlineContent = { Text(text = "学期切换") },
-                    supportingContent = {  Text("切换学期后再次刷新将会缓存新的数据") },
+                    headlineContent = { Text(text = "课程表配置") },
+                    supportingContent = {  Text("切换学期、切换默认课程表等配置") },
                     leadingContent = {
                         Icon(painterResource(id = R.drawable.approval), contentDescription = "")
                     },
                     modifier = Modifier.clickable {
-                        showBottomSheet_settings = true
+                        onDismissed()
+                        navController.push(CalendarConfigDestination, effect = ScaleTransitionEffect(true,false))
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "外观调整") },
+                    supportingContent = {  Text("调整课程表方格外观、背景等") },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.format_paint), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable {
+                        onDismissed()
+                        onShowUiSettings(true)
                     }
                 )
                 PaddingHorizontalDivider()

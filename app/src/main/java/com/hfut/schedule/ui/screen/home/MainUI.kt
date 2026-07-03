@@ -287,6 +287,7 @@ fun MainScreen(
                 MultiScheduleSettings(
                     ifSaved = ifSaved,
                     select = swapUI,
+                    onDismissed = { showBottomSheet_multi = false },
                     onSelectedChange = { newSelected ->
                         swapUI = newSelected
                     },
@@ -579,7 +580,6 @@ fun MainScreen(
                 } else {
                     if(useCustomBackground) {
                         val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-                        val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
                         val iconColor = IconButtonDefaults.iconButtonColors().contentColor
                         TopAppBar(
                             colors = topBarTransplantColor(),
@@ -931,7 +931,6 @@ fun MainScreen(
                                     hazeState = hazeState,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     onSwapShowAll = { showAll = it },
-//                                    navController = navHostTopController,
                                     onRestoreHeight = { smoothToOne(scaleFactor) }
                                 )
                                 // 合工大教务
