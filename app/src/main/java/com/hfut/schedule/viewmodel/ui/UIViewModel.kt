@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.model.huixin.ReturnCard
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
-@Deprecated("使用GlobalStateHolder替代")
+@Deprecated("使用GlobalUiStateHolder替代")
 class UIViewModel : ViewModel()  {
     var cardValue by mutableStateOf<ReturnCard?>(null)
     @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
@@ -16,8 +16,7 @@ class UIViewModel : ViewModel()  {
     @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
     var webValue = MutableLiveData<WebInfo>()
 
-    var isAddUIExpanded by mutableStateOf(false)
+    // 挪到Event中
     var specialWorkDayChange by mutableIntStateOf(0)
-
-    var isAddUIExpandedSupabase by mutableStateOf(false)
 }
+// 呱呱、supabase的返回图标

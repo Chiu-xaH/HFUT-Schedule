@@ -24,13 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 
@@ -38,16 +37,19 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.status.CustomSwitch
+import com.hfut.schedule.ui.nav.destination.GuaGuaLoginDestination
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostController) {
+fun GuaGuaSettings(innerPadding: PaddingValues) {
     val switch_usecode = prefs.getBoolean("SWITCHUSECODE",false)
     var autoUseCode by remember { mutableStateOf(switch_usecode) }
+    val navController = LocalNavController.current
     saveBoolean("SWITCHUSECODE",true,autoUseCode)
        Column(modifier = Modifier
            .fillMaxSize()
@@ -61,7 +63,9 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
                        leadingContent = {
                            Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
                        },
-                       modifier = Modifier.clickable { navHostController.navigateForBottomBar(ShowerScreen.LOGIN.name) }
+                       modifier = Modifier.clickable {
+                           navController.push(GuaGuaLoginDestination, effect = JumpTransitionEffectWallpaper())
+                       }
                    )
                    PaddingHorizontalDivider()
                    TransplantListItem(

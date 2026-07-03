@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.xah.common.ui.component.status.LoadingUI
@@ -116,15 +117,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel) {
                     }
                 },
                 navigationIcon  = {
-                    Column(modifier = Modifier
-                        .padding(horizontal = 23.dp)) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = "Supabase",
-                            fontSize = 38.sp,
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    }
+                    TopBarNavigationIcon()
                 }
             )
         }

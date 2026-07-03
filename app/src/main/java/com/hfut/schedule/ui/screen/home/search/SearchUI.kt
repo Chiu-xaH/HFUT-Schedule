@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.nav.destination.SecondClassDestination
 import com.hfut.schedule.ui.nav.destination.SelectCoursesDestination
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SurveyDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
@@ -246,7 +247,7 @@ fun SearchScreen(
                 SearchAppBean(36,"${context.getString(R.string.navigation_label_ietp)} 大学生创新创业系统", { IETP() }, WebViewDestination.getKey(Constant.IETP_URL)),
                 SearchAppBean(37,"${WorkDestination.title.asString(context)} 实习 春招 双选 秋招", { Work() }, WorkDestination.key),
                 SearchAppBean(38,"${HolidayDestination.title.asString(context)} 国家法定节假日 假期 节日 调休", { Holiday() }, HolidayDestination.key),
-                SearchAppBean(39,"${context.getString(R.string.navigation_label_supabase)} 信息共建 日程 网课 网址导航", { Supabase() }),
+                SearchAppBean(39,"${context.getString(R.string.navigation_label_supabase)} 信息共建 日程 网课 网址导航", { Supabase() }, SupabaseDestination.key),
                 SearchAppBean(40,"${context.getString(R.string.navigation_label_laundry)} 洗鞋机 烘干机 ${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_washing)} 缴费", { Washing(hazeState) }),
                 SearchAppBean(41,"${AdmissionDestination.title.asString(context)} 历年分数线 招生计划", { Admission() }, AdmissionDestination.key),
                 SearchAppBean(42,"${WebVpnDestination.title.asString(context)} 外地访问 内网", { WebVpn() }, WebVpnDestination.key),

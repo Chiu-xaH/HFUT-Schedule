@@ -398,10 +398,15 @@ private fun LoginUI(
                             }
                             is NetworkUiState.Success<*> -> {
                                 showToast("登陆成功")
+                                val launchMode = if(navController.containsDestination(XiaoWuXingDestination)) {
+                                    LaunchMode.PopToExisting(reuse = false)
+                                } else {
+                                    LaunchMode.Replace()
+                                }
                                 navController.push(
                                     destination = XiaoWuXingDestination,
                                     effect = JumpTransitionEffectWallpaper(),
-                                    launchMode = LaunchMode.Replace()
+                                    launchMode = launchMode
                                 )
                             }
                         }

@@ -133,7 +133,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                     headlineContent = { Text(if(jwt.isEmpty() || jwt.isBlank()) "注册/登录" else "刷新登陆状态") },
                     leadingContent = { Icon(painterResource(R.drawable.login), null) },
                     modifier = Modifier.clickable {
-                        navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper(), launchMode = LaunchMode.Replace())
+                        navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper())
                     }
                 )
                 PaddingHorizontalDivider()

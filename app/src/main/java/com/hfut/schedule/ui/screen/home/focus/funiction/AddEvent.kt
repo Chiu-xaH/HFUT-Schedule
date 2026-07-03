@@ -202,11 +202,6 @@ fun AddEventFloatButton(
     ) }
     // 通知父布局开始进行模糊和缩放，同时暂时关闭topBar和bottomBar的实时模糊
     LaunchedEffect(showAddUI) {
-        if(isSupabase) {
-            vmUI.isAddUIExpandedSupabase = showAddUI
-        } else {
-            vmUI.isAddUIExpanded = showAddUI
-        }
         if(showAddUI) {
             // 进入
             showSurface = false
@@ -362,7 +357,7 @@ fun AddEventScreen(
                             StatusIcon(R.drawable.login,text("未登录或状态失效"))
                             Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             Button(onClick = {
-                                navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper(), launchMode = LaunchMode.Replace())
+                                navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper())
                             }) {
                                 Text("刷新登录状态")
                             }
@@ -527,7 +522,7 @@ private fun SharedTransitionScope.SurfaceUI(
                                 StatusIcon(R.drawable.login,text("未登录或状态失效"))
                                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                 Button(onClick = {
-                                    navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper(), launchMode = LaunchMode.Replace())
+                                    navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper())
                                 }) {
                                     Text("刷新登录状态")
                                 }

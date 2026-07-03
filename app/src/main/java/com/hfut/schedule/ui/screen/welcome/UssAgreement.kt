@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.killAppUnSafely
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -121,11 +122,7 @@ fun UseAgreementScreen() {
                                             launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
                                             launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
                                         }.await()
-                                        navController.push(
-                                            HomeDestination(),
-                                            LaunchMode.Single(reuse = true, actionType = ActionType.POP)
-                                        )
-//                                    navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
+                                        Starter.backToHome(navController)
                                     }
                                 },
 //                                shape = NoneRoundShape,

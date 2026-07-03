@@ -42,33 +42,37 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.ErrorIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.GuaGuaLoginDestination
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.util.text
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 //*******最新模范写法****
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostController) {
-    val uiState by vm.useCodeResult.state.collectAsState()
+fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
+    val uiState by vm.useCodeResp.state.collectAsState()
     val successLoad = uiState is NetworkUiState.Success
     var useCode by remember { mutableStateOf("# # #") }
     var showButton = uiState !is NetworkUiState.Success
@@ -90,14 +94,14 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-        ) { ReSetUseCodeUI(vm,navController) }
+        ) { ReSetUseCodeUI(vm) }
     }
 
     val scope = rememberCoroutineScope()
     val refreshNetwork: suspend () -> Unit = {
         showButton = false
-        vm.useCodeResult.clear()
-        vm.getUseCode()
+        vm.useCodeResp.clear()
+        vm.getGuaGuaUseCode()
     }
     val switchAutoRefresh = remember { prefs.getBoolean("SWITCHUSECODE",false) }
     //预加载
@@ -186,7 +190,9 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
 
 
 @Composable
-fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
+fun ReSetUseCodeUI(vm: NetWorkViewModel) {
+    val navController = LocalNavController.current
+
     var password by remember { mutableStateOf("") }
     var passwordStatus by remember { mutableStateOf("请输入新的使用码") }
     val len = remember { 5 }
@@ -211,10 +217,10 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
             )
         }
     } else {
-        val uiState by vm.reSetCodeResult.state.collectAsState()
+        val uiState by vm.resetCodeResp.state.collectAsState()
         val refreshNetwork: suspend () -> Unit = {
-            vm.reSetCodeResult.clear()
-            vm.reSetUseCode(password)
+            vm.resetCodeResp.clear()
+            vm.resetGuaGuaUseCode(password)
         }
         LaunchedEffect(Unit) {
             refreshNetwork()
@@ -232,7 +238,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
                     RowHorizontal {
                         Button(
                             onClick = {
-                                navController.navigateForBottomBar(ShowerScreen.LOGIN.name)
+                                navController.push(GuaGuaLoginDestination, effect = JumpTransitionEffectWallpaper())
                             }
                         ) {
                             Text("去登录")

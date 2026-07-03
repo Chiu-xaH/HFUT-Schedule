@@ -387,7 +387,7 @@ fun RecentlyStackUI(
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = globalColor),
                                 onClick = {
                                     scope.launch {
-                                        navController.push(item.destination, LaunchMode.PopToExisting)
+                                        navController.push(item.destination, LaunchMode.PopToExisting())
                                         snapshotFlow { navController.isTransitioning }
                                             .filter { !it }
                                             .first()
@@ -439,7 +439,7 @@ fun RecentlyStackUI(
                                 onExit()
                             } else {
                                 scope.launch {
-                                    navController.push(item.destination, LaunchMode.PopToExisting)
+                                    navController.push(item.destination, LaunchMode.PopToExisting())
                                     snapshotFlow { navController.isTransitioning }
                                         .filter { !it }
                                         .first()

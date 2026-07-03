@@ -99,11 +99,6 @@
             android:label="@string/title_activity_base"
             android:theme="@style/Theme.App" />
         <activity
-            android:name=".activity.screen.ShowerActivity"
-            android:exported="true"
-            android:label="@string/title_activity_shower"
-            android:theme="@style/Theme.App" />
-        <activity
             android:name=".activity.screen.FixActivity"
             android:exported="true"
             android:label="@string/title_activity_fix"

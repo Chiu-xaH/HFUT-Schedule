@@ -816,50 +816,21 @@ private fun TwoTextField(
                 .padding(horizontal = APP_HORIZONTAL_DP),
             horizontalArrangement = Arrangement.Center
         ) {
-            if(false) {
-                LargeButton(
-                    onClick = {
-                        val cookie = prefs.getString("LOGIN_FLAVORING", "")
-                        if (cookie != null) {
-                            loginClick(context,vm,username,inputAES,inputCode, onLoad = { loading = it }, onResult = { status = it},scope)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
-                    text = "登录",
-                    icon = R.drawable.login
+            Button(
+                onClick = {
+                    val cookie = prefs.getString("LOGIN_FLAVORING", "")
+                    if (cookie != null) {
+                        loginClick(context,vm,username,inputAES,inputCode, onLoad = { loading = it }, onResult = { status = it}, scope)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    "登录",
+                    modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 1),
+                    style = MaterialTheme.typography.titleMedium,
                 )
-                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                LargeButton(
-                    onClick = {
-                        scope.launch {
-                            Starter.goToMain(context)
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f),
-                    text = "游客",
-                    icon = R.drawable.partner_exchange,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                )
-            } else {
-                Button(
-                    onClick = {
-                        val cookie = prefs.getString("LOGIN_FLAVORING", "")
-                        if (cookie != null) {
-                            loginClick(context,vm,username,inputAES,inputCode, onLoad = { loading = it }, onResult = { status = it}, scope)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text(
-                        "登录",
-                        modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 1),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
             }
         }
     }

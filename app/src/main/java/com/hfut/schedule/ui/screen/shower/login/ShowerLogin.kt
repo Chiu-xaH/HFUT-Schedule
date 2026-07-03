@@ -42,29 +42,32 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.nav.destination.GuaGuaDestination
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
-import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.common.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
-import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.navigation.controller.NavigationController
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,13 +79,15 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
+fun ShowerLogin(vm : NetWorkViewModel) {
     val context = LocalActivity.current
     var show by remember { mutableStateOf(false) }
     val Savedusername = prefs.getString("PHONENUM", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
+    val navController = LocalNavController.current
+
     Scaffold(
         topBar = {
             LargeTopAppBar(
@@ -90,7 +95,7 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
                 colors = topBarTransplantColor(),
                 title = {
                     Text(
-                        text = "登录", modifier = Modifier.padding(start = 10.dp)
+                        text = "呱呱物联-登录", modifier = Modifier.padding(start = 10.dp)
                     )
                 },
                 actions = {
@@ -108,15 +113,7 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
                     }
                 },
                 navigationIcon  = {
-                    Column(modifier = Modifier
-                        .padding(horizontal = APP_HORIZONTAL_DP).padding(start = 3.5.dp)) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = "呱呱物联",
-                            fontSize = 38.sp,
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    }
+                    TopBarNavigationIcon()
                 }
             )
         },
@@ -133,13 +130,18 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
                     EditLoginCode(true,{
                         saveString("PHONENUM",username)
                         CoroutineScope(Job()).launch {
-                            async { netVm.getGuaGuaUserInfo() }.await()
+                            async { vm.getGuaGuaUserInfo() }.await()
                             launch {
                                 Handler(Looper.getMainLooper()).post {
-                                    netVm.guaGuaUserInfo.observeForever { result ->
+                                    vm.guaGuaUserInfo.observeForever { result ->
                                         if (result?.contains("成功") == true) {
                                             saveString("GuaGuaPersonInfo",result)
-                                            navHostController.navigateAndClear(ShowerScreen.HOME.name)
+                                            val launchMode = if(navController.containsDestination(GuaGuaDestination)) {
+                                                LaunchMode.PopToExisting(reuse = false)
+                                            } else {
+                                                LaunchMode.Replace()
+                                            }
+                                            navController.push(GuaGuaDestination, launchMode = launchMode, effect = JumpTransitionEffectWallpaper())
                                         } else if(result?.contains("error") == true) {
                                             showToast("登陆失败")
                                         }
@@ -155,7 +157,7 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            GuaGuaLoginUI(vm,navHostController,username) {
+            GuaGuaLoginUI(vm,username) {
                 username = it
             }
         }
@@ -164,8 +166,8 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun GuaGuaLoginUI(vm : GuaGuaViewModel, navHostController: NavHostController,username : String,onUsername : (String) -> Unit) {
-
+private fun GuaGuaLoginUI(vm : NetWorkViewModel,username : String,onUsername : (String) -> Unit) {
+    val navController = LocalNavController.current
     var hidden by rememberSaveable { mutableStateOf(true) }
 
     val Savedpassword = prefs.getString("GuaGuaPsk","")
@@ -237,7 +239,7 @@ private fun GuaGuaLoginUI(vm : GuaGuaViewModel, navHostController: NavHostContro
 
         Button(
             onClick = {
-                scope.launch { loginGuaGuaClick(username,inputAES,vm,navHostController) }
+                scope.launch { loginGuaGuaClick(username,inputAES,vm,navController) }
             },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp),
             shape = MaterialTheme.shapes.medium
@@ -251,8 +253,8 @@ private fun GuaGuaLoginUI(vm : GuaGuaViewModel, navHostController: NavHostContro
 suspend fun loginGuaGuaClick(
     phoneNumber: String,
     psk: String,
-    vm: GuaGuaViewModel,
-    navHostController: NavHostController
+    vm: NetWorkViewModel,
+    navHostController: NavigationController
 ) : Unit = withContext(Dispatchers.IO) {
     // 存储信息
     saveString("PHONENUM", phoneNumber)
@@ -260,13 +262,18 @@ suspend fun loginGuaGuaClick(
     val inputPSK = CryptoUtil.md5Hash(psk).uppercase(Locale.getDefault())
 
     // 启动登录
-    vm.loginResult.clear()
-    vm.login(phoneNumber, inputPSK)
+    vm.loginGuaGuaResp.clear()
+    vm.loginGuaGua(phoneNumber, inputPSK)
 
-    onListenStateHolder(vm.loginResult) { data ->
+    onListenStateHolder(vm.loginGuaGuaResp) { data ->
         data.message.let{ msg ->
-            if(msg.contains("成功") == true) {
-                navHostController.navigateAndClear(ShowerScreen.HOME.name)
+            if(msg.contains("成功")) {
+                val launchMode = if(navHostController.containsDestination(GuaGuaDestination)) {
+                    LaunchMode.PopToExisting(reuse = false)
+                } else {
+                    LaunchMode.Replace()
+                }
+                navHostController.push(GuaGuaDestination, launchMode = launchMode, effect = JumpTransitionEffectWallpaper())
                 showToast("登录成功")
             } else {
                 showToast(data.message)

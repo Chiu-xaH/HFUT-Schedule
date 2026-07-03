@@ -24,6 +24,7 @@ import com.hfut.schedule.ui.component.icon.LoadingIconNew
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +32,7 @@ import dev.chrisbanes.haze.HazeState
 fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
+    val navController = LocalNavController.current
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -58,7 +60,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
                 modifier = Modifier
                     .size(30.dp),
                 onClick = {
-                    getInGuaGua(vm,context) { loading = it }
+                    getInGuaGua(vm, navController) { loading = it }
                 },
             ) { Icon( painterResource(R.drawable.shower), contentDescription = "Localized description",) }
         },

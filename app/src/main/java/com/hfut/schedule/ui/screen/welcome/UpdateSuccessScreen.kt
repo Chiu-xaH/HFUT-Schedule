@@ -63,6 +63,7 @@ import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -155,11 +156,7 @@ fun UpdateSuccessScreen() {
                                     AppVersion.getVersionName()
                                 )
                             }.await()
-                            navController.push(
-                                HomeDestination(),
-                                LaunchMode.Single(reuse = true, actionType = ActionType.POP)
-                            )
-//                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
+                            Starter.backToHome(navController)
                         }
                     },
 //                    shape = NoneRoundShape,

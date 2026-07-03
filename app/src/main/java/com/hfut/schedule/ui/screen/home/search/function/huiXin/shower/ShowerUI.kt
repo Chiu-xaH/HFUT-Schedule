@@ -59,9 +59,8 @@ import com.hfut.schedule.logic.model.huixin.ShowerFeeResponse
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
-import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.GsonInstance
@@ -71,12 +70,16 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.GuaGuaDestination
+import com.hfut.schedule.ui.nav.destination.GuaGuaLoginDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.controller.NavigationController
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -89,7 +92,7 @@ private fun getUrl(page : Int,) : String {
     val auth = prefs.getString("auth","")
     return Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
-fun getInGuaGua(vm: NetWorkViewModel,context : Context,onResult : (Boolean) -> Unit) {
+fun getInGuaGua(vm: NetWorkViewModel,navController: NavigationController,onResult : (Boolean) -> Unit) {
 
     lateinit var guaguaUserInfoObserver: Observer<String?> // 延迟初始化观察者
 
@@ -99,10 +102,10 @@ fun getInGuaGua(vm: NetWorkViewModel,context : Context,onResult : (Boolean) -> U
             if (result.contains("成功")) {
                 saveString("GuaGuaPersonInfo", result)
                 vm.guaGuaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-                startGuaGua(context)
+                navController.push(GuaGuaDestination, effect = JumpTransitionEffectWallpaper())
             } else if (result.contains("error")) {
                 vm.guaGuaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-                loginGuaGua(context)
+                navController.push(GuaGuaLoginDestination, effect = JumpTransitionEffectWallpaper())
             }
         }
     }
@@ -124,6 +127,7 @@ private const val XUANCHENG_TAB = 1
 @Composable
 fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: HazeState) {
     val titles = remember { listOf("合肥","宣城") }
+    val navController = LocalNavController.current
 
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampusRegion()) {
@@ -317,7 +321,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                 CardListItem(
                     headlineContent = { Text("进入呱呱物联") },
                     modifier = Modifier.clickable {
-                        getInGuaGua(vm,context) { loading = it }
+                        getInGuaGua(vm,navController) { loading = it }
                     },
                     trailingContent = {
                         Icon(painterResource(R.drawable.arrow_forward),null)

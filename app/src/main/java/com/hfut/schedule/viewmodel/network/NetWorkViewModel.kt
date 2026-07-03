@@ -54,6 +54,8 @@ import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.MapBean
 import com.hfut.schedule.logic.model.community.StuAppBean
 import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.huixin.BillMonth
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -613,5 +615,20 @@ class NetWorkViewModel() : ViewModel() {
 
     val xwxDocPreviewResp = UiStateHolder<Bitmap>()
     suspend fun getXwxDocPreview(schoolCode : Long, username : String, filePropertyType : Int, fileProperty : String, token : String) = XwxRepository.getDocPreview(schoolCode, username, filePropertyType, fileProperty, token, xwxDocPreviewResp)
+
+    var loginGuaGuaResp = UiStateHolder<GuaGuaLoginResponse>()
+    suspend fun loginGuaGua(phoneNumber : String, password : String) = GuaGuaRepository.guaGuaLogin(phoneNumber,password,loginGuaGuaResp)
+
+    val startGuaGuaShowerResp = UiStateHolder<String>()
+    suspend fun startGuaGuaShower(phoneNumber: String, macLocation : String, loginCode : String) = GuaGuaRepository.guaGuaStartShower(phoneNumber,macLocation,loginCode,startGuaGuaShowerResp)
+
+    var guaGuaBillsResp = UiStateHolder<GuaguaBillsResponse>()
+    suspend fun getGuaGuaBills() = GuaGuaRepository.guaGuaGetBills(guaGuaBillsResp)
+
+    var useCodeResp = UiStateHolder<String>()
+    suspend fun getGuaGuaUseCode() = GuaGuaRepository.guaGuaGetUseCode(useCodeResp)
+
+    var resetCodeResp = UiStateHolder<String>()
+    suspend fun resetGuaGuaUseCode(newCode : String) = GuaGuaRepository.guaGuaReSetUseCode(newCode,resetCodeResp)
 }
 

@@ -12,12 +12,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.xah.common.ui.component.text.ScrollText
-import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
 
 @Composable
@@ -49,7 +47,7 @@ fun Supabase() {
             }
         },
         modifier = Modifier.clickable {
-            navController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper())
+            navController.push(SupabaseDestination)
 //           scope.launch {
 //               loading = true
 //               loginSupabaseWithCheck(jwt,refreshToken,vm,context)

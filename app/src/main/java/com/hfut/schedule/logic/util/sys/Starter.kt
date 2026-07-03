@@ -16,20 +16,24 @@ import androidx.core.net.toUri
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.FixActivity
-import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.util.WebViewActivity
-import com.hfut.schedule.logic.enumeration.ShowerScreen
+import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.WebVpnConvertor
+import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.anim.effect.DefaultPageEffects
 import com.xah.navigation.controller.NavigationController
+import com.xah.navigation.model.action.ActionType
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.model.anim.TransitionEffect
 
 
 object Starter {
@@ -161,38 +165,17 @@ object Starter {
         }
         context.startActivity(it)
     }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
     @JvmStatic
-    fun goToMain(context: Context) {
-        val it = Intent(context, MainActivity::class.java).apply {
-            putExtra("login",false)
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun loginGuaGua(context: Context) {
-        val it = Intent(context, ShowerActivity::class.java).apply {
-            putExtra("FIRST",ShowerScreen.LOGIN.name)
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun startGuaGua(context: Context) {
-        val it = Intent(context, ShowerActivity::class.java).apply {
-            putExtra("FIRST",ShowerScreen.HOME.name)
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
+    fun backToHome(
+        navController: NavigationController,
+        subStartDestination : BottomBarItems = BottomBarItems.FOCUS,
+        effect : TransitionEffect = navController.defaultTransitionEffect
+    ) {
+        navController.push(
+            HomeDestination(subStartDestination),
+            launchMode = LaunchMode.Single(reuse = true, actionType = ActionType.POP),
+            effect = effect
+        )
     }
     @JvmStatic
     suspend fun startWebUrlInner(

@@ -14,20 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.xah.common.logic.state.NetworkUiState
-
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 
 @Composable
-fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
-    val uiState by vm.billsResult.state.collectAsState()
+fun GuaguaBills(innerPadding: PaddingValues, vm: NetWorkViewModel) {
+    val uiState by vm.guaGuaBillsResp.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        vm.billsResult.clear()
-        vm.getBills()
+        vm.guaGuaBillsResp.clear()
+        vm.getGuaGuaBills()
     }
     LaunchedEffect(Unit) {
         refreshNetwork()

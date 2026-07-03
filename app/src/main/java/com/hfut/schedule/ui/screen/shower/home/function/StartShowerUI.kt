@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
@@ -75,18 +75,18 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-suspend fun startShower(vm : GuaGuaViewModel, macLocation : String) = withContext(Dispatchers.IO) {
+suspend fun startShower(vm : NetWorkViewModel, macLocation : String) = withContext(Dispatchers.IO) {
     val loginCode = SharedPrefs.prefs.getString("loginCode",null)
     val phoneNumber = SharedPrefs.prefs.getString("PHONENUM",null)
-    phoneNumber?.let { loginCode?.let { it1 -> vm.startShower(phoneNumber = it, loginCode = it1, macLocation = macLocation) } }
+    phoneNumber?.let { loginCode?.let { it1 -> vm.startGuaGuaShower(phoneNumber = it, loginCode = it1, macLocation = macLocation) } }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
-    val uiState by vm.startShowerResult.state.collectAsState()
+fun ShowerStatusUI(vm : NetWorkViewModel,input : String) {
+    val uiState by vm.startGuaGuaShowerResp.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        vm.startShowerResult.clear()
+        vm.startGuaGuaShowerResp.clear()
         startShower(vm,input)
     }
     LaunchedEffect(Unit) {
@@ -103,7 +103,7 @@ data class StatusMsgResponse(val message : String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
+fun StartShowerUI(vm: NetWorkViewModel, hazeState: HazeState) {
     val context = LocalContext.current
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()

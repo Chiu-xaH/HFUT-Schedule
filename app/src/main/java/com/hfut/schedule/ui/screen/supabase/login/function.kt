@@ -8,6 +8,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.nav.destination.GuaGuaDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -35,8 +36,13 @@ suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, n
                 launch { DataStoreManager.saveSupabaseRefreshToken(result.data.refreshToken) }
                 launch { DataStoreManager.saveSupabaseJwt(result.data.token) }
             }.await()
-            launch {
-                Handler(Looper.getMainLooper()).post { navHostController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper()) }
+            launch {4
+                val launchMode = if(navHostController.containsDestination(SupabaseDestination)) {
+                    LaunchMode.PopToExisting(reuse = false)
+                } else {
+                    LaunchMode.Replace()
+                }
+                navHostController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper(), launchMode = launchMode)
                 showToast("登录成功")
             }
         }

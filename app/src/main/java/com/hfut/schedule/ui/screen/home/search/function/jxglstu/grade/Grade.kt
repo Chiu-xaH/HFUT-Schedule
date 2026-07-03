@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
@@ -80,8 +81,8 @@ fun Grade(
 
 suspend fun goToXwx(viewModel: NetWorkViewModel, navController : NavigationController) {
     if(!checkXwxLogin(viewModel)) {
-        navController.push(XiaoWuXingLoginDestination)
+        navController.push(XiaoWuXingLoginDestination, effect = JumpTransitionEffectWallpaper())
     } else {
-        navController.push(XiaoWuXingDestination)
+        navController.push(XiaoWuXingDestination, effect = JumpTransitionEffectWallpaper())
     }
 }
