@@ -76,7 +76,7 @@ private val items = listOf(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI : UIViewModel) {
+fun SupabaseHome(vm : NetWorkViewModel,vmUI : UIViewModel) {
     val navController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)

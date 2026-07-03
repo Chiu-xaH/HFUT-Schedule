@@ -110,6 +110,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
@@ -132,9 +133,9 @@ import com.hfut.schedule.ui.component.divider.defaultDividerColor
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.input.WheelPicker
-
 import com.hfut.schedule.ui.component.status.StatusIcon
-
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination
+import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -161,6 +162,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
+import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -311,7 +313,7 @@ fun AddEventScreen(
                         if(!isSupabase) {
                             LiquidButton(
                                 onClick = {
-                                    Starter.startSupabase(context)
+                                    navController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper())
                                 },
                                 modifier = Modifier
                                     .padding(end = APP_HORIZONTAL_DP)
@@ -359,7 +361,9 @@ fun AddEventScreen(
                         ColumnVertical {
                             StatusIcon(R.drawable.login,text("未登录或状态失效"))
                             Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                            Button(onClick = { Starter.loginSupabase(context)}) {
+                            Button(onClick = {
+                                navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper(), launchMode = LaunchMode.Replace())
+                            }) {
                                 Text("刷新登录状态")
                             }
                         }
@@ -433,6 +437,7 @@ private fun SharedTransitionScope.SurfaceUI(
 
 //                            }
     }
+    val navController = LocalNavController.current
     var scale by remember { mutableFloatStateOf(1f) }
     if(useBackHandler && enablePredictive) {
         PredictiveBackHandler() { progress: Flow<BackEventCompat> ->
@@ -478,7 +483,7 @@ private fun SharedTransitionScope.SurfaceUI(
                     actions = {
                         if(!isSupabase) {
                             FilledTonalButton(onClick = {
-                                Starter.startSupabase(context)
+                                navController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper())
                             }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 Text("云端共建")
                             }
@@ -496,10 +501,7 @@ private fun SharedTransitionScope.SurfaceUI(
         },
     ) { innerPadding ->
         AnimatedVisibility(
-            modifier = Modifier
-                .scale(scale)
-
-            ,
+            modifier = Modifier.scale(scale),
             visible = showSurface,
             enter  = fadeIn(),
             exit = fadeOut(tween(durationMillis = 0))
@@ -524,7 +526,9 @@ private fun SharedTransitionScope.SurfaceUI(
                             ColumnVertical {
                                 StatusIcon(R.drawable.login,text("未登录或状态失效"))
                                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                                Button(onClick = { Starter.loginSupabase(context)}) {
+                                Button(onClick = {
+                                    navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper(), launchMode = LaunchMode.Replace())
+                                }) {
                                     Text("刷新登录状态")
                                 }
                             }

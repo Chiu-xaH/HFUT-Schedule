@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -58,6 +57,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 
 private const val TAB_LOGIN = 0
@@ -66,7 +66,8 @@ private const val TAB_REG = 1
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostController) {
+fun SupabaseLoginScreen(vm : NetWorkViewModel) {
+    val navController = LocalNavController.current
     val context = LocalActivity.current
     var hidden by rememberSaveable { mutableStateOf(true) }
     var loading by rememberSaveable { mutableStateOf(false) }
@@ -231,7 +232,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
                                             regSupabase(password,vm) { loading = it }
                                         } else {
                                             loading = true
-                                            loginSupabaseWithPassword(password,vm,navHostController)
+                                            loginSupabaseWithPassword(password,vm,navController)
                                             loading = false
                                         }
                                     }

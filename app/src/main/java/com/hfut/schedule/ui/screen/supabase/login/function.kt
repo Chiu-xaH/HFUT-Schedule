@@ -3,26 +3,18 @@ package com.hfut.schedule.ui.screen.supabase.login
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.lifecycle.Observer
-import androidx.navigation.NavHostController
-
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.SupabaseScreen
-import com.hfut.schedule.logic.model.SupabaseLoginResponse
-import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.hfut.schedule.logic.util.sys.Starter.loginSupabase
-import com.hfut.schedule.logic.util.sys.Starter.startSupabase
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import kotlinx.coroutines.CoroutineScope
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.navigation.controller.NavigationController
+import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -31,7 +23,7 @@ import kotlinx.coroutines.withContext
 // 逻辑层
 fun getSchoolEmail() : String? = getPersonInfo().getStudentIdFinally()?.let { it + MyApplication.EMAIL }
 
-suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, navHostController: NavHostController) = withContext(Dispatchers.IO) {
+suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, navHostController: NavigationController) = withContext(Dispatchers.IO) {
     vm.supabaseLoginResp.clear()
     saveString("SupabasePsk",password)
     vm.supabaseLoginWithPassword(password)
@@ -44,7 +36,7 @@ suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, n
                 launch { DataStoreManager.saveSupabaseJwt(result.data.token) }
             }.await()
             launch {
-                Handler(Looper.getMainLooper()).post { navHostController.navigateAndClear(SupabaseScreen.HOME.name) }
+                Handler(Looper.getMainLooper()).post { navHostController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper()) }
                 showToast("登录成功")
             }
         }

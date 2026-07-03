@@ -5,27 +5,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.Starter.loginSupabase
-import com.hfut.schedule.ui.component.icon.LoadingIcon
-import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import kotlinx.coroutines.launch
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination
+import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 
 @Composable
 fun Supabase() {
@@ -34,6 +27,7 @@ fun Supabase() {
 //    val scope = rememberCoroutineScope()
 //    var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_supabase)) },
@@ -47,13 +41,15 @@ fun Supabase() {
         trailingContent = {
             FilledTonalIconButton(
                 modifier = Modifier.size(30.dp),
-                onClick = { loginSupabase(context) }
+                onClick = {
+                    navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper())
+                }
             ) {
                 Icon(painterResource(R.drawable.refresh),null)
             }
         },
         modifier = Modifier.clickable {
-            Starter.startSupabase(context)
+            navController.push(SupabaseDestination, effect = JumpTransitionEffectWallpaper())
 //           scope.launch {
 //               loading = true
 //               loginSupabaseWithCheck(jwt,refreshToken,vm,context)

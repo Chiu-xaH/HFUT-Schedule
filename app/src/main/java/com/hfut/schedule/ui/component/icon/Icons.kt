@@ -7,7 +7,11 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 
 @Composable
-fun DepartmentIcons(name : String, modifier: Modifier = Modifier) = Icon(painterResource(departmentIcon(name)), null,modifier)
+fun DepartmentIcons(name : String, modifier: Modifier = Modifier) = Icon(
+    painterResource(departmentIcon(name)),
+    null,
+    modifier
+)
 
 /**
  * 学院图标重绘
@@ -53,30 +57,25 @@ fun departmentIcon(name : String) : Int =
     else R.drawable.crossword
 
 @Composable
-fun ScheduleIcons(title : String) {
-    if (title.contains("实验"))
-        Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
-    else if (title.contains("上机"))
-        Icon(painter = painterResource(id = R.drawable.data_object), contentDescription = "")
-    else if (title.contains("实习"))
-        Icon(painter = painterResource(id = R.drawable.massage), contentDescription = "")
-    else
-        Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
-}
+fun BillsIcons(
+    name : String,
+    modifier: Modifier = Modifier
+) = Icon(
+    painterResource(billsIcons(name)),
+    contentDescription = "",
+    modifier
+)
 
-@Composable
-fun BillsIcons(name : String) {
-    when {
-        name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")
-        name.contains("网") -> Icon(painterResource(R.drawable.net), contentDescription = "")
-        name.contains("餐饮") -> Icon(painterResource(R.drawable.restaurant), contentDescription = "")
-        name.contains("电") -> Icon(painterResource(R.drawable.flash_on), contentDescription = "")
-        name.contains("超市") || name.contains("贸易") || name.contains("商店") -> Icon(painterResource(R.drawable.storefront), contentDescription = "",)
-        name.contains("打印") -> Icon(painterResource(R.drawable.print), contentDescription = "",)
-        name.contains("充值") -> Icon(painterResource(R.drawable.add_card), contentDescription = "",)
-        name.contains("补助") -> Icon(painterResource(R.drawable.volunteer_activism), contentDescription = "",)
-        name.contains("医院") -> Icon(painterResource(R.drawable.emergency), contentDescription = "",)
-        name.contains("呱呱") -> Icon(painterResource(R.drawable.bathtub), contentDescription = "")
-        else ->  Icon(painterResource(R.drawable.paid), contentDescription = "")
-    }
+fun billsIcons(name : String) = when {
+    name.contains("餐饮") || name.contains("食堂") -> R.drawable.restaurant
+    name.contains("超市") || name.contains("贸易") || name.contains("商店") -> R.drawable.storefront
+    name.contains("淋浴") || name.contains("呱呱物联") -> R.drawable.bathtub
+    name.contains("网") -> R.drawable.net
+    name.contains("电") -> R.drawable.flash_on
+    name.contains("打印") -> R.drawable.print
+    name.contains("医院") || name.contains("药")-> R.drawable.emergency
+    name.contains("充值") -> R.drawable.add_card
+    name.contains("补助") -> R.drawable.volunteer_activism
+    // 默认
+    else ->  R.drawable.paid
 }

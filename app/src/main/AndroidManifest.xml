@@ -61,11 +61,6 @@
             android:label="@string/title_activity_web_view"
             android:theme="@style/Theme.App" />
         <activity
-            android:name=".activity.screen.SupabaseActivity"
-            android:exported="true"
-            android:label="@string/title_activity_supabase"
-            android:theme="@style/Theme.App" />
-        <activity
             android:name=".activity.screen.SuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"

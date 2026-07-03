@@ -67,7 +67,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.icon.LoadingIcon
-import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
@@ -141,7 +140,9 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
         headlineContent = {  Text(text = title) },
         overlineContent = {Text(text = time)},
         supportingContent = { Text(text = info)},
-        leadingContent = { ScheduleIcons(title = title) },
+        leadingContent = {
+            Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
+        },
         modifier = Modifier.clickable {},
         trailingContent = {
             if(isFuture)

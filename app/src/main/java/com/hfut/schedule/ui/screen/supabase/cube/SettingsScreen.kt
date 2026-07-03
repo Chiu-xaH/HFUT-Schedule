@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.common.ui.component.text.BottomTip
@@ -35,10 +36,13 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -48,6 +52,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
     val context = LocalContext.current
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val navController = LocalNavController.current
 
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -127,7 +132,9 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 TransplantListItem(
                     headlineContent = { Text(if(jwt.isEmpty() || jwt.isBlank()) "注册/登录" else "刷新登陆状态") },
                     leadingContent = { Icon(painterResource(R.drawable.login), null) },
-                    modifier = Modifier.clickable { Starter.loginSupabase(context) }
+                    modifier = Modifier.clickable {
+                        navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper(), launchMode = LaunchMode.Replace())
+                    }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(

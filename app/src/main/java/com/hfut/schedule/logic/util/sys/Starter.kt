@@ -18,10 +18,8 @@ import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.FixActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
-import com.hfut.schedule.activity.screen.SupabaseActivity
 import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.WebVpnConvertor
@@ -196,17 +194,6 @@ object Starter {
         }
         context.startActivity(it)
     }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun loginSupabase(context: Context) {
-        val it = Intent(context, SupabaseActivity::class.java).apply {
-            putExtra("FIRST",SupabaseScreen.LOGIN.name)
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
-    }
     @JvmStatic
     suspend fun startWebUrlInner(
         context: Context,
@@ -275,17 +262,6 @@ object Starter {
             putExtra("title",title)
             cookies?.let { putExtra("cookies",it) }
             icon?.let { putExtra("icon",it) }
-            if (context !is Activity) {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        }
-        context.startActivity(it)
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")
-    @JvmStatic
-    fun startSupabase(context: Context) {
-        val it = Intent(context, SupabaseActivity::class.java).apply {
-            putExtra("FIRST",SupabaseScreen.HOME.name)
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }

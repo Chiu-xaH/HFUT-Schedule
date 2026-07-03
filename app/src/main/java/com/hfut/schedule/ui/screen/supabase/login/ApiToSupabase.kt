@@ -19,10 +19,15 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.anim.effect.SlideTransitionEffect
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,11 +60,11 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
 //        }
 //    }
     val context = LocalContext.current
-
+    val navController = LocalNavController.current
 
     IconButton(
         onClick = {
-            Starter.startSupabase(context)
+            navController.push(SupabaseDestination, effect = SlideTransitionEffect())
 //            scope.launch {
 //                loginSupabaseWithCheck(jwt,refreshToken,vm, context)
 //            }
