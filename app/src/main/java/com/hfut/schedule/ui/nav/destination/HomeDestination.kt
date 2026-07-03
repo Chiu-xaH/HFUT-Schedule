@@ -11,7 +11,6 @@ import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
@@ -32,7 +31,6 @@ data class HomeDestination(
     @Composable
     override fun Content() {
         val networkVm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        val uiVm = LocalNavDependencies.current.get<UIViewModel>()
         val loginVm = LocalNavDependencies.current.get<LoginViewModel>()
         val login = LocalNavDependencies.current.get<Boolean>("login")
         val celebration = LocalNavDependencies.current.get<Celebration>()
@@ -41,7 +39,6 @@ data class HomeDestination(
             if(isSuccessActivity) {
                 MainScreen(
                     vm = networkVm,
-                    vmUI = uiVm,
                     celebrationText = celebrationText,
                     isLogin = true,
                     subStartDestination = subStartDestination
@@ -49,7 +46,6 @@ data class HomeDestination(
             } else if(!login) {
                 MainScreen(
                     vm = networkVm,
-                    vmUI = uiVm,
                     celebrationText = celebrationText,
                     isLogin = false,
                     subStartDestination = subStartDestination

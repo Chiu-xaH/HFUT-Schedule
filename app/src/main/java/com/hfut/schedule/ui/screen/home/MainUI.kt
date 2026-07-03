@@ -110,11 +110,9 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.model.NavigationBarItemDynamicIconModern
-import com.hfut.schedule.logic.util.network.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -173,9 +171,9 @@ import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hjq.device.compat.DeviceOs
 import com.sharednav.common.util.NoneRoundShape
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.shader.ShaderState
@@ -190,7 +188,6 @@ import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.anim.effect.Direction
 import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.util.LocalNavController
-import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -226,7 +223,6 @@ fun smoothToOne(scaleFactor: MutableState<Float>) {
 @Composable
 fun MainScreen(
     vm : NetWorkViewModel,
-    vmUI : UIViewModel,
     celebrationText : String?,
     isLogin : Boolean,
     subStartDestination : BottomBarItems?
@@ -312,10 +308,6 @@ fun MainScreen(
 
 
     LaunchedEffect(Unit) {
-        if(!isNextOpen()) {
-            //重置
-            saveInt("FIRST",0)
-        }
         if(!isLogin) {
             onListenStateHolder(vm.bizTypeIdResponse) { data ->
                 // 检测是否教务token还有效
@@ -1019,7 +1011,6 @@ fun MainScreen(
                     TodayScreen(
                         vm,
                         innerPadding,
-                        vmUI,
                         ifSaved,
                         pagerState,
                         hazeState = hazeState,
@@ -1032,7 +1023,6 @@ fun MainScreen(
                         vm,
                         ifSaved,
                         innerPadding,
-                        vmUI,
                         searchText,
                         hazeState = hazeState,
                     )

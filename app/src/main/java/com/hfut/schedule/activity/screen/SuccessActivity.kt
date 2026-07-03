@@ -22,7 +22,6 @@ class SuccessActivity : BaseActivity() {
         MainHost(
             networkVm,
             loginVm,
-            uiVm,
             false,
             true,
             HomeDestination()

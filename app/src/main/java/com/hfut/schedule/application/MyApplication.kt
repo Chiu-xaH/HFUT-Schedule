@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.AppStatus
 import com.hfut.schedule.logic.model.Location
@@ -51,11 +50,11 @@ class MyApplication : Application() {
         ProcessLifecycleOwner.get().lifecycle.addObserver(
             object : DefaultLifecycleObserver {
                 override fun onStart(owner: LifecycleOwner) {
-                    GlobalEventHolder.appStatus.emit(AppStatus.FOREGROUND)
+                    GlobalEventHolder.appStatusChanged.emit(AppStatus.FOREGROUND)
                 }
 
                 override fun onStop(owner: LifecycleOwner) {
-                    GlobalEventHolder.appStatus.emit(AppStatus.BACKGROUND)
+                    GlobalEventHolder.appStatusChanged.emit(AppStatus.BACKGROUND)
                 }
             }
         )

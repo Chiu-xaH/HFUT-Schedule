@@ -39,7 +39,8 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
+
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
@@ -47,7 +48,7 @@ import com.xah.navigation.util.LocalNavController
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun SchoolCardItem(vmUI : UIViewModel,isFromFocus : Boolean) {
+fun SchoolCardItem(isFromFocus : Boolean) {
     val navController = LocalNavController.current
     val interactionSource2 = remember { MutableInteractionSource() }
     val isPressed2 by interactionSource2.collectIsPressedAsState()
@@ -56,7 +57,7 @@ fun SchoolCardItem(vmUI : UIViewModel,isFromFocus : Boolean) {
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "" // 使用弹簧动画
     )
-    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+    val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
     val context = LocalContext.current
 

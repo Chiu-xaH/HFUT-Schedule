@@ -71,8 +71,9 @@ import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.common.logic.util.LogUtil
@@ -99,7 +100,6 @@ suspend fun getTodayEvents() {
 fun TodayScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
-    vmUI : UIViewModel,
     ifSaved : Boolean,
     state: PagerState,
     hazeState: HazeState,
@@ -121,7 +121,7 @@ fun TodayScreen(
             refreshing = true
             async {
                 launch { DateTimeManager.updateTime { timeNow = it } }
-                launch { initNetworkRefresh(vm, vmUI, ifSaved) }
+                launch { initNetworkRefresh(vm, ifSaved) }
                 launch { netCourseList = getNetCourse() }
                 launch { scheduleList = getSchedule() }
             }.await()
@@ -136,15 +136,30 @@ fun TodayScreen(
     var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
-    val specialWorkDayChange by remember { derivedStateOf { vmUI.specialWorkDayChange } }
-    val specialWorkToday by produceState<String?>(initialValue = null, key1 = specialWorkDayChange) {
-        value = withContext(Dispatchers.IO) {
-            DataBaseManager.specialWorkDayDao.searchToday()
+    val specialWorkToday by produceState<String?>(initialValue = null) {
+        suspend fun refresh() {
+            value = withContext(Dispatchers.IO) {
+                DataBaseManager.specialWorkDayDao.searchToday()
+            }
+        }
+
+        refresh()
+
+        GlobalEventHolder.specialWorkDayChanged.flow.collect {
+            refresh()
         }
     }
-    val specialWorkTomorrow by produceState<String?>(initialValue = null, key1 = specialWorkDayChange) {
-        value = withContext(Dispatchers.IO) {
-            DataBaseManager.specialWorkDayDao.searchTomorrow()
+    val specialWorkTomorrow by produceState<String?>(initialValue = null) {
+        suspend fun refresh() {
+            value = withContext(Dispatchers.IO) {
+                DataBaseManager.specialWorkDayDao.searchTomorrow()
+            }
+        }
+
+        refresh()
+
+        GlobalEventHolder.specialWorkDayChanged.flow.collect {
+            refresh()
         }
     }
     val exams by produceState(initialValue = emptyList()) {
@@ -211,7 +226,7 @@ fun TodayScreen(
                 return@launch
             }
             async {
-                initNetworkRefresh(vm,vmUI,ifSaved)
+                initNetworkRefresh(vm,ifSaved)
             }.await()
             refreshing = false
         }
@@ -242,7 +257,7 @@ fun TodayScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
                         TAB_LEFT -> {
-                            item { FocusCard(vmUI,vm,hazeState) }
+                            item { FocusCard(vm,hazeState) }
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {

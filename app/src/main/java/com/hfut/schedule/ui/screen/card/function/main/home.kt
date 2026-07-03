@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -49,31 +48,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.xah.common.logic.state.NetworkUiState
-
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
-   
-
-import com.hfut.schedule.ui.component.container.largeCardColor
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
 import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
@@ -82,17 +75,19 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.loginHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.EleUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWebScaUI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -129,7 +124,7 @@ fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialVal
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navController :  NavHostController, vmUI : UIViewModel, hazeState: HazeState) {
+fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navController :  NavHostController, hazeState: HazeState) {
     //刷新
     var refreshing by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
@@ -141,7 +136,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 refreshing = true
                 loading = true
             }.await()
-            async { initCardNetwork(vm,vmUI) }.await()
+            async { initCardNetwork(vm) }.await()
             async {
                 delay(500)
                 refreshing = false
@@ -165,7 +160,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     var showBottomSheet_Toady by remember { mutableStateOf(false) }
     var showBottomSheet_Lost by remember { mutableStateOf(false) }
 
-    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+    val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
     val str by loadTodayPay(vm)
 
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
@@ -268,7 +263,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             showBottomSheet = showBottomSheet_Web
         ) {
-            LoginWebScaUI(vmUI, vm,hazeState)
+            LoginWebScaUI( vm,hazeState)
         }
     }
 
@@ -323,7 +318,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
 //            expandFully = false
 //            sheetState = sheetState_Settings,
 //            shape = bottomSheetRound(sheetState_Settings)
-        ) { CardLimit(vm,vmUI) }
+        ) { CardLimit(vm) }
     }
 
     if(showBottomSheet_Toady) {
@@ -553,8 +548,8 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
 }
 
 @Composable
-fun limitRow(vmUI : UIViewModel) {
-    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+fun limitRow() {
+    val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
 
     val limit by remember { mutableStateOf(cardValue?.autotrans_limite ?: 0) }
     val amt by remember { mutableStateOf(cardValue?.autotrans_amt?: 0) }

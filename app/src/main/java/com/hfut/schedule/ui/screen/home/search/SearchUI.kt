@@ -138,7 +138,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -197,22 +197,20 @@ fun SearchScreen(
     vm : NetWorkViewModel,
     ifSaved : Boolean,
     innerPaddings : PaddingValues,
-    vmUI : UIViewModel,
     input : String,
-//    navController : NavHostController,
     hazeState: HazeState,
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     //建立索引 <搜索关键词,功能>
-    var funcMaps by remember(vm, ifSaved, vmUI, navController, hazeState) {
+    var funcMaps by remember(vm, ifSaved, navController, hazeState) {
         mutableStateOf(
             listOf(
-                SearchAppBean(1,"${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 ${context.getString(R.string.navigation_label_school_card)}" , { SchoolCardItem(vmUI, false) }, isHigh = true, route = SchoolCardDestination.key),
+                SearchAppBean(1,"${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 ${context.getString(R.string.navigation_label_school_card)}" , { SchoolCardItem( false) }, isHigh = true, route = SchoolCardDestination.key),
                 SearchAppBean(2,"${ScanQrCodeDestination.title.asString(context)} 扫码 指尖工大 CAS统一认证登录", { Scan() }, ScanQrCodeDestination.key,isHigh = true),
-                SearchAppBean(3,"${context.getString(R.string.navigation_label_dormitory_electricity_bill)} 缴费 ${context.getString(R.string.navigation_label_hui_xin)}" , { Electric(vm, false, vmUI,hazeState) },isHigh = true),
-                SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb(vmUI, false, vm,hazeState) },isHigh = true),
+                SearchAppBean(3,"${context.getString(R.string.navigation_label_dormitory_electricity_bill)} 缴费 ${context.getString(R.string.navigation_label_hui_xin)}" , { Electric(vm, false, hazeState) },isHigh = true),
+                SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb( false, vm,hazeState) },isHigh = true),
                 SearchAppBean(5,"${context.getString(R.string.navigation_label_school_email)} 校园邮箱" , { Mail(vm,hazeState) }),
                 SearchAppBean(6,"${ExamDestination.TITLE.asString(context)}安排 教务处考试安排 ${context.getString(R.string.navigation_label_exam_news)}" , { Exam() }, ExamDestination(null).key),
                 SearchAppBean(7,"${GradeDestination.TITLE.asString(context)}", { Grade(vm,ifSaved) }, GradeDestination(ifSaved).key),

@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.util.insertSafely
@@ -49,8 +48,6 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
-import com.xah.common.logic.state.NetworkUiState
-
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -72,7 +69,6 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
-
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -81,19 +77,17 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.sharednav.common.util.NoneRoundShape
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.container.component.base.sharedContainer
-import com.xah.navigation.util.LocalNavController
-import com.xah.common.logic.util.LogUtil
 import com.xah.container.component.base.SharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -259,10 +253,8 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun FocusCard(
-    vmUI : UIViewModel,
     vm : NetWorkViewModel,
     hazeState: HazeState,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val showEle = prefs.getBoolean("SWITCHELE",true)
@@ -279,7 +271,7 @@ fun FocusCard(
                     Row {
                         if(showCard)
                             Box(modifier = Modifier.weight(.5f)) {
-                                SchoolCardItem(vmUI,true)
+                                SchoolCardItem(true)
                             }
                         if(showToday)
                             Box(modifier = Modifier
@@ -291,15 +283,15 @@ fun FocusCard(
                     Row {
                         if(showEle)
                             Box(modifier = Modifier.weight(.5f)) {
-                                Electric(vm,true,vmUI,hazeState)
+                                Electric(vm,true,hazeState)
                             }
                         if(showWeb)
                             Box(modifier = Modifier
                                 .weight(.5f)) {
-                                LoginWeb(vmUI,true,vm,hazeState)
+                                LoginWeb(true,vm,hazeState)
                             }
                     }
-                Special(vmUI)
+                Special()
                 if(showWeather) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
@@ -341,27 +333,27 @@ fun FocusCard(
 }
 
 
-suspend fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
+suspend fun getWebInfoFromHuiXin(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
     val auth = prefs.getString("auth","")
     async { vm.getFee("bearer $auth",FeeType.NET_XUANCHENG) }.await()
     async {
         Handler(Looper.getMainLooper()).post{
             vm.infoValue.observeForever { result ->
                 if(result != null && result.contains("success")&&!result.contains("账号不存在")) {
-                    vmUI.webValue.value = getWebInfo(vm)
+                    GlobalUiStateHolder.webValue.value = getWebInfo(vm)
                 }
             }
         }
     }
 }
 
-suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
+suspend fun getElectricFromHuiXin(vm : NetWorkViewModel) = withContext(Dispatchers.IO) {
     val useHefei = DataStoreManager.useHefeiElectric.first()
     val auth = prefs.getString("auth","")
     if(useHefei) {
         val bean = DataStoreManager.getHefeiElectric()
         if(bean == null) {
-            vmUI.electricValue.value = "--"
+            GlobalUiStateHolder.electricValue.value = "--"
             saveString("memoryEle","0.0")
             return@withContext
         }
@@ -373,8 +365,8 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                         try {
                             val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
-                                vmUI.electricValue.value = value
-                                saveString("memoryEle",vmUI.electricValue.value)
+                                GlobalUiStateHolder.electricValue.value = value
+                                saveString("memoryEle",GlobalUiStateHolder.electricValue.value)
                             }
                         } catch (e:Exception) {
                             LogUtil.error(e)
@@ -397,8 +389,8 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                         try {
                             val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
-                                vmUI.electricValue.value = value.substringAfter("剩余金额:").toDouble().roundOffString(2)
-                                saveString("memoryEle",vmUI.electricValue.value)
+                                GlobalUiStateHolder.electricValue.value = value.substringAfter("剩余金额:").toDouble().roundOffString(2)
+                                saveString("memoryEle",GlobalUiStateHolder.electricValue.value)
                             }
                         } catch (e:Exception) {
                             LogUtil.error(e)
@@ -412,7 +404,6 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
 
 @Composable
 fun Special(
-    vmUI: UIViewModel,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val isSpecificWorkDay = remember { isSpecificWorkDay() }
@@ -433,8 +424,8 @@ fun Special(
         }
     }
     LaunchedEffect(showBottomSheet) {
-        if(showBottomSheet == false) {
-            vmUI.specialWorkDayChange++
+        if(!showBottomSheet) {
+            GlobalEventHolder.specialWorkDayChanged.emit(Unit)
         }
     }
 

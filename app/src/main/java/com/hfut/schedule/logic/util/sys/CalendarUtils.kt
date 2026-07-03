@@ -3,18 +3,14 @@ package com.hfut.schedule.logic.util.sys
 import android.app.Activity
 import android.content.ContentUris
 import android.content.ContentValues
-import android.content.Context
 import android.provider.CalendarContract
-
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.network.util.GsonInstance
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

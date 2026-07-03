@@ -107,15 +107,6 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel) {
                         text = "${MyApplication.APP_NAME}信息平台" , modifier = Modifier.padding(start = 10.dp)
                     )
                 },
-                actions = {
-                    Row {
-                        IconButton(onClick = {
-                            context?.finish()
-                        }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                },
                 navigationIcon  = {
                     TopBarNavigationIcon()
                 }

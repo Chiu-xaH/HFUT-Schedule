@@ -24,8 +24,9 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.xah.common.logic.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
@@ -33,7 +34,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
+fun LoginWeb( card : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
@@ -58,7 +59,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             }
             val memoryWeb = prefs.getString("memoryWeb","0")
 
-            val flow = vmUI.webValue.value?.flow?: memoryWeb
+            val flow = GlobalUiStateHolder.webValue.value?.flow?: memoryWeb
             val gB = (flow?.toDouble() ?: 0.0) / 1024
             val str = gB.roundOffString(2)
 
@@ -68,7 +69,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
                 headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text =
                     if(showPercent) "${precent}%" else "$str GiB"
                 ) },
-                overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},
+                overlineContent = { if(!card) ScrollText(text = "${GlobalUiStateHolder.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",
@@ -84,7 +85,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet
         ) {
-            LoginWebScaUI(vmUI, vm,hazeState)
+            LoginWebScaUI(vm,hazeState)
         }
     }
 }

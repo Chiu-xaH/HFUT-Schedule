@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -73,7 +73,7 @@ private val items = listOf(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupabaseHome(vm : NetWorkViewModel,vmUI : UIViewModel) {
+fun SupabaseHome(vm : NetWorkViewModel) {
     val navController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -86,7 +86,6 @@ fun SupabaseHome(vm : NetWorkViewModel,vmUI : UIViewModel) {
     }
     val titles = listOf("日程","网址导航")
     val pagerState = rememberPagerState(pageCount = { titles.size })
-    val context = LocalActivity.current
     var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
     var sortReversed by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -95,7 +94,7 @@ fun SupabaseHome(vm : NetWorkViewModel,vmUI : UIViewModel) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
         Box(modifier = Modifier.align(Alignment.BottomEnd).zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isSupabase = bottomBarItems != SupabaseScreen.STORAGE,isVisible = bottomBarItems != SupabaseScreen.SETTINGS,vmUI,it,vm) }
+            innerPaddingValues?.let { AddEventFloatButton(isSupabase = bottomBarItems != SupabaseScreen.STORAGE,isVisible = bottomBarItems != SupabaseScreen.SETTINGS,it,vm) }
         }
 
         Scaffold(

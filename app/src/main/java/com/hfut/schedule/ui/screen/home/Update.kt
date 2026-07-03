@@ -20,7 +20,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -58,7 +58,7 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
 }
 
 // 应用冷启动主界面时的网络请求
-suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean) = withContext(Dispatchers.IO) {
+suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withContext(Dispatchers.IO) {
     try {
         val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
         val communityToken = prefs.getString("TOKEN","")
@@ -122,11 +122,11 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         }
         // 更新聚焦卡片
         if(showWeb && getCampusRegion() == CampusRegion.XUANCHENG)
-            launch { getWebInfoFromHuiXin(vm,vmUI) }
+            launch { getWebInfoFromHuiXin(vm) }
         if(showEle)
-            launch { getElectricFromHuiXin(vm, vmUI) }
+            launch { getElectricFromHuiXin(vm) }
         if(showCard)
-            launch { initCardNetwork(vm,vmUI) }
+            launch { initCardNetwork(vm) }
         launch {
             val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
             val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制

@@ -3,15 +3,12 @@ package com.hfut.schedule.ui.screen.card.bill
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,34 +22,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.xah.forecast.model.network.BillRecordBean
-import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.ui.component.icon.BillsIcons
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.icon.BillsIcons
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.ui.component.text.ScrollText
+import com.xah.forecast.model.network.BillRecordBean
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
-    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+fun CardRow(vm : NetWorkViewModel, hazeState: HazeState) {
+    val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
     val now = prefs.getString("card_now","00")
     val settle = prefs.getString("card_settle","00")
     val str by loadTodayPay(vm)

@@ -26,14 +26,15 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeState: HazeState) {
+fun Electric(vm : NetWorkViewModel, card : Boolean, hazeState: HazeState) {
     val context = LocalContext.current
     val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
     var room by remember { mutableStateOf(context.getString(R.string.navigation_label_dormitory_electricity_bill)) }
@@ -66,7 +67,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
         }
     }
 
-    val f = vmUI.electricValue.value ?: prefs.getString("memoryEle","0")
+    val f = GlobalUiStateHolder.electricValue.value ?: prefs.getString("memoryEle","0")
     val fD = f?.toDoubleOrNull() ?: 0.0
     val showRed = if(fD < 0.0) {
         // 爆红

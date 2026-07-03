@@ -20,15 +20,15 @@ import androidx.compose.ui.res.painterResource
 import com.google.gson.JsonObject
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.slider.CustomSlider
 import kotlinx.coroutines.Dispatchers
@@ -63,15 +63,15 @@ private suspend fun click(vm : NetWorkViewModel, limit : String, amt : String) =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+fun CardLimit(vm : NetWorkViewModel) {
+    val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
 
     var limit by remember { mutableStateOf((cardValue?.autotrans_limite ?: SharedPrefs.prefs.getString("card_limit","0"))) }
     var amt by remember { mutableStateOf(cardValue?.autotrans_amt?: SharedPrefs.prefs.getString("card_amt","0")) }
 
 
-    var limitFloat = limit?.toFloat()
-    var amtFloat = amt?.toFloat()
+    val limitFloat = limit?.toFloat()
+    val amtFloat = amt?.toFloat()
     val scope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier.fillMaxSize(),

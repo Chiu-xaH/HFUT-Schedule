@@ -32,36 +32,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.xah.forecast.model.network.BillRecordBean
-import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.icon.BillsIcons
-import com.xah.common.ui.component.text.BottomTip
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.hfut.schedule.ui.component.icon.BillsIcons
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.pager.PageController
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
+import com.xah.forecast.model.network.BillRecordBean
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState,sorted : Boolean) {
+fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState : HazeState,sorted : Boolean) {
     val auth = prefs.getString("auth","")
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.huiXinBillResult.state.collectAsState()
@@ -113,7 +112,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
             LazyColumn(state = listState) {
                 item { InnerPaddingHeight(innerPaddings,true) }
                 if (page == 1)
-                    item { CardRow(vm,vmUI, hazeState) }
+                    item { CardRow(vm, hazeState) }
                 items(list.size, key = { list[it].orderId }) { item ->
                     val bills = list[item]
                     var name = bills.resume.replace("有限公司","")

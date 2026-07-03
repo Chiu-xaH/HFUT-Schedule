@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -33,13 +32,11 @@ import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
-import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.sharednav.common.helper.AnimationSpecManager
 import com.sharednav.common.helper.ScreenCornerHelper
-import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
@@ -56,7 +53,6 @@ import kotlinx.coroutines.withContext
 fun MainHost(
     networkVm : NetWorkViewModel,
     loginVm : LoginViewModel,
-    uiVm : UIViewModel,
     login : Boolean,
     isSuccessActivity: Boolean,
     startDestination : NavDestination
@@ -93,9 +89,8 @@ fun MainHost(
     }
 
     val navigationController = rememberNavController(startDestination)
-    val dependencies = rememberNavDependencies(networkVm,uiVm,login,login,celebration,isSuccessActivity) {
+    val dependencies = rememberNavDependencies(networkVm,login,login,celebration,isSuccessActivity) {
         put(networkVm)
-        put(uiVm)
         put(loginVm)
         put(login,"login")
         put(celebration)

@@ -201,7 +201,6 @@ private fun CourseSurveyListUI(
                                             if(!isSubmitted) {
                                                 name = tName ?: ""
                                                 tId = id
-//                                                SharedPrefs.saveInt("teacherID",id)
                                                 showBottomSheet_start = true
                                             } else showToast("已评教")
                                         },
@@ -219,7 +218,6 @@ private fun CourseSurveyListUI(
                                                 if(!isSubmitted) {
                                                     name = tName ?: ""
                                                     tId = id
-//                                                    SharedPrefs.saveInt("teacherID",id)
                                                     showBottomSheet_start = true
                                                 } else showToast("已评教")
                                             },
@@ -282,7 +280,6 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
                         if(!isSubmitted) {
                             name = tName ?: ""
                             id = list[item].id
-                            SharedPrefs.saveInt("teacherID",id)
                             showBottomSheet = true
                         } else showToast("已评教")
                     },

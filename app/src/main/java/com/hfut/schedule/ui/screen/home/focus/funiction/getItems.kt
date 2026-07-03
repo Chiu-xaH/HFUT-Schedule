@@ -2,27 +2,23 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.os.Handler
 import android.os.Looper
-
 import com.hfut.schedule.logic.model.huixin.BalanceResponse
 import com.hfut.schedule.logic.model.huixin.ReturnCard
-
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 
 //使用指尖工大接口获取一卡通余额
-suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
+suspend fun initCardNetwork(vm : NetWorkViewModel) = withContext(Dispatchers.IO) {
     val auth = prefs.getString("auth","")
     async { vm.getHuiXinCardInfo("bearer $auth") }.await()
     launch {
@@ -44,7 +40,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
                         val balance = str
                         SharedPrefs.saveString("card", str)
                         SharedPrefs.saveString("card_account", account)
-                        vmUI.cardValue = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
+                        GlobalUiStateHolder.cardValue = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
                     } catch (e: Exception) {
                         LogUtil.error(e)
                     }

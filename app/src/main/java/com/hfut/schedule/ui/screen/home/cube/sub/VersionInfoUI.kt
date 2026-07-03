@@ -40,13 +40,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.AddEventDestination
-import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
-import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
-import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.sharednav.common.util.NoneRoundShape

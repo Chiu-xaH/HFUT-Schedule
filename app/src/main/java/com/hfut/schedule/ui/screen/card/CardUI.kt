@@ -49,7 +49,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -96,7 +96,7 @@ private val items = listOf(
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
+fun CardUI(vm : NetWorkViewModel) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
@@ -114,7 +114,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     LaunchedEffect(refresh) {
         if(!refresh) {
-            async { initCardNetwork(vm,vmUI) }.await()
+            async { initCardNetwork(vm) }.await()
             launch { refresh = true }
         }
     }
@@ -198,12 +198,12 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         ) {
             composable(CardBarItems.HOME.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    CardHomeScreen(innerPadding,vm,navController,vmUI,hazeState)
+                    CardHomeScreen(innerPadding,vm,navController,hazeState)
                 }
             }
             composable(CardBarItems.BILLS.name) {
                 Scaffold {
-                    BillScreen(vm,innerPadding,vmUI, hazeState,sorted)
+                    BillScreen(vm,innerPadding, hazeState,sorted)
                 }
             }
             composable(CardBarItems.COUNT.name) {

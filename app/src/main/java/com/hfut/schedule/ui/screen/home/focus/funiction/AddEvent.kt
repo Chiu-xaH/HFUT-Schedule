@@ -147,7 +147,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
@@ -181,7 +181,6 @@ private enum class ShareRoutes {
 fun AddEventFloatButton(
     isSupabase : Boolean,
     isVisible: Boolean,
-    vmUI : UIViewModel,
     innerPaddings: PaddingValues,
     vm: NetWorkViewModel
 ) {

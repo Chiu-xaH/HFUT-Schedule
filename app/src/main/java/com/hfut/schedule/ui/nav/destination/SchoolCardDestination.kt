@@ -5,7 +5,6 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.card.CardUI
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.common.ui.util.text
 import com.xah.navigation.util.LocalNavDependencies
 
@@ -17,7 +16,6 @@ object SchoolCardDestination : NavDestination() {
     @Composable
     override fun Content() {
         val networkVm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        val uiVm = LocalNavDependencies.current.get<UIViewModel>()
-        CardUI(networkVm,uiVm)
+        CardUI(networkVm)
     }
 }

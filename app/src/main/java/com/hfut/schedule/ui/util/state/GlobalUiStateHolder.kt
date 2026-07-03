@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.lifecycle.MutableLiveData
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.huixin.ReturnCard
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.AlumniDestination
@@ -44,6 +46,7 @@ import com.hfut.schedule.ui.nav.destination.WorkDestination
 
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 
 /**
  * 全局共享的UI变量放在这里
@@ -57,6 +60,12 @@ object GlobalUiStateHolder {
     var webVpn by mutableStateOf(false)
 
     var isSupabaseRegistering = false
+
+    var cardValue by mutableStateOf<ReturnCard?>(null)
+    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    var electricValue = MutableLiveData<String?>()
+    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    var webValue = MutableLiveData<WebInfo>()
 
     // 用过的ID 不要再用了，比如之前删除的功能ID
     val funcDefault = listOf(

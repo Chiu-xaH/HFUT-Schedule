@@ -72,8 +72,9 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
+
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
@@ -90,13 +91,13 @@ private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
+fun LoginWebScaUI(vm : NetWorkViewModel, hazeState: HazeState) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
     ) {
-        LoginWebUI(vmUI,vm, hazeState)
+        LoginWebUI(vm, hazeState)
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
@@ -104,7 +105,7 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeStat
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
+fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
     val auth = remember { prefs.getString("auth", "") }
     val zjgdUrl = remember { Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
@@ -116,8 +117,8 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     var json by remember { mutableStateOf("") }
     // 校园网用的变量
     val memoryWeb = prefs.getString("memoryWeb","0")
-    var flow by remember { mutableStateOf(vmUI.webValue.value?.flow ?: memoryWeb) }
-    var fee by remember { mutableStateOf(vmUI.webValue.value?.fee?: "0") }
+    var flow by remember { mutableStateOf(GlobalUiStateHolder.webValue.value?.flow ?: memoryWeb) }
+    var fee by remember { mutableStateOf(GlobalUiStateHolder.webValue.value?.fee?: "0") }
 
     // 百分比
     val percent = try {
@@ -157,7 +158,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         if (result != null)
                             if(result.contains("success")&&!result.contains("账号不存在")) {
                                 val webInfo = getWebInfo(vm)
-                                vmUI.webValue.value = webInfo
+                                GlobalUiStateHolder.webValue.value = webInfo
                                 if (webInfo != null) {
                                     val jsonObject = JSONObject(result)
                                     val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")

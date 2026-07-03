@@ -44,7 +44,6 @@ class MainActivity : BaseActivity() {
         MainHost(
             super.networkVm,
             super.loginVm,
-            super.uiVm,
             intent.getBooleanExtra("login", false),
             false,
             startDestination,
@@ -127,7 +126,7 @@ class MainActivity : BaseActivity() {
                 val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true)
                 if(
                     switchUpload && // 用户决定
-                    postedUse == false && // 全局只传一次
+                    !postedUse && // 全局只传一次
                     !AppVersion.isDev && // 内部版本不传
                     !AppVersion.isRunningOnAvd && // 跑在Avd的测试机不传
                     !AppVersion.isDebug  // Debug版本不传
