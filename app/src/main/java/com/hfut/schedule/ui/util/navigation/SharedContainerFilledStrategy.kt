@@ -12,5 +12,4 @@ enum class SharedContainerFilledStrategy(
 ) : BaseChoice {
     DEFAULT(text("填充"),0, null),
     CLIP(text("裁切"),1, ContainerFilledStrategy.Clip),
-    STRETCH(text("拉伸"),2, ContainerFilledStrategy.Stretch)
 }

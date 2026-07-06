@@ -60,12 +60,18 @@ private const val RELEASE_DATE = "2026-06-21"
 fun VersionInfo() {
     VersionInfoCard()
     // 多重个人信息保障
+    // 适配iOS后版本号跳为5.0
+    // 剩余xxh文案简化
+    // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         UpdateItems("新增 学期报告的折线图支持点击", developers = listOf("Junpgle"))//
         UpdateItems("新增 新生首次登录输入学号后的礼花动效")//
 //        UpdateItems("新增 支持将转专业列表生成长截图并保存")
         UpdateItems("新增 容器共享二次形变效果","位于 选项-外观-动效-二次形变",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("重构 若干代码，使一卡通、校务行、呱呱物联、共建平台适配新转场动画")//
+        UpdateItems("移除 容器填充拉伸方案")//
+        UpdateItems("新增 支持自定义转场动画样式","位于 选项-外观-动效",to = To.Screen(SettingsAppearanceDestination))//取消Level0，支持自定义导航默认动画：翻页动效，缩放动效2，容器共享。（只负责覆盖容器共享场景，其余场景不算）
+        UpdateItems("优化 校园网页面的显示")//校园网太大了，挪到FloatingWindow中
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
 //        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)

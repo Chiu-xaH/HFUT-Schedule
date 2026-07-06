@@ -93,7 +93,7 @@ object DataStoreManager : IDataStore {
     private val ANIMATION_TYPE = intPreferencesKey("animation_types")
     private val PURE_DARK = booleanPreferencesKey("pure_dark")
     private val COLOR_MODE = intPreferencesKey("color_mode")
-    private val CONTAINER_FILLED_STRATEGY = intPreferencesKey("container_filled_strategy")
+    private val CONTAINER_FILLED_STRATEGY = intPreferencesKey("container_filled_strategy_2")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
     private val HAZE_BLUR = booleanPreferencesKey("haze_blur_4")
     private val TRANSITION = intPreferencesKey("transitions_3")
