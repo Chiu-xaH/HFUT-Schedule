@@ -157,7 +157,7 @@ fun UniAppCoursesScreen(
 
     val floatingController = LocalFloatingController.current
     val isExpand = floatingController.isRunning
-    val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
+    val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }, key1 = termStartDate) {
         value = allToTimeTableDataUniApp()
     }
 

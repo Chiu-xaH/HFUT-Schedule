@@ -230,7 +230,12 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
             val endTime = end[1]
 
             // 是同一周
-            val list = result[weekInfo.first-1]
+            val week = weekInfo.first
+            if(week > MyApplication.MAX_WEEK || week < 1) {
+                // 跳过
+                continue
+            }
+            val list = result[week-1]
             val name = item.title
             val place = item.description
 

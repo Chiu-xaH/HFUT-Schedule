@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -134,7 +135,7 @@ fun CommunityCourseTableUI(
 
 
 
-    val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
+    val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }, key1 = termStartDate, key2 = friendUserName) {
         value = allToTimeTableData(friendUserName)
     }
 

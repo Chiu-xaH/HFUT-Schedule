@@ -476,7 +476,7 @@ fun JxglstuCourseTableUI(
             LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
         }
     } else {
-        val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
+        val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }, key1 = termStartDate) {
             value = allToTimeTableData()
         }
         LaunchedEffect(currentWeek,items) {
