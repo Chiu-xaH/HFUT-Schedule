@@ -72,6 +72,7 @@ import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
 import com.xah.navigation.anim.effect.ScaleTransitionEffect
+import com.xah.navigation.anim.effect.TinyScaleTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -255,7 +256,7 @@ fun MultiScheduleSettings(
                     },
                     modifier = Modifier.clickable {
                         onDismissed()
-                        navController.push(CalendarConfigDestination, effect = ScaleTransitionEffect(true,false))
+                        navController.push(CalendarConfigDestination, effect = TinyScaleTransitionEffect(true, false))
                     }
                 )
                 PaddingHorizontalDivider()

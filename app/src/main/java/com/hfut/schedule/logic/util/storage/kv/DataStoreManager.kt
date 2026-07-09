@@ -26,6 +26,7 @@ import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
+import com.hfut.schedule.ui.util.navigation.SharedNavEffect
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
@@ -94,6 +95,7 @@ object DataStoreManager : IDataStore {
     private val PURE_DARK = booleanPreferencesKey("pure_dark")
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val CONTAINER_FILLED_STRATEGY = intPreferencesKey("container_filled_strategy_2")
+    private val DEFAULT_TRANSITION_EFFECT = intPreferencesKey("default_transition_effect")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
     private val HAZE_BLUR = booleanPreferencesKey("haze_blur_4")
     private val TRANSITION = intPreferencesKey("transitions_3")
@@ -162,6 +164,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveNavSplashScreen(value: Boolean) = saveValue(NAV_SPLASH_SCREEN,value)
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveContainerFilledStrategy(mode: SharedContainerFilledStrategy) = saveValue(CONTAINER_FILLED_STRATEGY,mode.code)
+    suspend fun saveDefaultTransitionEffect(mode: SharedNavEffect) = saveValue(DEFAULT_TRANSITION_EFFECT,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
     suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR, value)
     suspend fun saveTransition(value: EffectLevel) = saveValue(TRANSITION,value.levelNum)
@@ -239,9 +242,10 @@ object DataStoreManager : IDataStore {
     val enablePureDark = getFlow(PURE_DARK,false)
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val containerFilledStrategy = getFlow(CONTAINER_FILLED_STRATEGY, SharedContainerFilledStrategy.DEFAULT.code)
+    val defaultTransitionEffect = getFlow(DEFAULT_TRANSITION_EFFECT, SharedNavEffect.DEFAULT.code)
     val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, true)
-    val transitionLevel = getFlow(TRANSITION, EffectLevel.NO_SCALE.levelNum)
+    val transitionLevel = getFlow(TRANSITION, EffectLevel.LOW.levelNum)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,false)

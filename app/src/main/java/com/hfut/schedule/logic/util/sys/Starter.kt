@@ -29,7 +29,6 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
-import com.xah.navigation.anim.effect.DefaultPageEffects
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode

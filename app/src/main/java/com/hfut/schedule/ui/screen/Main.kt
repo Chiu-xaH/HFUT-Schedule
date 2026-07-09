@@ -32,12 +32,14 @@ import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
+import com.hfut.schedule.ui.util.navigation.SharedNavEffect
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.helper.AnimationSpecManager
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.container.util.LocalSharedRegistry
+import com.xah.navigation.anim.effect.PushTransitionEffect
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.component.rememberNavController
 import com.xah.navigation.model.anim.EffectLevel
@@ -110,6 +112,7 @@ fun MainHost(
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
     val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
+    val defaultTransitionEffectIndex by DataStoreManager.defaultTransitionEffect.collectAsState(initial = SharedNavEffect.DEFAULT.code)
     val sharedNavSpeedRadio by DataStoreManager.sharedNavSpeedRadio.collectAsState(initial = 1f)
     val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
 
@@ -125,7 +128,7 @@ fun MainHost(
     }
 
     LaunchedEffect(transition) {
-        navigationController.transitionLevel = transitionLevels.find { it.levelNum == transition } ?: EffectLevel.NO_BLUR
+        navigationController.transitionLevel = transitionLevels.find { it.levelNum == transition } ?: EffectLevel.LOW
     }
 
     LaunchedEffect(motionBlur) {
@@ -134,6 +137,17 @@ fun MainHost(
 
     LaunchedEffect(enableNavSplashScreen) {
         navigationController.enableSplashScreen = enableNavSplashScreen
+    }
+
+    LaunchedEffect(defaultTransitionEffectIndex) {
+        var effect = SharedNavEffect.entries.find {
+            it.code == defaultTransitionEffectIndex
+        }?.effect
+            ?: navigationController.sharedTransitionEffect
+        if(effect is PushTransitionEffect) {
+            effect = PushTransitionEffect()
+        }
+        navigationController.defaultTransitionEffect = effect
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

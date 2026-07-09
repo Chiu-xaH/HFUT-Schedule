@@ -69,6 +69,8 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.anim.effect.IslandTransitionEffect
+import com.xah.navigation.anim.effect.TinyScalePageEffects
+import com.xah.navigation.anim.effect.TinyScaleTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -229,13 +231,8 @@ fun GradeScreen(
                     uiState is NetworkUiState.Success<*>
                 }
             }
-            val display2 = if(displayCompactly) {
-                true
-            } else {
-                isNavigationIconVisible
-            }
             AnimatedVisibility(
-                visible = display2 && display,
+                visible = isNavigationIconVisible && display,
                 exit = AppAnimationManager.toBottomAnimation.exit,
                 enter = AppAnimationManager.toBottomAnimation.enter
             ) {
@@ -256,7 +253,7 @@ fun GradeScreen(
                                         }
                                     }
                                 ),
-                                effect = IslandTransitionEffect(TransformOrigin(0.5f, 1f))
+                                effect = TinyScaleTransitionEffect(true,false)
                             )
                         },
                         icon = AverageGradeDestination.ICON,

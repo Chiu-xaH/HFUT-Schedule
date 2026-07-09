@@ -123,6 +123,7 @@ import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
+import com.hfut.schedule.ui.util.navigation.SharedNavEffect
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.AnimationSpecManager
 import com.xah.navigation.controller.NavigationController
@@ -254,10 +255,11 @@ fun SharedAppearanceSettingsScreen(
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-        val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
+        val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.LOW.levelNum)
         val containerSharedSpeed by DataStoreManager.sharedNavSpeedRadio.collectAsState(initial = 1f)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
+        val defaultTransitionEffectIndex by DataStoreManager.defaultTransitionEffect.collectAsState(initial = SharedNavEffect.DEFAULT.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
@@ -695,7 +697,7 @@ fun SharedAppearanceSettingsScreen(
                         Column {
                             Text(text = stringResource(
                                 R.string.appearance_settings_transition_level_title,
-                                transition+1,
+                                transition,
                             ))
                         }
                     },
@@ -718,11 +720,64 @@ fun SharedAppearanceSettingsScreen(
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
                 )
                 PaddingHorizontalDivider()
+                val text = remember(containerSharedSpeed) { "${containerSharedSpeed.roundOffString(1)}x" }
+                TransplantListItem(
+                    headlineContent = {
+                        Text("动画速率倍数 $text")
+                    },
+                    leadingContent = {
+                        Icon(
+                            painterResource(
+                                // TODO 这里可以做动效，懒
+                                when(containerSharedSpeed) {
+                                    in 0.5f .. 0.875f -> R.drawable.speed_2
+                                    in 0.875f .. 1.25f -> R.drawable.speed_3
+                                    in 1.25f .. 1.625f -> R.drawable.speed_4
+                                    in 1.625f .. 2f -> R.drawable.speed
+                                    else -> R.drawable.timer
+                                }
+                            ),
+                            null
+                        )
+                    },
+                    supportingContent = {
+                        Text("控制转场动画速率，默认为1.0x")
+                    }
+                )
+                LoopingRectangleCenteredTrail2(AnimationSpecManager.getSharedTween())
+                CustomSlider(
+                    value = containerSharedSpeed,
+                    onValueChange = {
+                        scope.launch {
+                            DataStoreManager.saveSharedNavSpeedRadio(it)
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                    valueRange = 0.5f..2f,
+                    stepPadding = 0.1f,
+                    processText = text
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_splash_title)) },
+                    supportingContent = {
+                        Text(stringResource(R.string.appearance_settings_transition_splash_description))
+                    },
+                    trailingContent = {
+                        Switch(checked = enableNavSplashScreen, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveNavSplashScreen(!enableNavSplashScreen)
+                            }
+                        })
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.resize), contentDescription = "Localized description") },
+                )
                 if(transition != EffectLevel.NONE.levelNum) {
+                    PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = { Text(text = "容器共享") },
                         supportingContent = {
-                            Text("过渡时容器带有共享效果")
+                            Text("过渡时使大多数容器带有一镜到底的连贯效果")
                         },
                         trailingContent = {
                             Switch(checked = enableContainerShare, onCheckedChange = {
@@ -734,47 +789,7 @@ fun SharedAppearanceSettingsScreen(
                         leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
                     )
                     PaddingHorizontalDivider()
-
-
                     if(enableContainerShare) {
-                        val text = remember(containerSharedSpeed) { "${containerSharedSpeed.roundOffString(1)}x" }
-                        TransplantListItem(
-                            headlineContent = {
-                                Text("动画速率倍数 $text")
-                            },
-                            leadingContent = {
-                                Icon(
-                                    painterResource(
-                                        // TODO 这里可以做动效，懒
-                                        when(containerSharedSpeed) {
-                                            in 0.5f .. 0.875f -> R.drawable.speed_2
-                                            in 0.875f .. 1.25f -> R.drawable.speed_3
-                                            in 1.25f .. 1.625f -> R.drawable.speed_4
-                                            in 1.625f .. 2f -> R.drawable.speed
-                                            else -> R.drawable.timer
-                                        }
-                                    ),
-                                    null
-                                )
-                            },
-                            supportingContent = {
-                                Text("控制转场动画速率，默认为1.0x")
-                            }
-                        )
-                        LoopingRectangleCenteredTrail2(AnimationSpecManager.getSharedTween())
-                        CustomSlider(
-                            value = containerSharedSpeed,
-                            onValueChange = {
-                                scope.launch {
-                                    DataStoreManager.saveSharedNavSpeedRadio(it)
-                                }
-                            },
-                            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                            valueRange = 0.5f..2f,
-                            stepPadding = 0.1f,
-                            processText = text
-                        )
-                        PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "容器填充方案") },
                             leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
@@ -818,7 +833,6 @@ fun SharedAppearanceSettingsScreen(
                             leadingContent = { Icon(painterResource(R.drawable.shapes), contentDescription = "Localized description") },
                         )
                         PaddingHorizontalDivider()
-
                         TransplantListItem(
                             headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_extension_title)) },
                             supportingContent = {
@@ -834,46 +848,44 @@ fun SharedAppearanceSettingsScreen(
                             leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
                         )
                         ExtensionSample()
-                        PaddingHorizontalDivider()
+                    } else {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "默认转场动画") },
+                            supportingContent = {
+                                Text("强制全局的转场动效,部分场景下不会生效")
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                        )
+                        CustomSingleChoiceRow<SharedNavEffect>(
+                            selected = defaultTransitionEffectIndex,
+                            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                        ) {
+                            scope.launch {
+                                DataStoreManager.saveDefaultTransitionEffect(it)
+                            }
+                        }
                     }
-
-
-                    TransplantListItem(
-                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_splash_title)) },
-                        supportingContent = {
-                            Text(stringResource(R.string.appearance_settings_transition_splash_description))
-                        },
-                        trailingContent = {
-                            Switch(checked = enableNavSplashScreen, onCheckedChange = {
-                                scope.launch {
-                                    DataStoreManager.saveNavSplashScreen(!enableNavSplashScreen)
-                                }
-                            })
-                        },
-                        leadingContent = { Icon(painterResource(R.drawable.resize), contentDescription = "Localized description") },
-                    )
-
                     PaddingHorizontalDivider()
-                }
-                SharedContainer(
-                    key = CornerSettingsDestination.key,
-                    shape = MaterialTheme.shapes.medium.copy(
-                        topEnd = CornerSize(0.dp),
-                        topStart = CornerSize(0.dp),
-                    ),
-                    containerColor = MaterialTheme.colorScheme.surface
-                ) {
-                    TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
-                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
-                        supportingContent = {
-                            Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
-                        },
-                        modifier = Modifier.clickable {
-                            navController.push(CornerSettingsDestination)
-                        },
-                        leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
-                    )
+                    SharedContainer(
+                        key = CornerSettingsDestination.key,
+                        shape = MaterialTheme.shapes.medium.copy(
+                            topEnd = CornerSize(0.dp),
+                            topStart = CornerSize(0.dp),
+                        ),
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ) {
+                        TransplantListItem(
+                            colors = MaterialTheme.colorScheme.surface,
+                            headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
+                            supportingContent = {
+                                Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
+                            },
+                            modifier = Modifier.clickable {
+                                navController.push(CornerSettingsDestination)
+                            },
+                            leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
+                        )
+                    }
                 }
             }
         }
