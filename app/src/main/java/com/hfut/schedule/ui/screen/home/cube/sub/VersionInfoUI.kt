@@ -69,7 +69,7 @@ fun VersionInfo() {
         UpdateItems("新增 新生首次登录输入学号后的礼花动效")//
         UpdateItems("新增 容器共享二次形变效果","位于 选项-外观-动效-二次形变",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("重构 若干代码，使一卡通、校务行、呱呱物联、共建平台适配新转场动画")//
-        UpdateItems("新增 支持自定义转场动画样式","位于 选项-外观-动效",to = To.Screen(SettingsAppearanceDestination))//取消Level0，支持自定义导航默认动画：翻页动效，缩放动效2，容器共享。（只负责覆盖容器共享场景，其余场景不算）
+        UpdateItems("新增 支持自定义转场动画样式","位于 选项-外观-动效",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("修复 课程表在添加跨学期的日程之后，无法显示的Bug")//
         UpdateItems("优化 校园网页面的显示")//校园网太大了，挪到FloatingWindow中
         UpdateItems("优化 部分界面的显示")//

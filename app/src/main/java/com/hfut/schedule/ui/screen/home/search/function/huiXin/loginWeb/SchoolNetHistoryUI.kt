@@ -80,7 +80,7 @@ fun SchoolNetHistoryUsage(vm: NetWorkViewModel) {
         }
     }
 
-    DividerTextExpandedWith(text = "历史用量查询", defaultIsExpanded = false) {
+    DividerTextExpandedWith(text = "历史用量查询") {
         CustomCard(color = cardNormalColor()) {
             Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                 OutlinedCard(modifier = Modifier.fillMaxWidth()) {

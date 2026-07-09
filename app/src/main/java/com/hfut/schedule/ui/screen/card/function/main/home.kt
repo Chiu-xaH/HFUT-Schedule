@@ -263,7 +263,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             showBottomSheet = showBottomSheet_Web
         ) {
-            LoginWebScaUI( vm,hazeState)
+            LoginWebScaUI( vm,)
         }
     }
 

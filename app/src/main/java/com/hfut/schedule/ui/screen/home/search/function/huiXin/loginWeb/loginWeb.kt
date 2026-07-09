@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,11 +24,17 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.parse.roundOffString
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
+import com.hfut.schedule.ui.nav.window.SchoolNetWindow
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.util.NoneRoundShape
 
 import com.xah.common.logic.util.safeDiv
+import com.xah.container.component.base.sharedContainer
+import com.xah.floating.util.LocalFloatingController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 
@@ -35,59 +42,50 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginWeb( card : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
+    val floatingController = LocalFloatingController.current
+    var showPercent by remember { mutableStateOf(true) }
 
-//    when(getCampusRegion()) {
-//        CampusRegion.HEFEI -> {
-//            TransplantListItem(
-//                headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text = "-- GiB") },
-//                overlineContent = { if(!card) ScrollText(text = "-- MiB") else ScrollText(text = stringResource(R.string.navigation_label_school_net))},
-//                leadingContent = { Icon(
-//                    painterResource(R.drawable.net),
-//                    contentDescription = "Localized description",
-//                ) },
-//                modifier = Modifier.clickable { showBottomSheet = true }
-//            )
-//        }
-//        CampusRegion.XUANCHENG -> {
-            var showPercent by remember { mutableStateOf(true) }
-            LaunchedEffect(Unit) {
-                showPercent = true
-                delay(3000L)
-                showPercent = false
-            }
-            val memoryWeb = prefs.getString("memoryWeb","0")
-
-            val flow = GlobalUiStateHolder.webValue.value?.flow?: memoryWeb
-            val gB = (flow?.toDouble() ?: 0.0) / 1024
-            val str = gB.roundOffString(2)
-
-            val precent = (((flow?.toDoubleOrNull() ?: 0.0) safeDiv (1024 * maxFlow)) * 100).roundOffString(2)
-
-            TransplantListItem(
-                headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text =
-                    if(showPercent) "${precent}%" else "$str GiB"
-                ) },
-                overlineContent = { if(!card) ScrollText(text = "${GlobalUiStateHolder.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},
-                leadingContent = { Icon(
-                    painterResource(R.drawable.net),
-                    contentDescription = "Localized description",
-                ) },
-                modifier = Modifier.clickable { showBottomSheet = true }
-            )
-//        }
-//    }
-
-
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet
-        ) {
-            LoginWebScaUI(vm,hazeState)
-        }
+    LaunchedEffect(Unit) {
+        showPercent = true
+        delay(3000L)
+        showPercent = false
     }
+
+    val memoryWeb = prefs.getString("memoryWeb","0")
+    val flow = GlobalUiStateHolder.webValue.value?.flow?: memoryWeb
+    val gB = (flow?.toDouble() ?: 0.0) / 1024
+    val str = gB.roundOffString(2)
+    val precent = (((flow?.toDoubleOrNull() ?: 0.0) safeDiv (1024 * maxFlow)) * 100).roundOffString(2)
+
+    TransplantListItem(
+        headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text =
+            if(showPercent) "${precent}%" else "$str GiB"
+        ) },
+        overlineContent = { if(!card) ScrollText(text = "${GlobalUiStateHolder.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},
+        leadingContent = { Icon(
+            painterResource(R.drawable.net),
+            contentDescription = "Localized description",
+        ) },
+        colors = cardNormalColor(),
+        modifier = Modifier
+            .let {
+                if(card) {
+                    it.sharedContainer(
+                        SchoolNetWindow.KEY,
+                        shape = NoneRoundShape.copy(
+                            bottomEnd = MaterialTheme.shapes.medium.bottomEnd,
+                        ),
+                        containerColor = cardNormalColor()
+                    )
+                } else {
+                    it
+                }
+            }
+            .clickable {
+                floatingController.push(SchoolNetWindow(vm))
+            }
+    )
 }
 
 

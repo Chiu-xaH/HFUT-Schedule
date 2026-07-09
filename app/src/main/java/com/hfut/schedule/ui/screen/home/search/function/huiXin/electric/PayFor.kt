@@ -59,7 +59,7 @@ import kotlin.collections.iterator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : String, type : FeeType, hazeState: HazeState) {
+fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : String, type : FeeType, hazeState: HazeState = HazeState()) {
     var showDialog by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
 

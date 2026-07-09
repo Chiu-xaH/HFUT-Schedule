@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -91,13 +92,14 @@ private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWebScaUI(vm : NetWorkViewModel, hazeState: HazeState) {
+fun LoginWebScaUI(vm : NetWorkViewModel) {
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.surface)
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
     ) {
-        LoginWebUI(vm, hazeState)
+        LoginWebUI(vm,)
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
@@ -105,7 +107,7 @@ fun LoginWebScaUI(vm : NetWorkViewModel, hazeState: HazeState) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
+fun LoginWebUI(vm : NetWorkViewModel) {
     val auth = remember { prefs.getString("auth", "") }
     val zjgdUrl = remember { Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
@@ -298,7 +300,7 @@ fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
 //                val info by remember { mutableStateOf("") }
                 var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
-                    PayFor(vm,int,"学号 ${getPersonInfo().getStudentIdFinally()}",json, FeeType.NET_XUANCHENG,hazeState)
+                    PayFor(vm,int,"学号 ${getPersonInfo().getStudentIdFinally()}",json, FeeType.NET_XUANCHENG)
                 } else showToast("输入数值")
             }
 
@@ -394,7 +396,7 @@ fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     Column {
                         loginUi(CampusRegion.HEFEI)
                         SchoolNetHistoryUsage(vm)
-                        DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
+                        DividerTextExpandedWith(text = "使用说明") {
                             CustomCard(color = cardNormalColor()) {
                                 TransplantListItem(
                                     headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
@@ -403,16 +405,6 @@ fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     },
                                     leadingContent = {
                                         Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
-                                    }
-                                )
-                                PaddingHorizontalDivider()
-                                TransplantListItem(
-                                    headlineContent = { Text(text = "部分内网需校园网或WebVpn打开") },
-                                    supportingContent = {
-                                        Text(text = "学校提供平台供外网访问内网网址,位于 查询中心-WebVpn")
-                                    },
-                                    leadingContent = {
-                                        Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
                                     }
                                 )
                             }
@@ -456,7 +448,7 @@ fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
                         SchoolNetHistoryUsage(vm)
 
-                        DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
+                        DividerTextExpandedWith(text = "使用说明") {
                             CustomCard(color = cardNormalColor()) {
                                 TransplantListItem(
                                     headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
@@ -469,19 +461,9 @@ fun LoginWebUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                 )
                                 PaddingHorizontalDivider()
                                 TransplantListItem(
-                                    headlineContent = { Text(text = "部分内网需校园网或WebVpn打开") },
-                                    supportingContent = {
-                                        Text(text = "学校提供平台供外网访问内网网址,位于 查询中心-WebVpn")
-                                    },
-                                    leadingContent = {
-                                        Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
-                                    }
-                                )
-                                PaddingHorizontalDivider()
-                                TransplantListItem(
                                     headlineContent = { Text(text = "免费时期") },
                                     supportingContent = {
-                                        Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${maxFlow}GiB，每日熄灯期间禁用；合肥校区不限额")
+                                        Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${maxFlow}GiB，每日熄灯期间禁用")
                                     },
                                     leadingContent = {
                                         Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")

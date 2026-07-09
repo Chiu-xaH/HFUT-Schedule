@@ -85,6 +85,7 @@ import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.window.ExpressWindow
 import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.RepairWindow
+import com.hfut.schedule.ui.nav.window.SchoolNetWindow
 
 import com.hfut.schedule.ui.screen.home.search.function.community.appointment.Appointment
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
@@ -210,7 +211,7 @@ fun SearchScreen(
                 SearchAppBean(1,"${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 ${context.getString(R.string.navigation_label_school_card)}" , { SchoolCardItem( false) }, isHigh = true, route = SchoolCardDestination.key),
                 SearchAppBean(2,"${ScanQrCodeDestination.title.asString(context)} 扫码 指尖工大 CAS统一认证登录", { Scan() }, ScanQrCodeDestination.key,isHigh = true),
                 SearchAppBean(3,"${context.getString(R.string.navigation_label_dormitory_electricity_bill)} 缴费 ${context.getString(R.string.navigation_label_hui_xin)}" , { Electric(vm, false, hazeState) },isHigh = true),
-                SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb( false, vm,hazeState) },isHigh = true),
+                SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb( false, vm,hazeState) }, SchoolNetWindow.KEY,isHigh = true),
                 SearchAppBean(5,"${context.getString(R.string.navigation_label_school_email)} 校园邮箱" , { Mail(vm,hazeState) }),
                 SearchAppBean(6,"${ExamDestination.TITLE.asString(context)}安排 教务处考试安排 ${context.getString(R.string.navigation_label_exam_news)}" , { Exam() }, ExamDestination(null).key),
                 SearchAppBean(7,"${GradeDestination.TITLE.asString(context)}", { Grade(vm,ifSaved) }, GradeDestination(ifSaved).key),
