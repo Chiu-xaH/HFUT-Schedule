@@ -84,7 +84,7 @@ object GuaGuaRepository {
             holder = reSetCodeResult,
             request = {
                 val psk = SharedPrefs.prefs.getString("GuaGuaPsk", "") ?: ""
-                val encrypted = CryptoUtil.md5Hash(psk).uppercase(Locale.ROOT)
+                val encrypted = CryptoUtil.md5HashForGuaGua(psk).uppercase(Locale.ROOT)
                 guaGua.reSetUseCode(
                     phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
                     encrypted,

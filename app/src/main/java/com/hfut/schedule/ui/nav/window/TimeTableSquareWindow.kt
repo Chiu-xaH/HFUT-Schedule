@@ -50,11 +50,8 @@ import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
-import com.hfut.schedule.ui.util.color.deepen
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.materialkolor.ktx.darken
-import com.materialkolor.ktx.lighten
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.util.text
@@ -63,6 +60,7 @@ import com.xah.container.model.ContentStrategy
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
+import com.xah.navigation.util.windowToDestination
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -138,13 +136,8 @@ data class TimeTableSquareWindow(
                                         .padding(bottom = CARD_NORMAL_DP)
                                         .clip(MaterialTheme.shapes.medium)
                                         .clickable {
-                                            // 特殊情况，用全局Scope
-                                            GlobalScope.launch {
-                                                getSharedDest(item)?.let { dest ->
-                                                    floatingController.pop()
-                                                    floatingController.awaitRunning()
-                                                    navController.push(dest)
-                                                }
+                                            getSharedDest(item)?.let { dest ->
+                                                windowToDestination(floatingController,navController,dest)
                                             }
                                         }
                                 ) {

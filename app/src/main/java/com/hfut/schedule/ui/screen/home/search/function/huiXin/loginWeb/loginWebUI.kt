@@ -7,6 +7,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -70,6 +71,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -80,8 +82,13 @@ import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.safeDiv
+import com.xah.floating.util.LocalFloatingController
+import com.xah.navigation.util.LocalNavController
+import com.xah.navigation.util.windowToDestination
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -105,7 +112,7 @@ fun LoginWebScaUI(vm : NetWorkViewModel) {
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Composable
 fun LoginWebUI(vm : NetWorkViewModel) {
     val auth = remember { prefs.getString("auth", "") }
@@ -209,6 +216,8 @@ fun LoginWebUI(vm : NetWorkViewModel) {
     }
 
     val context = LocalContext.current
+    val navController = LocalNavController.current
+    val floatingController = LocalFloatingController.current
 
     if(refresh) {
         refreshFlow()
@@ -451,19 +460,22 @@ fun LoginWebUI(vm : NetWorkViewModel) {
                         DividerTextExpandedWith(text = "使用说明") {
                             CustomCard(color = cardNormalColor()) {
                                 TransplantListItem(
-                                    headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
+                                    headlineContent = { Text(text = "认证初始密码") },
                                     supportingContent = {
-                                        Text("如您修改了一卡通默认密码，请前往 选项-网络-一卡通密码 填入新的密码才可登陆校园网")
+                                        Text("为一卡通默认密码，如您修改了密码，请点击填入新的密码")
+                                    },
+                                    modifier = Modifier.clickable {
+                                        windowToDestination(floatingController,navController,SettingsHuiXinPasswordDestination)
                                     },
                                     leadingContent = {
-                                        Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+                                        Icon(painter = painterResource(id = R.drawable.password), contentDescription = "")
                                     }
                                 )
                                 PaddingHorizontalDivider()
                                 TransplantListItem(
                                     headlineContent = { Text(text = "免费时期") },
                                     supportingContent = {
-                                        Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${maxFlow}GiB，每日熄灯期间禁用")
+                                        Text(text = "假期不限额度与时间，其余时间限额月${maxFlow}GiB，且熄灯期间禁用")
                                     },
                                     leadingContent = {
                                         Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")

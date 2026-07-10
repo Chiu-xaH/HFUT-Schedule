@@ -53,7 +53,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-06-21"
+private const val RELEASE_DATE = "2026-07-11"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable

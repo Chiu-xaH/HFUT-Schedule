@@ -9,15 +9,14 @@ import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.network.api.SchoolNetSelfService
 import com.hfut.schedule.network.impl.SchoolNetSelfServiceCreator
+import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.common.logic.util.LogUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import retrofit2.awaitResponse
-import java.security.MessageDigest
 
 private data class SemesterUsageQueryContext(
     val range: SemesterParser.SemesterDateRange,
@@ -46,9 +45,7 @@ object SchoolNetSelfRepository {
                 doLoginAndFetch(year)
             }
         },
-        transformSuccess = { _, html ->
-            parseMonthPay(html)
-        }
+        transformSuccess = { _, html -> parseMonthPay(html) }
     )
 
     suspend fun getMonthPayAfterLogin(
@@ -62,9 +59,7 @@ object SchoolNetSelfRepository {
             }
             service.getMonthPay(type = 1, year = year)
         },
-        transformSuccess = { _, html ->
-            parseMonthPay(html)
-        }
+        transformSuccess = { _, html -> parseMonthPay(html) }
     )
 
     private suspend fun doLoginAndFetch(year: Int): retrofit2.Call<okhttp3.ResponseBody> {
@@ -72,10 +67,7 @@ object SchoolNetSelfRepository {
         val rawPassword = getCardPsk() ?: throw Exception("未获取到校园卡密码")
 
         val loginPageHtml = service.getLoginPage()
-            .awaitResponse()
-            .body()
-            ?.string()
-            .orEmpty()
+            .awaitResponse().body()?.string().orEmpty()
 
         val checkcode = parseCheckcodeOrNull(loginPageHtml)
 
@@ -88,15 +80,10 @@ object SchoolNetSelfRepository {
             throw Exception("校园网自服务登录需要验证码，请先网页登录一次或稍后重试")
         }
 
-        service.getRandomJs()
-            .awaitResponse()
-            .body()
-            ?.string()
-            .orEmpty()
-
+        service.getRandomJs().awaitResponse().body()?.string().orEmpty()
         service.getRandomCode().awaitResponse()
 
-        val passwordMd5 = md5Lower(rawPassword)
+        val passwordMd5 = CryptoUtil.md5Hash(rawPassword)
 
         val loginResponse = service.loginRaw(
             body = buildLoginBody(account, passwordMd5, checkcode)
@@ -127,26 +114,22 @@ object SchoolNetSelfRepository {
                 "&Submit=%E7%99%BB+%E5%BD%95"
 
         body.toRequestBody("application/x-www-form-urlencoded".toMediaTypeOrNull())
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+    } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun parseCheckcodeOrNull(html: String): String? = try {
         Regex("""var\s+checkcode\s*=\s*"([^"]+)"""")
             .find(html)
-            ?.groupValues
-            ?.getOrNull(1)
+            ?.groupValues?.getOrNull(1)
             ?.takeIf { it.isNotBlank() }
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+    } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun needCaptcha(html: String): Boolean = try {
         val tryTimes = Regex("""var\s+trytimes\s*=\s*"([^"]+)"""")
-            .find(html)
-            ?.groupValues
-            ?.getOrNull(1)
-            ?.toIntOrNull()
+            .find(html)?.groupValues?.getOrNull(1)?.toIntOrNull()
         tryTimes != null && tryTimes >= 3
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+    } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun checkLoginResult(html: String) {
@@ -156,7 +139,7 @@ object SchoolNetSelfRepository {
             val fieldError1 = doc.selectFirst("#fielderror1")?.text()?.trim().orEmpty()
             val fieldError2 = doc.selectFirst("#fielderror2")?.text()?.trim().orEmpty()
             val redText = doc.select(".redtext").text().trim()
-            val bodyText = doc.body()?.text()?.take(1000).orEmpty()
+            val bodyText = doc.body().text().take(1000).orEmpty()
             val hasLoginForm = doc.select("form#loginform").isNotEmpty()
 
             if (fieldError1.isNotBlank() || fieldError2.isNotBlank()) {
@@ -173,16 +156,8 @@ object SchoolNetSelfRepository {
                     .ifBlank { bodyText.take(300) }
                 throw Exception("校园网自服务登录后仍停留在登录页：$error")
             }
-        } catch (e : Exception) { LogUtil.error(e); throw e }
+        } catch (e : Exception) { throw e }
     }
-
-    @JvmStatic
-    private fun md5Lower(input: String): String = try {
-        MessageDigest
-            .getInstance("MD5")
-            .digest(input.toByteArray(Charsets.UTF_8))
-            .joinToString("") { "%02x".format(it) }
-    } catch (e : Exception) { LogUtil.error(e); throw e }
 
     @JvmStatic
     private fun parseMonthPay(html: String): SchoolNetMonthPayResult = try {
@@ -216,20 +191,12 @@ object SchoolNetSelfRepository {
                 .trim()
         }
 
-        fun String.toDoubleSafe(): Double {
-            return cleanText().toDoubleOrNull() ?: 0.0
-        }
-
-        fun String.toIntSafe(): Int {
-            return cleanText().toIntOrNull() ?: 0
-        }
+        fun String.toDoubleSafely(): Double = cleanText().toDoubleOrNull() ?: 0.0
+        fun String.toIntSafely(): Int = cleanText().toIntOrNull() ?: 0
 
         val titleText = doc.selectFirst("td.t_l")?.text()?.cleanText().orEmpty()
         val year = Regex("""\((\d{4})\)""")
-            .find(titleText)
-            ?.groupValues
-            ?.getOrNull(1)
-            ?.toIntOrNull()
+            .find(titleText)?.groupValues?.getOrNull(1)?.toIntOrNull()
 
         val summaryCells = doc.select("table.table2 tr td")
 
@@ -246,22 +213,20 @@ object SchoolNetSelfRepository {
         fun summaryValueExact(label: String): String {
             return summaryPairs
                 .firstOrNull { (key, _) -> key == label }
-                ?.second
-                .orEmpty()
+                ?.second.orEmpty()
         }
 
         fun summaryValueContains(label: String): String {
             return summaryPairs
                 .firstOrNull { (key, _) -> key.contains(label) }
-                ?.second
-                .orEmpty()
+                ?.second.orEmpty()
         }
 
         val summary = SchoolNetMonthPaySummary(
-            baseFee = summaryValueContains("基本月租").toDoubleSafe(),
-            usageFee = summaryValueContains("时长/流量计费").toDoubleSafe(),
-            durationMinutes = summaryValueContains("使用时长").toIntSafe(),
-            flowMb = summaryValueExact("流量(MB)").toDoubleSafe()
+            baseFee = summaryValueContains("基本月租").toDoubleSafely(),
+            usageFee = summaryValueContains("时长/流量计费").toDoubleSafely(),
+            durationMinutes = summaryValueContains("使用时长").toIntSafely(),
+            flowMb = summaryValueExact("流量(MB)").toDoubleSafely()
         )
 
         val records = doc.select("table#example tbody tr").mapNotNull { tr ->
@@ -272,10 +237,10 @@ object SchoolNetSelfRepository {
                 startDate = tds[0].text().cleanText(),
                 endDate = tds[1].text().cleanText(),
                 packageName = tds[2].text().cleanText(),
-                baseFee = tds[3].text().toDoubleSafe(),
-                usageFee = tds[4].text().toDoubleSafe(),
-                durationMinutes = tds[5].text().toIntSafe(),
-                flowMb = tds[6].text().toDoubleSafe(),
+                baseFee = tds[3].text().toDoubleSafely(),
+                usageFee = tds[4].text().toDoubleSafely(),
+                durationMinutes = tds[5].text().toIntSafely(),
+                flowMb = tds[6].text().toDoubleSafely(),
                 billTime = tds[7].text().cleanText()
             )
         }
@@ -289,7 +254,7 @@ object SchoolNetSelfRepository {
             summary = summary,
             records = records
         )
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+    } catch (e : Exception) { throw e }
 
     suspend fun loginAndGetSemesterUsage(
         semester: Int,
@@ -299,12 +264,10 @@ object SchoolNetSelfRepository {
         launchRequestState(
             holder = holder,
             request = {
-                val range = SemesterParser.getSemesterDateRange(semester)
-                    ?: throw Exception("无法解析学期时间范围")
+                val range = SemesterParser.getSemesterDateRange(semester) ?: throw Exception("无法解析学期时间范围")
 
                 val queryYears = getYearsInRange(range.startYearMonth, range.endYearMonth)
-                val firstYear = queryYears.firstOrNull()
-                    ?: throw Exception("无法解析校园网查询年份")
+                val firstYear = queryYears.firstOrNull() ?: throw Exception("无法解析校园网查询年份")
 
                 ctx = SemesterUsageQueryContext(range, queryYears)
 
@@ -320,9 +283,7 @@ object SchoolNetSelfRepository {
                 for (year in ctx.queryYears.drop(1)) {
                     val html = service.getMonthPay(type = 1, year = year)
                         .awaitResponse()
-                        .body()
-                        ?.string()
-                        .orEmpty()
+                        .body()?.string().orEmpty()
                     results.add(parseMonthPay(html))
                 }
 
@@ -403,9 +364,12 @@ object SchoolNetSelfRepository {
     private fun getYearsInRange(startYearMonth: String, endYearMonth: String): List<Int> = try {
         val startYear = startYearMonth.substringBefore("-").toIntOrNull()
         val endYear = endYearMonth.substringBefore("-").toIntOrNull()
-        if (startYear == null || endYear == null) emptyList()
-        else (startYear..endYear).toList()
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+        if (startYear == null || endYear == null) {
+            emptyList()
+        } else {
+            (startYear..endYear).toList()
+        }
+    } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun buildSemesterUsageResult(
@@ -418,7 +382,7 @@ object SchoolNetSelfRepository {
             .flatMap { it.records }
             .filter { record ->
                 val month = record.startDate.take(7)
-                month >= startYearMonth && month <= endYearMonth
+                month in startYearMonth..endYearMonth
             }
             .sortedBy { it.startDate }
 
@@ -430,5 +394,5 @@ object SchoolNetSelfRepository {
             totalFlowMb = records.sumOf { it.flowMb },
             records = records
         )
-    } catch (e : Exception) { LogUtil.error(e); throw e }
+    } catch (e : Exception) { throw e }
 }

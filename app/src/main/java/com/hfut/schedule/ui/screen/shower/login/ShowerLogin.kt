@@ -259,7 +259,7 @@ suspend fun loginGuaGuaClick(
     // 存储信息
     saveString("PHONENUM", phoneNumber)
     saveString("GuaGuaPsk", psk)
-    val inputPSK = CryptoUtil.md5Hash(psk).uppercase(Locale.getDefault())
+    val inputPSK = CryptoUtil.md5HashForGuaGua(psk).uppercase(Locale.getDefault())
 
     // 启动登录
     vm.loginGuaGuaResp.clear()

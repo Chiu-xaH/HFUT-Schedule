@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.nav.deepLinks
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.common.logic.util.LogUtil
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import java.util.Collections
 class MyApplication : Application() {
 
     // 这里必须严格限制，不许放入太耗时的方法，不是不得不在Activity之前初始化的函数别放这里，放Activity里或者Compose里都可以
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
         // 暴露全局Context

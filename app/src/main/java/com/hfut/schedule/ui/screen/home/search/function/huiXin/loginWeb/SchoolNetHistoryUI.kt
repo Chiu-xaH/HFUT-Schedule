@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -34,16 +35,21 @@ import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.component.text.BottomTip
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -65,99 +71,93 @@ private fun formatDuration(minutes: Int): String {
 
 @Composable
 fun SchoolNetHistoryUsage(vm: NetWorkViewModel) {
-    val scope = rememberCoroutineScope()
-    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-    var selectedYear by remember { mutableIntStateOf(currentYear) }
+    var selectedYear by remember { mutableStateOf<Int?>(null) }
     var isFirstQuery by remember { mutableStateOf(true) }
     val monthPayState by vm.schoolNetMonthPayResp.state.collectAsState()
+    val refreshNetwork = suspend m@ {
+        if(selectedYear == null) {
+            return@m
+        }
+        vm.schoolNetMonthPayResp.clear()
+        if (isFirstQuery) {
+            vm.loginAndGetSchoolNetMonthPay(selectedYear!!)
+            isFirstQuery = false
+        } else {
+            vm.getSchoolNetMonthPayAfterLogin(selectedYear!!)
+        }
+    }
+    val initValue = { offset : Int ->
+        selectedYear = DateTimeManager.Date_yyyy.toInt() + offset
+    }
 
     LaunchedEffect(monthPayState) {
+        if(selectedYear == null) {
+            return@LaunchedEffect
+        }
         if (monthPayState is NetworkUiState.Error) {
             val msg = (monthPayState as NetworkUiState.Error).exception?.message.orEmpty()
-            if (msg.contains("登录态已失效") && !isFirstQuery) {
-                vm.loginAndGetSchoolNetMonthPay(selectedYear)
+            if (msg.contains("登录态已失效") && !isFirstQuery ) {
+                vm.loginAndGetSchoolNetMonthPay(selectedYear!!)
             }
         }
     }
 
-    DividerTextExpandedWith(text = "历史用量查询") {
-        CustomCard(color = cardNormalColor()) {
-            Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
-                        Text("查询年份", style = MaterialTheme.typography.labelLarge)
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            listOf(currentYear, currentYear - 1, currentYear - 2).forEach { year ->
-                                FilterChip(
-                                    selected = selectedYear == year,
-                                    onClick = {
-                                        selectedYear = year
-                                        scope.launch {
-                                            try {
-                                                vm.getSchoolNetMonthPayAfterLogin(year)
-                                            } catch (e: Exception) {
-                                                LogUtil.error(e)
-                                            }
-                                        }
-                                    },
-                                    label = { Text("$year") },
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        containerColor = MaterialTheme.colorScheme.surface,
-                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                )
-                            }
-                        }
+    LaunchedEffect(selectedYear) {
+        if(selectedYear == null) {
+            vm.schoolNetMonthPayResp.emitPrepare()
+        } else {
+            refreshNetwork()
+        }
+    }
+
+    DividerTextExpandedWith(text = "历史用量") {
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP)) {
+            FilledTonalButton(
+                onClick = {
+                    if(selectedYear == null) {
+                        initValue(-1)
+                    } else {
+                        selectedYear = selectedYear!! - 1
                     }
-                }
-
-                Spacer(Modifier.height(APP_HORIZONTAL_DP / 2))
-
-                FilledTonalButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        scope.launch {
-                            try {
-                                if (isFirstQuery) {
-                                    vm.loginAndGetSchoolNetMonthPay(selectedYear)
-                                    isFirstQuery = false
-                                } else {
-                                    vm.getSchoolNetMonthPayAfterLogin(selectedYear)
-                                }
-                            } catch (e: Exception) {
-                                LogUtil.error(e)
-                            }
-                        }
-                    }
-                ) {
-                    Text("查询 $selectedYear 年历史用量")
-                }
-
-                Spacer(Modifier.height(APP_HORIZONTAL_DP / 2))
-
-                CommonNetworkScreen(
-                    uiState = monthPayState,
-                    isFullScreen = false,
-                    onReload = {
-                        vm.getSchoolNetMonthPayAfterLogin(selectedYear)
-                    },
-                    prepareContent = {
-                        Text(
-                            "点击上方按钮查询校园网历史用量",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)
-                        )
-                    }
-                ) {
-                    val data = (monthPayState as NetworkUiState.Success).data
-                    MonthPayContent(data)
-                }
+                },
+                modifier = Modifier.weight(1/3f)
+            ) {
+                Icon(painterResource(R.drawable.keyboard_arrow_left),null)
             }
+            Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+            FilledTonalButton(
+                onClick = {
+                    initValue(0)
+                },
+                modifier = Modifier.weight(1/3f)
+            ) {
+                Text(
+                    selectedYear?.let { "${it}年" } ?: "${DateTimeManager.Date_yyyy}年"
+                )
+            }
+            Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+            FilledTonalButton(
+                onClick = {
+                    if(selectedYear == null) {
+                        initValue(+1)
+                    } else {
+                        selectedYear = selectedYear!! + 1
+                    }
+                },
+                modifier = Modifier.weight(1/3f)
+            ) {
+                Icon(painterResource(R.drawable.keyboard_arrow_right),null)
+            }
+        }
+        CommonNetworkScreen(
+            uiState = monthPayState,
+            isFullScreen = false,
+            onReload = refreshNetwork,
+            // 特殊处理 为节省空间
+            prepareContent = { BottomTip("点按年份开始搜素") }
+        ) {
+            val data = (monthPayState as NetworkUiState.Success).data
+            MonthPayContent(data)
         }
     }
 }

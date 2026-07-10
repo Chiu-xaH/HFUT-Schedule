@@ -59,6 +59,13 @@ object CryptoUtil {
     }
 
     @JvmStatic
+    fun md5HashForGuaGua(input: String): String {
+        val hexString = md5Hash(input)
+        // 返回最后10位
+        return if (hexString.length > 10) hexString.takeLast(10) else hexString
+    }
+
+    @JvmStatic
     fun md5Hash(input: String): String {
         // 获取MD5实例
         val md = MessageDigest.getInstance("MD5")
@@ -66,8 +73,7 @@ object CryptoUtil {
         val digest = md.digest(input.toByteArray())
         // 将加密后的字节数组转换为16进制字符串
         val hexString = digest.joinToString("") { "%02x".format(it) }
-        // 返回最后10位
-        return if (hexString.length > 10) hexString.takeLast(10) else hexString
+        return hexString
     }
 
     //校务行用的，就是微信小程序逆向JS
@@ -91,7 +97,7 @@ object CryptoUtil {
     }
 
     @JvmStatic
-    fun decryptXiaoWuXing(cipherText: String): String {
+    private fun decryptXiaoWuXing(cipherText: String): String {
         val key = "JL$<&*l9~67?:#5p"
         val iv = "{g;,9~l4'/sw`885"
 
