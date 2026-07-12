@@ -57,28 +57,16 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     return cookie
 }
 
-private fun turnOffWebVpn() {
-    GlobalUiStateHolder.webVpn = false
-    JxglstuRepository.updateServices()
-}
-
-private fun turnOnWebVpn() {
-    GlobalUiStateHolder.webVpn = true
-    JxglstuRepository.updateServices()
-}
-
-
 // 应用冷启动主界面时的网络请求
 suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withContext(Dispatchers.IO) {
     try {
-        // 教务系统、WebVpn、合工大教务
         val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
         val communityToken = prefs.getString("TOKEN","")
         val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
         val showToday = prefs.getBoolean("SWITCHTODAY",true)
         val showWeb = prefs.getBoolean("SWITCHWEB",true)
         val showCard = prefs.getBoolean("SWITCHCARD",true)
-        val jxglstuCookie = getJxglstuCookie()
+        val jxglstuCookie = prefs.getString("redirect", "")
         val webVpnCookie = Constant.WEBVPN_COOKIE_HEADER + DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         val uniAppJwt = DataStoreManager.uniAppJwt.first()
         // 刷新个人接口
@@ -96,7 +84,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
                 if(studentId == null) {
                     GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(Pair("正在检查教务系统登陆状态","如教务系统封网可能较慢，请稍候"))
                     // 切换到教务模式尝试
-                    turnOffWebVpn()
+                    GlobalUiStateHolder.turnOffWebVpn()
                     if(jxglstuCookie == null) {
                         // 从未登陆过
                         GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(null)
@@ -106,7 +94,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
                     studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
                     if(studentId == null) {
                         // 教务系统也不行，复原
-                        turnOnWebVpn()
+                        GlobalUiStateHolder.turnOnWebVpn()
                         GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(null)
                         return@checkLogin
                     }
@@ -125,12 +113,12 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
                 if(studentId == null) {
                     GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(Pair("正在检查WebVpn教务登陆状态","此过程较慢，请稍候"))
                     // 切换到WEBVPN模式尝试
-                    turnOnWebVpn()
+                    GlobalUiStateHolder.turnOnWebVpn()
                     vm.getStudentId(webVpnCookie)
                     studentId = (vm.studentId.state.value as? NetworkUiState.Success)?.data
                     if(studentId == null) {
                         // WebVpn也不行，复原
-                        turnOffWebVpn()
+                        GlobalUiStateHolder.turnOffWebVpn()
                         GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(null)
                         return@checkLogin
                     }
@@ -148,14 +136,6 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
                 launch { vm.getExamJXGLSTU(finalCookie) }
             }
             // 登陆成功反馈，可以切屏了
-            showToast(
-                if(GlobalUiStateHolder.webVpn) {
-                    "WevVpn教务"
-                } else {
-                    "教务系统"
-                } +
-                "已登陆"
-            )
             GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(null)
         }
         // 更新课程表

@@ -57,6 +57,22 @@ object GlobalUiStateHolder {
 
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
+        private set
+
+    fun turnOffWebVpn() {
+        webVpn = false
+        JxglstuRepository.updateServices()
+    }
+
+    fun turnOnWebVpn() {
+        webVpn = true
+        JxglstuRepository.updateServices()
+    }
+
+    fun switchWebVpn() {
+        webVpn = !webVpn
+        JxglstuRepository.updateServices()
+    }
 
     var isSupabaseRegistering = false
     var casCookies : String? = null
