@@ -14,7 +14,6 @@ import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-@Deprecated("可以转移回Repo")
 object MyApiParse {
     @JvmStatic
     fun getMy() : MyAPIResponse? {

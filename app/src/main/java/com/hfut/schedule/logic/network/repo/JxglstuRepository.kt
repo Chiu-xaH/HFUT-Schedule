@@ -28,7 +28,6 @@ import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
@@ -515,10 +514,32 @@ object JxglstuRepository {
         )
     @JvmStatic
     private fun parseBizTypeId(html : String): Int = try{
-        CasInHFUT.getBizTypeId(html)!!
+        getBizTypeId(html)!!
     } catch (e : Exception) {
         throw e
     }
+
+    @JvmStatic
+    private fun getBizTypeId(html : String) : Int? {
+        val doc = Jsoup.parse(html)
+        try {
+            val scriptElements = doc.select("script")
+            val regex = """bizTypeId\s*:\s*(\d+)""".toRegex()
+            for (script in scriptElements) {
+                val scriptText = script.html()
+                val matchResult = regex.find(scriptText)
+                if (matchResult != null) {
+                    val id = matchResult.groupValues[1].toIntOrNull()
+                    return id
+                }
+            }
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            return null
+        }
+        return null
+    }
+
 
     suspend fun getStudentId(cookie : String,holder : UiStateHolder<Int>) = launchRequestState(
         holder = holder,

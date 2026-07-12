@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -43,6 +42,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -77,7 +77,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
         value = prefs.getString("auth","")
     }
     val cookieCAS by produceState<String?>(initialValue = null,key1 = showEditDialog) {
-        value = CasInHFUT.casCookies
+        value = GlobalUiStateHolder.casCookies
     }
     val studentId by vm.studentId.state.collectAsState()
     val bizTypeId by vm.bizTypeIdResponse.state.collectAsState()

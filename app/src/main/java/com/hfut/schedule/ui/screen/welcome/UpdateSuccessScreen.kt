@@ -164,7 +164,10 @@ fun UpdateSuccessScreen() {
                         .fillMaxWidth()
                         .padding(APP_HORIZONTAL_DP)
                         .navigationBarsPadding()
-                        .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
+                        .shimmerEffect(
+                            ShimmerAngle.START_TO_END,
+                            MaterialTheme.colorScheme.surface.copy(0.25f)
+                        )
 //                        .sharedContainer(HomeDestination.key,MaterialTheme.shapes.extraLarge)
                 ) {
                     Text(

@@ -2,13 +2,13 @@ package com.hfut.schedule.ui.util.state
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.MutableLiveData
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.ReturnCard
+import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.AlumniDestination
@@ -36,17 +36,16 @@ import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
 import com.hfut.schedule.ui.nav.destination.SurveyDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
-import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
-
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
-import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * 全局共享的UI变量放在这里
@@ -58,13 +57,33 @@ object GlobalUiStateHolder {
 
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
+        private set
+
+    fun turnOffWebVpn() {
+        webVpn = false
+        JxglstuRepository.updateServices()
+    }
+
+    fun turnOnWebVpn() {
+        webVpn = true
+        JxglstuRepository.updateServices()
+    }
+
+    fun switchWebVpn() {
+        webVpn = !webVpn
+        JxglstuRepository.updateServices()
+    }
 
     var isSupabaseRegistering = false
+    var casCookies : String? = null
+
+    // 聚焦下拉刷新的进度文案 暂时设置成String，如果需要加进度可以进一步扩展
+    val focusRefreshProgressFlow = MutableStateFlow<Pair<String, String>?>(null)
 
     var cardValue by mutableStateOf<ReturnCard?>(null)
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     var electricValue = MutableLiveData<String?>()
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     var webValue = MutableLiveData<WebInfo>()
 
     // 用过的ID 不要再用了，比如之前删除的功能ID

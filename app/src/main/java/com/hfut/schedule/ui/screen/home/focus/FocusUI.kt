@@ -16,10 +16,12 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -49,6 +51,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -72,11 +75,14 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.style.color.ShimmerAngle
+import com.xah.common.ui.style.color.shimmerEffect
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -239,6 +245,14 @@ fun TodayScreen(
         }
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+            GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(null)
+        }
+    }
+
+    val focusRefreshProgressDesc = GlobalUiStateHolder.focusRefreshProgressFlow.collectAsState(initial = null)
+
     Box(modifier = Modifier
         .fillMaxSize()
         .pullRefresh(states)) {
@@ -258,6 +272,25 @@ fun TodayScreen(
                     when(page) {
                         TAB_LEFT -> {
                             item { FocusCard(vm,hazeState) }
+                            focusRefreshProgressDesc.value?.let { desc ->
+                                item {
+                                    CardListItem(
+                                        headlineContent = {
+                                            Text(desc.first)
+                                        },
+                                        supportingContent = {
+                                            Text(desc.second)
+                                        },
+                                        leadingContent = {
+                                            LoadingIcon()
+                                        },
+                                        modifier = Modifier.shimmerEffect(
+                                            angle = ShimmerAngle.START_TO_END,
+                                            color = MaterialTheme.colorScheme.primaryContainer.copy(0.15f)
+                                        ),
+                                    )
+                                }
+                            }
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {

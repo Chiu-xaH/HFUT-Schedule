@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.interceptor.GoToInterceptorState
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.isNotBadRequest
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -214,7 +213,7 @@ fun JxglstuCourseTableUI(
     }
 
     if(refreshLogin) {
-        val casCookies = CasInHFUT.casCookies
+        val casCookies = GlobalUiStateHolder.casCookies
         val tgcCookie = prefs.getString("TGC", "")
 
        LaunchedEffect(Unit) {
@@ -473,7 +472,7 @@ fun JxglstuCourseTableUI(
 
     if(loadingJxglstu) {
         CenterScreen {
-            LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
+            LoadingUI(if(webVpn) "WebVpn登录过程比较慢，请等待" else null)
         }
     } else {
         val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }, key1 = termStartDate) {

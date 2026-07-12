@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -280,6 +281,10 @@ fun LoginScreen(
     var tab by remember { mutableIntStateOf(TAB_LOGIN) }
     val context = LocalContext.current
 
+    BackHandler(tab == TAB_SETTRINGS) {
+        tab = TAB_LOGIN
+    }
+
     Box() {
         if(showTip) {
             Party()
@@ -548,9 +553,13 @@ fun LoginScreen(
                                     supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
                                     leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
                                     trailingContent = {
-                                        Switch(checked = GlobalUiStateHolder.webVpn,onCheckedChange = { ch -> GlobalUiStateHolder.webVpn = !GlobalUiStateHolder.webVpn })
+                                        Switch(checked = GlobalUiStateHolder.webVpn,onCheckedChange = {
+                                            GlobalUiStateHolder.switchWebVpn()
+                                        })
                                     },
-                                    modifier = Modifier.clickable { GlobalUiStateHolder.webVpn = !GlobalUiStateHolder.webVpn },
+                                    modifier = Modifier.clickable {
+                                        GlobalUiStateHolder.switchWebVpn()
+                                    },
                                 )
                                 PaddingHorizontalDivider()
                                 TransplantListItem(

@@ -24,14 +24,14 @@ enum class ShimmerAngle(val angle : Float) {
 }
 
 /**
- * 从左到右，高光扫描效果
+ * 从左到右，高光扫描效果，记得裁切，否则是直角矩形
  */
 @Composable
 fun Modifier.shimmerEffect(
     angle: ShimmerAngle = ShimmerAngle.START_TOP_TO_BOTTOM_END,
-    alpha : Float = 0.55f,
+    color : Color =  MaterialTheme.colorScheme.surface.copy(0.55f),
+    durationMills : Int = 1000
 ): Modifier {
-    val durationMills = 1000
     val transition = rememberInfiniteTransition(label = "shimmer")
     val progress by transition.animateFloat(
         initialValue = -1f,
@@ -42,8 +42,6 @@ fun Modifier.shimmerEffect(
         ),
         label = "shimmer-progress"
     )
-
-    val color = MaterialTheme.colorScheme.surface.copy(alpha)
 
     return this.drawWithContent {
         drawContent()
