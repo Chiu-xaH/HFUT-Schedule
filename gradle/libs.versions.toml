@@ -1,6 +1,6 @@
 [versions]
 baseline = "1.4.1"
-# 这个库新版跟现在的Api变动有点多，暂时先不升级
+# 这个库新版跟现在的api变动有点多，暂时先不升级
 androidliquidglass = "1.0.0"
 devicecompat = "2.6"
 glance = "1.1.1"
@@ -52,7 +52,7 @@ profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
 # 聚在工大的底座/骨架，负责整个应用大部分的页面与浮窗管理、容器共享、与外界深度链接的交互等功能
-sharednav = "1.0.0-dev06210146"
+sharednav = "1.0.0-dev07121153"
 tesseract4android = "4.9.0"
 uiautomator = "2.3.0"
 # 非必要不建议动
