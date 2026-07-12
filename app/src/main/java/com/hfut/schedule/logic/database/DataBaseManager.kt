@@ -73,16 +73,17 @@ private val MIGRATION_5_6 = object : Migration(5, 6) {
                 place TEXT,
                 type TEXT,
                 source TEXT NOT NULL,
+                studentId TEXT NOT NULL,
                 semester INTEGER NOT NULL,
                 fetchedAt INTEGER NOT NULL
             )
             """.trimIndent()
         )
         db.execSQL(
-            "CREATE UNIQUE INDEX IF NOT EXISTS index_exam_record_semester_source_name_dateTime ON exam_record(semester, source, name, dateTime)"
+            "CREATE UNIQUE INDEX IF NOT EXISTS index_exam_record_studentId_semester_source_name_dateTime ON exam_record(studentId, semester, source, name, dateTime)"
         )
         db.execSQL(
-            "CREATE INDEX IF NOT EXISTS index_exam_record_semester ON exam_record(semester)"
+            "CREATE INDEX IF NOT EXISTS index_exam_record_studentId_semester ON exam_record(studentId, semester)"
         )
     }
 }

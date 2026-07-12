@@ -918,7 +918,9 @@ object JxglstuRepository {
         onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
             launchRequestState(
                 holder = examHolder,
-                transformSuccess = { _, html -> parseJxglstuExamInner(html) },
+                transformSuccess = { _, html ->
+                    parseJxglstuExamInner(html, sId.toString())
+                },
                 request = { jxglstu.getExam(cookie, sId.toString()) }
             )
         }
@@ -941,21 +943,24 @@ object JxglstuRepository {
             .filter { isValidExamDateTime(it.dateTime) }
             .sortedBy { it.dateTime }
 
-        // 保存到Room数据库
-        try {
-            // 考试接口不接收用户在课表中手动选择的学期，返回的是当前学期数据。
-            val semester = SemesterParser.getLatestSemester()
-            ExamHistoryRepository.saveExamSnapshot(filteredData, "jxglstu", semester)
-        } catch (e: Exception) {
-            LogUtil.error(e, "保存考试记录到Room失败")
-        }
-
         filteredData
     } catch (e:Exception) { throw e }
 
     @JvmStatic
-    private suspend fun parseJxglstuExamInner(html : String) : List<JxglstuExam> = try {
+    private suspend fun parseJxglstuExamInner(
+        html: String,
+        studentId: String
+    ): List<JxglstuExam> = try {
         LargeStringDataManager.save(LargeStringDataManager.EXAM,html)
-        parseJxglstuExam(html)
+        val exams = parseJxglstuExam(html)
+        // 考试接口不接收用户在课表中手动选择的学期，返回的是当前学期数据。
+        val semester = SemesterParser.getLatestSemester()
+        ExamHistoryRepository.saveExamSnapshot(
+            studentId = studentId,
+            exams = exams,
+            source = "jxglstu",
+            fallbackSemester = semester
+        )
+        exams
     } catch (e:Exception) { throw e }
 }

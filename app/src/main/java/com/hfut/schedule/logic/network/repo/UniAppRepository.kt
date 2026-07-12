@@ -167,6 +167,7 @@ object UniAppRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun updateExams(token : String) {
+        val studentId = ExamHistoryRepository.currentStudentId() ?: return
         try {
             var request = uniApp.getExams(token).awaitResponse()
             // 登陆过期，重新刷新一次登录
@@ -188,7 +189,12 @@ object UniAppRepository {
                 val exams = parseExams(json)
                 // 考试接口不接收用户在课表中手动选择的学期，返回的是当前学期数据。
                 val semester = SemesterParser.getLatestSemester()
-                ExamHistoryRepository.saveExamSnapshot(exams, "uniapp", semester)
+                ExamHistoryRepository.saveExamSnapshot(
+                    studentId = studentId,
+                    exams = exams,
+                    source = "uniapp",
+                    fallbackSemester = semester
+                )
             } catch (e: Exception) {
                 LogUtil.error(e, "解析并保存考试记录到Room失败")
             }

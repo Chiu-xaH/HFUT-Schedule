@@ -133,7 +133,15 @@ private fun ExamAnalysisCard(result: ExamAnalysisResult) {
 
 @Composable
 fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: String = "本学期") {
-    val uiState by vm.uniAppGradesResp.state.collectAsState()
+    val uniAppState by vm.uniAppGradesResp.state.collectAsState()
+    val jxglstuState by vm.jxglstuGradeData.state.collectAsState()
+    val uniAppGrades = (uniAppState as? NetworkUiState.Success)?.data
+    val jxglstuGrades = (jxglstuState as? NetworkUiState.Success)?.data
+    val useUniApp = hasUniAppGradeData(uniAppGrades)
+    val uiState = if (useUniApp) uniAppState else jxglstuState
+    val allGrades = remember(uniAppState, jxglstuState) {
+        selectReportGrades(uniAppGrades, jxglstuGrades)
+    }
 
     val isLatestSemester = remember(semester) {
         SemesterParser.isLatestSemester(semester)
@@ -254,14 +262,15 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
 
             CommonNetworkScreen(uiState, onReload = null, isFullScreen = false) {
                 Column {
-                val gradeMap = (uiState as NetworkUiState.Success).data
                 val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
 
-                val grades = remember(gradeMap, semester) {
+                val grades = remember(allGrades, semester) {
                     if (termInfo == null || semester == 0) {
-                        gradeMap.values.flatten().filter { it.finalGrade != null }
+                        allGrades.filter { it.finalGrade != null }
                     } else {
-                        gradeMap.filter { SemesterParser.matchesSemester(it.key, semester) }.values.flatten().filter { it.finalGrade != null }
+                        allGrades.filter {
+                            SemesterParser.matchesSemester(it.term, semester) && it.finalGrade != null
+                        }
                     }
                 }
 
@@ -283,12 +292,12 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                         )
                         TransplantListItem(
                             overlineContent = { Text("最佳科目") },
-                            headlineContent = { Text(best.courseNameZh, style = MaterialTheme.typography.titleSmall) },
+                                headlineContent = { Text(best.courseName, style = MaterialTheme.typography.titleSmall) },
                             trailingContent = { Text(gradeDisplayText(best.finalGrade, best.credits)) }
                         )
                         TransplantListItem(
                             overlineContent = { Text("最差科目") },
-                            headlineContent = { Text(worst.courseNameZh, style = MaterialTheme.typography.titleSmall) },
+                                headlineContent = { Text(worst.courseName, style = MaterialTheme.typography.titleSmall) },
                             trailingContent = { Text(gradeDisplayText(worst.finalGrade, worst.credits)) }
                         )
                     }
@@ -368,7 +377,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                         val targetGrades = if (grades.size > 8) grades.sortedByDescending { it.credits }.take(8) else grades
                         targetGrades.map {
                             val ratio = (it.gp / 4.0f).toFloat().coerceIn(0f, 1f)
-                            RadarData(it.courseNameZh.take(4), ratio)
+                            RadarData(it.courseName.take(4), ratio)
                         }
                     }
 
