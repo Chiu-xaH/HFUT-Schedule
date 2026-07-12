@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.FeeDestination
 import com.hfut.schedule.ui.nav.destination.GradeDestination
+import com.hfut.schedule.ui.nav.destination.GuaGuaCheckLoginDestination
 import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.nav.destination.HolidayDestination
 import com.hfut.schedule.ui.nav.destination.HomeDestination
@@ -34,6 +35,7 @@ import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
+import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAboutDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
@@ -42,6 +44,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
 import com.hfut.schedule.ui.nav.destination.SettingsNetworkDestination
 import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
@@ -54,6 +57,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.screen.home.search.function.my.supabase.Supabase
 import com.xah.navigation.model.dest.DeepLink
 
 private fun createDeepLinkByKey(destination : NavDestination) = with(destination) {
@@ -98,6 +102,9 @@ val deepLinks = listOf(
     createDeepLinkByKey(DepartmentsDestination) ,
     createDeepLinkByKey(DormitoryDestination),
     createDeepLinkByKey(FeeDestination),
+    /* TODO:暂未上线
+    createDeepLinkByKey(GuaGuaCheckLoginDestination),
+     */
     createDeepLinkByKey(HaiLeWashingDestination),
     createDeepLinkByKey(HolidayDestination),
     createDeepLinkByKey(LifeDestination),
@@ -105,6 +112,7 @@ val deepLinks = listOf(
     createDeepLinkByKey(OfficeHallDestination),
     createDeepLinkByKey(PersonInfoDestination),
     createDeepLinkByKey(ScanQrCodeDestination),
+    createDeepLinkByKey(SchoolCardDestination),
     createDeepLinkByKey(SettingsAboutDestination),
     createDeepLinkByKey(SettingsAboutDeveloperDestination),
     createDeepLinkByKey(SettingsAppearanceDestination),
@@ -115,12 +123,16 @@ val deepLinks = listOf(
     createDeepLinkByKey(SettingsTipsDestination),
      */
     createDeepLinkByKey(SettingsNetworkDestination),
+    createDeepLinkByKey(SupabaseDestination),
     createDeepLinkByKey(TermReportDestination),
     createDeepLinkByKey(TrackDestination),
     createDeepLinkByKey(VersionInfoDestination),
     createDeepLinkByKey(WebFolderDestination),
     createDeepLinkByKey(WebVpnDestination),
     createDeepLinkByKey(WorkDestination),
+    /* TODO:暂未上线
+    createDeepLinkByKey(XiaoWuXingCheckLoginDestination),
+     */
     createDeepLinkByKey(LibraryDestination),
     createDeepLinkByKey(LibraryBorrowedDestination),
     createDeepLinkByKey(UpdateSuccessfullyDestination),

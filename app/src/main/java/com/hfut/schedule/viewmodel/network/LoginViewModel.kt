@@ -9,7 +9,6 @@ import com.hfut.schedule.network.api.WebVpnService
 import com.hfut.schedule.logic.network.repo.CasLoginRepository
 import com.hfut.schedule.logic.network.impl.LoginServiceCreator
 import com.hfut.schedule.network.impl.LoginWebVpnServiceCreator
-import com.hfut.schedule.logic.util.network.CasInHFUT
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -30,9 +29,9 @@ class LoginViewModel : ViewModel() {
     private val loginWebVpn = LoginWebVpnServiceCreator.create(WebVpnService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val code = MutableLiveData<String?>()
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val location = MutableLiveData<String>()
 
     val jSessionId = UiStateHolder<CasGetFlavorBean>() // JSESSION
@@ -42,7 +41,7 @@ class LoginViewModel : ViewModel() {
     val executionAndSession = UiStateHolder<Pair<String, String>>()
     suspend fun getCookie() = CasLoginRepository.getCasCookie(executionAndSession)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     var ticketStValue = MutableLiveData<String?>()
     suspend fun login(username : String, password : String, keys : String, imageCode : String) =
         onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->
@@ -50,7 +49,7 @@ class LoginViewModel : ViewModel() {
                 val execution = it.first
                 val session = it.second
                 val cookies : String = session + jId.jSession +";" + keys
-                CasInHFUT.casCookies = cookies
+                GlobalUiStateHolder.casCookies = cookies
                 if(GlobalUiStateHolder.webVpn) {
                     onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
                         val call = loginWebVpn.loginWebVpn(

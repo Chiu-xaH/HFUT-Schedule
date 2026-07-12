@@ -191,7 +191,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getTodayVisit() = SupabaseRepository.getTodayVisit(supabaseTodayVisitResp)
     suspend fun getUserCount() = SupabaseRepository.getUserCount(supabaseUserCountResp)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val supabaseRegResp = MutableLiveData<String?>()
     fun supabaseReg(password: String) = SupabaseRepository.supabaseReg(password, supabaseRegResp)
 
@@ -202,16 +202,16 @@ class NetWorkViewModel() : ViewModel() {
     val supabaseDelResp = UiStateHolder<Boolean>()
     suspend fun supabaseDel(jwt : String,id : Int) = SupabaseRepository.supabaseDel(jwt,id,supabaseDelResp)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val supabaseAddResp = MutableLiveData<Pair<Boolean,String?>?>()
     fun supabaseAdd(jwt: String,event : SupabaseEventOutput) = SupabaseRepository.supabaseAdd(jwt,event, supabaseAddResp)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val supabaseAddCountResp = MutableLiveData<Boolean?>()
     fun supabaseAddCount(jwt: String,eventId : Int) = SupabaseRepository.supabaseAddCount(jwt,eventId, supabaseAddCountResp)
 
     // 默认 展示未过期日程&&符合自己班级的日程
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val supabaseGetEventsResp = MutableLiveData<String?>()
     fun supabaseGetEvents() = SupabaseRepository.supabaseGetEvents(supabaseGetEventsResp)
 
@@ -275,7 +275,7 @@ class NetWorkViewModel() : ViewModel() {
     val selectCourseInfoData = UiStateHolder<List<SelectCourseInfo>>()
     suspend fun getSelectCourseInfo(cookie: String, id : Int) = JxglstuRepository.getSelectCourseInfo(cookie,id,selectCourseInfoData)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val stdCountData = MutableLiveData<String?>()
     fun getSCount(cookie: String,id : Int) = JxglstuRepository.getSCount(cookie,id, stdCountData)
 
@@ -406,7 +406,7 @@ class NetWorkViewModel() : ViewModel() {
         size : Int = Constant.DEFAULT_PAGE_SIZE
     ) = HuiXinRepository.getCardBill(auth,page,size,huiXinBillResult)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val huiXinCardInfoResponse = MutableLiveData<String?>()
     fun getHuiXinCardInfo(auth : String) = HuiXinRepository.getHuiXinCardInfo(auth, huiXinCardInfoResponse)
 
@@ -424,17 +424,17 @@ class NetWorkViewModel() : ViewModel() {
     val cardPredictedResponse = UiStateHolder<TotalResult>()
     suspend fun getCardPredicted(auth: String) = HuiXinRepository.getCardPredicted(auth,huiXinBillResult,cardPredictedResponse)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val infoValue = MutableLiveData<String?>()
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val electricData = MutableLiveData<String?>()
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val showerData = MutableLiveData<String?>()
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val hefeiElectric = MutableLiveData<String?>()
     fun getFee(auth: String,type : FeeType,room : String? = null,phoneNumber : String? = null,building : String? = null) = HuiXinRepository.getFee(auth,type,room,phoneNumber, building,hefeiElectric,infoValue, electricData, showerData)
 
-    @Deprecated("LiveData已不再作为本项目主力，请使用StateFlow或封装好的UiStateHolder")
+    @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val guaGuaUserInfo = MutableLiveData<String?>()
     fun getGuaGuaUserInfo() = GuaGuaRepository.getGuaGuaUserInfo(guaGuaUserInfo)
 
