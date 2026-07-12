@@ -7,6 +7,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
 import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -40,8 +41,8 @@ import com.hfut.schedule.network.impl.JxglstuServiceCreator
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
+import com.hfut.schedule.logic.model.JxglstuExam
+import com.hfut.schedule.logic.model.isValidExamDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.updateStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
@@ -937,8 +938,18 @@ object JxglstuRepository {
         }
 
         val filteredData = data
-            .filter { isValidDateTime(it.dateTime) }
+            .filter { isValidExamDateTime(it.dateTime) }
             .sortedBy { it.dateTime }
+
+        // 保存到Room数据库
+        try {
+            // 考试接口不接收用户在课表中手动选择的学期，返回的是当前学期数据。
+            val semester = SemesterParser.getLatestSemester()
+            ExamHistoryRepository.saveExamSnapshot(filteredData, "jxglstu", semester)
+        } catch (e: Exception) {
+            LogUtil.error(e, "保存考试记录到Room失败")
+        }
+
         filteredData
     } catch (e:Exception) { throw e }
 

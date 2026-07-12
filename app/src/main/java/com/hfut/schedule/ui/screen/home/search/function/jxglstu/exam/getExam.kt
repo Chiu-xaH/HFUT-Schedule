@@ -1,22 +1,20 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
 
-import android.annotation.SuppressLint
-
+import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
+import com.hfut.schedule.logic.model.JxglstuExam
 import com.hfut.schedule.logic.model.community.ExamResponse
 import com.hfut.schedule.logic.model.community.examArrangementList
-import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuExam
+import com.hfut.schedule.logic.network.repo.UniAppRepository.parseExams
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.util.GsonInstance
-import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 // 废弃
 fun getExam() : List<examArrangementList> {
@@ -58,16 +56,27 @@ fun getExam() : List<examArrangementList> {
 //    }
 //}
 
-data class JxglstuExam(
-    val name : String,
-    val dateTime : String,
-    val place : String?,
-    val type : String? = null
-)
+suspend fun getExamFromCache(
+    semester: Int = SemesterParser.getLatestSemester()
+) : List<JxglstuExam> = withContext(Dispatchers.IO) {
+    // 优先从Room数据库读取
+    try {
+        val roomExams = ExamHistoryRepository.getExams(semester)
+        if (roomExams.isNotEmpty()) {
+            return@withContext roomExams
+        }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        LogUtil.error(e, "从Room读取考试记录失败，回退到缓存")
+    }
 
+    // 旧文件缓存没有学期维度，只能作为当前学期首次迁移时的回退数据。
+    if (semester != SemesterParser.getLatestSemester()) {
+        return@withContext emptyList()
+    }
 
-suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO) {
-    //考试解析
+    // 如果Room没有数据，从缓存读取并解析
     val jxglstuDeferred = async {
         val html = LargeStringDataManager.read(LargeStringDataManager.EXAM) ?: return@async emptyList()
         try {
@@ -80,30 +89,7 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
     val uniAppDeferred = async {
         val json = LargeStringDataManager.read(LargeStringDataManager.UNI_APP_EXAMS) ?: return@async emptyList()
         try {
-            val list = GsonInstance.fromJson(json, UniAppExamResponse::class.java).data
-            list.mapNotNull {
-                // YYYY-MM-DD HH:MM~HH-MM
-                val startTime = parseJxglstuIntTime(it.startTime)
-                val endTime = parseJxglstuIntTime(it.endTime)
-                val dateTime = "${it.examDate} ${startTime}~${endTime}"
-                if(isValidDateTime(dateTime)) {
-                    // 去除前导后导空格
-                    JxglstuExam(
-                        name = it.courseNameZh.trim(),
-                        dateTime = dateTime,
-                        place = it.place.let { p ->
-                            if(p?.contains(" ") == true) {
-                                p.split(" ").last()
-                            } else {
-                                p
-                            }
-                        },
-                        type = it.examType.nameZh
-                    )
-                } else {
-                    null
-                }
-            }
+            parseExams(json)
         } catch (e : Exception) {
             LogUtil.error(e)
             emptyList()
@@ -113,8 +99,16 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
     val jxglstuExams = jxglstuDeferred.await()
     val uniAppExams = uniAppDeferred.await()
 
-    // 合并并去重 优先保留信息多的，
     try {
+        ExamHistoryRepository.saveExamSnapshot(uniAppExams, "uniapp", semester)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        LogUtil.error(e, "保存 UniApp 考试记录到Room失败")
+    }
+
+    // 合并并去重 优先保留信息多的，
+    val mergedExams = try {
         (jxglstuExams + uniAppExams).groupBy { it.name to it.dateTime }
             .map { entry ->
                 // 对每组数据按优先级（优先保留有place和type的）进行合并
@@ -130,32 +124,6 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
         LogUtil.error(e)
         jxglstuExams
     }
-}
 
-
-//[日期时间]的格式必须是 YYYY-MM-DD HH:MM~HH-MM
-fun isValidDateTime(str : String) : Boolean {
-    val regex = Regex("""\d{4}-\d{2}-\d{2} \d{2}:\d{2}~\d{2}:\d{2}""")
-    if (!regex.matches(str)) {
-        return false
-    }
-
-    return try {
-        val parts = str.split(" ")
-        val datePart = parts[0]
-        val timeRange = parts[1].split("~")
-        val timeStart = timeRange[0]
-        val timeEnd = timeRange[1]
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-
-        // 验证日期和时间部分是否有效
-        dateFormat.parse(datePart)
-        timeFormat.parse(timeStart)
-        timeFormat.parse(timeEnd)
-        true
-    } catch (e: Exception) {
-        false
-    }
+    mergedExams
 }

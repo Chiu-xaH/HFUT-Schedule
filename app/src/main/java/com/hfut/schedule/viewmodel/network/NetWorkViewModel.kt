@@ -116,7 +116,7 @@ import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.logic.model.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
@@ -631,4 +631,3 @@ class NetWorkViewModel() : ViewModel() {
     var resetCodeResp = UiStateHolder<String>()
     suspend fun resetGuaGuaUseCode(newCode : String) = GuaGuaRepository.guaGuaReSetUseCode(newCode,resetCodeResp)
 }
-

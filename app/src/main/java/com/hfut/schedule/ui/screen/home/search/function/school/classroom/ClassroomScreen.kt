@@ -112,7 +112,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniApp
-import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
+import com.hfut.schedule.logic.util.parse.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.smoothToOne

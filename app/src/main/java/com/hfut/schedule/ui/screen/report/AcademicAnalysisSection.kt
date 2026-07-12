@@ -34,7 +34,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.component.chart.RadarChart
 import com.xah.common.ui.component.chart.RadarData
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.logic.model.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil
@@ -76,6 +76,59 @@ private fun gradeDisplayText(grade: String?, credits: Double): String {
         if (mapped != null) "$grade (${mapped.roundOffString(2)}) / ${credits}学分"
         else "$grade / ${credits}学分"
     }
+}
+
+@Composable
+private fun ExamAnalysisCard(result: ExamAnalysisResult) {
+    CustomCard(color = cardNormalColor()) {
+        TransplantListItem(
+            headlineContent = {
+                Text(
+                    "考试月分布",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        )
+        result.busiestMonth?.let { (month, exams) ->
+            TransplantListItem(
+                overlineContent = { Text("考试最多的月份") },
+                headlineContent = {
+                    Text("${month}月", style = MaterialTheme.typography.headlineMedium)
+                },
+                supportingContent = { Text("共 ${exams.size} 门考试") }
+            )
+        }
+        result.monthStats.forEach { (month, count) ->
+            TransplantListItem(
+                headlineContent = { Text("${month}月") },
+                trailingContent = { Text("${count}门") }
+            )
+        }
+        if (
+            result.maxConsecutiveDays >= 2 &&
+            result.consecutiveStart != null &&
+            result.consecutiveEnd != null
+        ) {
+            TransplantListItem(
+                overlineContent = { Text("连续考试") },
+                headlineContent = {
+                    Text(
+                        "最长连续 ${result.maxConsecutiveDays} 天",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        "${result.consecutiveStart.format(DateTimeFormatter.ofPattern("M月d日"))} ~ " +
+                            result.consecutiveEnd.format(DateTimeFormatter.ofPattern("M月d日"))
+                    )
+                }
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 }
 
 @Composable
@@ -124,17 +177,12 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
 
     val examAnalysis by produceState<ExamAnalysisResult?>(
         initialValue = null,
-        semester,
-        isLatestSemester
+        semester
     ) {
         value = null
 
-        if (!isLatestSemester) {
-            return@produceState
-        }
-
         try {
-            val allExams = getExamFromCache()
+            val allExams = getExamFromCache(semester)
             val exams = allExams
 
             if (exams.isNotEmpty()) {
@@ -195,13 +243,17 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                 )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
     }
 
     DividerTextExpandedWith("学业分析") {
-        CommonNetworkScreen(uiState, onReload = null, isFullScreen = false) {
-            Column {
+        Column {
+            // 考试缓存同时支持教务系统与合工大教务，不依赖 UniApp 成绩加载状态。
+            examAnalysis?.let { ExamAnalysisCard(it) }
+
+            CommonNetworkScreen(uiState, onReload = null, isFullScreen = false) {
+                Column {
                 val gradeMap = (uiState as NetworkUiState.Success).data
                 val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
 
@@ -282,62 +334,6 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                                     Text(courseListStr, style = MaterialTheme.typography.bodyMedium)
                                 }
                             )
-                        }
-
-                        Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                    }
-                }
-
-                // 考试分析
-                // 考试分析（仅最新学期可见）
-                if (isLatestSemester) {
-                    examAnalysis?.let { result ->
-                        CustomCard(color = cardNormalColor()) {
-                            TransplantListItem(
-                                headlineContent = {
-                                    Text(
-                                        "考试月分布",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            )
-                            result.busiestMonth?.let { (month, exams) ->
-                                TransplantListItem(
-                                    overlineContent = { Text("考试最多的月份") },
-                                    headlineContent = {
-                                        Text("${month}月", style = MaterialTheme.typography.headlineMedium)
-                                    },
-                                    supportingContent = { Text("共 ${exams.size} 门考试") }
-                                )
-                            }
-                            result.monthStats.forEach { (month, count) ->
-                                TransplantListItem(
-                                    headlineContent = { Text("${month}月") },
-                                    trailingContent = { Text("${count}门") }
-                                )
-                            }
-                            if (
-                                result.maxConsecutiveDays >= 2 &&
-                                result.consecutiveStart != null &&
-                                result.consecutiveEnd != null
-                            ) {
-                                TransplantListItem(
-                                    overlineContent = { Text("连续考试") },
-                                    headlineContent = {
-                                        Text(
-                                            "最长连续 ${result.maxConsecutiveDays} 天",
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                    },
-                                    supportingContent = {
-                                        Text(
-                                            "${result.consecutiveStart.format(DateTimeFormatter.ofPattern("M月d日"))} ~ " +
-                                                    result.consecutiveEnd.format(DateTimeFormatter.ofPattern("M月d日"))
-                                        )
-                                    }
-                                )
-                            }
                         }
 
                         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
@@ -433,6 +429,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                     }
                 }
                 }
+            }
         }
     }
 }

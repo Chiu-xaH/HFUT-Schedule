@@ -5,6 +5,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.dao.CustomEventDao
+import com.hfut.schedule.logic.database.dao.ExamRecordDao
 import com.hfut.schedule.logic.database.dao.FriendDao
 import com.hfut.schedule.logic.database.dao.ShowerLabelDao
 import com.hfut.schedule.logic.database.dao.SpecialWorkDayDao
@@ -61,6 +62,30 @@ private val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("DROP TABLE IF EXISTS `course`")
     }
 }
+private val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS exam_record (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                name TEXT NOT NULL,
+                dateTime TEXT NOT NULL,
+                place TEXT,
+                type TEXT,
+                source TEXT NOT NULL,
+                semester INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+        db.execSQL(
+            "CREATE UNIQUE INDEX IF NOT EXISTS index_exam_record_semester_source_name_dateTime ON exam_record(semester, source, name, dateTime)"
+        )
+        db.execSQL(
+            "CREATE INDEX IF NOT EXISTS index_exam_record_semester ON exam_record(semester)"
+        )
+    }
+}
 
 object DataBaseManager {
     private val db: AppDataBase by lazy {
@@ -72,7 +97,8 @@ object DataBaseManager {
             MIGRATION_1_2,
             MIGRATION_2_3,
             MIGRATION_3_4,
-            MIGRATION_4_5
+            MIGRATION_4_5,
+            MIGRATION_5_6
         ).build()
     }
 
@@ -81,4 +107,5 @@ object DataBaseManager {
     val specialWorkDayDao: SpecialWorkDayDao by lazy { db.specialWorkDayDao() }
     val webUrlDao: WebURLDao by lazy { db.webUrlDao() }
     val friendDao: FriendDao by lazy { db.friendDao() }
+    val examRecordDao: ExamRecordDao by lazy { db.examRecordDao() }
 }
