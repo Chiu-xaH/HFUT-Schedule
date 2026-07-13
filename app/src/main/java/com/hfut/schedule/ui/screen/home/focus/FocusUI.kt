@@ -16,7 +16,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -77,12 +75,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getC
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-
-import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.container.util.LocalSharedRegistry
-import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -286,7 +281,7 @@ fun TodayScreen(
                                         },
                                         modifier = Modifier.shimmerEffect(
                                             angle = ShimmerAngle.START_TO_END,
-                                            color = MaterialTheme.colorScheme.primaryContainer.copy(0.15f)
+                                            color = MaterialTheme.colorScheme.primaryContainer.copy(0.225f)
                                         ),
                                     )
                                 }
