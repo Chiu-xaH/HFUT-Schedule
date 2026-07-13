@@ -34,10 +34,11 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.component.chart.RadarChart
 import com.xah.common.ui.component.chart.RadarData
-import com.hfut.schedule.logic.model.JxglstuExam
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
+import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil
+import kotlinx.coroutines.CancellationException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -178,6 +179,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                     courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             LogUtil.error(e)
         }
@@ -190,7 +193,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
         value = null
 
         try {
-            val allExams = getExamFromCache(semester)
+            val allExams = ExamHistoryRepository.getExams(semester)
             val exams = allExams
 
             if (exams.isNotEmpty()) {
@@ -250,6 +253,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                     consecutiveEnd = maxEnd
                 )
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             LogUtil.error(e)
         }
@@ -257,7 +262,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
 
     DividerTextExpandedWith("学业分析") {
         Column {
-            // 考试缓存同时支持教务系统与合工大教务，不依赖 UniApp 成绩加载状态。
+            // Room 考试历史同时包含教务系统与合工大教务来源，不依赖成绩加载状态。
             examAnalysis?.let { ExamAnalysisCard(it) }
 
             CommonNetworkScreen(uiState, onReload = null, isFullScreen = false) {

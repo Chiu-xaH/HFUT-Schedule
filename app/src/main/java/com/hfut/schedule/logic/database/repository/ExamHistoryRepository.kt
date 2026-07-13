@@ -2,9 +2,8 @@ package com.hfut.schedule.logic.database.repository
 
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ExamRecordEntity
-import com.hfut.schedule.logic.model.JxglstuExam
 import com.hfut.schedule.logic.util.parse.groupExamsBySemester
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +19,7 @@ object ExamHistoryRepository {
 
     suspend fun getExams(semester: Int): List<JxglstuExam> = withContext(Dispatchers.IO) {
         try {
-            val studentId = currentStudentId() ?: return@withContext emptyList()
-            dao.getBySemester(studentId, semester).mergeSources()
+            dao.getBySemester(semester).mergeSources()
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -31,15 +29,12 @@ object ExamHistoryRepository {
     }
 
     suspend fun saveExamSnapshot(
-        studentId: String,
         exams: List<JxglstuExam>,
         source: String,
         fallbackSemester: Int
     ): Boolean = saveMutex.withLock {
         withContext(Dispatchers.IO) {
             try {
-                val ownerStudentId = studentId.trim().takeIf { it.isNotEmpty() }
-                    ?: return@withContext false
                 val groupedExams = groupExamsBySemester(exams)
                 val snapshots = buildMap {
                     put(fallbackSemester, emptyList())
@@ -55,13 +50,12 @@ object ExamHistoryRepository {
                             place = exam.place,
                             type = exam.type,
                             source = source,
-                            studentId = ownerStudentId,
                             semester = semester,
                             fetchedAt = now
                         )
                     }
-                    dao.replaceSource(ownerStudentId, semester, source, entities)
-                    LogUtil.info("考试记录快照已按用户和日期归档: semester=$semester, count=${entities.size}, source=$source")
+                    dao.replaceSource(semester, source, entities)
+                    LogUtil.info("考试记录快照已按日期归档: semester=$semester, count=${entities.size}, source=$source")
                 }
                 true
             } catch (e: CancellationException) {
@@ -72,11 +66,6 @@ object ExamHistoryRepository {
             }
         }
     }
-
-    internal fun currentStudentId(): String? = SharedPrefs.prefs
-        .getString("Username", null)
-        ?.trim()
-        ?.takeIf { it.isNotEmpty() }
 
     private fun ExamRecordEntity.toJxglstuExam(): JxglstuExam {
         return JxglstuExam(

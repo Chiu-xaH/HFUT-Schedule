@@ -41,8 +41,8 @@ import com.hfut.schedule.network.impl.JxglstuServiceCreator
 import com.hfut.schedule.network.util.Constant
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
-import com.hfut.schedule.logic.model.JxglstuExam
-import com.hfut.schedule.logic.model.isValidExamDateTime
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.updateStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.logic.util.LogUtil
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -918,9 +919,7 @@ object JxglstuRepository {
         onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
             launchRequestState(
                 holder = examHolder,
-                transformSuccess = { _, html ->
-                    parseJxglstuExamInner(html, sId.toString())
-                },
+                transformSuccess = { _, html -> parseJxglstuExamInner(html) },
                 request = { jxglstu.getExam(cookie, sId.toString()) }
             )
         }
@@ -940,27 +939,26 @@ object JxglstuRepository {
         }
 
         val filteredData = data
-            .filter { isValidExamDateTime(it.dateTime) }
+            .filter { isValidDateTime(it.dateTime) }
             .sortedBy { it.dateTime }
-
         filteredData
     } catch (e:Exception) { throw e }
 
     @JvmStatic
-    private suspend fun parseJxglstuExamInner(
-        html: String,
-        studentId: String
-    ): List<JxglstuExam> = try {
+    private suspend fun parseJxglstuExamInner(html : String) : List<JxglstuExam> = try {
         LargeStringDataManager.save(LargeStringDataManager.EXAM,html)
         val exams = parseJxglstuExam(html)
-        // 考试接口不接收用户在课表中手动选择的学期，返回的是当前学期数据。
-        val semester = SemesterParser.getLatestSemester()
-        ExamHistoryRepository.saveExamSnapshot(
-            studentId = studentId,
-            exams = exams,
-            source = "jxglstu",
-            fallbackSemester = semester
-        )
+        try {
+            ExamHistoryRepository.saveExamSnapshot(
+                exams = exams,
+                source = "jxglstu",
+                fallbackSemester = SemesterParser.getLatestSemester()
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            LogUtil.error(e, "保存教务系统考试历史失败")
+        }
         exams
     } catch (e:Exception) { throw e }
 }

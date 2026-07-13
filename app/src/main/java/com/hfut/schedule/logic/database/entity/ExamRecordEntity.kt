@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "exam_record",
     indices = [
-        Index(value = ["studentId", "semester", "source", "name", "dateTime"], unique = true),
-        Index(value = ["studentId", "semester"])
+        Index(value = ["semester", "source", "name", "dateTime"], unique = true),
+        Index(value = ["semester"])
     ]
 )
 data class ExamRecordEntity(
@@ -19,7 +19,6 @@ data class ExamRecordEntity(
     val place: String?,
     val type: String?,
     val source: String,
-    val studentId: String,
     val semester: Int,
     val fetchedAt: Long
 )

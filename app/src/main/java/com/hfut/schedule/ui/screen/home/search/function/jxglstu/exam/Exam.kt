@@ -43,8 +43,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.destination.AllExamDestination
-import com.hfut.schedule.logic.model.JxglstuExam
-import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -126,13 +124,8 @@ fun ExamScreen() {
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            val semester by produceState(
-                initialValue = SemesterParser.getLatestSemester()
-            ) {
-                value = SemesterParser.getSemester()
-            }
-            val list by produceState(initialValue = emptyList(), semester) {
-                value = getExamFromCache(semester)
+            val list by produceState(initialValue = emptyList()) {
+                value = getExamFromCache()
             }
             if(list.isEmpty()) {
                 CenterScreen {

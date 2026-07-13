@@ -11,7 +11,6 @@ import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.util.network.toStr
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.parse.parseJxglstuIntTime
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
@@ -395,6 +394,14 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
     distinctForCommunity(result)
     return result
 }
+
+fun parseJxglstuIntTime(time : Int) : String {
+    val hour = time / 100
+    val minute = time % 100
+    return "${parseTimeItem(hour)}:${parseTimeItem(minute)}"
+}
+
+
 
 private data class TimeTableItemKey(
     val type: TimeTableType,

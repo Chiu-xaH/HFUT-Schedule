@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.network.repo
 
 import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
 import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
@@ -30,10 +31,6 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
-import com.hfut.schedule.logic.model.JxglstuExam
-import com.hfut.schedule.logic.model.isValidExamDateTime
-import com.hfut.schedule.logic.util.parse.parseJxglstuIntTime
 import com.hfut.schedule.network.api.UniAppService
 import com.hfut.schedule.network.impl.UniAppServiceCreator
 import com.hfut.schedule.network.model.UniAppEmptyClassroomRequest
@@ -43,8 +40,12 @@ import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.util.LogUtil
+import kotlinx.coroutines.CancellationException
 import retrofit2.awaitResponse
 
 object UniAppRepository {
@@ -167,7 +168,6 @@ object UniAppRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun updateExams(token : String) {
-        val studentId = ExamHistoryRepository.currentStudentId() ?: return
         try {
             var request = uniApp.getExams(token).awaitResponse()
             // 登陆过期，重新刷新一次登录
@@ -183,44 +183,38 @@ object UniAppRepository {
             }
             val json = request.body()?.string() ?: return
             LargeStringDataManager.save(LargeStringDataManager.UNI_APP_EXAMS,json)
-
-            // 解析并保存到Room数据库
             try {
-                val exams = parseExams(json)
-                // 考试接口不接收用户在课表中手动选择的学期，返回的是当前学期数据。
-                val semester = SemesterParser.getLatestSemester()
                 ExamHistoryRepository.saveExamSnapshot(
-                    studentId = studentId,
-                    exams = exams,
+                    exams = parseExamsForHistory(json),
                     source = "uniapp",
-                    fallbackSemester = semester
+                    fallbackSemester = SemesterParser.getLatestSemester()
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                LogUtil.error(e, "解析并保存考试记录到Room失败")
+                LogUtil.error(e, "保存 UniApp 考试历史失败")
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e : Exception) {
             LogUtil.error(e)
         }
     }
 
-    fun parseExams(json: String): List<JxglstuExam> {
-        val response = GsonInstance.fromJson(json, UniAppExamResponse::class.java)
-        return response.data.mapNotNull { bean ->
-            runCatching {
-                val startTime = parseJxglstuIntTime(bean.startTime)
-                val endTime = parseJxglstuIntTime(bean.endTime)
-                val dateTime = "${bean.examDate} ${startTime}~${endTime}"
-                if (!isValidExamDateTime(dateTime)) return@mapNotNull null
-
-                JxglstuExam(
-                    name = bean.courseNameZh.trim(),
-                    dateTime = dateTime,
-                    place = bean.place?.substringAfterLast(" "),
-                    type = bean.examType.nameZh
-                )
-            }.getOrElse {
-                LogUtil.error(it, "解析单条 UniApp 考试记录失败，已跳过")
+    private fun parseExamsForHistory(json: String): List<JxglstuExam> {
+        return GsonInstance.fromJson(json, UniAppExamResponse::class.java).data.mapNotNull {
+            val startTime = parseJxglstuIntTime(it.startTime)
+            val endTime = parseJxglstuIntTime(it.endTime)
+            val dateTime = "${it.examDate} ${startTime}~${endTime}"
+            if (!isValidDateTime(dateTime)) {
                 null
+            } else {
+                JxglstuExam(
+                    name = it.courseNameZh.trim(),
+                    dateTime = dateTime,
+                    place = it.place?.substringAfterLast(" "),
+                    type = it.examType.nameZh
+                )
             }
         }
     }

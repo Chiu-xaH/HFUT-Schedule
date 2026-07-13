@@ -16,19 +16,18 @@ interface ExamRecordDao {
     @Query(
         """
         DELETE FROM exam_record
-        WHERE studentId = :studentId AND semester = :semester AND source = :source
+        WHERE semester = :semester AND source = :source
         """
     )
-    suspend fun deleteBySemesterAndSource(studentId: String, semester: Int, source: String)
+    suspend fun deleteBySemesterAndSource(semester: Int, source: String)
 
     @Transaction
     suspend fun replaceSource(
-        studentId: String,
         semester: Int,
         source: String,
         records: List<ExamRecordEntity>
     ) {
-        deleteBySemesterAndSource(studentId, semester, source)
+        deleteBySemesterAndSource(semester, source)
         if (records.isNotEmpty()) {
             insertAll(records)
         }
@@ -37,10 +36,10 @@ interface ExamRecordDao {
     @Query(
         """
         SELECT * FROM exam_record
-        WHERE studentId = :studentId AND semester = :semester
+        WHERE semester = :semester
         ORDER BY dateTime ASC
         """
     )
-    suspend fun getBySemester(studentId: String, semester: Int): List<ExamRecordEntity>
+    suspend fun getBySemester(semester: Int): List<ExamRecordEntity>
 
 }
