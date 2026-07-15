@@ -53,7 +53,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-07-11"
+private const val RELEASE_DATE = "2026-07-13"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -64,9 +64,12 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         UpdateItems("新增 在聚焦首页检查登陆状态时显示当前检查的进度")//
-        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
-        UpdateItems("重构 去除冗余登录流程")
         UpdateItems("修复 使用外地访问登录加载时提示获取登录中止的Bug")//
+        UpdateItems("重构 部分存储代码","部分开关值发生变化属正常现象，正在重构代码")//
+//        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
+//        UpdateItems("重构 去除冗余登录流程")
+//        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
+//        UpdateItems("重构 去除冗余登录流程")
 //        UpdateItems("新增 支持将转专业列表生成长截图并保存")
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
 //        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)

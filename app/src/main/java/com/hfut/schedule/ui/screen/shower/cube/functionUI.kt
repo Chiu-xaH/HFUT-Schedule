@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.shower.cube
 
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -25,32 +25,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-
-
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.GuaGuaLoginDestination
-import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.xah.navigation.model.action.LaunchMode
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.navigation.util.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuaGuaSettings(innerPadding: PaddingValues) {
-    val switch_usecode = prefs.getBoolean("SWITCHUSECODE",false)
-    var autoUseCode by remember { mutableStateOf(switch_usecode) }
     val navController = LocalNavController.current
-    saveBoolean("SWITCHUSECODE",true,autoUseCode)
        Column(modifier = Modifier
            .fillMaxSize()
            .verticalScroll(rememberScrollState())) {
@@ -67,18 +59,18 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
                            navController.push(GuaGuaLoginDestination, effect = JumpTransitionEffectWallpaper())
                        }
                    )
-                   PaddingHorizontalDivider()
-                   TransplantListItem(
-                       headlineContent = { Text(text = "预加载使用码") },
-                       supportingContent = { Text(text = "打开后将主动加载使用码，即使您不需要使用时") },
-                       leadingContent = {
-                           Icon(painterResource(id = R.drawable.reset_iso), contentDescription = "")
-                       },
-                       trailingContent = {
-                           Switch(checked = autoUseCode, onCheckedChange = { autoUseCode = it })
-                       },
-                       modifier = Modifier.clickable { autoUseCode = !autoUseCode }
-                   )
+//                   PaddingHorizontalDivider()
+//                   TransplantListItem(
+//                       headlineContent = { Text(text = "预加载使用码") },
+//                       supportingContent = { Text(text = "打开后将主动加载使用码，即使您不需要使用时") },
+//                       leadingContent = {
+//                           Icon(painterResource(id = R.drawable.reset_iso), contentDescription = "")
+//                       },
+//                       trailingContent = {
+//                           Switch(checked = autoUseCode, onCheckedChange = { autoUseCode = it })
+//                       },
+//                       modifier = Modifier.clickable { autoUseCode = !autoUseCode }
+//                   )
                    PaddingHorizontalDivider()
 
                    TransplantListItem(

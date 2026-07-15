@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,9 +27,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.ocr.TesseractUtils.isExistModule
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.util.ocr.preprocessCaptcha
 import com.hfut.schedule.logic.util.other.rememberImageState
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
@@ -237,7 +240,7 @@ fun UrlImageWithAutoOcr(
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            val switch_open = prefs.getBoolean("SWITCH_ML",false)
+            val switch_open by DataStoreManager.enableOcrCaptcha.collectAsState(initial = false)
             if(switch_open) {
                 onResult(recognizeCaptcha(preProgressed))
             }

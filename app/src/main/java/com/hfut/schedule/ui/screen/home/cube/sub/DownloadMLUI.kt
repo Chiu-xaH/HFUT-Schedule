@@ -25,49 +25,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.ocr.TesseractUtils
+import com.hfut.schedule.logic.util.ocr.TesseractUtils.isExistModule
+import com.hfut.schedule.logic.util.ocr.TesseractUtils.isModelInDownloadFolder
+import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.util.sys.PermissionSet
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
-import com.hfut.schedule.logic.util.ocr.TesseractUtils
-import com.hfut.schedule.logic.util.ocr.TesseractUtils.isModelInDownloadFolder
-import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.status.CustomSwitch
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun DownloadMLUI(innerPadding : PaddingValues) {
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    navController?.let {
-//        val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//        TransitionBackHandler(it,enablePredictive) {
-//            scale = it
-//        }
-//    }
     val activity = LocalActivity.current
     LaunchedEffect(activity) {
         activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
     }
-    val switch_open = prefs.getBoolean("SWITCH_ML",false)
-    var open by remember { mutableStateOf(switch_open) }
-    saveBoolean("SWITCH_ML",false,open)
+    val enableOcrCaptcha by DataStoreManager.enableOcrCaptcha.collectAsState(initial = false)
+    val scope = rememberCoroutineScope()
 
     var isExistModule by remember { mutableStateOf(TesseractUtils.isExistModule()) }
 
@@ -91,7 +80,7 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
     LaunchedEffect(pro) {
         if(pro == 1f) {
             moveDownloadedModel()
-            isExistModule = TesseractUtils.isExistModule()
+            isExistModule = isExistModule()
         }
     }
 
@@ -101,7 +90,15 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
             TransplantListItem(
                 headlineContent = { Text("图片验证码自动填充") },
                 trailingContent = {
-                    Switch(checked = open, onCheckedChange = { openCh -> open = openCh }, enabled = isExistModule )
+                    Switch(
+                        checked = enableOcrCaptcha,
+                        onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveEnableOcrCaptcha(!enableOcrCaptcha)
+                            }
+                        },
+                        enabled = isExistModule
+                    )
                 }
             )
         }

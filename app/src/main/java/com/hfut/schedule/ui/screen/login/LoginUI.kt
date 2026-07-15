@@ -769,6 +769,7 @@ private fun TwoTextField(
                 loadingText = "正在检查是否需要图片验证码"
             ) {
                 val useCaptcha = (jSession as NetworkUiState.Success).data.needCaptcha
+                val enableOcr by DataStoreManager.enableOcrCaptcha.collectAsState(initial = false)
                 if (useCaptcha) {
                     Column {
                         Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
@@ -796,7 +797,7 @@ private fun TwoTextField(
                                         }
                                     }
                                 },
-                                supportingText = if (!prefs.getBoolean("SWITCH_ML", false)) {
+                                supportingText = if (!enableOcr) {
                                     {
                                         Text(
                                             "点击下载模型文件以启用自动填充",

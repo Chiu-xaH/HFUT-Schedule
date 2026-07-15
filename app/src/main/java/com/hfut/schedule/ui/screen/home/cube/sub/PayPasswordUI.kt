@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -21,47 +19,30 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.sharednav.common.util.NoneRoundShape
-
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
-//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
-    val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)
-    var pin by remember { mutableStateOf(switch_pin) }
-    saveBoolean("SWITCHPIN", false,pin)
+//    val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)
+    var pin by remember { mutableStateOf(false) }
+//    saveBoolean("SWITCHPIN", false,pin)
 
     var psk = SharedPrefs.prefs.getString("pins",null)
     var input by remember { mutableStateOf("") }

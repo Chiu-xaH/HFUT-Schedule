@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
 import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
@@ -19,6 +20,7 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder.postedUse
 import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity() {
@@ -123,9 +125,10 @@ class MainActivity : BaseActivity() {
             }
             launch(Dispatchers.IO) {
                 // 埋点，上传用户统计数据
-                val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true)
+                val enableUserTrack = DataStoreManager.enableUserTrack.first()
+
                 if(
-                    switchUpload && // 用户决定
+                    enableUserTrack && // 用户决定
                     !postedUse && // 全局只传一次
                     !AppVersion.isDev && // 内部版本不传
                     !AppVersion.isRunningOnAvd && // 跑在Avd的测试机不传
