@@ -43,20 +43,16 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.reverseGetSemester
-
 import com.hfut.schedule.logic.util.parse.roundOff
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.media.SimpleVideo
@@ -74,7 +70,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getD
 import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
-import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -98,17 +93,10 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         .padding(innerPaddings)
     ) {
         Spacer(modifier = Modifier.height(5.dp))
-        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
+//        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
         val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
+        val enableShowOverdueFocus by DataStoreManager.enableShowOverdueFocus.collectAsState(initial = false)
 //        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
-
-        val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
-        var showSUpdate by remember { mutableStateOf(switch_update) }
-        saveBoolean("SWITCHUPDATE",true,showSUpdate)
-
-        val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
-        var showEnded by remember { mutableStateOf(switch_show_ended) }
-        saveBoolean("SWITCHSHOWENDED",true,showEnded)
 
         val scope = rememberCoroutineScope()
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
@@ -244,8 +232,16 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         painterResource(R.drawable.search_activity),
                         contentDescription = "Localized description"
                     ) },
-                    trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
-                    modifier = Modifier.clickable { showEnded = !showEnded }
+                    trailingContent = { Switch(checked = enableShowOverdueFocus, onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveEnableShowOverdueFocus(!enableShowOverdueFocus)
+                        }
+                    }) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveEnableShowOverdueFocus(!enableShowOverdueFocus)
+                        }
+                    }
                 )
 //                PaddingHorizontalDivider()
 //                TransplantListItem(

@@ -103,10 +103,9 @@ fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
         vm.useCodeResp.clear()
         vm.getGuaGuaUseCode()
     }
-    val switchAutoRefresh = remember { prefs.getBoolean("SWITCHUSECODE",false) }
     //预加载
     LaunchedEffect(Unit) {
-        if(switchAutoRefresh) { refreshNetwork() }
+        refreshNetwork()
     }
 
     LaunchedEffect(uiState) {
@@ -128,7 +127,7 @@ fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
         colors = CardDefaults.cardColors(containerColor = largeCardColor())
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            if(!switchAutoRefresh) {
+            if(!true) {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = showButton,
                     enter = fadeIn(tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) + scaleIn(tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)),

@@ -43,7 +43,6 @@ import com.hfut.schedule.logic.util.network.MyApiParse.getNetCourse
 import com.hfut.schedule.logic.util.network.MyApiParse.getSchedule
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
@@ -113,7 +112,7 @@ fun TodayScreen(
     var refreshing by rememberSaveable { mutableStateOf(true) }
     var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
     var enableShowOutOfDateEvent by rememberSaveable { mutableStateOf(false) }
-    val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
+    val enableShowOverdueFocus by DataStoreManager.enableShowOverdueFocus.collectAsState(initial = false)
 
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
@@ -312,7 +311,7 @@ fun TodayScreen(
                                         if(!isHoliday()) {
                                             todayJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow)
+                                                    JxglstuTodayCourseItem(item,list[item], enableShowOverdueFocus,timeNow)
                                                 }
                                             }
                                         }
@@ -323,7 +322,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow,showOutOfDateItems = switchShowEnded) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow,showOutOfDateItems = enableShowOverdueFocus) { refreshDB = !refreshDB }
                                     }
                                 }
                             }

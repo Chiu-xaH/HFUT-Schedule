@@ -11,13 +11,14 @@
 维护成本高，每次有更新还要同步 iOS 仓
 ## 方案3：改造现有Android项目为KMP √
 ### 前期铺垫（必要条件）
-1. mirror 模块迁移回主仓
-2. 探索 skia shader 在 KMP 的适配写法（参考 AndroidLiquidGlass 库），并适配 KMP SharedNav
-4. 模块整理：shared 模块改名 common-logic，common 模块改名 common-ui，新建 network-api 模块，承载 repo 和解析层。network 改成 network-core，model 整理（定规矩，只有顶层数据类带Response/Request后缀，非顶层的数据类如果被其他Response/Request共用则独立文件，否则放在所属Response/Request的文件中。），RepoInf
-5. 所有页面管理归一化(Card、Shower、Xwx、Supabase 回归 SharedNav 管理) ，WebView、Fix 仍保持，WidgetConfig 删掉，Success 并入主逻辑，对 Starter 类进行重构
-6. 彻底去掉 SP
-7. 彻底去掉 LiveData 
-8. 先把 Send 项目改造适配 iOS，小试牛刀
+1. mirror 模块迁移回主仓 (已完成)
+2. 探索 Skia shader 在 KMP 的适配写法（参考 AndroidLiquidGlass 库），并适配 KMP SharedNav  (已完成)
+3. 所有页面管理归一化(Card、Shower、Xwx、Supabase 回归 SharedNav 管理) ，WebView、Fix 仍保持，WidgetConfig 删掉，Success 并入主逻辑，对 Starter 类进行重构  (正在进行,除 Success 其余已完成)
+4. 模块整理：shared 模块改名 common-logic，common 模块改名 common-ui  (已完成)
+5. 模块整理：model 整理（定规矩，只有顶层数据类带Response/Request后缀，非顶层的数据类如果被其他Response/Request共用则独立文件，否则放在所属Response/Request的文件中。）新建 RepoInf 
+6. 模块整理：新建 network-api 模块，承载 repo 和解析层。network 改成 network-core ，model移入 
+7. 彻底去掉 SP (正在进行，剩余65+)
+8. 彻底去掉 LiveData (正在进行，剩余16)
 ### 开始改造
 1. 改造 Gradle，彻底弃用 Groovy 使用 Kotlin
 示例： 

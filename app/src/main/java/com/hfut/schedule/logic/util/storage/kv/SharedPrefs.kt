@@ -8,6 +8,9 @@ import androidx.core.content.edit
 import com.hfut.schedule.logic.util.other.AppVersion
 
 //特别想彻底重构这里，当时键值乱飞，已经难以重构了
+/**
+ * 除非很重要的值，否则不需要做值迁移
+ */
 @Deprecated("为KMP适配计划的开始做铺垫，将彻底弃用SP，此类会被删除，请改用`DataStoreManager`存储键值对")
 object SharedPrefs {
     private val PREFS = "${AppVersion.appPackageName}_preferences"

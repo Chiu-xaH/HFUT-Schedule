@@ -15,6 +15,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.util.ocr.TesseractUtils.isExistModule
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
@@ -76,6 +77,17 @@ object DataStoreManager : IDataStore {
                 }
             }
         }
+    }
+
+    private suspend fun moveTo(
+        oldKey : String,
+        newKey :  Preferences.Key<Boolean>
+    ) {
+        val originalValue = SharedPrefs.prefs.getBoolean(oldKey,false)
+        saveValue(newKey,originalValue)
+    }
+
+    suspend fun moveToDataStore() = with(Dispatchers.IO) {
     }
 
     data class HefeiElectricStorage(
@@ -158,6 +170,10 @@ object DataStoreManager : IDataStore {
     private val READ_NOTIFICATIONS = stringPreferencesKey("read_notifications")
     private val API_KEY = stringPreferencesKey("llm_api_key")
     private val LANGUAGE = intPreferencesKey("language")
+    private val DRAWER_OFFSET = floatPreferencesKey("drawer_offset")
+    private val OCR_CAPTCHA = booleanPreferencesKey("ocr_captcha")
+    private val SHOW_OVERDUE_FOCUS = booleanPreferencesKey("show_overdue_focus")
+    private val USER_TRACK = booleanPreferencesKey("user_track")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -207,6 +223,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveQuadraticCornerLerp(value: Boolean) = saveValue(QUADRATIC_CORNER_LERP, value)
     suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
     suspend fun saveSharedNavSpeedRadio(value: Float) = saveValue(SHARED_NAV_SPEED_RADIO, value)
+    suspend fun saveDrawerOffset(value: Float) = saveValue(DRAWER_OFFSET, value)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
 //    suspend fun saveShowOutOdDateEvent(value: Boolean) = saveValue(SHOW_OUT_OF_DATE_EVENT, value)
 //    suspend fun saveEnableKeepPreviousPage(value: Boolean) = saveValue(KEEP_PREVIOUS_PAGE, value)
@@ -236,6 +253,9 @@ object DataStoreManager : IDataStore {
         DateTimeManager.initCurrentWeekValue()
     }
     suspend fun saveUniAppJwt(value: String) = saveValue(UNI_APP_JWT,value)
+    suspend fun saveEnableOcrCaptcha(value: Boolean) = saveValue(OCR_CAPTCHA,value)
+    suspend fun saveEnableShowOverdueFocus(value: Boolean) = saveValue(SHOW_OVERDUE_FOCUS, value)
+    suspend fun saveEnableUserTrack(value: Boolean) = saveValue(USER_TRACK, value)
 
 
     val animationType = getFlow(ANIMATION_TYPE, AppAnimationManager.AnimationTypes.CenterAnimation.code)
@@ -281,6 +301,7 @@ object DataStoreManager : IDataStore {
     val enableContainerShare = getFlow(CONTAINER_SHEAR,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val sharedNavSpeedRadio = getFlow(SHARED_NAV_SPEED_RADIO,1f)
+    val drawerOffset = getFlow(DRAWER_OFFSET,0f)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val enableQuadraticCornerLerp = getFlow(QUADRATIC_CORNER_LERP, false)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
@@ -299,6 +320,9 @@ object DataStoreManager : IDataStore {
     val defaultCalendar = getFlow(DEFAULT_CALENDAR, CourseType.JXGLSTU.code)
     val enableLiveCourseReminder = getFlow(LIVE_COURSE_REMINDER, false)
     val liveCourseReminderMinutes = getFlow(LIVE_COURSE_REMINDER_MINUTES, 20)
+    val enableOcrCaptcha = getFlow(OCR_CAPTCHA, isExistModule())
+    val enableShowOverdueFocus = getFlow(SHOW_OVERDUE_FOCUS, false)
+    val enableUserTrack = getFlow(USER_TRACK, true)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)

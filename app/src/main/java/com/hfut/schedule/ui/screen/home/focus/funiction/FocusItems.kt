@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -91,7 +90,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Composable
 fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
@@ -254,7 +252,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
 @Composable
 fun CommunityTodayCourseItem(list : courseDetailDTOList, timeNow : String) {
 
-    val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
+    val enableShowOverdueFocus by DataStoreManager.enableShowOverdueFocus.collectAsState(initial = false)
 
     var weekday = DateTimeManager.dayWeek
     if(weekday == 0) weekday = 7
@@ -318,7 +316,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, timeNow : String) {
         )
     }
 
-    if(switchShowEnded) {
+    if(enableShowOverdueFocus) {
         itemUI()
     } else {
         if(state != ENDED) {

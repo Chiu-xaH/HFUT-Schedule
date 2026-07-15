@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -64,7 +63,6 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.LifeDestination
@@ -101,7 +99,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
 //    TransitionBackHandler(navController,enablePredictive) {
 //        scale = it
 //    }
-    var showBottomSheet by remember { mutableStateOf(false) }
+//    var showBottomSheet by remember { mutableStateOf(false) }
 //    var sheetState = rememberModalBottomSheetState()
 
     val switch_ele = prefs.getBoolean("SWITCHELE", true)
@@ -124,14 +122,6 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
     val switch_card_add = prefs.getBoolean("SWITCHCARDADD", true)
     var showCardAdd by remember { mutableStateOf(switch_card_add) }
     SharedPrefs.saveBoolean("SWITCHCARDADD", true, showCardAdd)
-
-    val switch_countDown = prefs.getBoolean("SWITCHCOUNTDOWN", false)
-    var showCountDown by remember { mutableStateOf(switch_countDown) }
-    SharedPrefs.saveBoolean("SWITCHCOUNTDOWN", false, showCountDown)
-
-    val switch_shortCut = prefs.getBoolean("SWITCHSHORTCUT", false)
-    var showShortCut by remember { mutableStateOf(switch_shortCut) }
-    SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
 //    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
@@ -172,7 +162,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                                 onClick = {
                                     scope.launch { DataStoreManager.saveUseHefeiElectric(true) }
                                 },
-                                selected = useHefei == true,
+                                selected = useHefei,
                                 label = { Text("合肥校区") }
                             )
                             Spacer(Modifier.width(CARD_NORMAL_DP*2))
@@ -180,7 +170,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                                 onClick = {
                                     scope.launch { DataStoreManager.saveUseHefeiElectric(false) }
                                 },
-                                selected = useHefei == false,
+                                selected = !useHefei,
                                 label = { Text("宣城校区") }
                             )
                         }
@@ -217,34 +207,6 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
             }
         }
         InnerPaddingHeight(innerPadding,false)
-    }
-
-
-
-    if(showBottomSheet && showShortCut) {
-        HazeBottomSheet(
-            showBottomSheet = showBottomSheet,
-            onDismissRequest = { showBottomSheet = false },
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("选择你想放在聚焦首页的项")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-
-                    Spacer(modifier = Modifier.height(100.dp))
-                }
-            }
-        }
     }
 }
 

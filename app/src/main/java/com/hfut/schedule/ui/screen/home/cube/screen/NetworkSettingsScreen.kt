@@ -18,20 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -56,11 +53,6 @@ import kotlinx.coroutines.launch
 fun NetworkSettingsScreen(
     innerPaddings : PaddingValues,
 ) {
-//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
     val context = LocalContext.current
     val navTopController = LocalNavController.current
 
@@ -71,14 +63,8 @@ fun NetworkSettingsScreen(
     )
     {
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
-        val switch_upload = SharedPrefs.prefs.getBoolean("SWITCHUPLOAD",true )
-        var upload by remember { mutableStateOf(switch_upload) }
-        saveBoolean("SWITCHUPLOAD",true,upload)
+        val enableUserTrack by DataStoreManager.enableUserTrack.collectAsState(true)
 
-
-        val switch_server = SharedPrefs.prefs.getBoolean("SWITCHSERVER",false )
-        var server by remember { mutableStateOf(switch_server) }
-        saveBoolean("SWITCHSERVER",false,server)
         val scope = rememberCoroutineScope()
         val navController = LocalNavController.current
         val video by produceState<String?>(initialValue = null) {
@@ -179,7 +165,19 @@ fun NetworkSettingsScreen(
                     headlineContent = { Text(text = stringResource(R.string.network_settings_update_data_title)) },
                     supportingContent = { Text(text = stringResource(R.string.network_settings_update_data_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
-                    trailingContent = { Switch(checked = upload, onCheckedChange = { unUpload -> upload = unUpload }, enabled = true) }
+                    trailingContent = { Switch(
+                        checked = enableUserTrack,
+                        onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveEnableUserTrack(!enableUserTrack)
+                            }
+                        }
+                    ) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveEnableUserTrack(!enableUserTrack)
+                        }
+                    }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(

@@ -22,8 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
@@ -46,6 +44,7 @@ import com.xah.navigation.model.anim.EffectLevel
 import com.xah.navigation.util.DefaultBackHandler
 import com.xah.navigation.util.rememberNavDependencies
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -200,16 +199,13 @@ fun MainHost(
     }
 }
 
-
-private const val OFFSET_KEY = "OFFSET_DRAWERS"
-
 suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(Dispatchers.IO) {
     drawerState.close()
-    val currentValue = prefs.getFloat(OFFSET_KEY,0f)
+    val currentValue = DataStoreManager.drawerOffset.first()
     val newValue = drawerState.currentOffset
     if(currentValue == 0f || newValue != currentValue) {
         showToast("正在校准，请勿动稍后")
-        SharedPrefs.saveFloat(OFFSET_KEY,newValue,0f)
+        DataStoreManager.saveDrawerOffset(newValue)
         showToast("校准完成")
         return@withContext newValue
     } else {
