@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
+import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
@@ -53,7 +54,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-07-13"
+private const val RELEASE_DATE = "2026-07-16"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -63,9 +64,10 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
+        UpdateItems("新增 学期报告考试记录", to = To.Screen(TermReportDestination), developers = listOf("Junpgle"))
         UpdateItems("新增 在聚焦首页检查登陆状态时显示当前检查的进度")//
+        UpdateItems("重构 部分存储逻辑的代码","部分开关值发生变化属正常现象，正在重构代码")//
         UpdateItems("修复 使用外地访问登录加载时提示获取登录中止的Bug")//
-        UpdateItems("重构 部分存储代码","部分开关值发生变化属正常现象，正在重构代码")//
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
 //        UpdateItems("重构 去除冗余登录流程")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
