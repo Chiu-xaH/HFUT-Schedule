@@ -7,6 +7,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
 import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -945,6 +946,16 @@ object JxglstuRepository {
     @JvmStatic
     private suspend fun parseJxglstuExamInner(html : String) : List<JxglstuExam> = try {
         LargeStringDataManager.save(LargeStringDataManager.EXAM,html)
-        parseJxglstuExam(html)
+        val exams = parseJxglstuExam(html)
+        try {
+            ExamHistoryRepository.saveExamSnapshot(
+                exams = exams,
+                source = "jxglstu",
+                fallbackSemester = SemesterParser.getLatestSemester()
+            )
+        } catch (e: Exception) {
+            LogUtil.error(e, "保存教务系统考试历史失败")
+        }
+        exams
     } catch (e:Exception) { throw e }
 }

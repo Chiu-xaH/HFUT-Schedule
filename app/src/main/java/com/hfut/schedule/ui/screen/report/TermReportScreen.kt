@@ -237,13 +237,19 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     var exportSemester by remember { mutableIntStateOf(0) }
     var showWelcome by remember { mutableStateOf(true) }
     var isGraduating by remember { mutableStateOf(false) }
-    val gradeState by vm.uniAppGradesResp.state.collectAsState()
-    val allSemesters = remember(gradeState) {
-        if (gradeState is NetworkUiState.Success) {
-            (gradeState as NetworkUiState.Success).data.keys.mapNotNull {
-                SemesterParser.parseSemester(it)
-            }
-        } else emptyList()
+    val uniAppGradeState by vm.uniAppGradesResp.state.collectAsState()
+    val jxglstuGradeState by vm.jxglstuGradeData.state.collectAsState()
+    val uniAppGrades = (uniAppGradeState as? NetworkUiState.Success)?.data
+    val jxglstuGrades = (jxglstuGradeState as? NetworkUiState.Success)?.data
+    val allSemesters = remember(uniAppGradeState, jxglstuGradeState) {
+        val terms = when {
+            hasUniAppGradeData(uniAppGrades) ->
+                uniAppGrades!!.filterValues { it.isNotEmpty() }.keys
+            hasJxglstuGradeData(jxglstuGrades) ->
+                jxglstuGrades!!.filter { it.list.isNotEmpty() }.map { it.term }
+            else -> emptyList()
+        }
+        terms.mapNotNull(SemesterParser::parseSemester).distinct()
     }
     val backdrop = rememberLayerBackdrop()
 

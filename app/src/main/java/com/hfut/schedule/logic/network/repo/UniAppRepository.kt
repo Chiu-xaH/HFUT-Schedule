@@ -1,7 +1,9 @@
 package com.hfut.schedule.logic.network.repo
 
 
+import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
 import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
@@ -38,6 +40,9 @@ import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.network.util.GsonInstance
 import com.hfut.schedule.network.util.StatusCode
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.util.LogUtil
 import retrofit2.awaitResponse
@@ -177,8 +182,35 @@ object UniAppRepository {
             }
             val json = request.body()?.string() ?: return
             LargeStringDataManager.save(LargeStringDataManager.UNI_APP_EXAMS,json)
+            try {
+                ExamHistoryRepository.saveExamSnapshot(
+                    exams = parseExamsForHistory(json),
+                    source = "uniapp",
+                    fallbackSemester = SemesterParser.getLatestSemester()
+                )
+            } catch (e: Exception) {
+                LogUtil.error(e, "保存 UniApp 考试历史失败")
+            }
         } catch (e : Exception) {
             LogUtil.error(e)
+        }
+    }
+
+    private fun parseExamsForHistory(json: String): List<JxglstuExam> {
+        return GsonInstance.fromJson(json, UniAppExamResponse::class.java).data.mapNotNull {
+            val startTime = parseJxglstuIntTime(it.startTime)
+            val endTime = parseJxglstuIntTime(it.endTime)
+            val dateTime = "${it.examDate} ${startTime}~${endTime}"
+            if (!isValidDateTime(dateTime)) {
+                null
+            } else {
+                JxglstuExam(
+                    name = it.courseNameZh.trim(),
+                    dateTime = dateTime,
+                    place = it.place?.substringAfterLast(" "),
+                    type = it.examType.nameZh
+                )
+            }
         }
     }
 
