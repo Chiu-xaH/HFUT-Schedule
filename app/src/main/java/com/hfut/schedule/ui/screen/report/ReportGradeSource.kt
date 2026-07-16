@@ -4,7 +4,7 @@ import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
 
-internal data class ReportGradeItem(
+data class ReportGradeItem(
     val courseName: String,
     val lessonCode: String,
     val term: String,
@@ -15,20 +15,20 @@ internal data class ReportGradeItem(
     val gp: Double
 )
 
-internal data class ReportTermGrade(
+data class ReportTermGrade(
     val dto: GradeJxglstuDTO,
     val passFlags: List<Boolean>
 )
 
-internal fun hasUniAppGradeData(
+fun hasUniAppGradeData(
     grades: Map<String, List<UniAppGradeBean>>?
 ): Boolean = grades?.values?.any { it.isNotEmpty() } == true
 
-internal fun hasJxglstuGradeData(
+fun hasJxglstuGradeData(
     grades: List<GradeJxglstuDTO>?
 ): Boolean = grades?.any { it.list.isNotEmpty() } == true
 
-internal fun selectReportGrades(
+fun selectReportGrades(
     uniAppGrades: Map<String, List<UniAppGradeBean>>?,
     jxglstuGrades: List<GradeJxglstuDTO>?
 ): List<ReportGradeItem> {
@@ -41,7 +41,7 @@ internal fun selectReportGrades(
     }
 }
 
-internal fun uniAppReportGrades(gradeMap: Map<String, List<UniAppGradeBean>>): List<ReportGradeItem> {
+fun uniAppReportGrades(gradeMap: Map<String, List<UniAppGradeBean>>): List<ReportGradeItem> {
     return gradeMap.flatMap { (term, grades) ->
         grades.map { grade ->
             ReportGradeItem(
@@ -58,7 +58,7 @@ internal fun uniAppReportGrades(gradeMap: Map<String, List<UniAppGradeBean>>): L
     }
 }
 
-internal fun jxglstuReportGrades(terms: List<GradeJxglstuDTO>): List<ReportGradeItem> {
+fun jxglstuReportGrades(terms: List<GradeJxglstuDTO>): List<ReportGradeItem> {
     return terms.flatMap { term ->
         term.list.map { grade ->
             ReportGradeItem(
@@ -96,7 +96,7 @@ private fun isJxglstuGradePassed(finalGrade: String, gp: Double): Boolean {
     }
 }
 
-internal fun List<ReportGradeItem>.toReportTerms(): List<ReportTermGrade> {
+fun List<ReportGradeItem>.toReportTerms(): List<ReportTermGrade> {
     return groupBy { it.term }.map { (term, grades) ->
         ReportTermGrade(
             dto = GradeJxglstuDTO(

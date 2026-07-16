@@ -38,7 +38,6 @@ import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil
-import kotlinx.coroutines.CancellationException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -179,8 +178,6 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                     courseAnalysis = CourseAnalysisResult(busiest.key, busiest.value, avg)
                 }
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             LogUtil.error(e)
         }
@@ -253,8 +250,6 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                     consecutiveEnd = maxEnd
                 )
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             LogUtil.error(e)
         }

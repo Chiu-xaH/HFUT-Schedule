@@ -74,20 +74,17 @@ fun isInLanding() : Boolean {
 enum class UniversityPeriod {
     READY,GOING,GRADUATED
 }
-internal fun getUniversityPeriod(startDate: String, endDate: String): UniversityPeriod {
-    val percent = DateTimeManager.getPercent(startDate, endDate)
-    return if(percent in 0.0..<1.0) {
-        UniversityPeriod.GOING
-    } else if(percent < 0f) {
-        UniversityPeriod.READY
-    } else {
-        UniversityPeriod.GRADUATED
-    }
-}
 fun getUniversityPeriod() : UniversityPeriod? {
     val info = getPersonInfo()
     try {
-        return getUniversityPeriod(info.startDate!!, info.endDate!!)
+        val percent = DateTimeManager.getPercent(info.startDate!!, info.endDate!!)
+        return if(percent in 0.0..<1.0) {
+            UniversityPeriod.GOING
+        } else if(percent < 0f) {
+            UniversityPeriod.READY
+        } else {
+            UniversityPeriod.GRADUATED
+        }
     } catch (e : Exception) {
         LogUtil.error(e)
         return null

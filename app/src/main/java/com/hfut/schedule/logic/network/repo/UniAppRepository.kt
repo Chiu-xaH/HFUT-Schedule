@@ -45,7 +45,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.util.LogUtil
-import kotlinx.coroutines.CancellationException
 import retrofit2.awaitResponse
 
 object UniAppRepository {
@@ -189,13 +188,9 @@ object UniAppRepository {
                     source = "uniapp",
                     fallbackSemester = SemesterParser.getLatestSemester()
                 )
-            } catch (e: CancellationException) {
-                throw e
             } catch (e: Exception) {
                 LogUtil.error(e, "保存 UniApp 考试历史失败")
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e : Exception) {
             LogUtil.error(e)
         }

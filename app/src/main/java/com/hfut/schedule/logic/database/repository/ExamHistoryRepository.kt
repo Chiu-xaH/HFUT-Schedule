@@ -5,23 +5,16 @@ import com.hfut.schedule.logic.database.entity.ExamRecordEntity
 import com.hfut.schedule.logic.util.parse.groupExamsBySemester
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.xah.common.logic.util.LogUtil
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 object ExamHistoryRepository {
 
     private val dao get() = DataBaseManager.examRecordDao
 
-    private val saveMutex = Mutex()
-
     suspend fun getExams(semester: Int): List<JxglstuExam> = withContext(Dispatchers.IO) {
         try {
             dao.getBySemester(semester).mergeSources()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             LogUtil.error(e, "从Room读取考试记录失败")
             emptyList()
@@ -32,38 +25,34 @@ object ExamHistoryRepository {
         exams: List<JxglstuExam>,
         source: String,
         fallbackSemester: Int
-    ): Boolean = saveMutex.withLock {
-        withContext(Dispatchers.IO) {
-            try {
-                val groupedExams = groupExamsBySemester(exams)
-                val snapshots = buildMap {
-                    put(fallbackSemester, emptyList())
-                    putAll(groupedExams)
-                }
-                val now = System.currentTimeMillis()
-
-                snapshots.forEach { (semester, semesterExams) ->
-                    val entities = semesterExams.map { exam ->
-                        ExamRecordEntity(
-                            name = exam.name,
-                            dateTime = exam.dateTime,
-                            place = exam.place,
-                            type = exam.type,
-                            source = source,
-                            semester = semester,
-                            fetchedAt = now
-                        )
-                    }
-                    dao.replaceSource(semester, source, entities)
-                    LogUtil.info("考试记录快照已按日期归档: semester=$semester, count=${entities.size}, source=$source")
-                }
-                true
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                LogUtil.error(e, "按日期归档考试记录失败")
-                false
+    ): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val groupedExams = groupExamsBySemester(exams)
+            val snapshots = buildMap {
+                put(fallbackSemester, emptyList())
+                putAll(groupedExams)
             }
+            val now = System.currentTimeMillis()
+
+            snapshots.forEach { (semester, semesterExams) ->
+                val entities = semesterExams.map { exam ->
+                    ExamRecordEntity(
+                        name = exam.name,
+                        dateTime = exam.dateTime,
+                        place = exam.place,
+                        type = exam.type,
+                        source = source,
+                        semester = semester,
+                        fetchedAt = now
+                    )
+                }
+                dao.replaceSource(semester, source, entities)
+                LogUtil.info("考试记录快照已按日期归档: semester=$semester, count=${entities.size}, source=$source")
+            }
+            true
+        } catch (e: Exception) {
+            LogUtil.error(e, "按日期归档考试记录失败")
+            false
         }
     }
 

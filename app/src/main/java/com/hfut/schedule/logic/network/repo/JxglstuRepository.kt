@@ -51,7 +51,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.logic.util.LogUtil
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -954,8 +953,6 @@ object JxglstuRepository {
                 source = "jxglstu",
                 fallbackSemester = SemesterParser.getLatestSemester()
             )
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
             LogUtil.error(e, "保存教务系统考试历史失败")
         }
