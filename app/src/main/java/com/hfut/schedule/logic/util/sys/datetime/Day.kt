@@ -77,10 +77,10 @@ enum class UniversityPeriod {
 fun getUniversityPeriod() : UniversityPeriod? {
     val info = getPersonInfo()
     try {
-        val precent = DateTimeManager.getPercentTime(info.startDate!!,info.endDate!!)
-        return if(precent in 0.0..<1.0) {
+        val percent = DateTimeManager.getPercent(info.startDate!!, info.endDate!!)
+        return if(percent in 0.0..<1.0) {
             UniversityPeriod.GOING
-        } else if(precent < 0f) {
+        } else if(percent < 0f) {
             UniversityPeriod.READY
         } else {
             UniversityPeriod.GRADUATED
@@ -135,4 +135,3 @@ fun getCelebration() : Celebration {
     }
     return Celebration(false,null)
 }
-

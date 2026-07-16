@@ -631,4 +631,3 @@ class NetWorkViewModel() : ViewModel() {
     var resetCodeResp = UiStateHolder<String>()
     suspend fun resetGuaGuaUseCode(newCode : String) = GuaGuaRepository.guaGuaReSetUseCode(newCode,resetCodeResp)
 }
-

@@ -15,8 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
@@ -32,28 +30,45 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.flow.first
 
-private data class TermGradeStats(val dto: GradeJxglstuDTO, val passFlags: List<Boolean>)
-
 @Composable
 fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester: (Int) -> Unit) {
-    val uiState by vm.uniAppGradesResp.state.collectAsState()
+    val uniAppState by vm.uniAppGradesResp.state.collectAsState()
+    val jxglstuState by vm.jxglstuGradeData.state.collectAsState()
     var initialSemesterSet by remember { mutableStateOf(false) }
 
+    val uniAppGrades = (uniAppState as? NetworkUiState.Success)?.data
+    val jxglstuGrades = (jxglstuState as? NetworkUiState.Success)?.data
+
+    val useUniApp = hasUniAppGradeData(uniAppGrades)
+    val uiState = if (useUniApp) uniAppState else jxglstuState
+
+    val allTermList = remember(uniAppState, jxglstuState) {
+        selectReportGrades(uniAppGrades, jxglstuGrades)
+            .filter { it.finalGrade != null && !(it.passed && it.gp == 0.0) }
+            .toReportTerms()
+    }
+
     val refreshNetwork: suspend () -> Unit = m@ {
-        if (uiState is NetworkUiState.Success) return@m
-        var cookie = DataStoreManager.uniAppJwt.first()
-        if (cookie.isEmpty()) {
-            if (!UniAppRepository.login()) return@m
-            cookie = DataStoreManager.uniAppJwt.first()
+        getJxglstuCookie()?.let { cookie ->
+            vm.jxglstuGradeData.clear()
+            vm.getGradeFromJxglstu(cookie, null)
         }
-        vm.uniAppGradesResp.clear()
-        vm.getUniAppGrades(cookie)
+        if (!hasUniAppGradeData(uniAppGrades)) {
+            var cookie = DataStoreManager.uniAppJwt.first()
+            if (cookie.isEmpty()) {
+                if (!UniAppRepository.login()) return@m
+                cookie = DataStoreManager.uniAppJwt.first()
+            }
+            vm.uniAppGradesResp.clear()
+            vm.getUniAppGrades(cookie)
+        }
     }
 
     LaunchedEffect(Unit) { refreshNetwork() }
@@ -61,21 +76,6 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     DividerTextExpandedWith("学业报表") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
             Column {
-                val gradeMap = (uiState as NetworkUiState.Success).data
-                val allTermList = remember(gradeMap) {
-                    gradeMap.toList().sortedByDescending { it.first }.mapNotNull { (term, items) ->
-                        val filtered = items.filter { !(it.passed && it.gp == 0.0) && it.finalGrade != null }
-                        if (filtered.isEmpty()) return@mapNotNull null
-                        TermGradeStats(
-                            dto = GradeJxglstuDTO(
-                                term,
-                                filtered.map { GradeJxglstuResponse(it.courseNameZh, it.credits.toString(), it.gp.toString(), it.gradeDetail, it.finalGrade!!, it.lessonCode) }
-                            ),
-                            passFlags = filtered.map { it.passed }
-                        )
-                    }
-                }
-
             LaunchedEffect(allTermList, semester) {
                 if (
                     !initialSemesterSet &&
@@ -152,6 +152,4 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
         }
     }
 }
-
-
 
