@@ -17,7 +17,7 @@
 4. 模块整理：shared 模块改名 common-logic，common 模块改名 common-ui  (已完成)
 5. 模块整理：model 整理（定规矩，只有顶层数据类带Response/Request后缀，非顶层的数据类如果被其他Response/Request共用则独立文件，否则放在所属Response/Request的文件中。）新建 RepoInf 
 6. 模块整理：新建 network-api 模块，承载 repo 和解析层。network 改成 network-core ，model移入 
-7. 彻底去掉 SP (正在进行，剩余65+)
+7. 彻底去掉 SP (正在进行，剩余60+)
 8. 彻底去掉 LiveData (正在进行，剩余16)
 ### 开始改造
 1. 改造 Gradle，彻底弃用 Groovy 使用 Kotlin

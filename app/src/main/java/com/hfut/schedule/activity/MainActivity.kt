@@ -67,7 +67,7 @@ class MainActivity : BaseActivity() {
         }
     }
     private fun getDefaultStartDestination() : NavDestination {
-        return if(prefs.getBoolean("canUse",false)) {
+        return if(DataStoreManager.getSyncEnableUse()) {
             if(!haveImportantUpdate()) {
                 HomeDestination()
             } else {

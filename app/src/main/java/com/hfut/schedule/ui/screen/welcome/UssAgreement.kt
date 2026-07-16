@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.work.Data
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.killAppUnSafely
@@ -55,6 +56,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -120,7 +122,7 @@ fun UseAgreementScreen() {
                                     scope.launch {
                                         async {
                                             launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
-                                            launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
+                                            launch { DataStoreManager.saveEnableUse(true) }
                                         }.await()
                                         Starter.backToHome(navController)
                                     }
@@ -136,14 +138,16 @@ fun UseAgreementScreen() {
                             Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP*2/3))
                             FilledTonalButton(
                                 onClick = {
-                                    showToast("已关闭APP")
-                                    killAppUnSafely()
+                                    scope.launch {
+                                        DataStoreManager.saveEnableUse(false)
+                                        showToast("已关闭APP")
+                                        killAppUnSafely()
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(.5f)
                             ) {
-                                SharedPrefs.saveBoolean("canUse", default = false, save = false)
                                 Text("拒绝")
                             }
                         }

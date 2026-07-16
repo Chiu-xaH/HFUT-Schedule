@@ -49,7 +49,6 @@ import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -94,38 +93,14 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FocusCardSettings(innerPadding : PaddingValues) {
-//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//    var sheetState = rememberModalBottomSheetState()
 
-    val switch_ele = prefs.getBoolean("SWITCHELE", true)
-    var showEle by remember { mutableStateOf(switch_ele) }
-    SharedPrefs.saveBoolean("SWITCHELE", true, showEle)
+    val enableShowFocusToday by DataStoreManager.enableShowFocusToday.collectAsState(true)
+    val enableFocusElectric by DataStoreManager.enableFocusElectric.collectAsState(true)
+    val enableFocusSchoolNet by DataStoreManager.enableFocusSchoolNet.collectAsState(true)
+    val enableFocusSchoolCard by DataStoreManager.enableFocusSchoolCard.collectAsState(true)
+    val enableFocusSchoolCardAddButton by DataStoreManager.enableFocusSchoolCardAddButton.collectAsState(true)
 
-    val switch_web = prefs.getBoolean("SWITCHWEB", true)
-    var showWeb by remember { mutableStateOf(switch_web) }
-    SharedPrefs.saveBoolean("SWITCHWEB", true, showWeb)
-
-    val switch_card = prefs.getBoolean("SWITCHCARD", true)
-    var showCard by remember { mutableStateOf(switch_card) }
-    SharedPrefs.saveBoolean("SWITCHCARD", true, showCard)
-
-    val switch_today = prefs.getBoolean("SWITCHTODAY", true)
-    var showToday by remember { mutableStateOf(switch_today) }
-    SharedPrefs.saveBoolean("SWITCHTODAY", true, showToday)
-
-
-    val switch_card_add = prefs.getBoolean("SWITCHCARDADD", true)
-    var showCardAdd by remember { mutableStateOf(switch_card_add) }
-    SharedPrefs.saveBoolean("SWITCHCARDADD", true, showCardAdd)
-
-//    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
-//    val showSpecial by DataStoreManager.showFocusSpecial.collectAsState(initial = true)
 
     val scope = rememberCoroutineScope()
     val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
@@ -146,9 +121,24 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
                     trailingContent = {
                         Row {
-                            Switch(checked = showCardAdd, onCheckedChange = {showch -> showCardAdd = showch}, thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")})
+                            Switch(
+                                checked = enableFocusSchoolCardAddButton,
+                                onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveEnableFocusSchoolCardAddButton(!enableFocusSchoolCardAddButton)
+                                    }
+                                },
+                                thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")}
+                            )
                             Spacer(modifier = Modifier.width(10.dp))
-                            Switch(checked = showCard, onCheckedChange = {showch -> showCard = showch})
+                            Switch(
+                                checked = enableFocusSchoolCard,
+                                onCheckedChange = {
+                                    scope.launch {
+                                        DataStoreManager.saveEnableFocusSchoolCard(!enableFocusSchoolCard)
+                                    }
+                                }
+                            )
                         }
                     }
                 )
@@ -176,21 +166,46 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                         }
                     },
                     trailingContent = {
-                        Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
+                        Switch(
+                            checked = enableFocusElectric,
+                            onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveEnableFocusElectric(!enableFocusElectric)
+                                }
+                            }
+                        )
                     }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "校园网")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
-                    trailingContent = { Switch(checked = showWeb, onCheckedChange = {showch -> showWeb = showch})}
+                    trailingContent = {
+                        Switch(
+                            checked = enableFocusSchoolNet,
+                            onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveEnableFocusSchoolNet(!enableFocusSchoolNet)
+                                }
+                            }
+                        )
+                    }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "聚焦通知")} ,
                     supportingContent = { Text(text = "明日早八,临近课程,催还图书,临近考试")},
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sentiment_very_satisfied), contentDescription = "")},
-                    trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
+                    trailingContent = {
+                        Switch(
+                            checked = enableShowFocusToday,
+                            onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveEnableShowFocusToday(!enableShowFocusToday)
+                                }
+                            }
+                        )
+                    }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
@@ -219,10 +234,11 @@ fun FocusCard(
     hazeState: HazeState,
 ) {
     val navController = LocalNavController.current
-    val showEle = prefs.getBoolean("SWITCHELE",true)
-    val showToday = prefs.getBoolean("SWITCHTODAY",true)
-    val showWeb = prefs.getBoolean("SWITCHWEB",true)
-    val showCard = prefs.getBoolean("SWITCHCARD",true)
+    val showToday by DataStoreManager.enableShowFocusToday.collectAsState(true)
+    val showEle by DataStoreManager.enableFocusElectric.collectAsState(true)
+    val showWeb by DataStoreManager.enableFocusSchoolNet.collectAsState(true)
+    val showCard by DataStoreManager.enableFocusSchoolCard.collectAsState(true)
+
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
     if(showCard || showEle || showToday || showWeb)
         CustomCard(

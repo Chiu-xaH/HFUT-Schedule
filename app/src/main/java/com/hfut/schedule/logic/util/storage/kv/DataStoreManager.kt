@@ -174,6 +174,12 @@ object DataStoreManager : IDataStore {
     private val OCR_CAPTCHA = booleanPreferencesKey("ocr_captcha")
     private val SHOW_OVERDUE_FOCUS = booleanPreferencesKey("show_overdue_focus")
     private val USER_TRACK = booleanPreferencesKey("user_track")
+    private val SHOW_FOCUS_ELECTRIC = booleanPreferencesKey("show_focus_electric")
+    private val SHOW_FOCUS_SCHOOL_NET = booleanPreferencesKey("show_focus_school_net")
+    private val SHOW_FOCUS_SCHOOL_CARD = booleanPreferencesKey("show_focus_school_card")
+    private val SHOW_FOCUS_TODAY = booleanPreferencesKey("show_focus_today")
+    private val SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON = booleanPreferencesKey("show_focus_school_card_add_button")
+    private val CAN_USE = booleanPreferencesKey("can_use")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -256,8 +262,26 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableOcrCaptcha(value: Boolean) = saveValue(OCR_CAPTCHA,value)
     suspend fun saveEnableShowOverdueFocus(value: Boolean) = saveValue(SHOW_OVERDUE_FOCUS, value)
     suspend fun saveEnableUserTrack(value: Boolean) = saveValue(USER_TRACK, value)
+    suspend fun saveEnableShowFocusToday(value: Boolean) = saveValue(SHOW_FOCUS_TODAY, value)
+    suspend fun saveEnableFocusElectric(value: Boolean) = saveValue(SHOW_FOCUS_ELECTRIC, value)
+    suspend fun saveEnableFocusSchoolNet(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_NET, value)
+    suspend fun saveEnableFocusSchoolCard(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD, value)
+    suspend fun saveEnableFocusSchoolCardAddButton(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON, value)
+    suspend fun saveEnableUse(value: Boolean) = saveValue(CAN_USE, value)
 
 
+    private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
+    private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
+    private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
+    suspend fun getHefeiElectric(): HefeiElectricStorage? = withContext(Dispatchers.IO) {
+        val hefeiBuildingNumber = hefeiBuildingNumber.first()
+        val hefeiRoomNumber = hefeiRoomNumber.first()
+        val hefeiElectric = hefeiElectric.first()
+        if (hefeiRoomNumber == EMPTY_STRING || hefeiElectric == EMPTY_STRING || hefeiBuildingNumber == EMPTY_STRING) {
+            return@withContext null
+        }
+        return@withContext HefeiElectricStorage(hefeiBuildingNumber, hefeiRoomNumber, hefeiElectric)
+    }
     val animationType = getFlow(ANIMATION_TYPE, AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val enablePureDark = getFlow(PURE_DARK,false)
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
@@ -323,25 +347,25 @@ object DataStoreManager : IDataStore {
     val enableOcrCaptcha = getFlow(OCR_CAPTCHA, isExistModule())
     val enableShowOverdueFocus = getFlow(SHOW_OVERDUE_FOCUS, false)
     val enableUserTrack = getFlow(USER_TRACK, true)
-    private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
-    private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
-    private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
     val termStartDate = getFlow(TERM_START_DATE, getDefaultStartTerm())
-    suspend fun getHefeiElectric(): HefeiElectricStorage? = withContext(Dispatchers.IO) {
-        val hefeiBuildingNumber = hefeiBuildingNumber.first()
-        val hefeiRoomNumber = hefeiRoomNumber.first()
-        val hefeiElectric = hefeiElectric.first()
-        if (hefeiRoomNumber == EMPTY_STRING || hefeiElectric == EMPTY_STRING || hefeiBuildingNumber == EMPTY_STRING) {
-            return@withContext null
-        }
-        return@withContext HefeiElectricStorage(hefeiBuildingNumber, hefeiRoomNumber, hefeiElectric)
-    }
+    val enableShowFocusToday = getFlow(SHOW_FOCUS_TODAY,true)
+    val enableFocusElectric = getFlow(SHOW_FOCUS_ELECTRIC,true)
+    val enableFocusSchoolNet = getFlow(SHOW_FOCUS_SCHOOL_NET,true)
+    val enableFocusSchoolCard = getFlow(SHOW_FOCUS_SCHOOL_CARD,true)
+    val enableFocusSchoolCardAddButton = getFlow(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON,true)
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
+    val enableUse = getFlow(CAN_USE, false)
 
     fun getSyncDefaultCalendar(): Int? {
         return runBlocking {
             val preferences = dataStore.data.first()
             preferences[DEFAULT_CALENDAR]
+        }
+    }
+    fun getSyncEnableUse(): Boolean {
+        return runBlocking {
+            val preferences = dataStore.data.first()
+            preferences[CAN_USE] ?: false
         }
     }
 }

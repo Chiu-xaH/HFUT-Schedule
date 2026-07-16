@@ -26,21 +26,18 @@ object SharedPrefs {
     fun saveString(title : String, info : String?) {
         if (saved.getString(title, "") != info) { saved.edit { putString(title, info) } }
     }
-
-    @Deprecated("为KMP适配计划的开始做铺垫，即将去除")
-    fun saveBoolean(title : String, default : Boolean, save : Boolean) {
-        if (saved.getBoolean(title, default) != save) { saved.edit { putBoolean(title, save) } }
-    }
-
-    @Deprecated("为KMP适配计划的开始做铺垫垫，即将去除")
-    fun saveInt(title : String, save : Int) {
-        if (saved.getInt(title, 0) != save) { saved.edit { putInt(title, save) } }
-    }
-    @Deprecated("为KMP适配计划的开始做铺垫，彻底弃用SP")
-    fun saveFloat(title: String, save: Float, default: Float) {
-        if (saved.getFloat(title, default) != save) { saved.edit { putFloat(title, save) } }
-    }
-
+//    @Deprecated("为KMP适配计划的开始做铺垫，即将去除")
+//    fun saveBoolean(title : String, default : Boolean, save : Boolean) {
+//        if (saved.getBoolean(title, default) != save) { saved.edit { putBoolean(title, save) } }
+//    }
+//    @Deprecated("为KMP适配计划的开始做铺垫垫，即将去除")
+//    fun saveInt(title : String, save : Int) {
+//        if (saved.getInt(title, 0) != save) { saved.edit { putInt(title, save) } }
+//    }
+//    @Deprecated("为KMP适配计划的开始做铺垫，彻底弃用SP")
+//    fun saveFloat(title: String, save: Float, default: Float) {
+//        if (saved.getFloat(title, default) != save) { saved.edit { putFloat(title, save) } }
+//    }
     @Deprecated("为KMP适配计划的开始做铺垫，彻底弃用SP")
     fun saveLong(title : String, info : Long) {
         if (saved.getLong(title, 0L) != info) { saved.edit { putLong(title, info) } }

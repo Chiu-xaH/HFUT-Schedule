@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.util.Constant
@@ -66,7 +68,8 @@ fun SchoolCardItem(isFromFocus : Boolean) {
         if(text == "00") { text = context.getString(R.string.navigation_label_school_card_not_login) }
     }
 
-    val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
+    val showAdd by DataStoreManager.enableFocusSchoolCardAddButton.collectAsState(true)
+
     TransplantListItem(
         colors = cardNormalColor(),
         headlineContent = {

@@ -367,11 +367,9 @@ fun About(vm : NetWorkViewModel) {
                 LargeButton(
                     onClick = {
                         scope.launch {
-                            async { SharedPrefs.saveBoolean("canUse", default = false, save = false) }.await()
-                            launch {
-                                showToast("已退出APP")
-                                MyApplication.exitAppSafely()
-                            }
+                            DataStoreManager.saveEnableUse(false)
+                            showToast("已退出APP")
+                            MyApplication.exitAppSafely()
                         }
                     },
                     modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP*2),

@@ -9,7 +9,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,27 +29,38 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
-
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.sharednav.common.util.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 
 /* 本kt文件已完成多语言文案适配 */
 @Composable
 fun PersonPart() {
-    var expandItems by remember { mutableStateOf(prefs.getBoolean("expandPerson",false)) }
-    val startDate = getPersonInfo().startDate
-    val endDate = getPersonInfo().endDate
+    var expandItems by rememberSaveable { mutableStateOf(false) }
+    val startDate = remember { getPersonInfo().startDate }
+    val endDate = remember { getPersonInfo().endDate }
+    val navController = LocalNavController.current
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Column() {
-            CustomCard(color = MaterialTheme.colorScheme.secondaryContainer) {
+        Column {
+            CustomCard(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = NoneRoundShape,
+                modifier = Modifier.sharedContainer(
+                    PersonInfoDestination.key,
+                    MaterialTheme.shapes.medium,
+                    MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
                 TransplantListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { Text(text = getPersonInfo().getNameFinally())  },
@@ -69,10 +81,17 @@ fun PersonPart() {
                             }
                         }
                     },
-                    modifier = Modifier.clickable {
-                        expandItems = !expandItems
-                        SharedPrefs.saveBoolean("expandPerson",true,expandItems)
-                    }
+                    modifier = Modifier.combinedClickable(
+                        onLongClick = {
+                            expandItems = !expandItems
+                        },
+                        onClick = {
+                            navController.push(PersonInfoDestination)
+                        },
+                        onDoubleClick = {
+                            showToast("长按展开，单击进入个人信息页面")
+                        }
+                    )
                 )
 
                 AnimatedVisibility(

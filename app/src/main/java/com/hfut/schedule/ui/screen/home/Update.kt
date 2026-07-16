@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.screen.home
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HolidayBean
@@ -60,13 +62,13 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
 // 应用冷启动主界面时的网络请求
 suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withContext(Dispatchers.IO) {
     try {
-        val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
         val communityToken = prefs.getString("TOKEN","")
-        val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
-        val showToday = prefs.getBoolean("SWITCHTODAY",true)
-        val showWeb = prefs.getBoolean("SWITCHWEB",true)
-        val showCard = prefs.getBoolean("SWITCHCARD",true)
         val jxglstuCookie = prefs.getString("redirect", "")
+        val showToday = DataStoreManager.enableShowFocusToday.first()
+        val showEle = DataStoreManager.enableFocusElectric.first()
+        val showWeb = DataStoreManager.enableFocusSchoolNet.first()
+        val showCard = DataStoreManager.enableFocusSchoolCard.first()
+
         val webVpnCookie = Constant.WEBVPN_COOKIE_HEADER + DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         val uniAppJwt = DataStoreManager.uniAppJwt.first()
         // 刷新个人接口
