@@ -33,9 +33,10 @@ import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.util.navigation.SharedNavEffect
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.sharednav.common.helper.AnimationSpecManager
+import com.sharednav.common.manager.AnimationSpecManager
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.container.model.TiltEffect
 import com.xah.container.util.LocalSharedRegistry
 import com.xah.navigation.anim.effect.PushTransitionEffect
 import com.xah.navigation.component.SharedNavHost
@@ -182,7 +183,11 @@ fun MainHost(
             }
 
             LaunchedEffect(enableContainerTilt) {
-                registry.enableTilt = enableContainerTilt
+                registry.tiltEffect = if(enableContainerTilt) {
+                    TiltEffect.ROTATION
+                } else {
+                    TiltEffect.NONE
+                }
             }
 
             LaunchedEffect(enablePredictive) {

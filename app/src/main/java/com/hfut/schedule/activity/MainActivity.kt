@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder.postedUse
 import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.util.toDeepLinkUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class MainActivity : BaseActivity() {
                 parseStartDestinationByRoute(route)
             } ?:
             // 接口2 DeepLink
-            intent?.data?.let { deeplink ->
+            intent?.data?.toDeepLinkUri()?.let { deeplink ->
                 val destination = DeepLinkRegistry.parse(deeplink)
                 if(destination == null) {
                     ExceptionDestination(Exception("打开深度链接($deeplink)失败,请发起跳转方确认接口是否正确"))

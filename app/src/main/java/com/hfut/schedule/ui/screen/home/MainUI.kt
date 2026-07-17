@@ -172,7 +172,7 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.webview.pickColorFromTop
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hjq.device.compat.DeviceOs
-import com.sharednav.common.util.NoneRoundShape
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText

@@ -149,7 +149,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.sharednav.common.util.NoneRoundShape
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingUI

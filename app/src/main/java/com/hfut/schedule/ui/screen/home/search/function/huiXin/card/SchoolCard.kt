@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 
-import com.sharednav.common.util.NoneRoundShape
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 

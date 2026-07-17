@@ -52,7 +52,7 @@ profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
 # 聚在工大的底座/骨架，负责整个应用大部分的页面与浮窗管理、容器共享、与外界深度链接的交互等功能
-sharednav = "1.0.0-dev07121153"
+sharednav = "1.0.0-dev07171121"
 tesseract4android = "4.9.0"
 uiautomator = "2.3.0"
 # 非必要不建议动
@@ -123,7 +123,7 @@ bsdiff = { module = "com.github.Chiu-xaH:Bsdiff-Android-Library", version.ref = 
 glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }
-sharednav = { module = "com.github.Chiu-xaH:SharedNav", version.ref = "sharednav" }
+sharednav = { module = "com.github.Chiu-xaH.SharedNav:navigation-android", version.ref = "sharednav" }
 zxing = { module = "com.google.zxing:core", version.ref = "coreVersion" }
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }

@@ -30,7 +30,7 @@ import com.hfut.schedule.ui.nav.window.SchoolNetWindow
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.sharednav.common.util.NoneRoundShape
+import com.sharednav.common.helper.NoneRoundShape
 
 import com.xah.common.logic.util.safeDiv
 import com.xah.container.component.base.sharedContainer

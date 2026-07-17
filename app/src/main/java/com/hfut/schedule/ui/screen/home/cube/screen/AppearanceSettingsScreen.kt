@@ -125,7 +125,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.util.navigation.SharedNavEffect
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.sharednav.common.helper.AnimationSpecManager
+import com.sharednav.common.manager.AnimationSpecManager
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.slider.CustomSlider
@@ -137,7 +137,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.mask
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.util.pixelExtension
+import com.xah.container.util.shader.pixelExtension
 import com.xah.navigation.model.anim.EffectLevel
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -146,7 +146,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.roundToInt
 
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
