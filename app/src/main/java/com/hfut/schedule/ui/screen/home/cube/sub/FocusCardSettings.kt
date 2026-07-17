@@ -55,7 +55,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard

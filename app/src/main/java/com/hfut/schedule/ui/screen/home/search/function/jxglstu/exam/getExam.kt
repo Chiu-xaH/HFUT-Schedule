@@ -1,15 +1,12 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
 
-import android.annotation.SuppressLint
-
-import com.hfut.schedule.logic.model.community.ExamResponse
-import com.hfut.schedule.logic.model.community.examArrangementList
+import com.hfut.schedule.network.model.response.community.CommunityExamResponse
+import com.hfut.schedule.network.model.response.community.CommunityExamArrangement
 import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuExam
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -19,10 +16,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 // 废弃
-fun getExam() : List<examArrangementList> {
+fun getExam() : List<CommunityExamArrangement> {
     val json = prefs.getString("Exam","")
     try {
-        val result = GsonInstance.fromJson(json,ExamResponse::class.java)
+        val result = GsonInstance.fromJson(json,CommunityExamResponse::class.java)
         val list = result.result.examArrangementList
         return list
     } catch (e:Exception) {

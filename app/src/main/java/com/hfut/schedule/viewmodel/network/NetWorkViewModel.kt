@@ -37,23 +37,23 @@ import com.hfut.schedule.logic.model.SupabaseLoginResponse
 import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.XuanquResponse
-import com.hfut.schedule.logic.model.community.ApplyingLists
-import com.hfut.schedule.logic.model.community.AvgResult
-import com.hfut.schedule.logic.model.community.BookPositionBean
-import com.hfut.schedule.logic.model.community.BorrowRecords
-import com.hfut.schedule.logic.model.community.BusBean
-import com.hfut.schedule.logic.model.community.DormitoryBean
-import com.hfut.schedule.logic.model.community.DormitoryScoreBean
-import com.hfut.schedule.logic.model.community.DormitoryWeeklyScores
-import com.hfut.schedule.logic.model.community.DormitoryUser
-import com.hfut.schedule.logic.model.community.FailRateRecord
-import com.hfut.schedule.logic.model.community.GradeAllResult
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeResult
-import com.hfut.schedule.logic.model.community.LibRecord
-import com.hfut.schedule.logic.model.community.MapBean
-import com.hfut.schedule.logic.model.community.StuAppBean
-import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.network.model.response.community.CommunityApplyingFriendRecord
+import com.hfut.schedule.network.model.response.community.CommunityGradeAverage
+import com.hfut.schedule.network.model.response.community.CommunityBookPosition
+import com.hfut.schedule.network.model.response.community.CommunityBorrowRecord
+import com.hfut.schedule.network.model.response.community.CommunityBus
+import com.hfut.schedule.network.model.response.community.CommunityDormitory
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryScore
+import com.hfut.schedule.logic.model.DormitoryWeeklyScores
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryUser
+import com.hfut.schedule.network.model.response.community.CommunityFailRateRecord
+import com.hfut.schedule.network.model.response.community.CommunityGradeAll
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
+import com.hfut.schedule.network.model.response.community.CommunityGrade
+import com.hfut.schedule.network.model.response.community.CommunityLibraryRecord
+import com.hfut.schedule.network.model.response.community.CommunitySchoolMap
+import com.hfut.schedule.network.model.response.community.CommunityStuAppDetail
+import com.hfut.schedule.network.model.response.community.CommunityToday
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.huixin.BillMonth
@@ -112,8 +112,8 @@ import com.hfut.schedule.logic.network.repo.WxRepository
 import com.hfut.schedule.logic.network.repo.XwxRepository
 
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
@@ -485,7 +485,7 @@ class NetWorkViewModel() : ViewModel() {
     val dormitoryResult = UiStateHolder<List<XuanquResponse>>()
     suspend fun searchDormitoryXuanCheng(code : String) = OthersRepository.searchDormitoryXuanCheng(code,dormitoryResult)
 
-    val failRateData = UiStateHolder<Pair<String?,List<FailRateRecord>>>()
+    val failRateData = UiStateHolder<Pair<String?,List<CommunityFailRateRecord>>>()
     suspend fun searchFailRate(token : String, name: String, page : Int, code : String?) = CommunityRepository.searchFailRate(token,name,page,code,failRateData)
 
     val checkCommunityResponse = UiStateHolder<Boolean>()
@@ -494,53 +494,53 @@ class NetWorkViewModel() : ViewModel() {
     val examResponse = UiStateHolder<List<JxglstuExam>>()
     suspend fun getExamJXGLSTU(cookie: String) = JxglstuRepository.getExam(cookie,studentId,examResponse)
 
-    val gradeFromCommunityResponse = UiStateHolder<GradeResult>()
+    val gradeFromCommunityResponse = UiStateHolder<CommunityGrade>()
     suspend fun getGrade(token: String, year : String, term : String) = CommunityRepository.getGrade(token,year,term,gradeFromCommunityResponse)
 
-    val avgData = UiStateHolder<AvgResult>()
+    val avgData = UiStateHolder<CommunityGradeAverage>()
     suspend fun getAvgGrade(token: String) = CommunityRepository.getAvgGrade(token,avgData)
 
-    val allAvgData = UiStateHolder<List<GradeAllResult>>()
+    val allAvgData = UiStateHolder<List<CommunityGradeAll>>()
     suspend fun getAllAvgGrade(token: String) = CommunityRepository.getAllAvgGrade(token,allAvgData)
 
-    val libraryData = UiStateHolder<List<LibRecord>>()
+    val libraryData = UiStateHolder<List<CommunityLibraryRecord>>()
     suspend fun searchBooks(token: String, name: String, page: Int) = CommunityRepository.searchBooks(token,name,page,libraryData)
 
-    val bookPositionData = UiStateHolder<List<BookPositionBean>>()
+    val bookPositionData = UiStateHolder<List<CommunityBookPosition>>()
     suspend fun getBookPosition(token: String,callNo: String) = CommunityRepository.getBookPosition(token,callNo,bookPositionData)
 
     fun getCoursesFromCommunity(token : String, studentId: String? = null) = CommunityRepository.getCoursesFromCommunity(token,studentId)
 
     fun openFriend(token : String) = CommunityRepository.openFriend(token)
 
-    val dormitoryFromCommunityResp = UiStateHolder<DormitoryBean>()
+    val dormitoryFromCommunityResp = UiStateHolder<CommunityDormitory>()
     suspend fun getDormitory(token : String) = CommunityRepository.getDormitory(token,dormitoryFromCommunityResp)
 
-    val dormitoryInfoFromCommunityResp = UiStateHolder<List<DormitoryUser>>()
+    val dormitoryInfoFromCommunityResp = UiStateHolder<List<CommunityDormitoryUser>>()
     suspend fun getDormitoryInfo(token : String) = CommunityRepository.getDormitoryInfo(token,dormitoryFromCommunityResp,dormitoryInfoFromCommunityResp)
 
     val addFriendApplyResponse = UiStateHolder<String>()
     suspend fun addFriendApply(token : String, username : String) = CommunityRepository.addFriendApply(token,username,addFriendApplyResponse)
 
-    val applyFriendsResponse = UiStateHolder<List<ApplyingLists?>>()
+    val applyFriendsResponse = UiStateHolder<List<CommunityApplyingFriendRecord?>>()
     suspend fun getApplying(token : String) = CommunityRepository.getApplying(token,applyFriendsResponse)
 
-    val mapsResponse = UiStateHolder<List<MapBean>>()
+    val mapsResponse = UiStateHolder<List<CommunitySchoolMap>>()
     suspend fun getMaps(token : String) = CommunityRepository.getMaps(token,mapsResponse)
 
     val officeHallSearchResponse = UiStateHolder<List<OfficeHallSearchBean>>()
     suspend fun officeHallSearch(text : String, page : Int) = OthersRepository.officeHallSearch(text,page,officeHallSearchResponse)
 
-    val stuAppsResponse = UiStateHolder<List<StuAppBean>>()
+    val stuAppsResponse = UiStateHolder<List<CommunityStuAppDetail>>()
     suspend fun getStuApps(token : String) = CommunityRepository.getStuApps(token,stuAppsResponse)
 
-    val busResponse = UiStateHolder<List<BusBean>>()
+    val busResponse = UiStateHolder<List<CommunityBus>>()
     suspend fun getBus(token : String) = CommunityRepository.getBus(token,busResponse)
 
-    val booksChipData = UiStateHolder<List<BorrowRecords>>()
+    val booksChipData = UiStateHolder<List<CommunityBorrowRecord>>()
     suspend fun communityBooks(token : String,type : LibraryItems,page : Int = 1) = CommunityRepository.communityBooks(token,type,page,booksChipData)
 
-    val todayFormCommunityResponse = UiStateHolder<TodayResult>()
+    val todayFormCommunityResponse = UiStateHolder<CommunityToday>()
     suspend fun getToday(token : String) = CommunityRepository.getToday(token,todayFormCommunityResponse)
 
     fun getFriends(token : String) = CommunityRepository.getFriends(token)
@@ -586,7 +586,7 @@ class NetWorkViewModel() : ViewModel() {
     val getProgramByIdResp = UiStateHolder<ProgramSearchBean>()
     suspend fun getProgramById(id : Int, token: String, ) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
 
-    val dormitoryScoreResp = UiStateHolder<List<DormitoryScoreBean>>()
+    val dormitoryScoreResp = UiStateHolder<List<CommunityDormitoryScore>>()
     suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
 
     val allDormitoryScoresResp = UiStateHolder<DormitoryWeeklyScores>()

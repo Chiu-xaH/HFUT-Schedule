@@ -37,7 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
 import com.hfut.schedule.logic.util.network.MyApiParse.getCustomEvent
 import com.hfut.schedule.logic.util.network.MyApiParse.getNetCourse
 import com.hfut.schedule.logic.util.network.MyApiParse.getSchedule
@@ -130,8 +130,8 @@ fun TodayScreen(
     })
     val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     var lastTime by remember { mutableStateOf("00:00") }
-    var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
-    var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
+    var tomorrowCourseList by remember { mutableStateOf<List<CommunityCourseDetail>>(emptyList()) }
+    var todayCourseList by remember { mutableStateOf<List<CommunityCourseDetail>>(emptyList()) }
     var jxglstuLastTime by remember { mutableStateOf("00:00") }
     var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }

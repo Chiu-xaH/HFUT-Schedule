@@ -1,8 +1,8 @@
 package com.hfut.schedule.network.impl
 
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.allowAutoRedirect
-import com.hfut.schedule.network.util.timeoutMaxValue
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.allowAutoRedirect
+import com.hfut.schedule.network.helper.timeoutMaxValue
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

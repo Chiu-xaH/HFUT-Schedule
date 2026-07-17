@@ -8,8 +8,8 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseBookResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
@@ -38,8 +38,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.JxglstuService
 import com.hfut.schedule.network.impl.JxglstuServiceCreator
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime

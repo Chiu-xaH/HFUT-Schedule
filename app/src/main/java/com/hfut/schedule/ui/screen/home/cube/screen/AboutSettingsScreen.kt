@@ -46,7 +46,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider

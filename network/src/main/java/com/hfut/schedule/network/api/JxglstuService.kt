@@ -1,7 +1,7 @@
 package com.hfut.schedule.network.api
 
 import com.google.gson.JsonObject
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

@@ -6,12 +6,12 @@ import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
 import com.hfut.schedule.logic.model.QWeatherWarnBean
 import com.hfut.schedule.logic.model.QWeatherWarnResponse
-import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.model.StatusCode
 import com.hfut.schedule.network.api.QWeatherService
 import com.hfut.schedule.network.impl.QWeatherServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 
 object QWeatherRepository {

@@ -24,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 
@@ -71,7 +69,7 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
         val endDate = end.substringBefore(" ")
 
         DividerTextExpandedWith("学期",openBlurAnimation = false) {
-            LargeCard(title = xn + "学年 第${xq}学期") {
+            LargeCard(title = termYear + "学年 第${termPeriod}学期") {
                 Row {
                     TransplantListItem(
                         headlineContent = { Text(startDate) },
@@ -150,10 +148,10 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
                 }
             }
         }
-        if(courseBasicInfoDTOList.isNotEmpty()) {
+        if(basicInfoList.isNotEmpty()) {
             DividerTextExpandedWith("线下课程(智慧社区数据源)") {
-                courseBasicInfoDTOList.forEachIndexed { index, item ->
-                    val type = item.trainingCategoryName_dictText
+                basicInfoList.forEachIndexed { index, item ->
+                    val type = item.type
                     val str = type?.let { " | $it" } ?: ""
                     val id = item.courseId
                     CardListItem(

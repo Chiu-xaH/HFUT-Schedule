@@ -26,7 +26,7 @@ import com.hfut.schedule.network.impl.GiteeServiceCreator
 import com.hfut.schedule.network.impl.GithubRawServiceCreator
 import com.hfut.schedule.network.impl.GithubServiceCreator
 import com.hfut.schedule.network.impl.MyServiceCreator
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
 import com.hfut.schedule.ui.screen.home.search.function.other.life.RoomRect
 import okhttp3.Headers

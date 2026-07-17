@@ -4,12 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 
-import com.hfut.schedule.network.model.XwxDocPreviewRequest
+import com.hfut.schedule.network.model.request.XwxDocPreviewRequest
 import com.hfut.schedule.logic.model.xwx.XwxDocPreviewResponseBody
 import com.hfut.schedule.logic.model.xwx.XwxFunction
-import com.hfut.schedule.network.model.XwxFunctionsRequest
+import com.hfut.schedule.network.model.request.XwxFunctionsRequest
 import com.hfut.schedule.logic.model.xwx.XwxFunctionsResponseBody
-import com.hfut.schedule.network.model.XwxLoginRequest
+import com.hfut.schedule.network.model.request.XwxLoginRequest
 import com.hfut.schedule.logic.model.xwx.XwxLoginResponseBody
 import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
 import com.hfut.schedule.logic.model.xwx.XwxSchoolListResponseBody
@@ -20,7 +20,7 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

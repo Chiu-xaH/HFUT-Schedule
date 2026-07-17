@@ -22,7 +22,7 @@ import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import okhttp3.ResponseBody
 import retrofit2.Call

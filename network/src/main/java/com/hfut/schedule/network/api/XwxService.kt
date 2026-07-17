@@ -1,9 +1,9 @@
 package com.hfut.schedule.network.api
 
-import com.hfut.schedule.network.model.XwxDocPreviewRequest
-import com.hfut.schedule.network.model.XwxFunctionsRequest
-import com.hfut.schedule.network.model.XwxLoginRequest
-import com.hfut.schedule.network.model.XwxSchoolListRequest
+import com.hfut.schedule.network.model.request.XwxDocPreviewRequest
+import com.hfut.schedule.network.model.request.XwxFunctionsRequest
+import com.hfut.schedule.network.model.request.XwxLoginRequest
+import com.hfut.schedule.network.model.request.XwxSchoolListRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body

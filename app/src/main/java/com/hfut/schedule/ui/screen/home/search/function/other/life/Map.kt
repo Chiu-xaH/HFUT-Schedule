@@ -53,7 +53,7 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
             val list = (uiState as NetworkUiState.Success).data
             // 从list里取出符合条件的一项
             val bean = list.find { it.name.contains(campus.description) } ?: return@CommonNetworkScreen
-            val cUrl = bean.currentMap
+            val cUrl = bean.imageUrl
             Column {
                 RowHorizontal {
                     UrlImage(

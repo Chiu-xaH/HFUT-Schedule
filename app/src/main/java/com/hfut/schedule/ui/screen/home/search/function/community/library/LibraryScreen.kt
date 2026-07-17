@@ -65,7 +65,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -380,7 +380,7 @@ private fun DetailBookUI(vm: NetWorkViewModel, callNo : String) {
             LazyColumn {
                 items(list.size) { index ->
                     val item = list[index]
-                    val status = item.status_dictText
+                    val status = item.status
                     CardListItem(
                         headlineContent = {
                             Text(item.place)

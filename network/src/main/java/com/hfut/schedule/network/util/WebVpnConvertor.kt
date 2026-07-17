@@ -1,5 +1,6 @@
 package com.hfut.schedule.network.util
 
+import com.hfut.schedule.network.helper.Constant
 import com.xah.common.logic.util.LogUtil
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec

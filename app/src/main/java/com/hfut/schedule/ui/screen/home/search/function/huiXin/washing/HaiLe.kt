@@ -45,7 +45,7 @@ import com.hfut.schedule.logic.model.HaiLeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor

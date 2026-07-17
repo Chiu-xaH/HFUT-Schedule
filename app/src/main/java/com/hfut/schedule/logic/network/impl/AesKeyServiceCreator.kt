@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.network.impl
 
 import com.hfut.schedule.logic.network.interceptor.AesKeyInterceptor
 import com.hfut.schedule.network.impl.base.BaseServiceCreator
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import okhttp3.OkHttpClient
 
 object AesKeyServiceCreator : BaseServiceCreator(

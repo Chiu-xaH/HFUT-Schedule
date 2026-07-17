@@ -20,13 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.xah.common.logic.state.NetworkUiState
@@ -55,7 +52,6 @@ import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -174,10 +170,10 @@ fun DormitoryScoreScreen(
                                         for(i in data2) {
                                             TransplantListItem(
                                                 headlineContent = {
-                                                    Text(i.realname + " | " + i.username)
+                                                    Text(i.name + " | " + i.studentId)
                                                 },
                                                 modifier = Modifier.clickable {
-                                                    ClipBoardHelper.copy(i.username)
+                                                    ClipBoardHelper.copy(i.studentId)
                                                 },
                                                 overlineContent = { Text("寝室成员") },
                                                 leadingContent = {

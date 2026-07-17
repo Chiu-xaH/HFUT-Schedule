@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.student
 
+import android.content.Context
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -37,12 +38,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.getTodayCampusApps
+import com.hfut.schedule.logic.model.TodayCampusApp
+import com.hfut.schedule.logic.model.TodayCampusAppResponse
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.StartAppIconButton
@@ -54,7 +57,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.StuTodayCampusDestination
@@ -64,6 +66,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -72,6 +75,7 @@ import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -227,7 +231,7 @@ fun StuAppsScreen(
                             if(url == null) {
                                 return@with
                             }
-                            val route = WebViewDestination.getKey(url)
+                            val route = WebViewDestination.getKey(url!!)
                             SmallCard(
                                 color = cardNormalColor(),
                                 modifier = Modifier
@@ -241,7 +245,7 @@ fun StuAppsScreen(
                                     headlineContent = { ScrollText(name) },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebUrlInner(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                            Starter.startWebUrlInner(context, url!!, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                         }
                                     }
                                 )
@@ -326,7 +330,7 @@ fun StuAppsScreen(
                                     if(url == null) {
                                         return@with
                                     }
-                                    val route = WebViewDestination.getKey(url)
+                                    val route = WebViewDestination.getKey(url!!)
                                     SmallCard(
                                         color = cardNormalColor(),
                                         modifier = Modifier
@@ -341,7 +345,7 @@ fun StuAppsScreen(
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
                                                 scope.launch {
-                                                    Starter.startWebUrlInner(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                                    Starter.startWebUrlInner(context,url!!, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                 }
                                             }
                                         )
@@ -353,7 +357,7 @@ fun StuAppsScreen(
                                         if(url == null) {
                                             return@with
                                         }
-                                        val route = WebViewDestination.getKey(url)
+                                        val route = WebViewDestination.getKey(url!!)
                                         SmallCard(
                                             color = cardNormalColor(),
                                             modifier = Modifier
@@ -368,7 +372,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebUrlInner(context,url, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
+                                                        Starter.startWebUrlInner(context,url!!, title = name, cookie =cookie, icon = StuTodayCampusDestination.icon)
                                                     }
                                                 }
                                             )
@@ -384,6 +388,20 @@ fun StuAppsScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
+    }
+}
+
+private fun getTodayCampusApps(context: Context) : List<TodayCampusApp> {
+    try {
+        val json = with(Dispatchers.IO) {
+            context.assets.open("stu.json").bufferedReader().use { it.readText() }
+        }
+        return with(Dispatchers.Default) {
+            GsonInstance.fromJson(json, TodayCampusAppResponse::class.java).list
+        }
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return emptyList()
     }
 }
 

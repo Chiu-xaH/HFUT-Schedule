@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.model.uniapp
 import android.accessibilityservice.GestureDescription
 import com.hfut.schedule.logic.enumeration.Campus
 
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 
 data class UniAppEmptyClassroomResponse(
     val data : UniAppEmptyClassroomData

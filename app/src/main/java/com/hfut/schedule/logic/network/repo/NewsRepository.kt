@@ -14,7 +14,7 @@ import com.hfut.schedule.network.impl.AcademicServiceCreator
 import com.hfut.schedule.network.impl.AcademicXCServiceCreator
 import com.hfut.schedule.network.impl.NewsServiceCreator
 import com.hfut.schedule.network.impl.XuanChengServiceCreator
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.network.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData

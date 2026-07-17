@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.model
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.network.model.HaiLeNearPositionRequest
+import com.hfut.schedule.network.model.request.HaiLeNearPositionRequest
 
 enum class HaiLeType(val typeCode : String,val description: String) {
     WASHING_MACHINE("00","洗衣"),

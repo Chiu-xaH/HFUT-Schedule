@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.report
 
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
 
 data class ReportGradeItem(

@@ -55,9 +55,9 @@ import com.hfut.schedule.network.impl.StuServiceCreator
 import com.hfut.schedule.network.impl.TeacherServiceCreator
 import com.hfut.schedule.network.impl.WorkServiceCreator
 import com.hfut.schedule.network.impl.ZhiJianServiceCreator
-import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.flow.first

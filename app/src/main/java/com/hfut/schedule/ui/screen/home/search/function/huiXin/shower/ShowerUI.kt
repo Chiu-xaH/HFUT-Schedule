@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.shower
 
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -62,8 +61,8 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem

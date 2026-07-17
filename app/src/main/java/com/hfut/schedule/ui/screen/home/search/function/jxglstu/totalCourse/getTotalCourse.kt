@@ -1,26 +1,18 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-
-import com.hfut.schedule.logic.model.community.CourseResult
-import com.hfut.schedule.logic.model.community.CourseTotalResponse
-import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.network.model.response.community.CommunityTotalCourse
+import com.hfut.schedule.network.model.response.community.CommunityTotalCourseResponse
+import com.hfut.schedule.network.model.response.community.CommunityCourseBasicInfo
+import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.util.network.MyApiParse
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.xah.common.logic.util.LogUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 private fun parseDatumCourse(result: String) : List<lessons> = try {
@@ -61,29 +53,28 @@ suspend fun updateStartDate(json : String) {
 
 
 // 之前的奇葩脑回路，完全看不懂咋写的
-private fun getCourse(friendUserName : String? = null): List<courseBasicInfoDTOList>  {
+private fun getCourse(friendUserName : String? = null): List<CommunityCourseBasicInfo>  {
     return try {
-        getFormCommunity(friendUserName)!!.courseBasicInfoDTOList
+        getFormCommunity(friendUserName)!!.basicInfoList
     } catch (e:Exception) {
         LogUtil.error(e)
         emptyList()
     }
 }
 
-fun getCoursesFromCommunity(targetWeek : Int, friendUserName : String? = null) : List<List<MutableList<courseDetailDTOList>>> {
-    val dayArray : List<List<MutableList<courseDetailDTOList>>> = List(7) { List(12) { mutableListOf<courseDetailDTOList>() } }
+fun getCoursesFromCommunity(targetWeek : Int, friendUserName : String? = null) : List<List<MutableList<CommunityCourseDetail>>> {
+    val dayArray : List<List<MutableList<CommunityCourseDetail>>> = List(7) { List(12) { mutableListOf<CommunityCourseDetail>() } }
     val result = getCourse(friendUserName)
     for (i in result.indices){
         val name = result[i].courseName
-        val list = result[i].courseDetailDTOList
+        val list = result[i].detailList
         for(j in list.indices) {
             val section = list[j].section
             val weekCount = list[j].weekCount
             val week = list[j].week
             weekCount.forEach { item ->
                 if(item == targetWeek) {
-                    list[j].name = name
-                    dayArray[week - 1][section - 1].add(list[j])
+                    dayArray[week - 1][section - 1].add(list[j].copy(name = name))
                 }
             }
         }
@@ -92,8 +83,8 @@ fun getCoursesFromCommunity(targetWeek : Int, friendUserName : String? = null) :
 }
 
 // weekday 周几 week 第几周 friendUserName 好友课表学号 空为自己课表
-fun getCourseInfoFromCommunity(weekday : Int, week : Int, friendUserName : String? = null) : List<List<courseDetailDTOList>> {
-    val result = mutableListOf<List<courseDetailDTOList>>()
+fun getCourseInfoFromCommunity(weekday : Int, week : Int, friendUserName : String? = null) : List<List<CommunityCourseDetail>> {
+    val result = mutableListOf<List<CommunityCourseDetail>>()
     return try {
         if(weekday <= 7) {
             val days = getCoursesFromCommunity(week,friendUserName)[weekday - 1]
@@ -111,10 +102,10 @@ fun getCourseInfoFromCommunity(weekday : Int, week : Int, friendUserName : Strin
 
 
 
-fun getFormCommunity(friendUserName : String? = null): CourseResult? {
+fun getFormCommunity(friendUserName : String? = null): CommunityTotalCourse? {
     val json = prefs.getString(if(friendUserName == null) "Course" else "Course${friendUserName}",null)
     return try {
-        GsonInstance.fromJson(json, CourseTotalResponse::class.java).result
+        GsonInstance.fromJson(json, CommunityTotalCourseResponse::class.java).result
     } catch (e:Exception) {
         LogUtil.error(e)
         null

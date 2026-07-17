@@ -20,7 +20,7 @@ import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.network.util.WebVpnConvertor
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination

@@ -22,8 +22,8 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.HuiXinService
 import com.hfut.schedule.network.impl.HuiXinServiceCreator
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 import com.xah.forecast.getConsumptionResult
 import com.xah.forecast.model.network.BillBean
 import com.xah.forecast.model.network.BillResponse

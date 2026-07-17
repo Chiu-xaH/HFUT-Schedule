@@ -15,8 +15,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.WxService
 import com.hfut.schedule.network.impl.WxServiceCreator
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 
 object WxRepository {
     private val wx = WxServiceCreator.create(WxService::class.java)

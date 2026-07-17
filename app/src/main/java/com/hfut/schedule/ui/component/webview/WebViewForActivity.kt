@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.ui.util.webview.WebViewBackHandler
 import com.hfut.schedule.ui.util.webview.WebViewBackIcon
 import com.hfut.schedule.ui.util.webview.WebViewContent

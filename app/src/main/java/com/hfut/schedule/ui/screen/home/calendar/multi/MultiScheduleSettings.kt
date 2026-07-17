@@ -21,7 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -71,7 +70,6 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
-import com.xah.navigation.anim.effect.ScaleTransitionEffect
 import com.xah.navigation.anim.effect.TinyScaleTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
@@ -200,7 +198,7 @@ fun MultiScheduleSettings(
                         .combinedClickable(
                             onClick = {
                                 //点击加载好友课表
-                                val studentId = friendList[item]?.userId
+                                val studentId = friendList[item]?.studentId
                                 studentId?.let { getFriendsCourse(it, vm) }
                                 if (studentId != null) {
                                     onSelectedChange(studentId.toInt())
@@ -210,14 +208,14 @@ fun MultiScheduleSettings(
                                 //s删除
                             }
                         ),
-                    colors = if(select.toString() == (friendList[item]?.userId ?: 999)) selectedColor else normalColor
+                    colors = if(select.toString() == (friendList[item]?.studentId ?: 999)) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        friendList[item]?.realname?.let {
+                        friendList[item]?.name?.let {
                             Text(
                                 it,
                                 modifier = Modifier.align(Alignment.Center),
-                                fontWeight = if(select.toString() == (friendList[item]?.userId ?: 999)) FontWeight.Bold else FontWeight.Light
+                                fontWeight = if(select.toString() == (friendList[item]?.studentId ?: 999)) FontWeight.Bold else FontWeight.Light
                             )
                         }
                     }

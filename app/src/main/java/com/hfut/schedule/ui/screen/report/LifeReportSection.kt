@@ -121,7 +121,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                             headlineContent = { Text("${users.size}人", style = MaterialTheme.typography.titleMedium) }
                         )
                         users.forEach { user ->
-                            TransplantListItem(headlineContent = { Text(user.realname) }, supportingContent = { Text(user.username) })
+                            TransplantListItem(headlineContent = { Text(user.name) }, supportingContent = { Text(user.studentId) })
                         }
                     }
                 }

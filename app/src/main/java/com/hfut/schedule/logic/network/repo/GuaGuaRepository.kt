@@ -11,7 +11,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.GuaGuaService
 import com.hfut.schedule.network.impl.GuaGuaServiceCreator
 import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
 import okhttp3.ResponseBody
 import retrofit2.Call

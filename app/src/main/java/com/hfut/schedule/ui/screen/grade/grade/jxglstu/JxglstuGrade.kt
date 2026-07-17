@@ -58,8 +58,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPALevel
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.UniAppRepository

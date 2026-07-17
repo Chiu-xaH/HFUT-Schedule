@@ -22,13 +22,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
@@ -37,24 +36,21 @@ import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +60,7 @@ import kotlinx.coroutines.withContext
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false) {
+fun DetailInfos(sheet : CommunityCourseDetail, isFriend : Boolean = false) {
     val navController = LocalNavController.current
 
     LazyColumn {
@@ -100,7 +96,7 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false) {
                             }
                         )
                         TransplantListItem(
-                            headlineContent = { Text(sheet.campus_dictText ) },
+                            headlineContent = { Text(sheet.campus ) },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.local_library),

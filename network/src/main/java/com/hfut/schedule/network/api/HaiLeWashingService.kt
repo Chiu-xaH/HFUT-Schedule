@@ -1,7 +1,7 @@
 package com.hfut.schedule.network.api
 
-import com.hfut.schedule.network.model.HaiLeDeviceDetailRequest
-import com.hfut.schedule.network.model.HaiLeNearPositionRequest
+import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.model.request.HaiLeNearPositionRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body

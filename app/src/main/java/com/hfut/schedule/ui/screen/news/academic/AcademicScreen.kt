@@ -28,7 +28,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.AcademicType
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.common.ui.style.padding.navigationBarHeightPadding

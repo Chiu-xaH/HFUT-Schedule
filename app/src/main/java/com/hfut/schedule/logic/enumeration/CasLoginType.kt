@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.enumeration
 
 import com.hfut.schedule.logic.util.network.encodeUrl
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 
 // 使用CAS统一认证登陆 还有一种OAuth2登录，慧新易校用
 enum class CasLoginType(val service : String?, val description: String) {

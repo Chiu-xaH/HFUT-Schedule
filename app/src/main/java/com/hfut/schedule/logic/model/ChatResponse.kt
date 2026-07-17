@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.model
 
 import com.google.gson.annotations.SerializedName
-import com.hfut.schedule.network.model.ChatMsg
+import com.hfut.schedule.network.model.request.chat.ChatMsg
 
 data class ChatResponse(
     val usage : ChatUsageBean,

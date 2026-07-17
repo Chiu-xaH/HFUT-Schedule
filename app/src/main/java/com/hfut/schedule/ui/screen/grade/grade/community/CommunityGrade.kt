@@ -141,7 +141,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
             val context = LocalContext.current
             val bean = (uiState as NetworkUiState.Success).data
-            val list = bean.scoreInfoDTOList
+            val list = bean.scoreInfoList
             if(list.isEmpty()) EmptyIcon()
             else {
                 LazyColumn {

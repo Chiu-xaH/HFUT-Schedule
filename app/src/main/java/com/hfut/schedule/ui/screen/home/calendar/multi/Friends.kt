@@ -32,10 +32,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.FriendsList
-import com.hfut.schedule.logic.model.community.FriendsResopnse
+import com.hfut.schedule.network.model.response.community.CommunityFriend
+import com.hfut.schedule.network.model.response.community.CommunityFriendResponse
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.component.text.BottomTip
@@ -46,17 +45,17 @@ import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
-fun getFriendsList() : List<FriendsList?> {
+fun getFriendsList() : List<CommunityFriend?> {
     return try {
         val json = prefs.getString("feiends","")
 
-        val data = GsonInstance.fromJson(json,FriendsResopnse::class.java)
+        val data = GsonInstance.fromJson(json,CommunityFriendResponse::class.java)
         if(data.success) {
             data.result
         } else {
@@ -189,9 +188,9 @@ fun FriendsSetting(vm : NetWorkViewModel) {
 //        MyCustomCard {
             for(i in friendList.indices) {
                 CardListItem(
-                    headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
+                    headlineContent = { friendList[i]?.let { Text(text = it.name) } },
                     leadingContent = { Icon(painterResource(id = R.drawable.person), contentDescription = "")},
-                    overlineContent = { friendList[i]?.let { Text(text = it.userId) }},
+                    overlineContent = { friendList[i]?.let { Text(text = it.studentId) }},
                     trailingContent = {
                         FilledTonalIconButton(onClick = {
                             showToast("正在开发")
@@ -210,9 +209,9 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             Column {
                 for(i in applyList.indices) {
                     CardListItem(
-                        headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
+                        headlineContent = { applyList[i]?.let { ScrollText(text = it.name) } },
                         leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
-                        overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
+                        overlineContent = { applyList[i]?.let { Text(text = it.studentId) } },
                         trailingContent = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 FilledTonalButton(onClick = {

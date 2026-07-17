@@ -12,8 +12,8 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.api.LoginService
 import com.hfut.schedule.network.impl.LoginGetCookieServiceCreator
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import okhttp3.Headers
 import org.jsoup.Jsoup

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,9 +18,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.courseFailRateDTOList
+import com.hfut.schedule.network.model.response.community.CommunityCourseFailRate
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -54,7 +52,7 @@ fun FailRateUI(
     val listState = rememberLazyListState()
     val list = (uiState as NetworkUiState.Success).data.second.let {
         filterCode?.let { _ ->
-            it.filter { record -> record.courseMetaId == filterCode }
+            it.filter { record -> record.courseCode == filterCode }
         } ?: it
     }
     Box(modifier = Modifier.fillMaxSize()) {
@@ -68,7 +66,7 @@ fun FailRateUI(
                 item { InnerPaddingHeight(innerPadding,true) }
                 items(list.size){ item ->
                     val bean = list[item]
-                    val dest = FailRateDetailDestination(bean.courseName,bean.courseMetaId,bean.courseFailRateDTOList)
+                    val dest = FailRateDetailDestination(bean.courseName,bean.courseCode,bean.courseFailRateList)
                     CardListItem(
                         cardModifier = Modifier.sharedContainer(
                             key = dest.key,
@@ -76,7 +74,7 @@ fun FailRateUI(
                             containerColor = cardNormalColor()
                         ),
                         shape = NoneRoundShape,
-                        overlineContent = { Text(list[item].courseMetaId)},
+                        overlineContent = { Text(list[item].courseCode)},
                         headlineContent = {  Text(list[item].courseName) },
                         leadingContent = { Icon(painterResource(FailRateDestination.icon), contentDescription = "Localized description",) },
                         modifier = Modifier.clickable {
@@ -98,7 +96,7 @@ fun FailRateUI(
 @Composable
 fun FailRateDetailScreen(
     innerPadding : PaddingValues,
-    detailList : List<courseFailRateDTOList>
+    detailList : List<CommunityCourseFailRate>
 ) {
     LazyColumn {
         item { InnerPaddingHeight(innerPadding,true) }
@@ -108,7 +106,7 @@ fun FailRateDetailScreen(
             CardListItem(
                 headlineContent = {  Text("平均分 ${dataItem.avgScore}") },
                 supportingContent = { Text("人数: 挂科 ${dataItem.failCount} | 总 ${dataItem.totalCount}") },
-                overlineContent = { Text(text = "${dataItem.xn}年 第${dataItem.xq}学期")},
+                overlineContent = { Text(text = "${dataItem.termYear}年 第${dataItem.termPeriod}学期")},
                 leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                 trailingContent = { Text("挂科率 ${String.format("%.2f", rate)} %") },
             )

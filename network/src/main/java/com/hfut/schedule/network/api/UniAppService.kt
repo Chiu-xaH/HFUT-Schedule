@@ -1,8 +1,8 @@
 package com.hfut.schedule.network.api
 
-import com.hfut.schedule.network.model.UniAppEmptyClassroomRequest
-import com.hfut.schedule.network.model.UniAppSearchProgramRequest
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.model.request.UniAppEmptyClassroomRequest
+import com.hfut.schedule.network.model.request.UniAppSearchProgramRequest
+import com.hfut.schedule.network.helper.Constant
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body

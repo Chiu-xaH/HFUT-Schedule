@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.courseFailRateDTOList
+import com.hfut.schedule.network.model.response.community.CommunityCourseFailRate
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateDetailScreen
@@ -27,7 +27,7 @@ import dev.chrisbanes.haze.rememberHazeState
 data class FailRateDetailDestination(
     val courseName : String,
     val lessonId : String,
-    val bean : List<courseFailRateDTOList>
+    val bean : List<CommunityCourseFailRate>
 ) : NavDestination() {
     override val key = "fail_rate_detail_${courseName}_${lessonId}"
     override val description = courseName

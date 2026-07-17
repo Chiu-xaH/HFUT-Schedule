@@ -16,7 +16,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.OneService
 import com.hfut.schedule.network.impl.OneServiceCreator
 import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail

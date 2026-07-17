@@ -3,40 +3,40 @@ package com.hfut.schedule.logic.network.repo
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
-import com.hfut.schedule.logic.model.community.ApplyFriendResponse
-import com.hfut.schedule.logic.model.community.ApplyingLists
-import com.hfut.schedule.logic.model.community.ApplyingResponse
-import com.hfut.schedule.logic.model.community.AvgResult
-import com.hfut.schedule.logic.model.community.BookPositionBean
-import com.hfut.schedule.logic.model.community.BookPositionResponse
-import com.hfut.schedule.logic.model.community.BorrowRecords
-import com.hfut.schedule.logic.model.community.BorrowResponse
-import com.hfut.schedule.logic.model.community.BusBean
-import com.hfut.schedule.logic.model.community.BusResponse
-import com.hfut.schedule.logic.model.community.DormitoryBean
-import com.hfut.schedule.logic.model.community.DormitoryInfoResponse
-import com.hfut.schedule.logic.model.community.DormitoryResponse
-import com.hfut.schedule.logic.model.community.DormitoryScoreBean
-import com.hfut.schedule.logic.model.community.DormitoryScoreResponse
-import com.hfut.schedule.logic.model.community.DormitoryUser
-import com.hfut.schedule.logic.model.community.DormitoryWeeklyScores
-import com.hfut.schedule.logic.model.community.WeekScore
-import com.hfut.schedule.logic.model.community.FailRateRecord
-import com.hfut.schedule.logic.model.community.FailRateResponse
-import com.hfut.schedule.logic.model.community.GradeAllResponse
-import com.hfut.schedule.logic.model.community.GradeAllResult
-import com.hfut.schedule.logic.model.community.GradeAvgResponse
-import com.hfut.schedule.logic.model.community.GradeResponse
-import com.hfut.schedule.logic.model.community.GradeResult
-import com.hfut.schedule.logic.model.community.LibRecord
-import com.hfut.schedule.logic.model.community.LibraryResponse
-import com.hfut.schedule.logic.model.community.LoginCommunityResponse
-import com.hfut.schedule.logic.model.community.MapBean
-import com.hfut.schedule.logic.model.community.MapResponse
-import com.hfut.schedule.logic.model.community.StuAppBean
-import com.hfut.schedule.logic.model.community.StuAppsResponse
-import com.hfut.schedule.logic.model.community.TodayResponse
-import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.network.model.response.community.CommunityApplyFriendResponse
+import com.hfut.schedule.network.model.response.community.CommunityApplyingFriendRecord
+import com.hfut.schedule.network.model.response.community.CommunityApplyingFriendResponse
+import com.hfut.schedule.network.model.response.community.CommunityGradeAverage
+import com.hfut.schedule.network.model.response.community.CommunityBookPosition
+import com.hfut.schedule.network.model.response.community.CommunityBookPositionResponse
+import com.hfut.schedule.network.model.response.community.CommunityBorrowRecord
+import com.hfut.schedule.network.model.response.community.CommunityBorrowResponse
+import com.hfut.schedule.network.model.response.community.CommunityBus
+import com.hfut.schedule.network.model.response.community.CommunityBusResponse
+import com.hfut.schedule.network.model.response.community.CommunityDormitory
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryInfoResponse
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryResponse
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryScore
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryScoreResponse
+import com.hfut.schedule.network.model.response.community.CommunityDormitoryUser
+import com.hfut.schedule.logic.model.DormitoryWeeklyScores
+import com.hfut.schedule.logic.model.WeekScore
+import com.hfut.schedule.network.model.response.community.CommunityFailRateRecord
+import com.hfut.schedule.network.model.response.community.CommunityFailRateResponse
+import com.hfut.schedule.network.model.response.community.CommunityGradeAllResponse
+import com.hfut.schedule.network.model.response.community.CommunityGradeAll
+import com.hfut.schedule.network.model.response.community.CommunityGradeAverageResponse
+import com.hfut.schedule.network.model.response.community.CommunityGradeResponse
+import com.hfut.schedule.network.model.response.community.CommunityGrade
+import com.hfut.schedule.network.model.response.community.CommunityLibraryRecord
+import com.hfut.schedule.network.model.response.community.CommunityLibraryResponse
+import com.hfut.schedule.network.model.response.community.CommunityLoginResponse
+import com.hfut.schedule.network.model.response.community.CommunitySchoolMap
+import com.hfut.schedule.network.model.response.community.CommunitySchoolMapResponse
+import com.hfut.schedule.network.model.response.community.CommunityStuAppDetail
+import com.hfut.schedule.network.model.response.community.CommunityStuAppResponse
+import com.hfut.schedule.network.model.response.community.CommunityTodayResponse
+import com.hfut.schedule.network.model.response.community.CommunityToday
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -47,9 +47,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.hfut.schedule.network.api.CommunityService
 import com.hfut.schedule.network.impl.CommunityServiceCreator
-import com.hfut.schedule.network.util.Constant
-import com.hfut.schedule.network.util.GsonInstance
-import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.model.StatusCode
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -69,7 +69,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseCommunity(json : String) : String = try {
         if (json.contains(StatusCode.OK.code.toString())) {
-            val token = GsonInstance.fromJson(json, LoginCommunityResponse::class.java).result.token!!
+            val token = GsonInstance.fromJson(json, CommunityLoginResponse::class.java).result.token!!
             SharedPrefs.saveString("TOKEN", token)
             showToast("智慧社区登陆成功")
             token
@@ -82,7 +82,7 @@ object CommunityRepository {
         throw e
     }
 
-    suspend fun searchFailRate(token : String, name: String, page : Int,code : String?,holder : UiStateHolder<Pair<String?,List<FailRateRecord>>>) =
+    suspend fun searchFailRate(token : String, name: String, page : Int,code : String?,holder : UiStateHolder<Pair<String?,List<CommunityFailRateRecord>>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -95,9 +95,9 @@ object CommunityRepository {
             transformSuccess = { _, json -> Pair(code,parseFailRate(json)) }
         )
     @JvmStatic
-    private fun parseFailRate(json : String) : List<FailRateRecord> = try {
+    private fun parseFailRate(json : String) : List<CommunityFailRateRecord> = try {
         if(json.contains("操作成功")) {
-            GsonInstance.fromJson(json, FailRateResponse::class.java).result.records
+            GsonInstance.fromJson(json, CommunityFailRateResponse::class.java).result.records
         } else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -109,48 +109,48 @@ object CommunityRepository {
             transformSuccess = { _, _ -> true }
         )
 
-    suspend fun getGrade(token: String, year : String, term : String,holder : UiStateHolder<GradeResult>) =
+    suspend fun getGrade(token: String, year : String, term : String,holder : UiStateHolder<CommunityGrade>) =
         launchRequestState(
             holder = holder,
             request = { community.getGrade(token, year, term) },
             transformSuccess = { _, json -> parseGradeFromCommunity(json) }
         )
     @JvmStatic
-    private fun parseGradeFromCommunity(json : String) : GradeResult = try {
+    private fun parseGradeFromCommunity(json : String) : CommunityGrade = try {
         if(json.contains("success"))
-            GsonInstance.fromJson(json, GradeResponse::class.java).result
+            GsonInstance.fromJson(json, CommunityGradeResponse::class.java).result
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAvgGrade(token: String,holder : UiStateHolder<AvgResult>) = launchRequestState(
+    suspend fun getAvgGrade(token: String,holder : UiStateHolder<CommunityGradeAverage>) = launchRequestState(
         holder = holder,
         request = { community.getAvgGrade(token) },
         transformSuccess = { _, json -> parseAvgGradeFromCommunity(json) }
     )
     @JvmStatic
-    private fun parseAvgGradeFromCommunity(result : String) : AvgResult = try {
+    private fun parseAvgGradeFromCommunity(result : String) : CommunityGradeAverage = try {
         if(result.contains("success"))
-            GsonInstance.fromJson(result, GradeAvgResponse::class.java).result
+            GsonInstance.fromJson(result, CommunityGradeAverageResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAllAvgGrade(token: String,holder : UiStateHolder<List<GradeAllResult>>) =
+    suspend fun getAllAvgGrade(token: String,holder : UiStateHolder<List<CommunityGradeAll>>) =
         launchRequestState(
             holder = holder,
             request = { community.getAllAvgGrade(token) },
             transformSuccess = { _, json -> parseAllAvgGradeFromCommunity(json) }
         )
     @JvmStatic
-    private fun parseAllAvgGradeFromCommunity(result : String) : List<GradeAllResult> = try {
+    private fun parseAllAvgGradeFromCommunity(result : String) : List<CommunityGradeAll> = try {
         if(result.contains("success"))
-            GsonInstance.fromJson(result, GradeAllResponse::class.java).result
+            GsonInstance.fromJson(result, CommunityGradeAllResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchBooks(token: String, name: String, page: Int,holder : UiStateHolder<List<LibRecord>>) =
+    suspend fun searchBooks(token: String, name: String, page: Int,holder : UiStateHolder<List<CommunityLibraryRecord>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -163,23 +163,23 @@ object CommunityRepository {
             transformSuccess = { _, json -> parseSearchBooks(json) }
         )
     @JvmStatic
-    private fun parseSearchBooks(json : String) : List<LibRecord> = try {
+    private fun parseSearchBooks(json : String) : List<CommunityLibraryRecord> = try {
         if(json.contains("操作成功"))
-            GsonInstance.fromJson(json, LibraryResponse::class.java).result.records
+            GsonInstance.fromJson(json, CommunityLibraryResponse::class.java).result.records
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getBookPosition(token: String,callNo: String,holder : UiStateHolder<List<BookPositionBean>>) =
+    suspend fun getBookPosition(token: String,callNo: String,holder : UiStateHolder<List<CommunityBookPosition>>) =
         launchRequestState(
             holder = holder,
             request = { community.getBookPosition(token, callNo) },
             transformSuccess = { _, json -> parseBookPosition(json) }
         )
     @JvmStatic
-    private fun parseBookPosition(json : String) : List<BookPositionBean> = try {
+    private fun parseBookPosition(json : String) : List<CommunityBookPosition> = try {
         if(json.contains("成功"))
-            GsonInstance.fromJson(json, BookPositionResponse::class.java).result
+            GsonInstance.fromJson(json, CommunityBookPositionResponse::class.java).result
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -207,22 +207,22 @@ object CommunityRepository {
         })
     }
 
-    suspend fun getDormitory(token : String,holder : UiStateHolder<DormitoryBean>) =
+    suspend fun getDormitory(token : String,holder : UiStateHolder<CommunityDormitory>) =
         launchRequestState(
             holder = holder,
             request = { community.getDormitory(token) },
             transformSuccess = { _, json -> parseDormitory(json) }
         )
     @JvmStatic
-    private fun parseDormitory(result : String) : DormitoryBean = try {
+    private fun parseDormitory(result : String) : CommunityDormitory = try {
         if (result.contains("操作成功")) {
-            GsonInstance.fromJson(result, DormitoryResponse::class.java).result ?: throw Exception("无住宿信息")
+            GsonInstance.fromJson(result, CommunityDormitoryResponse::class.java).result ?: throw Exception("无住宿信息")
         }
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getDormitoryInfo(token : String, dormitoryFromCommunityResp : UiStateHolder<DormitoryBean>, dormitoryInfoFromCommunityResp : UiStateHolder<List<DormitoryUser>>) =
+    suspend fun getDormitoryInfo(token : String, dormitoryFromCommunityResp : UiStateHolder<CommunityDormitory>, dormitoryInfoFromCommunityResp : UiStateHolder<List<CommunityDormitoryUser>>) =
         onListenStateHolderForNetwork(
             dormitoryFromCommunityResp,
             dormitoryInfoFromCommunityResp
@@ -236,9 +236,9 @@ object CommunityRepository {
             )
         }
     @JvmStatic
-    private fun parseDormitoryInfo(result : String) : List<DormitoryUser> = try {
+    private fun parseDormitoryInfo(result : String) : List<CommunityDormitoryUser> = try {
         if (result.contains("操作成功")) {
-            val list1 = GsonInstance.fromJson(result, DormitoryInfoResponse::class.java).result?.profileList ?: throw Exception("未查询到宿舍")
+            val list1 = GsonInstance.fromJson(result, CommunityDormitoryInfoResponse::class.java).result?.profileList ?: throw Exception("未查询到宿舍")
             list1.flatMap { it.userList }.distinct()
         }
         else
@@ -257,12 +257,12 @@ object CommunityRepository {
     @JvmStatic
     private fun parseApplyFriend(result : String) : String = try {
         if (result.contains("success"))
-            GsonInstance.fromJson(result, ApplyFriendResponse::class.java).message
+            GsonInstance.fromJson(result, CommunityApplyFriendResponse::class.java).message
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getApplying(token : String,holder : UiStateHolder<List<ApplyingLists?>>) =
+    suspend fun getApplying(token : String,holder : UiStateHolder<List<CommunityApplyingFriendRecord?>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -273,36 +273,36 @@ object CommunityRepository {
             transformSuccess = { _, json -> parseApplyFriends(json) }
         )
     @JvmStatic
-    private fun parseApplyFriends(result : String) : List<ApplyingLists?> = try {
+    private fun parseApplyFriends(result : String) : List<CommunityApplyingFriendRecord?> = try {
         if(result.contains("success"))
-            GsonInstance.fromJson(result, ApplyingResponse::class.java).result.records
+            GsonInstance.fromJson(result, CommunityApplyingFriendResponse::class.java).result.records
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getMaps(token : String,holder : UiStateHolder<List<MapBean>>) = launchRequestState(
+    suspend fun getMaps(token : String,holder : UiStateHolder<List<CommunitySchoolMap>>) = launchRequestState(
         holder = holder,
         request = { community.getCampusMap(token) },
         transformSuccess = { _, json -> parseMaps(json) }
     )
     @JvmStatic
-    private fun parseMaps(result : String) : List<MapBean> = try {
+    private fun parseMaps(result : String) : List<CommunitySchoolMap> = try {
         if(result.contains("操作成功"))
-            GsonInstance.fromJson(result, MapResponse::class.java).result
+            GsonInstance.fromJson(result, CommunitySchoolMapResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getStuApps(token : String,holder : UiStateHolder<List<StuAppBean>>) =
+    suspend fun getStuApps(token : String,holder : UiStateHolder<List<CommunityStuAppDetail>>) =
         launchRequestState(
             holder = holder,
             request = { community.getStuApps(token) },
             transformSuccess = { _, json -> parseStuApps(json) }
         )
     @JvmStatic
-    private fun parseStuApps(result : String) : List<StuAppBean> = try {
+    private fun parseStuApps(result : String) : List<CommunityStuAppDetail> = try {
         if(result.contains("操作成功")) {
-            val list = GsonInstance.fromJson(result, StuAppsResponse::class.java).result
+            val list = GsonInstance.fromJson(result, CommunityStuAppResponse::class.java).result
             val totalList = list.flatMap { it.subList }
             totalList.filter { it.url?.startsWith(Constant.STU_URL) == true }
         }
@@ -310,21 +310,21 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getBus(token : String,holder : UiStateHolder<List<BusBean>>) = launchRequestState(
+    suspend fun getBus(token : String,holder : UiStateHolder<List<CommunityBus>>) = launchRequestState(
         holder = holder,
         request = { community.getBus(token) },
         transformSuccess = { _, json -> parseBus(json) }
     )
     @JvmStatic
-    private fun parseBus(result : String) : List<BusBean> = try {
+    private fun parseBus(result : String) : List<CommunityBus> = try {
         if(result.contains("操作成功")) {
-            GsonInstance.fromJson(result, BusResponse::class.java).result
+            GsonInstance.fromJson(result, CommunityBusResponse::class.java).result
         }
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun communityBooks(token : String, type : LibraryItems, page : Int = 1, booksChipData : UiStateHolder<List<BorrowRecords>>) =
+    suspend fun communityBooks(token : String, type : LibraryItems, page : Int = 1, booksChipData : UiStateHolder<List<CommunityBorrowRecord>>) =
         launchRequestState(
             holder = booksChipData,
             request = {
@@ -352,21 +352,21 @@ object CommunityRepository {
             transformSuccess = { _, json -> parseMyBookFromCommunity(json) }
         )
     @JvmStatic
-    private fun parseMyBookFromCommunity(json : String) : List<BorrowRecords> = try {
+    private fun parseMyBookFromCommunity(json : String) : List<CommunityBorrowRecord> = try {
         if(json.contains("success"))
-            GsonInstance.fromJson(json, BorrowResponse::class.java).result.records
+            GsonInstance.fromJson(json, CommunityBorrowResponse::class.java).result.records
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getToday(token : String,holder : UiStateHolder<TodayResult>) = launchRequestState(
+    suspend fun getToday(token : String,holder : UiStateHolder<CommunityToday>) = launchRequestState(
         holder = holder,
         request = { community.getToday(token) },
         transformSuccess = { _, json -> parseTodayFromCommunity(json) }
     )
     @JvmStatic
-    private fun parseTodayFromCommunity(result : String) : TodayResult = try {
-        GsonInstance.fromJson(result, TodayResponse::class.java).result
+    private fun parseTodayFromCommunity(result : String) : CommunityToday = try {
+        GsonInstance.fromJson(result, CommunityTodayResponse::class.java).result
     } catch (e : Exception) { throw e }
 
     fun getFriends(token : String) {
@@ -392,7 +392,7 @@ object CommunityRepository {
         token : String,
         week : Int? = null,
         semester : String? = null,
-        holder : UiStateHolder<List<DormitoryScoreBean>>
+        holder : UiStateHolder<List<CommunityDormitoryScore>>
     ) = launchRequestState(
         holder = holder,
         request = { community.getDormitoryScoreDetail(token, week, semester) },
@@ -483,9 +483,9 @@ object CommunityRepository {
     }
  
     @JvmStatic
-    private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> = try {
+    private fun parseDormitoryScore(result : String) : List<CommunityDormitoryScore> = try {
         if (result.contains("操作成功")) {
-            GsonInstance.fromJson(result, DormitoryScoreResponse::class.java)?.result ?: emptyList()
+            GsonInstance.fromJson(result, CommunityDormitoryScoreResponse::class.java)?.result ?: emptyList()
         } else {
             throw Exception(result)
         }

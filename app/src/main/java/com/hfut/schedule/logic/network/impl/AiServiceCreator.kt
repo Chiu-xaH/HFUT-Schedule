@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.impl
 
 import com.hfut.schedule.logic.enumeration.ChatModel
-import com.hfut.schedule.network.util.allowAutoRedirect
+import com.hfut.schedule.network.helper.allowAutoRedirect
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

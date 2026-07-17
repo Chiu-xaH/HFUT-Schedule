@@ -40,8 +40,8 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
-import com.hfut.schedule.logic.model.community.TodayResult
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.network.model.response.community.CommunityToday
+import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.MyApiParse.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
@@ -250,7 +250,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
 }
 
 @Composable
-fun CommunityTodayCourseItem(list : courseDetailDTOList, timeNow : String) {
+fun CommunityTodayCourseItem(list : CommunityCourseDetail, timeNow : String) {
 
     val enableShowOverdueFocus by DataStoreManager.enableShowOverdueFocus.collectAsState(initial = false)
 
@@ -326,7 +326,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, timeNow : String) {
 }
 
 @Composable
-fun CommunityTomorrowCourseItem(list: courseDetailDTOList) {
+fun CommunityTomorrowCourseItem(list: CommunityCourseDetail) {
 
     val weekdayTomorrow = DateTimeManager.dayWeek + 1
     var week = DateTimeManager.currentWeek.toInt()
@@ -579,7 +579,7 @@ fun TermTip() {
 fun TodayUI(vm: NetWorkViewModel) {
     val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
 
-    val data by produceState<TodayResult?>(initialValue = null) {
+    val data by produceState<CommunityToday?>(initialValue = null) {
         onListenStateHolder(vm.todayFormCommunityResponse, onError = { _,_ -> }) { data ->
             value = data
         }

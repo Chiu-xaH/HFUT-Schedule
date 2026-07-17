@@ -14,7 +14,7 @@ import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.ui.nav.deepLinks
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.xah.navigation.registry.DeepLinkRegistry

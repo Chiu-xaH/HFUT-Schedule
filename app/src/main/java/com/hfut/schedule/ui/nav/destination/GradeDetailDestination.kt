@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
+import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeDetailScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.common.ui.util.res

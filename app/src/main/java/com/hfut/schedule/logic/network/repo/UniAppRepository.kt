@@ -33,12 +33,12 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.UniAppService
 import com.hfut.schedule.network.impl.UniAppServiceCreator
-import com.hfut.schedule.network.model.UniAppEmptyClassroomRequest
-import com.hfut.schedule.network.model.UniAppSearchProgramRequest
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.model.request.UniAppEmptyClassroomRequest
+import com.hfut.schedule.network.model.request.UniAppSearchProgramRequest
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.network.util.GsonInstance
-import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.model.StatusCode
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam

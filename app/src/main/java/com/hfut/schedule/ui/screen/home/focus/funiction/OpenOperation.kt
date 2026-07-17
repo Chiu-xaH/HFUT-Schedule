@@ -4,7 +4,7 @@ import android.content.Context
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 
 // U校园 U校园AI版 微信 超星学习通 长江雨课堂 中国大学MOOC

@@ -6,14 +6,12 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -37,7 +35,6 @@ import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
-import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
@@ -45,14 +42,12 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.enumeration.BottomBarItems
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ENDED
@@ -167,10 +162,10 @@ class FocusWidget : GlanceAppWidget() {
         val isDarkTheme = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         val courseDataSource = DataStoreManager.getSyncDefaultCalendar() ?: CourseType.JXGLSTU.code
         var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
-        var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
+        var todayCourseList by remember { mutableStateOf<List<CommunityCourseDetail>>(emptyList()) }
         var lastTime by remember { mutableStateOf("00:00") }
         var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
-        var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
+        var tomorrowCourseList by remember { mutableStateOf<List<CommunityCourseDetail>>(emptyList()) }
         var jxglstuLastTime by remember { mutableStateOf("00:00") }
         val specialWorkToday by produceState<String?>(initialValue = null) {
             value = withContext(Dispatchers.IO) {

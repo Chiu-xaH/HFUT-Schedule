@@ -34,10 +34,10 @@ import com.hfut.schedule.logic.model.jxglstu.PostSurvey
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
-import com.hfut.schedule.network.util.StatusCode
+import com.hfut.schedule.network.model.StatusCode
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.util.GsonInstance
+import com.hfut.schedule.network.helper.GsonInstance
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.input.CustomTextField

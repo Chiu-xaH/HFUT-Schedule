@@ -13,7 +13,7 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.logic.util.LogUtil
@@ -93,8 +93,7 @@ class LoginViewModel : ViewModel() {
                             val tgc = response.headers()["Set-Cookie"].toString().substringBefore(";")
                             code.value = response.code().toString()
                             val tickets = response.headers()["Location"].toString().substringAfter("=")
-                            LogUtil.debug("CAS登录ticket $tickets")
-                            LogUtil.debug("CAS登录tgc $tgc")
+                            LogUtil.debug("CAS登录ticket=$tickets,tgc=$tgc")
                             saveString("ticket", tickets)
                             saveString("TGC", tgc)
                             ticketStValue.value = tickets

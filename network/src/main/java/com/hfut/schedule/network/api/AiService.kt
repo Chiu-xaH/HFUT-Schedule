@@ -1,6 +1,6 @@
 package com.hfut.schedule.network.api
 
-import com.hfut.schedule.network.model.ChatRequest
+import com.hfut.schedule.network.model.request.chat.ChatRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body

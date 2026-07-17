@@ -1,7 +1,7 @@
 package com.hfut.schedule.network.util
 
 import android.util.Base64
-import com.hfut.schedule.network.util.Constant
+import com.hfut.schedule.network.helper.Constant
 import com.xah.common.logic.util.LogUtil
 import java.security.KeyFactory
 import java.security.MessageDigest
@@ -158,7 +158,7 @@ object CryptoUtil {
     //用于生成和风天气密钥
     @JvmStatic
     fun getQWeatherAuth() : String {
-        return "Bearer " + GenerateQWeather()
+        return "Bearer " + QWeatherKeyGenerator()
             .generate(
             "MC4CAQAwBQYDK2VwBCIEILpLcCmyt8JbbBaEMiBvA9ys3RLb2v63rWhuFC83KDGZ",
             "4HTJ5N7F37",
