@@ -5,15 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingsResponse
-import com.hfut.schedule.logic.model.huixin.BillMonth
-import com.hfut.schedule.logic.model.huixin.BillMonthResponse
-import com.hfut.schedule.logic.model.huixin.BillRangeResponse
-import com.hfut.schedule.logic.model.huixin.ChangeLimitResponse
-import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.model.huixin.HuiXinLoginResponse
-import com.hfut.schedule.logic.model.huixin.PayStep1Response
-import com.hfut.schedule.logic.model.huixin.PayStep2Response
-import com.hfut.schedule.logic.model.huixin.PayStep3Response
+import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
+import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBillResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinRangeBillResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinChangeLimitResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinLoginResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinPayStep1Response
+import com.hfut.schedule.network.model.response.huixin.HuiXinPayStep2Response
+import com.hfut.schedule.network.model.response.huixin.HuiXinPayStep3Response
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.xah.common.logic.state.UiStateHolder
@@ -102,7 +102,7 @@ object HuiXinRepository {
         throw  e
     }
 
-    suspend fun payStep1(auth: String, json: String, pay : Float, type: FeeType, holder : UiStateHolder<String>) =
+    suspend fun payStep1(auth: String, json: String, pay : Float, type: HuiXinFeeType, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -126,13 +126,13 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinPayStep1(result : String) : String = try {
         if(result.contains("操作成功")) {
-            GsonInstance.fromJson(result, PayStep1Response::class.java).data.orderid
+            GsonInstance.fromJson(result, HuiXinPayStep1Response::class.java).data.orderId
         } else {
             throw Exception("Step1失败 终止支付")
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun payStep2(auth: String, orderId : String, type : FeeType, holder : UiStateHolder<Map<String, String>>) =
+    suspend fun payStep2(auth: String, orderId : String, type : HuiXinFeeType, holder : UiStateHolder<Map<String, String>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -156,13 +156,13 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinPayStep2(result : String) : Map<String, String> = try {
         if(result.contains("操作成功")) {
-            GsonInstance.fromJson(result, PayStep2Response::class.java).data.passwordMap
+            GsonInstance.fromJson(result, HuiXinPayStep2Response::class.java).data.passwordMap
         } else {
             throw Exception("Step2失败 终止支付")
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: FeeType, holder : UiStateHolder<String>) =
+    suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: HuiXinFeeType, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -186,7 +186,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinPayStep3(result : String) : String = try {
         if(result.contains("success")) {
-            GsonInstance.fromJson(result, PayStep3Response::class.java).msg
+            GsonInstance.fromJson(result, HuiXinPayStep3Response::class.java).msg
         } else {
             throw Exception("支付失败")
         }
@@ -200,7 +200,7 @@ object HuiXinRepository {
         )
     @JvmStatic
     private fun parseHuiXinChangeLimit(json : String) : String = try {
-        GsonInstance.fromJson(json, ChangeLimitResponse::class.java).msg
+        GsonInstance.fromJson(json, HuiXinChangeLimitResponse::class.java).msg
     } catch (e : Exception) { throw e }
 
     suspend fun searchDate(auth : String, timeFrom : String, timeTo : String,holder : UiStateHolder<Float>) =
@@ -212,7 +212,7 @@ object HuiXinRepository {
     @JvmStatic
     private fun parseHuiXinRange(result : String) : Float = try {
         if(result.contains("操作成功")) {
-            val data = GsonInstance.fromJson(result, BillRangeResponse::class.java)
+            val data = GsonInstance.fromJson(result, HuiXinRangeBillResponse::class.java)
             data.data.expenses / 100
         } else {
             throw Exception(result)
@@ -241,18 +241,18 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getMonthBills(auth : String, dateStr: String,holder : UiStateHolder<List<BillMonth>>) =
+    suspend fun getMonthBills(auth : String, dateStr: String,holder : UiStateHolder<List<HuiXinMonthBill>>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.getMonthYue(auth, dateStr) },
             transformSuccess = { _, json -> parseHuiXinMonthBills(json) }
         )
     @JvmStatic
-    private fun parseHuiXinMonthBills(json : String) : List<BillMonth> = try {
+    private fun parseHuiXinMonthBills(json : String) : List<HuiXinMonthBill> = try {
         if(json.contains("操作成功")) {
-            val data = GsonInstance.fromJson(json, BillMonthResponse::class.java)
+            val data = GsonInstance.fromJson(json, HuiXinMonthBillResponse::class.java)
             val bill = data.data
-            bill.map { (date,balance) -> BillMonth(date, balance) }
+            bill.map { (date,balance) -> HuiXinMonthBill(date, balance) }
         } else {
             throw Exception(json)
         }
@@ -286,7 +286,7 @@ object HuiXinRepository {
 
     fun getFee(
         auth: String,
-        type : FeeType,
+        type : HuiXinFeeType,
         room : String? = null,
         phoneNumber : String? = null,
         building : String? = null,
@@ -298,35 +298,35 @@ object HuiXinRepository {
 
         val feeItemId = type.code
         val campus = when(type) {
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1sh"
+            HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1sh"
             else -> null
         }
         val levels = when(type) {
-            FeeType.NET_XUANCHENG -> "0"
-            FeeType.ELECTRIC_XUANCHENG -> null
-            FeeType.SHOWER_XUANCHENG -> "1"
-            FeeType.SHOWER_HEFEI -> "未适配"
-            FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1"
+            HuiXinFeeType.NET_XUANCHENG -> "0"
+            HuiXinFeeType.ELECTRIC_XUANCHENG -> null
+            HuiXinFeeType.SHOWER_XUANCHENG -> "1"
+            HuiXinFeeType.SHOWER_HEFEI -> "未适配"
+            HuiXinFeeType.WASHING_HEFEI -> "未适配"
+            HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1"
         }
         val rooms = when(type) {
-            FeeType.NET_XUANCHENG -> null
-            FeeType.ELECTRIC_XUANCHENG -> room
-            FeeType.SHOWER_XUANCHENG -> null
-            FeeType.SHOWER_HEFEI -> null
-            FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> room
+            HuiXinFeeType.NET_XUANCHENG -> null
+            HuiXinFeeType.ELECTRIC_XUANCHENG -> room
+            HuiXinFeeType.SHOWER_XUANCHENG -> null
+            HuiXinFeeType.SHOWER_HEFEI -> null
+            HuiXinFeeType.WASHING_HEFEI -> "未适配"
+            HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> room
         }
         val phoneNumbers = when(type) {
-            FeeType.NET_XUANCHENG -> null
-            FeeType.ELECTRIC_XUANCHENG -> null
-            FeeType.SHOWER_XUANCHENG -> phoneNumber
-            FeeType.SHOWER_HEFEI -> phoneNumber
-            FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> null
+            HuiXinFeeType.NET_XUANCHENG -> null
+            HuiXinFeeType.ELECTRIC_XUANCHENG -> null
+            HuiXinFeeType.SHOWER_XUANCHENG -> phoneNumber
+            HuiXinFeeType.SHOWER_HEFEI -> phoneNumber
+            HuiXinFeeType.WASHING_HEFEI -> "未适配"
+            HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> null
         }
         val buildings = when(type) {
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> building
+            HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> building
             else -> null
         }
         val call = huiXin.getFee(
@@ -344,10 +344,10 @@ object HuiXinRepository {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val responseBody = response.body()?.string()
                 when(type) {
-                    FeeType.NET_XUANCHENG -> netValue.value = responseBody
-                    FeeType.ELECTRIC_XUANCHENG ->  electricData.value = responseBody
-                    FeeType.SHOWER_XUANCHENG -> showerData.value = responseBody
-                    FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> hefeiElectric.value = responseBody
+                    HuiXinFeeType.NET_XUANCHENG -> netValue.value = responseBody
+                    HuiXinFeeType.ELECTRIC_XUANCHENG ->  electricData.value = responseBody
+                    HuiXinFeeType.SHOWER_XUANCHENG -> showerData.value = responseBody
+                    HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> hefeiElectric.value = responseBody
                     else -> {
                         showToast("未适配")
                     }

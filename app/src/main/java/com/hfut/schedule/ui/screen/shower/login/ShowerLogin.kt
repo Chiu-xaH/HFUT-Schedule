@@ -41,8 +41,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
-import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.network.model.response.guagua.GuaGuaLoginData
+import com.hfut.schedule.network.model.response.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -294,7 +294,7 @@ suspend fun loginGuaGuaClick(
 }
 
 
-fun getGuaGuaPersonInfo() : GuaGuaLogin? = try {
+fun getGuaGuaPersonInfo() : GuaGuaLoginData? = try {
     val json = prefs.getString("GuaGuaPersonInfo",null)
     GsonInstance.fromJson(json, GuaGuaLoginResponse::class.java).data
 } catch (_:Exception) {

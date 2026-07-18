@@ -2,9 +2,9 @@ package com.hfut.schedule.logic.network.repo
 
 import androidx.lifecycle.MutableLiveData
 
-import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
-import com.hfut.schedule.logic.model.guagua.UseCodeResponse
+import com.hfut.schedule.network.model.response.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.network.model.response.guagua.GuaGuaBillResponse
+import com.hfut.schedule.network.model.response.guagua.GuaGuaUseCodeResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -56,7 +56,7 @@ object GuaGuaRepository {
             transformSuccess = { _, json -> parseGuaGuaStartShower(json) },
         )
 
-    suspend fun guaGuaGetBills(billsResult : UiStateHolder<GuaguaBillsResponse>) =
+    suspend fun guaGuaGetBills(billsResult : UiStateHolder<GuaGuaBillResponse>) =
         launchRequestState(
             holder = billsResult,
             request = {
@@ -111,14 +111,14 @@ object GuaGuaRepository {
     } catch (e : Exception) { throw e }
 
     @JvmStatic
-    private fun parseGuaGuaBills(result: String) : GuaguaBillsResponse = try {
-        GsonInstance.fromJson(result, GuaguaBillsResponse::class.java)
+    private fun parseGuaGuaBills(result: String) : GuaGuaBillResponse = try {
+        GsonInstance.fromJson(result, GuaGuaBillResponse::class.java)
     } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun parseGuaGuaUseCode(result: String) : String = try {
         if(result.contains("成功"))
-            GsonInstance.fromJson(result, UseCodeResponse::class.java).data.randomCode
+            GsonInstance.fromJson(result, GuaGuaUseCodeResponse::class.java).data.randomCode
         else throw Exception("解析错误")
     } catch (e : Exception) { throw e }
 

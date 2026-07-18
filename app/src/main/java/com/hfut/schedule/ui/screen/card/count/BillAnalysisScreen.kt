@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.card.count
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.huixin.BillMonth
+import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
 import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -162,7 +161,7 @@ private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.padding(14.dp,6.dp)){
                         drawLineChart(
-                            dayList.reversed().map { BillMonth(it.first,it.second) }
+                            dayList.reversed().map { HuiXinMonthBill(it.first,it.second) }
                         )
                     }
                 }
@@ -227,7 +226,7 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.padding(14.dp,6.dp)){
                         drawLineChart(
-                            monthList.reversed().map { BillMonth(it.first,it.second) }
+                            monthList.reversed().map { HuiXinMonthBill(it.first,it.second) }
                         )
                     }
                 }
@@ -291,7 +290,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.padding(14.dp,6.dp)){
                     drawLineChart(
-                        dayList.reversed().map { BillMonth(it.first,it.second) }
+                        dayList.reversed().map { HuiXinMonthBill(it.first,it.second) }
                     )
                 }
             }

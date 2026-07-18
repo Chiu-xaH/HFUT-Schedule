@@ -66,8 +66,8 @@ private suspend fun click(vm : NetWorkViewModel, limit : String, amt : String) =
 fun CardLimit(vm : NetWorkViewModel) {
     val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
 
-    var limit by remember { mutableStateOf((cardValue?.autotrans_limite ?: SharedPrefs.prefs.getString("card_limit","0"))) }
-    var amt by remember { mutableStateOf(cardValue?.autotrans_amt?: SharedPrefs.prefs.getString("card_amt","0")) }
+    var limit by remember { mutableStateOf((cardValue?.autoTransLimit ?: SharedPrefs.prefs.getString("card_limit","0"))) }
+    var amt by remember { mutableStateOf(cardValue?.autoTransAmt?: SharedPrefs.prefs.getString("card_amt","0")) }
 
 
     val limitFloat = limit?.toFloat()

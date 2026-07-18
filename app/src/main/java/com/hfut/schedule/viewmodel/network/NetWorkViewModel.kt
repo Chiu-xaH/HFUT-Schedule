@@ -54,10 +54,10 @@ import com.hfut.schedule.network.model.response.community.CommunityLibraryRecord
 import com.hfut.schedule.network.model.response.community.CommunitySchoolMap
 import com.hfut.schedule.network.model.response.community.CommunityStuAppDetail
 import com.hfut.schedule.network.model.response.community.CommunityToday
-import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
-import com.hfut.schedule.logic.model.huixin.BillMonth
-import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.network.model.response.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.network.model.response.guagua.GuaGuaBillResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
@@ -88,7 +88,7 @@ import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseTableDto
 import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.SupabaseRepository
@@ -102,8 +102,8 @@ import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
 import com.hfut.schedule.logic.network.repo.SchoolNetSelfRepository
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
 import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
-import com.hfut.schedule.logic.model.xwx.XwxFunction
-import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingFunction
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingSchool
 import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.OneRepository
 import com.hfut.schedule.logic.network.repo.OthersRepository
@@ -340,7 +340,7 @@ class NetWorkViewModel() : ViewModel() {
     val loginCommunityData = UiStateHolder<String>()
     suspend fun loginCommunity(ticket : String) = CommunityRepository.loginCommunity(ticket,loginCommunityData)
 
-    val zhiJianCourseResp = UiStateHolder<List<ZhiJianCourseItemDto>>()
+    val zhiJianCourseResp = UiStateHolder<List<ZhiJianCourseTableDto>>()
     suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String) = OthersRepository.getZhiJianCourses(studentId,mondayDate,token,zhiJianCourseResp)
 
     val zhiJianCheckLoginResp = UiStateHolder<Boolean>()
@@ -432,20 +432,20 @@ class NetWorkViewModel() : ViewModel() {
     val showerData = MutableLiveData<String?>()
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val hefeiElectric = MutableLiveData<String?>()
-    fun getFee(auth: String,type : FeeType,room : String? = null,phoneNumber : String? = null,building : String? = null) = HuiXinRepository.getFee(auth,type,room,phoneNumber, building,hefeiElectric,infoValue, electricData, showerData)
+    fun getFee(auth: String, type : HuiXinFeeType, room : String? = null, phoneNumber : String? = null, building : String? = null) = HuiXinRepository.getFee(auth,type,room,phoneNumber, building,hefeiElectric,infoValue, electricData, showerData)
 
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val guaGuaUserInfo = MutableLiveData<String?>()
     fun getGuaGuaUserInfo() = GuaGuaRepository.getGuaGuaUserInfo(guaGuaUserInfo)
 
     val orderIdData = UiStateHolder<String>()
-    suspend fun payStep1(auth: String,json: String,pay : Float,type: FeeType) = HuiXinRepository.payStep1(auth,json,pay,type,orderIdData)
+    suspend fun payStep1(auth: String,json: String,pay : Float,type: HuiXinFeeType) = HuiXinRepository.payStep1(auth,json,pay,type,orderIdData)
 
     val uuIdData = UiStateHolder<Map<String, String>>()
-    suspend fun payStep2(auth: String,orderId : String,type : FeeType) = HuiXinRepository.payStep2(auth,orderId,type,uuIdData)
+    suspend fun payStep2(auth: String,orderId : String,type : HuiXinFeeType) = HuiXinRepository.payStep2(auth,orderId,type,uuIdData)
 
     val payResultData = UiStateHolder<String>()
-    suspend fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: FeeType) = HuiXinRepository.payStep3(auth,orderId,password,uuid,type,payResultData)
+    suspend fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: HuiXinFeeType) = HuiXinRepository.payStep3(auth,orderId,password,uuid,type,payResultData)
 
     val changeLimitResponse = UiStateHolder<String>()
     suspend fun changeLimit(auth: String,json: JsonObject) = HuiXinRepository.changeLimit(auth,json,changeLimitResponse)
@@ -456,7 +456,7 @@ class NetWorkViewModel() : ViewModel() {
     val huiXinSearchBillsResult = UiStateHolder<BillBean>()
     suspend fun searchBills(auth : String, info: String,page : Int) = HuiXinRepository.searchBills(auth,info,page,huiXinSearchBillsResult)
 
-    val huiXinMonthBillResult = UiStateHolder<List<BillMonth>>()
+    val huiXinMonthBillResult = UiStateHolder<List<HuiXinMonthBill>>()
     suspend fun getMonthBills(auth : String, dateStr: String) = HuiXinRepository.getMonthBills(auth,dateStr,huiXinMonthBillResult)
 
     fun loginOne(code : String) = OneRepository.loginOne(code)
@@ -604,13 +604,13 @@ class NetWorkViewModel() : ViewModel() {
     val uniAppClassroomLessonsResp = UiStateHolder<List<UniAppClassroomLessonBean>>()
     suspend fun getClassroomLessons(semester: Int, roomId : Int, token : String) = UniAppRepository.getClassroomLessons(semester,roomId,token,uniAppClassroomLessonsResp)
 
-    val xwxSchoolListResp = UiStateHolder<List<XwxSchoolBean>>()
+    val xwxSchoolListResp = UiStateHolder<List<XiaoWuXingSchool>>()
     suspend fun getXwxSchoolList() = XwxRepository.getSchoolList(xwxSchoolListResp)
 
     val xwxLoginResp = UiStateHolder<Boolean>()
     suspend fun loginXwx(schoolCode : Long, username : String, password : String) = XwxRepository.login(schoolCode,username,password,xwxLoginResp)
 
-    val xwxFunctionsResp = UiStateHolder<List<XwxFunction>>()
+    val xwxFunctionsResp = UiStateHolder<List<XiaoWuXingFunction>>()
     suspend fun getXwxFunctions(schoolCode : Long, username : String, token : String) = XwxRepository.getFunctions(schoolCode,username,token,xwxFunctionsResp)
 
     val xwxDocPreviewResp = UiStateHolder<Bitmap>()
@@ -622,7 +622,7 @@ class NetWorkViewModel() : ViewModel() {
     val startGuaGuaShowerResp = UiStateHolder<String>()
     suspend fun startGuaGuaShower(phoneNumber: String, macLocation : String, loginCode : String) = GuaGuaRepository.guaGuaStartShower(phoneNumber,macLocation,loginCode,startGuaGuaShowerResp)
 
-    var guaGuaBillsResp = UiStateHolder<GuaguaBillsResponse>()
+    var guaGuaBillsResp = UiStateHolder<GuaGuaBillResponse>()
     suspend fun getGuaGuaBills() = GuaGuaRepository.guaGuaGetBills(guaGuaBillsResp)
 
     var useCodeResp = UiStateHolder<String>()

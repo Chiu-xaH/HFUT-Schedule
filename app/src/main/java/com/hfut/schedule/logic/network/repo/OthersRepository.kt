@@ -25,9 +25,10 @@ import com.hfut.schedule.logic.model.SecondClassActivity
 import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.XuanquResponse
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItem
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
+import com.hfut.schedule.network.model.response.zhijian.ZhiJianCourseTable
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseTableDto
+import com.hfut.schedule.logic.model.zhijian.toDto
+import com.hfut.schedule.network.model.response.zhijian.ZhiJianCourseTableResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.xah.common.logic.state.NetworkUiState
@@ -101,7 +102,7 @@ object OthersRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String,holder : UiStateHolder<List<ZhiJianCourseItemDto>>) =
+    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String,holder : UiStateHolder<List<ZhiJianCourseTableDto>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -129,16 +130,16 @@ object OthersRepository {
         return GsonInstance.toJson(map)
     }
     @JvmStatic
-    private fun parseZhiJianCourses(json : String,mondayDate : String) : List<ZhiJianCourseItemDto> = try {
+    private fun parseZhiJianCourses(json : String,mondayDate : String) : List<ZhiJianCourseTableDto> = try {
         val gson = GsonInstance
-        val root = gson.fromJson(json, ZhiJianCoursesResponse::class.java)
+        val root = gson.fromJson(json, ZhiJianCourseTableResponse::class.java)
         val data = root.data
 
         // 提取 kbdata 字符串
         val rawStr = data.rawJsonString
         // 再把这个字符串解析成二维数组
-        val listType = object : TypeToken<List<ZhiJianCourseItem>>() {}.type
-        val rawData: List<ZhiJianCourseItem> = gson.fromJson(rawStr, listType)
+        val listType = object : TypeToken<List<ZhiJianCourseTable>>() {}.type
+        val rawData: List<ZhiJianCourseTable> = gson.fromJson(rawStr, listType)
         val monday = LocalDate.parse(mondayDate)
         val sunday = monday.plusDays(6)
 

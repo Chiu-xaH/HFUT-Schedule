@@ -1,10 +1,10 @@
-package com.hfut.schedule.logic.model.guagua
+package com.hfut.schedule.network.model.response.guagua
 
-
-data class GuaguaBillsResponse(
-    val data : List<GuaguaBills>
+data class GuaGuaBillResponse(
+    val data : List<GuaguaBill>
 )
-data class GuaguaBills(
+
+data class GuaguaBill(
     val dealDate : String,
     val dealMark : String,
     val description : String,

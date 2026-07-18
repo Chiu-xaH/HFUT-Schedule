@@ -65,8 +65,8 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
-import com.hfut.schedule.logic.model.huixin.FeeResponse
-import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 
@@ -112,9 +112,9 @@ private fun getUrl(page : Int) : String {
     return  Constant.HUI_XIN_URL +
             "charge-app/?name=pays&appsourse=ydfwpt&id=${
                 if(page == XUANCHENG_TAB)
-                    FeeType.ELECTRIC_XUANCHENG.code
+                    HuiXinFeeType.ELECTRIC_XUANCHENG.code
                 else 
-                    FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
+                    HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
             }&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
 @SuppressLint("SuspiciousIndentation")
@@ -171,7 +171,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     val roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
                     val int by remember { mutableStateOf(payNumber.toFloat()) }
                     if(int > 0) {
-                        PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC_XUANCHENG,hazeState)
+                        PayFor(vm,int,roomInfo,json,HuiXinFeeType.ELECTRIC_XUANCHENG,hazeState)
                     } else showToast("输入数值")
                 }
         }
@@ -333,13 +333,13 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
             }
             show = false
             async { reEmptyLiveDta(vm.hefeiElectric) }.await()
-            async { vm.getFee("bearer $auth", FeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = data.roomNumber, building = data.buildingNumber) }.await()
+            async { vm.getFee("bearer $auth", HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = data.roomNumber, building = data.buildingNumber) }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.hefeiElectric.observeForever { result ->
                         if (result?.contains("success") == true) {
                             try {
-                                val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
+                                val jsons = GsonInstance.fromJson(result, HuiXinFeeResponse::class.java).map
                                 val data = jsons.showData
                                 for ((_, value) in data) {
                                     scope.launch {
@@ -384,13 +384,13 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                         SharedPrefs.saveString("RoomNumber", RoomNumber)
                                         SharedPrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
                                     }.await()
-                                    async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
+                                    async { vm.getFee("bearer $auth", HuiXinFeeType.ELECTRIC_XUANCHENG, room = input) }.await()
                                     async {
                                         Handler(Looper.getMainLooper()).post{
                                             vm.electricData.observeForever { result ->
                                                 if (result?.contains("success") == true) {
                                                     try {
-                                                        val jsons = GsonInstance.fromJson(result, FeeResponse::class.java).map
+                                                        val jsons = GsonInstance.fromJson(result, HuiXinFeeResponse::class.java).map
                                                         val data = jsons.showData
                                                         for ((_, value) in data) {
                                                             Result = value

@@ -25,10 +25,8 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,7 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.huixin.BillMonth
+import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
 import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
@@ -62,11 +60,10 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
-private fun withoutMonthBills(originalList : List<BillMonth>) : List<BillMonth> {
+private fun withoutMonthBills(originalList : List<HuiXinMonthBill>) : List<HuiXinMonthBill> {
     val list = originalList.toMutableList()
     val iterator = list.iterator()
     while (iterator.hasNext()) {

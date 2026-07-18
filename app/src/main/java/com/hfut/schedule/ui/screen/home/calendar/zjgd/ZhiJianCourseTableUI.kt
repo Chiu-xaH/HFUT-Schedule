@@ -31,7 +31,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,9 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseTableDto
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
@@ -89,14 +87,12 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.shader.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
 import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
-import com.xah.container.component.base.sharedContainer
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
@@ -116,8 +112,8 @@ fun ZhiJianCourseTableUI(
     onSwapShowAll : (Boolean) -> Unit
 ) {
     val uiState by vm.zhiJianCourseResp.state.collectAsState()
-    val table = remember { List(30) { mutableStateListOf<ZhiJianCourseItemDto>() } }
-    val tableAll = remember { List(42) { mutableStateListOf<ZhiJianCourseItemDto>() } }
+    val table = remember { List(30) { mutableStateListOf<ZhiJianCourseTableDto>() } }
+    val tableAll = remember { List(42) { mutableStateListOf<ZhiJianCourseTableDto>() } }
     val refreshNetwork = suspend m@ {
         val token = prefs.getString("ZhiJian", "") ?: return@m
         val date = getMondayOfWeek(today).format(DateTimeManager.formatter_YYYY_MM_DD)
@@ -197,7 +193,7 @@ fun ZhiJianCourseTableUI(
     var multiWeekday by remember { mutableIntStateOf(0) }
     var multiWeek by remember { mutableIntStateOf(0) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf<List<ZhiJianCourseItemDto>>(emptyList()) }
+    var selectedItem by remember { mutableStateOf<List<ZhiJianCourseTableDto>>(emptyList()) }
     if (showBottomSheetMultiCourse) {
         HazeBottomSheet (
             showBottomSheet = showBottomSheetMultiCourse,
@@ -714,7 +710,7 @@ fun ZhiJianCourseTableUI(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJianCourseItemDto>, vm: NetWorkViewModel) {
+fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJianCourseTableDto>, vm: NetWorkViewModel) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
     if (showBottomSheetTotalCourse) {
@@ -759,7 +755,7 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CourseDetail(
-    course : ZhiJianCourseItemDto
+    course : ZhiJianCourseTableDto
 ) {
     val navController = LocalNavController.current
 

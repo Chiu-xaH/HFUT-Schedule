@@ -45,8 +45,8 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.util.insertSafely
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.huixin.FeeResponse
-import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -313,7 +313,7 @@ fun FocusCard(
 
 suspend fun getWebInfoFromHuiXin(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
     val auth = prefs.getString("auth","")
-    async { vm.getFee("bearer $auth",FeeType.NET_XUANCHENG) }.await()
+    async { vm.getFee("bearer $auth",HuiXinFeeType.NET_XUANCHENG) }.await()
     async {
         Handler(Looper.getMainLooper()).post{
             vm.infoValue.observeForever { result ->
@@ -335,13 +335,13 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel) = withContext(Dispatche
             saveString("memoryEle","0.0")
             return@withContext
         }
-        async { vm.getFee("bearer $auth", FeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = bean.roomNumber, building = bean.buildingNumber) }.await()
+        async { vm.getFee("bearer $auth", HuiXinFeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = bean.roomNumber, building = bean.buildingNumber) }.await()
         async {
             Handler(Looper.getMainLooper()).post{
                 vm.hefeiElectric.observeForever { result ->
                     if (result?.contains("success") == true) {
                         try {
-                            val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
+                            val data = GsonInstance.fromJson(result,HuiXinFeeResponse::class.java).map.showData
                             for ((_, value) in data) {
                                 GlobalUiStateHolder.electricValue.value = value
                                 saveString("memoryEle",GlobalUiStateHolder.electricValue.value)
@@ -359,13 +359,13 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel) = withContext(Dispatche
         val EndNumber = prefs.getString("EndNumber", "")
 
         var input = "300$BuildingsNumber$RoomNumber$EndNumber"
-        async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
+        async { vm.getFee("bearer $auth", HuiXinFeeType.ELECTRIC_XUANCHENG, room = input) }.await()
         async {
             Handler(Looper.getMainLooper()).post{
                 vm.electricData.observeForever { result ->
                     if (result?.contains("success") == true) {
                         try {
-                            val data = GsonInstance.fromJson(result,FeeResponse::class.java).map.showData
+                            val data = GsonInstance.fromJson(result,HuiXinFeeResponse::class.java).map.showData
                             for ((_, value) in data) {
                                 GlobalUiStateHolder.electricValue.value = value.substringAfter("剩余金额:").toDouble().roundOffString(2)
                                 saveString("memoryEle",GlobalUiStateHolder.electricValue.value)

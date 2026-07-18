@@ -7,13 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.model.huixin.BillMonth
+import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 
 //消费折线图
 @Composable
-fun drawLineChart(data: List<BillMonth>, modifier: Modifier = Modifier) {
+fun drawLineChart(data: List<HuiXinMonthBill>, modifier: Modifier = Modifier) {
     if (data.isEmpty()) return
     val path = Path()
     val primaryColor = MaterialTheme.colorScheme.primary

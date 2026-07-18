@@ -1,14 +1,14 @@
-package com.hfut.schedule.logic.model.xwx
+package com.hfut.schedule.network.model.response.xiaowuxing
 
 import com.google.gson.annotations.SerializedName
 
-data class XwxDocPreviewResponseBody(
+data class XiaoWuXingDocPreviewResponse(
     @SerializedName("errcode")
     val code : String,
-    val result : XwxDocPreviewsBean
+    val result : XiaoWuXingDocPreview
 )
 
-data class XwxDocPreviewsBean(
+data class XiaoWuXingDocPreview(
     @SerializedName("smallImageList")
     val imageBase64String : String
 )

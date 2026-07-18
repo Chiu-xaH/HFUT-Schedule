@@ -9,10 +9,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +40,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.xwx.XwxLoginInfo
+import com.hfut.schedule.logic.model.xiaowuxing.XiaoWuXingLoginInfo
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.PermissionSet
@@ -52,9 +55,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.GuaGuaDestination
-import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
+import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
@@ -62,7 +64,9 @@ import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.navigation.model.action.LaunchMode
+import com.xah.container.component.base.sharedContainer
+import com.xah.container.model.ContainerFilledStrategy
+import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -83,7 +87,7 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by vm.xwxFunctionsResp.state.collectAsState()
-    val savedInfo by produceState<XwxLoginInfo?>(initialValue = null) {
+    val savedInfo by produceState<XiaoWuXingLoginInfo?>(initialValue = null) {
         value = getXwxLogin()
     }
     val navController = LocalNavController.current
@@ -106,6 +110,7 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
         refreshNetwork()
     }
     val scope = rememberCoroutineScope()
+    val floatingController = LocalFloatingController.current
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -175,6 +180,8 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
                 }
             ) {
                 val bitmap = (previewUiState as NetworkUiState.Success).data
+                val imageBitmap = remember(bitmap) { bitmap.asImageBitmap() }
+                val window = remember(imageBitmap) { ImagePreviewWindow(imageBitmap) }
                 DividerTextExpandedWith("预览") {
                     Box(
                         modifier = Modifier
@@ -184,25 +191,54 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
                     ) {
                         Image(
                             contentScale = ContentScale.Fit,
-                            bitmap = bitmap.asImageBitmap(),
+                            bitmap = imageBitmap,
                             contentDescription = "预览图片",
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .sharedContainer(
+                                    key = window.key,
+                                    shape = MaterialTheme.shapes.medium,
+                                    containerFilledStrategy = ContainerFilledStrategy.Element
+                                )
+                                .clickable {
+                                    floatingController.push(window)
+                                }
                         )
                     }
 
                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                    LargeButton(
-                        onClick = {
-                            scope.launch {
-                                // 保存图片
-                                activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
-                                saveImageToFile(bitmap)
-                            }
-                        },
-                        text = "保存",
-                        icon = R.drawable.save,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP)
-                    )
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                    ) {
+                        LargeButton(
+                            onClick = {
+                                floatingController.push(window)
+                            },
+                            text = "查看",
+                            icon = R.drawable.image_search,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1/2f)
+                        )
+                        Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                        LargeButton(
+                            onClick = {
+                                scope.launch {
+                                    // 保存图片
+                                    activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                                    saveImageToFile(bitmap)
+                                }
+                            },
+                            text = "保存",
+                            icon = R.drawable.save,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1/2f)
+                        )
+                    }
                 }
             }
             DividerTextExpandedWith("选项") {

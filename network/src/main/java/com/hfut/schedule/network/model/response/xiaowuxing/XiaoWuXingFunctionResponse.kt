@@ -1,18 +1,18 @@
-package com.hfut.schedule.logic.model.xwx
+package com.hfut.schedule.network.model.response.xiaowuxing
 
 import com.google.gson.annotations.SerializedName
 
-data class XwxFunctionsResponseBody(
+data class XiaoWuXingFunctionResponse(
     @SerializedName("errcode")
     val code : String,
-    val result : XwxFunctionsBean
+    val result : XiaoWuXingFunctionResult
 )
 
-data class XwxFunctionsBean(
-    val data : List<XwxFunction>
+data class XiaoWuXingFunctionResult(
+    val data : List<XiaoWuXingFunction>
 )
 
-data class XwxFunction(
+data class XiaoWuXingFunction(
     @SerializedName("vcPrintTypeId")
     val fileProperty : String,
     @SerializedName("printType")

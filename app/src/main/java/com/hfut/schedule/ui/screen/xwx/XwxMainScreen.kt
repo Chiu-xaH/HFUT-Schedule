@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.xwx.XwxLoginInfo
-import com.hfut.schedule.logic.model.xwx.XwxLoginResponseBody
+import com.hfut.schedule.logic.model.xiaowuxing.XiaoWuXingLoginInfo
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingLoginResponse
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -85,12 +85,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
+suspend fun getXwxLogin() : XiaoWuXingLoginInfo? = withContext(Dispatchers.IO) {
     return@withContext try {
         val jStr = LargeStringDataManager.read(LargeStringDataManager.XWX_USER_INFO)
         withContext(Dispatchers.Default) {
-            with(GsonInstance.fromJson(jStr, XwxLoginResponseBody::class.java).result) {
-                XwxLoginInfo(
+            with(GsonInstance.fromJson(jStr, XiaoWuXingLoginResponse::class.java).result) {
+                XiaoWuXingLoginInfo(
                     data[0],
                     token
                 )
@@ -200,7 +200,7 @@ private fun LoginUI(
     var hidden by rememberSaveable { mutableStateOf(true) }
     var password by remember { mutableStateOf("") }
     var username by remember { mutableStateOf(prefs.getString("Username", "") ?: "") }
-    val savedInfo by produceState<XwxLoginInfo?>(initialValue = null) {
+    val savedInfo by produceState<XiaoWuXingLoginInfo?>(initialValue = null) {
         value = getXwxLogin()
     }
 

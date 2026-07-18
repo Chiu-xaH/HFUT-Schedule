@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.model.huixin
+package com.hfut.schedule.network.model.response.huixin
 
 import com.google.gson.annotations.SerializedName
 

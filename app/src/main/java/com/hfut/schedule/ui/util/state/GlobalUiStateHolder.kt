@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.MutableLiveData
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.huixin.ReturnCard
+import com.hfut.schedule.logic.model.ReturnCard
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination

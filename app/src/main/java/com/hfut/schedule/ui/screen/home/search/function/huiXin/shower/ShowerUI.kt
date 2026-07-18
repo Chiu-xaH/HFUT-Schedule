@@ -53,8 +53,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.model.huixin.ShowerFeeResponse
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinShowerFeeResponse
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -89,7 +89,7 @@ import java.math.BigDecimal
 
 private fun getUrl(page : Int,) : String {
     val auth = prefs.getString("auth","")
-    return Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
+    return Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)HuiXinFeeType.SHOWER_XUANCHENG.code else HuiXinFeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth
 }
 fun getInGuaGua(vm: NetWorkViewModel,navController: NavigationController,onResult : (Boolean) -> Unit) {
 
@@ -167,7 +167,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                 val info by remember { mutableStateOf("手机号 $phoneNumber") }
                 var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
-                    PayFor(vm,int,info,json, FeeType.SHOWER_XUANCHENG, hazeState)
+                    PayFor(vm,int,info,json, HuiXinFeeType.SHOWER_XUANCHENG, hazeState)
                 } else showToast("输入数值")
             }
 
@@ -270,14 +270,14 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                 }
                                 saveString("PhoneNumber",phoneNumber )
                             }.await()
-                            async { vm.getFee("bearer $auth", FeeType.SHOWER_XUANCHENG, phoneNumber = phoneNumber) }.await()
+                            async { vm.getFee("bearer $auth", HuiXinFeeType.SHOWER_XUANCHENG, phoneNumber = phoneNumber) }.await()
                             async {
                                 Handler(Looper.getMainLooper()).post{
                                     vm.showerData.observeForever { result ->
                                         if (result?.contains("success") == true) {
                                             showButton = true
                                             try {
-                                                val jsons = GsonInstance.fromJson(result, ShowerFeeResponse::class.java).map.data
+                                                val jsons = GsonInstance.fromJson(result, HuiXinShowerFeeResponse::class.java).map.data
 
                                                 studentID = jsons.identifier.toString()
                                                 balance = jsons.accountMoney

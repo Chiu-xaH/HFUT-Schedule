@@ -5,15 +5,14 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 
 import com.hfut.schedule.network.model.request.XwxDocPreviewRequest
-import com.hfut.schedule.logic.model.xwx.XwxDocPreviewResponseBody
-import com.hfut.schedule.logic.model.xwx.XwxFunction
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingDocPreviewResponse
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingFunction
 import com.hfut.schedule.network.model.request.XwxFunctionsRequest
-import com.hfut.schedule.logic.model.xwx.XwxFunctionsResponseBody
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingFunctionResponse
 import com.hfut.schedule.network.model.request.XwxLoginRequest
-import com.hfut.schedule.logic.model.xwx.XwxLoginResponseBody
-import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
-import com.hfut.schedule.logic.model.xwx.XwxSchoolListResponseBody
-import com.hfut.schedule.logic.model.xwx.isXwxRequestSuccessful
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingLoginResponse
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingSchool
+import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingSchoolListResponse
 import com.hfut.schedule.network.api.XwxService
 import com.hfut.schedule.network.impl.XwxServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestState
@@ -28,16 +27,18 @@ import kotlinx.coroutines.withContext
 object XwxRepository {
     private val xwx = XwxServiceCreator.create(XwxService::class.java)
 
+    private fun isXwxRequestSuccessful(code: String) : Boolean = code == "0"
+
     suspend fun getSchoolList(
-        holder: UiStateHolder<List<XwxSchoolBean>>
+        holder: UiStateHolder<List<XiaoWuXingSchool>>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.getSchoolList() },
         transformSuccess = { _,json -> parseSchoolList(json) }
     )
     @JvmStatic
-    private fun parseSchoolList(json : String) : List<XwxSchoolBean> = try {
-        val result = GsonInstance.fromJson(json, XwxSchoolListResponseBody::class.java)
+    private fun parseSchoolList(json : String) : List<XiaoWuXingSchool> = try {
+        val result = GsonInstance.fromJson(json, XiaoWuXingSchoolListResponse::class.java)
         if(isXwxRequestSuccessful(result.code) == false) {
             throw Exception("登录状态失效")
         }
@@ -58,7 +59,7 @@ object XwxRepository {
     private suspend fun parseLogin(json : String)  = withContext(Dispatchers.IO) {
         try {
             val result = withContext(Dispatchers.Default) {
-                GsonInstance.fromJson(json, XwxLoginResponseBody::class.java)
+                GsonInstance.fromJson(json, XiaoWuXingLoginResponse::class.java)
             }
             if(!isXwxRequestSuccessful(result.code)) {
                 throw Exception("登录状态失效")
@@ -75,15 +76,15 @@ object XwxRepository {
         schoolCode : Long,
         username : String,
         token : String,
-        holder : UiStateHolder<List<XwxFunction>>
+        holder : UiStateHolder<List<XiaoWuXingFunction>>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.getFunctions(token,XwxFunctionsRequest(schoolCode = schoolCode,userId = username),) },
         transformSuccess = { _,json -> parseFunctions(json) }
     )
     @JvmStatic
-    private fun parseFunctions(json : String) : List<XwxFunction> = try {
-        val result = GsonInstance.fromJson(json, XwxFunctionsResponseBody::class.java)
+    private fun parseFunctions(json : String) : List<XiaoWuXingFunction> = try {
+        val result = GsonInstance.fromJson(json, XiaoWuXingFunctionResponse::class.java)
         if(!isXwxRequestSuccessful(result.code)) {
             throw Exception("登录状态失效")
         }
@@ -104,7 +105,7 @@ object XwxRepository {
     )
     @JvmStatic
     private fun parseDocPreview(json : String) : Bitmap = try {
-        val result = GsonInstance.fromJson(json, XwxDocPreviewResponseBody::class.java)
+        val result = GsonInstance.fromJson(json, XiaoWuXingDocPreviewResponse::class.java)
         if(isXwxRequestSuccessful(result.code) == false) {
             throw Exception("登录状态失效")
         }

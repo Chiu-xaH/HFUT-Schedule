@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.nav.window
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Image
@@ -10,9 +11,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,24 +23,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.PermissionSet
+import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.hfut.schedule.ui.screen.xwx.saveImageToFile
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
+/** 图片预览器交互：
+ * 1. 单击空白处收起预览
+ * 2. 双指捏合图片缩放（从1x到5x）
+ * 3. 当图片位于1x时，双击图片放大到2x
+ * 4. 当图片不位于1x时，双击图片缩小到1x
+ * 5. 长按图片弹窗菜单（保存）
+ */
 data class ImagePreviewWindow(
     val bitmap : ImageBitmap
 ) : FloatingWindow() {
@@ -69,6 +81,9 @@ data class ImagePreviewWindow(
     }
 }
 
+private const val DOUBLE_TAP_SCALE = 2f
+private const val MAX_SCALE = 5f
+
 @Composable
 private fun ZoomableImage(
     bitmap: ImageBitmap,
@@ -84,27 +99,89 @@ private fun ZoomableImage(
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
-    var imageRect by remember { mutableStateOf<Rect?>(null) }
 
     var baseImageSize by remember { mutableStateOf(IntSize.Zero) }
+    val left = (containerSize.width - baseImageSize.width) / 2f + offset.x
+    val top = (containerSize.height - baseImageSize.height) / 2f + offset.y
+
+    val imageRect = Rect(
+        Offset(left, top),
+        baseImageSize.toSize()
+    )
+
+    var displayDialog by remember { mutableStateOf(false) }
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val activity = LocalActivity.current
+
+    if(displayDialog) {
+        LittleDialog(
+            onDismissRequest = { displayDialog = false },
+            onConfirmation = {
+                scope.launch {
+                    // 保存图片
+                    activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                    saveImageToFile(bitmap.asAndroidBitmap())
+                    displayDialog = false
+                }
+            },
+            hazeState = hazeState,
+            dialogText = "是否保存此图片"
+        )
+    }
 
     Box(
         modifier = modifier
+            .hazeSource(hazeState)
             .fillMaxSize()
             .onSizeChanged { containerSize = it }
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { tap ->
-                        imageRect?.let {
-                            if (!it.contains(tap)) onBlankTap()
+                        if (!imageRect.contains(tap)) {
+                            onBlankTap()
                         }
                     },
-                    onDoubleTap = {
+                    onDoubleTap = { tap ->
                         scope.launch {
-                            launch { animatedScale.animateTo(1f) }
-                            launch { animatedOffset.animateTo(Offset.Zero) }
-                            scale = 1f
-                            offset = Offset.Zero
+                            if (scale == 1f) {
+                                val targetScale = DOUBLE_TAP_SCALE
+                                val center = Offset(
+                                    containerSize.width / 2f,
+                                    containerSize.height / 2f
+                                )
+                                val targetOffset = clampOffset(
+                                    offset = (center - tap) * (targetScale - 1f),
+                                    scale = targetScale,
+                                    imageSize = baseImageSize,
+                                    containerSize = containerSize
+                                )
+                                scale = targetScale
+                                offset = targetOffset
+
+                                launch {
+                                    animatedScale.animateTo(targetScale)
+                                }
+                                launch {
+                                    animatedOffset.animateTo(targetOffset)
+                                }
+
+                            } else {
+                                scale = 1f
+                                offset = Offset.Zero
+
+                                launch {
+                                    animatedScale.animateTo(1f)
+                                }
+                                launch {
+                                    animatedOffset.animateTo(Offset.Zero)
+                                }
+                            }
+                        }
+                    },
+                    onLongPress = { tap ->
+                        if (imageRect.contains(tap)) {
+                            displayDialog = true
                         }
                     }
                 )
@@ -112,7 +189,7 @@ private fun ZoomableImage(
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ ->
 
-                    val newScale = (scale * zoom).coerceIn(1f, 5f)
+                    val newScale = (scale * zoom).coerceIn(1f, MAX_SCALE)
                     val scaleChange = newScale / scale
 
                     val scaledWidth = baseImageSize.width * newScale
@@ -155,11 +232,11 @@ private fun ZoomableImage(
                 .onSizeChanged {
                     baseImageSize = it
                 }
-                .onGloballyPositioned {
-                    val pos = it.positionInParent()
-                    val size = it.size.toSize()
-                    imageRect = Rect(pos, size)
-                }
+//                .onGloballyPositioned {
+//                    val pos = it.positionInParent()
+//                    val size = it.size.toSize()
+//                    imageRect = Rect(pos, size)
+//                }
                 .graphicsLayer {
 
                     val baseOffsetX =
@@ -176,217 +253,6 @@ private fun ZoomableImage(
         )
     }
 }
-//@Composable
-//private fun ZoomableImage(
-//    bitmap: ImageBitmap,
-//    modifier: Modifier = Modifier,
-//    onBlankTap: () -> Unit = {}
-//) {
-//    val scope = rememberCoroutineScope()
-//
-//    // 用 Animatable 作为唯一真值，手势时 snapTo，松手/双击时 animateTo
-//    val animatedScale  = remember { Animatable(1f) }
-//    val animatedOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-//
-//    // 给手势计算用的"快照"引用，避免每帧读 Animatable.value
-//    var scale  by remember { mutableStateOf(1f) }
-//    var offset by remember { mutableStateOf(Offset.Zero) }
-//
-//    var imageRect     by remember { mutableStateOf<Rect?>(null) }
-//    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-//    var displayedSize by remember { mutableStateOf(IntSize.Zero) } // Fit 后的实际渲染尺寸
-//
-//    // ContentScale.Fit 的实际渲染尺寸：取宽高比中较小的缩放倍率
-//    LaunchedEffect(bitmap, containerSize) {
-//        if (containerSize.width == 0 || containerSize.height == 0) return@LaunchedEffect
-//        val fitScale = minOf(
-//            containerSize.width.toFloat()  / bitmap.width,
-//            containerSize.height.toFloat() / bitmap.height
-//        )
-//        displayedSize = IntSize(
-//            (bitmap.width  * fitScale).toInt(),
-//            (bitmap.height * fitScale).toInt()
-//        )
-//    }
-//
-//    Box(
-//        modifier = modifier
-//            .fillMaxSize()
-//            .onSizeChanged { containerSize = it }
-//            .pointerInput(Unit) {
-//                detectTapGestures(
-//                    onTap = { tapOffset ->
-//                        val rect = imageRect
-//                        if (rect != null && !rect.contains(tapOffset)) onBlankTap()
-//                    },
-//                    onDoubleTap = {
-//                        scope.launch {
-//                            // 并发动画，真正有视觉效果
-//                            launch { animatedScale.animateTo(1f) }
-//                            launch { animatedOffset.animateTo(Offset.Zero) }
-//                            scale  = 1f
-//                            offset = Offset.Zero
-//                        }
-//                    }
-//                )
-//            }
-//            .pointerInput(Unit) {
-//                detectTransformGestures { _, pan, zoom, _ ->
-//                    val newScale = (scale * zoom).coerceIn(1f, 5f)
-//                    val scaleChange = newScale / scale
-//
-//                    // 用展示尺寸判断是否可拖动
-//                    val canPanX = displayedSize.width  * newScale > containerSize.width
-//                    val canPanY = displayedSize.height * newScale > containerSize.height
-//
-//                    val filteredPan = Offset(
-//                        x = if (canPanX) pan.x else 0f,
-//                        y = if (canPanY) pan.y else 0f
-//                    )
-//
-//                    val newOffset = offset * scaleChange + filteredPan
-//
-//                    offset = clampOffset(newOffset, newScale, displayedSize, containerSize)
-//                    scale  = newScale
-//
-//                    // 手势期间 snap，保持动画值同步
-//                    scope.launch {
-//                        animatedScale.snapTo(scale)
-//                        animatedOffset.snapTo(offset)
-//                    }
-//                }
-//            }
-//    ) {
-//        Image(
-//            bitmap = bitmap,
-//            contentDescription = null,
-//            contentScale = ContentScale.Fit,
-//            modifier = Modifier
-//                .onGloballyPositioned { coordinates ->
-//                    val position = coordinates.positionInParent()
-//                    val size = coordinates.size.toSize()
-//                    imageRect = Rect(position, size)
-//                }
-//                .graphicsLayer {
-//                    val baseOffsetX = (containerSize.width  - displayedSize.width)  / 2f
-//                    val baseOffsetY = (containerSize.height - displayedSize.height) / 2f
-//
-//                    scaleX = animatedScale.value   // ← 读 Animatable，双击动画才生效
-//                    scaleY = animatedScale.value
-//                    translationX = baseOffsetX + animatedOffset.value.x
-//                    translationY = baseOffsetY + animatedOffset.value.y
-//                }
-//        )
-//    }
-//}
-
-//@Composable
-//private fun ZoomableImage(
-//    bitmap: ImageBitmap,
-//    modifier: Modifier = Modifier,
-//    onBlankTap: () -> Unit = {}
-//) {
-//    val scope = rememberCoroutineScope()
-//
-//    var scale by remember { mutableStateOf(1f) }
-//    var offset by remember { mutableStateOf(Offset.Zero) }
-//
-//
-//    val animatedScale = remember { Animatable(1f) }
-//    val animatedOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-//
-//    var imageRect by remember { mutableStateOf<Rect?>(null) }
-//    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-//
-//    val imageSize = IntSize(bitmap.width,bitmap.height)
-//
-//    Box(
-//        modifier = modifier
-//            .fillMaxSize()
-//            .onSizeChanged {
-//                containerSize = it
-//            }
-//            .pointerInput(Unit) {
-//                detectTapGestures(
-//                    onTap = { tapOffset ->
-//                        val rect = imageRect
-//                        if (rect != null && !rect.contains(tapOffset)) {
-//                            onBlankTap()
-//                        }
-//                    },
-//                    onDoubleTap = {
-//                        scope.launch {
-//                            animatedScale.animateTo(1f)
-//                            animatedOffset.animateTo(Offset.Zero)
-//                            scale = 1f
-//                            offset = Offset.Zero
-//                        }
-//                    }
-//                )
-//            }
-//            .pointerInput(Unit) {
-//                detectTransformGestures { _, pan, zoom, _ ->
-//
-//                    val newScale = (scale * zoom).coerceIn(1f, 5f)
-//                    val scaleChange = newScale / scale
-//
-//                    // 当前缩放后的尺寸
-//                    val scaledWidth = imageSize.width * newScale
-//                    val scaledHeight = imageSize.height * newScale
-//
-//                    // 是否允许拖动
-//                    val canPanX = scaledWidth > containerSize.width
-//                    val canPanY = scaledHeight > containerSize.height
-//
-//                    val filteredPan = Offset(
-//                        x = if (canPanX) pan.x else 0f,
-//                        y = if (canPanY) pan.y else 0f
-//                    )
-//
-//                    val newOffset = (offset + filteredPan) * scaleChange
-//
-//                    offset = clampOffset(
-//                        newOffset,
-//                        newScale,
-//                        imageSize,
-//                        containerSize
-//                    )
-//
-//                    scale = newScale
-//                }
-//            }
-//    ) {
-//        var imageSize by remember { mutableStateOf(IntSize.Zero) }
-//
-//        Image(
-//            bitmap = bitmap,
-//            contentDescription = null,
-//            contentScale = ContentScale.Fit,
-//            modifier = Modifier
-//                .onGloballyPositioned { coordinates ->
-//                    val position = coordinates.positionInParent()
-//                    val size = coordinates.size.toSize()
-//                    imageRect = Rect(position, size)
-//                }
-//                .onSizeChanged {
-//                    imageSize = it
-//                }
-//                .graphicsLayer {
-//
-//                    val baseOffsetX =
-//                        (containerSize.width - imageSize.width) / 2f
-//                    val baseOffsetY =
-//                        (containerSize.height - imageSize.height) / 2f
-//
-//                    scaleX = scale
-//                    scaleY = scale
-//
-//                    translationX = baseOffsetX + offset.x
-//                    translationY = baseOffsetY + offset.y
-//                }
-//        )
-//    }
-//}
 
 /**
  * 边界限制，防止拖出留白

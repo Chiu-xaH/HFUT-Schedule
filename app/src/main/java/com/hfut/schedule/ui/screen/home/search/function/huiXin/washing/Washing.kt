@@ -33,7 +33,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.helper.Constant
@@ -143,7 +143,7 @@ fun WashingUI() {
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
                                scope.launch {
-                                   Starter.startWebUrlInner(context,url = Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
+                                   Starter.startWebUrlInner(context,url = Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${HuiXinFeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
                                }
                             },
                             trailingContent = {

@@ -50,7 +50,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 
@@ -116,7 +116,7 @@ fun LoginWebScaUI(vm : NetWorkViewModel) {
 @Composable
 fun LoginWebUI(vm : NetWorkViewModel) {
     val auth = remember { prefs.getString("auth", "") }
-    val zjgdUrl = remember { Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth }
+    val zjgdUrl = remember { Constant.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${HuiXinFeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${Constant.HUI_XIN_URL}plat&token=" + auth }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
     // 支付用的变量
@@ -160,7 +160,7 @@ fun LoginWebUI(vm : NetWorkViewModel) {
         loading = true
         CoroutineScope(Job()).launch {
             async { reEmptyLiveDta(vm.infoValue) }.await()
-            async { vm.getFee("bearer $auth", FeeType.NET_XUANCHENG) }.await()
+            async { vm.getFee("bearer $auth", HuiXinFeeType.NET_XUANCHENG) }.await()
             async {
                 Handler(Looper.getMainLooper()).post {
                     vm.infoValue.observeForever { result ->
@@ -309,7 +309,7 @@ fun LoginWebUI(vm : NetWorkViewModel) {
 //                val info by remember { mutableStateOf("") }
                 var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
-                    PayFor(vm,int,"学号 ${getPersonInfo().getStudentIdFinally()}",json, FeeType.NET_XUANCHENG)
+                    PayFor(vm,int,"学号 ${getPersonInfo().getStudentIdFinally()}",json, HuiXinFeeType.NET_XUANCHENG)
                 } else showToast("输入数值")
             }
 

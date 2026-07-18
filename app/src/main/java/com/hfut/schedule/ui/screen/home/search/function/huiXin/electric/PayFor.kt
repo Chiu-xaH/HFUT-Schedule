@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -59,7 +59,7 @@ import kotlin.collections.iterator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : String, type : FeeType, hazeState: HazeState = HazeState()) {
+fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : String, type : HuiXinFeeType, hazeState: HazeState = HazeState()) {
     var showDialog by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -183,7 +183,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, type : FeeType) {
+private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, type : HuiXinFeeType) {
     val auth = remember { "Bearer " + SharedPrefs.prefs.getString("auth","") }
     val uiState by vm.payResultData.state.collectAsState()
 

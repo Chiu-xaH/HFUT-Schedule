@@ -551,8 +551,8 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
 fun limitRow() {
     val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
 
-    val limit by remember { mutableStateOf(cardValue?.autotrans_limite ?: 0) }
-    val amt by remember { mutableStateOf(cardValue?.autotrans_amt?: 0) }
+    val limit by remember { mutableStateOf(cardValue?.autoTransLimit ?: 0) }
+    val amt by remember { mutableStateOf(cardValue?.autoTransAmt?: 0) }
 
 
     Row {

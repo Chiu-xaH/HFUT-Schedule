@@ -2,8 +2,8 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.os.Handler
 import android.os.Looper
-import com.hfut.schedule.logic.model.huixin.BalanceResponse
-import com.hfut.schedule.logic.model.huixin.ReturnCard
+import com.hfut.schedule.network.model.response.huixin.HuiXinCardResponse
+import com.hfut.schedule.logic.model.ReturnCard
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -26,14 +26,14 @@ suspend fun initCardNetwork(vm : NetWorkViewModel) = withContext(Dispatchers.IO)
             vm.huiXinCardInfoResponse.observeForever { result ->
                 if (result != null && result.contains("操作成功")) {
                     try {
-                        val yuedata = GsonInstance.fromJson(result, BalanceResponse::class.java).data.card[0]
-                        val limite = transferNum(yuedata.autotrans_limite)
-                        val amt = transferNum(yuedata.autotrans_amt)
+                        val yuedata = GsonInstance.fromJson(result, HuiXinCardResponse::class.java).data.card[0]
+                        val limite = transferNum(yuedata.autoTransLimit)
+                        val amt = transferNum(yuedata.autoTransAmt)
                         val name = yuedata.name
                         val account = yuedata.account
-                        var now = transferNum(yuedata.db_balance)
+                        var now = transferNum(yuedata.balance)
                         SharedPrefs.saveString("card_now", now.toString())
-                        val settle = transferNum(yuedata.unsettle_amount)
+                        val settle = transferNum(yuedata.unsettleAmount)
                         SharedPrefs.saveString("card_settle", settle.toString())
                         now += settle
                         val str = now.roundOffString(2)
