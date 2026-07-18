@@ -39,10 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.largeCardColor
@@ -56,14 +53,12 @@ import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.util.text
-import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch

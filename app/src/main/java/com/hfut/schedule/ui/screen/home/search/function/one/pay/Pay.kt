@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.screen.home.search.function.one.pay
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,18 +31,16 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.PayData
+import com.hfut.schedule.network.api.model.response.json.one.OneFeeData
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -137,7 +134,7 @@ fun FeeScreen(
 fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     val uiState by vm.payFeeResponse.state.collectAsState()
     var successLoad = uiState is NetworkUiState.Success
-    var data by remember { mutableStateOf(PayData("0.00","0.00","0.00","0.00","0.00")) }
+    var data by remember { mutableStateOf(OneFeeData("0.00","0.00","0.00","0.00","0.00")) }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
     val context = LocalContext.current
     if (showBottomSheetQRCode) {
@@ -176,12 +173,12 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
         ) {
             Row {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(successLoad)data.xf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad)data.tuitionFee else "0.0"}") },
                     overlineContent = { Text("学费") },
                     modifier = Modifier.weight(.5f)
                 )
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.dstjf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.physicalExaminationFee else "0.0"}") },
                     overlineContent = { Text("体检费") },
                     modifier = Modifier.weight(.5f)
                 )
@@ -189,12 +186,12 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             }
             Row {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.zsf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.dormitoryFee else "0.0"}") },
                     overlineContent = { Text("住宿费") },
                     modifier = Modifier.weight(.5f)
                 )
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.dsjxf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.militaryTrainingFee else "0.0"}") },
                     overlineContent = { Text("军训费") },
                     modifier = Modifier.weight(.5f)
                 )

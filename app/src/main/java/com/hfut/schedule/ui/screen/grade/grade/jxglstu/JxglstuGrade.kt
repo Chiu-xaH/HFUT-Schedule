@@ -57,9 +57,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
-import com.hfut.schedule.logic.model.ScoreWithGPALevel
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
+import com.hfut.schedule.logic.model.ScoreWithGpaLevel
+import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
+import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
 import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.UniAppRepository
@@ -113,7 +113,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
+fun getTotalCredits(termBean : JxglstuTermGrade) : Float {
     val totalCredits = termBean.list.fold(0f) { init,acc->
         val avg = getCredit(acc.credits) ?: 0f
         if(avg == 0f) {
@@ -124,7 +124,7 @@ fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
     return totalCredits
 }
 
-fun getTotalGpa(termBean : GradeJxglstuDTO) : Float {
+fun getTotalGpa(termBean : JxglstuTermGrade) : Float {
     val totalGpa = termBean.list.fold(0f) { init, acc ->
         val avg = getGpa(acc.gpa)?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
         if(avg == 0f) {
@@ -139,7 +139,7 @@ fun getGpa(gpaText : String) : Float? = gpaText.toFloatOrNull()
 fun getCredit(creditText : String) : Float? = creditText.toFloatOrNull()
 fun getScore(scoreText : String) : Float? = scoreText.toFloatOrNull() ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat())
 
-fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
+fun getTotalScore(termBean : JxglstuTermGrade) : Float {
     val totalScore = termBean.list.fold(0f) { init, acc ->
         val avg = getScore(acc.detail)?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
         if(avg == 0f) {
@@ -153,7 +153,7 @@ fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
 fun avgGpaWithoutCourse(
     totalGpa: Float,
     totalCredit: Float,
-    remove: GradeJxglstuResponse
+    remove: JxglstuGrade
 ): Float {
     val removeCredit = getCredit(remove.credits) ?: return 0f
     val removeGpa = getGpa(remove.gpa) ?: return 0f
@@ -171,7 +171,7 @@ fun avgGpaWithoutCourse(
 fun avgGpaWithCourse(
     totalGpa: Float,
     totalCredit: Float,
-    course: GradeJxglstuResponse
+    course: JxglstuGrade
 ): Float {
     val addCredit = getCredit(course.credits) ?: return 0f
     val addGpa = getGpa(course.gpa) ?: return 0f
@@ -189,7 +189,7 @@ fun avgGpaWithCourse(
 fun avgScoreWithoutCourse(
     totalScore: Float,
     totalCredit: Float,
-    remove: GradeJxglstuResponse
+    remove: JxglstuGrade
 ): Float {
     if(getGpa(remove.gpa) == null) {
         return 0f
@@ -210,7 +210,7 @@ fun avgScoreWithoutCourse(
 fun avgScoreWithCourse(
     totalScore: Float,
     totalCredit: Float,
-    course: GradeJxglstuResponse
+    course: JxglstuGrade
 ): Float {
     if(getGpa(course.gpa) == null) {
         return 0f
@@ -279,12 +279,12 @@ fun GradeItemJxglstuUI(
         mutableStateMapOf<String, Boolean>()
     }
 
-    val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
+    val ui = @Composable { gradeList : List<JxglstuTermGrade> ->
         val safelyList = remember(gradeList) {
             gradeList
                 .associate { it.term to it.list }
                 .map { (term, items) ->
-                    GradeJxglstuDTO(
+                    JxglstuTermGrade(
                         term,
                         items.filter { getGpa(it.gpa) != null }
                     )
@@ -457,7 +457,7 @@ fun GradeItemJxglstuUI(
     }
 
     if(ifSaved) {
-        val gradeList by produceState<List<GradeJxglstuDTO>?>(initialValue = null) {
+        val gradeList by produceState<List<JxglstuTermGrade>?>(initialValue = null) {
             scope.launch(Dispatchers.IO) {
                 LargeStringDataManager.read(LargeStringDataManager.GRADE)?.let {
                     value = parseJxglstuGrade(it)
@@ -565,12 +565,12 @@ fun GradeItemUIUniApp(
                 gradeList
                     .associate { it.first to it.second }
                     .map { (term, items) ->
-                        GradeJxglstuDTO(
+                        JxglstuTermGrade(
                             term,
                             items.filter {
                                 !(it.passed && it.gp == 0.0) && it.finalGrade != null
                             }.map {
-                                GradeJxglstuResponse(
+                                JxglstuGrade(
                                     it.courseNameZh,
                                     it.credits.toString(),
                                     it.gp.toString(),
@@ -634,7 +634,7 @@ fun GradeItemUIUniApp(
 
                                     val finalGpaStr = (if(!isFailed && subItem.gp == 0.0) "--" else subItem.gp).toString()
 
-                                    val bean = GradeJxglstuResponse(
+                                    val bean = JxglstuGrade(
                                         courseName = subItem.courseNameZh,
                                         credits = subItem.credits.toString(),
                                         gpa = finalGpaStr,
@@ -752,7 +752,7 @@ private fun isExam(label : String) = label.contains("期末考试") || label.con
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradeDetailScreen(
-    bean : GradeJxglstuResponse,
+    bean : JxglstuGrade,
     allAvgGpa : Float,
     allAvgScore : Float,
     allTotalCredits : Float,
@@ -1153,15 +1153,15 @@ fun getGradeLevel(score : String,gpa : String) : Pair<Int, Int>? {
 }
 
 // 获取距离下一个级别需要的分数
-fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPALevel? {
+fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGpaLevel? {
     val gpaLevels = scoreWithGPA.reversed()
     try {
         when(score) {
             ScoreGrade.A.label -> return null
-            ScoreGrade.B.label -> return ScoreWithGPALevel(ScoreGrade.A.gpa,null)
-            ScoreGrade.C.label -> return ScoreWithGPALevel(ScoreGrade.B.gpa,null)
-            ScoreGrade.D.label -> return ScoreWithGPALevel(ScoreGrade.C.gpa,null)
-            ScoreGrade.F.label -> return ScoreWithGPALevel(ScoreGrade.D.gpa,null)
+            ScoreGrade.B.label -> return ScoreWithGpaLevel(ScoreGrade.A.gpa,null)
+            ScoreGrade.C.label -> return ScoreWithGpaLevel(ScoreGrade.B.gpa,null)
+            ScoreGrade.D.label -> return ScoreWithGpaLevel(ScoreGrade.C.gpa,null)
+            ScoreGrade.F.label -> return ScoreWithGpaLevel(ScoreGrade.D.gpa,null)
             else -> {
                 val gpaF = gpa.toFloat()
                 if(gpaF == gpaLevels.last().gpa) {
@@ -1170,7 +1170,7 @@ fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPALevel? {
                 // gpa等于gpaLevels列表某个值，对应后返回Pair(在列表的索引值,列表总长度-1)
                 val index = gpaLevels.indexOfFirst { it.gpa == gpaF }
                 val bean = gpaLevels[index+1]
-                return ScoreWithGPALevel(bean.gpa,bean.score)
+                return ScoreWithGpaLevel(bean.gpa,bean.score)
             }
         }
     } catch (e : Exception) {
@@ -1295,7 +1295,7 @@ fun GradeIcons(text : String) {
 
 @Composable
 fun AvgImportance(
-    subItem : GradeJxglstuResponse,
+    subItem : JxglstuGrade,
     allAvgGpa : Float,
     allAvgScore : Float,
     allTotalCredits : Float,

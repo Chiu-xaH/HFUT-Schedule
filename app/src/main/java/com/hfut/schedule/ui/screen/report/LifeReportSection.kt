@@ -18,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
+import com.hfut.schedule.network.api.model.response.html.SchoolNetSemesterUsageResult
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 

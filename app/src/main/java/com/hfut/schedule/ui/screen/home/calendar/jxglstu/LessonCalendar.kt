@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +37,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
@@ -46,9 +44,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -94,7 +91,7 @@ private fun MultiCourseSheetUIForSearch(
     week : Int,
     weekday : Int,
     courses : List<CardBean>,
-    lessons : List<lessons>
+    lessons : List<JxglstuLesson>
 ) {
     val navController = LocalNavController.current
 
@@ -176,7 +173,7 @@ fun JxglstuCourseTableSearch(
     showAll: Boolean,
 //    vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-    list : List<lessons>,
+    list : List<JxglstuLesson>,
     onDateChange: ((LocalDate) ->Unit)? = null,
     today: LocalDate? = null,
     backGroundHaze : ShaderState? = null,

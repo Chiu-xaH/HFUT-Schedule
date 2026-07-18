@@ -2,31 +2,31 @@ package com.hfut.schedule.logic.network.repo
 
 
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
-import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
-import com.hfut.schedule.logic.model.BuildingMapResponseBean
-import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.model.GithubBean
-import com.hfut.schedule.logic.model.GithubFolderBean
-import com.hfut.schedule.logic.model.GithubIssueBean
-import com.hfut.schedule.logic.model.GithubIssueLabel
-import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
+import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.model.CampusRegion.HEFEI
+import com.xah.common.logic.model.CampusRegion.XUANCHENG
+import com.hfut.schedule.network.api.model.response.json.github.GithubBuildingMapResponse
+import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubRepoResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubFolderResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueLabelDto
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.network.api.GiteeService
-import com.hfut.schedule.network.api.GithubRawService
-import com.hfut.schedule.network.api.GithubService
-import com.hfut.schedule.network.api.MyService
-import com.hfut.schedule.network.impl.GiteeServiceCreator
-import com.hfut.schedule.network.impl.GithubRawServiceCreator
-import com.hfut.schedule.network.impl.GithubServiceCreator
-import com.hfut.schedule.network.impl.MyServiceCreator
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.GiteeServiceCreator
+import com.hfut.schedule.network.api.impl.GithubRawServiceCreator
+import com.hfut.schedule.network.api.impl.GithubServiceCreator
+import com.hfut.schedule.network.api.impl.MyServiceCreator
+import com.hfut.schedule.network.api.inf.GiteeService
+import com.hfut.schedule.network.api.inf.GithubRawService
+import com.hfut.schedule.network.api.inf.GithubService
+import com.hfut.schedule.network.api.inf.MyService
+import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.api.model.response.json.github.GithubProgramSearchResponse
 import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
 import com.hfut.schedule.ui.screen.home.search.function.other.life.RoomRect
 import okhttp3.Headers
@@ -54,7 +54,7 @@ object GithubRepository {
         })
     }
 
-    suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : UiStateHolder<ProgramSearchBean>) =
+    suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : UiStateHolder<UniAppProgramData>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -68,11 +68,11 @@ object GithubRepository {
             },
             transformSuccess = { _, json -> parseProgramSearchInfo(json) }
         )
-    private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
-        GsonInstance.fromJson(json,ProgramSearchResponse::class.java).data
+    private fun parseProgramSearchInfo(json : String) : UniAppProgramData = try {
+        GsonInstance.fromJson(json, UniAppProgramResponse::class.java).data
     } catch (e : Exception) { throw e }
 
-    suspend fun getProgramList(campus : CampusRegion,holder : UiStateHolder<List<ProgramListBean>>) =
+    suspend fun getProgramList(campus : CampusRegion,holder : UiStateHolder<List<GithubProgramSearchResponse>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -86,8 +86,8 @@ object GithubRepository {
             transformSuccess = { _, json -> parseProgramSearch(json) }
         )
     @JvmStatic
-    private fun parseProgramSearch(json : String) : List<ProgramListBean> = try {
-        val data: List<ProgramListBean> = GsonInstance.fromJson(json,object : TypeToken<List<ProgramListBean>>() {}.type)
+    private fun parseProgramSearch(json : String) : List<GithubProgramSearchResponse> = try {
+        val data: List<GithubProgramSearchResponse> = GsonInstance.fromJson(json,object : TypeToken<List<GithubProgramSearchResponse>>() {}.type)
         data
     } catch (e : Exception) { throw e }
 
@@ -99,10 +99,10 @@ object GithubRepository {
 
     @JvmStatic
     private fun parseGithubStarNum(json : String) : Int = try {
-        GsonInstance.fromJson(json,GithubBean::class.java).stargazers_count
+        GsonInstance.fromJson(json,GithubRepoResponse::class.java).stargazersCount
     } catch (e : Exception) { throw e }
 
-    suspend fun getUpdateContents(holder : UiStateHolder<List<GithubFolderBean>>) =
+    suspend fun getUpdateContents(holder : UiStateHolder<List<GithubFolderResponse>>) =
         launchRequestState(
             holder = holder,
             request = { github.getFolderContent() },
@@ -110,9 +110,9 @@ object GithubRepository {
         )
 
     @JvmStatic
-    private fun parseUpdateContents(json : String) : List<GithubFolderBean> = try {
-        val listType = object : TypeToken<List<GithubFolderBean>>() {}.type
-        val data : List<GithubFolderBean> = GsonInstance.fromJson(json,listType)
+    private fun parseUpdateContents(json : String) : List<GithubFolderResponse> = try {
+        val listType = object : TypeToken<List<GithubFolderResponse>>() {}.type
+        val data : List<GithubFolderResponse> = GsonInstance.fromJson(json,listType)
         data
     } catch (e : Exception) { throw e }
 
@@ -160,16 +160,16 @@ object GithubRepository {
         GiteeReleaseResponse(versionName,data.body,list)
     } catch (e : Exception) { throw e }
 
-    suspend fun getIssues(page : Int,holder : UiStateHolder<List<GithubIssueBean>>) = launchRequestState(
+    suspend fun getIssues(page : Int,holder : UiStateHolder<List<GithubIssueResponse>>) = launchRequestState(
         request = { github.getIssues(page) },
         holder = holder,
         transformSuccess = { _, json -> parseGithubIssues(json) }
     )
     @JvmStatic
-    private fun parseGithubIssues(json : String) : List<GithubIssueBean> = try {
-        val listType = object : TypeToken<List<GithubIssueBean>>() {}.type
-        val issues : List<GithubIssueBean> = GsonInstance.fromJson(json,listType)
-        val flowLabelIds = GithubIssueLabel.entries.map { it.id }.toSet()
+    private fun parseGithubIssues(json : String) : List<GithubIssueResponse> = try {
+        val listType = object : TypeToken<List<GithubIssueResponse>>() {}.type
+        val issues : List<GithubIssueResponse> = GsonInstance.fromJson(json,listType)
+        val flowLabelIds = GithubIssueLabelDto.entries.map { it.id }.toSet()
         val realIssues = issues.filter { issue ->
             // 过滤 PR
             issue.pr == null &&
@@ -182,15 +182,15 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getBuildingMaps(holder : UiStateHolder<List<BuildingMapResponseBean>>) = launchRequestState(
+    suspend fun getBuildingMaps(holder : UiStateHolder<List<GithubBuildingMapResponse>>) = launchRequestState(
         request = { githubRaw.getBuildingMaps() },
         holder = holder,
         transformSuccess = { _, json -> parseBuildingMaps(json) }
     )
     @JvmStatic
-    private fun parseBuildingMaps(json : String) : List<BuildingMapResponseBean> = try {
-        val listType = object : TypeToken<List<BuildingMapResponseBean>>() {}.type
-        GsonInstance.fromJson(json,listType) as List<BuildingMapResponseBean>
+    private fun parseBuildingMaps(json : String) : List<GithubBuildingMapResponse> = try {
+        val listType = object : TypeToken<List<GithubBuildingMapResponse>>() {}.type
+        GsonInstance.fromJson(json,listType) as List<GithubBuildingMapResponse>
     } catch (e : Exception) { throw e }
 
     suspend fun getFloorXml(filename : String,holder : UiStateHolder<FloorMap>) = launchRequestState(

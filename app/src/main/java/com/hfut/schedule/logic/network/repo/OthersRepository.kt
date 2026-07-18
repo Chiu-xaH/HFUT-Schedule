@@ -2,63 +2,63 @@ package com.hfut.schedule.logic.network.repo
 
 
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.logic.enumeration.AdmissionType
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.model.AdmissionDetailBean
-import com.hfut.schedule.logic.model.AdmissionDetailResponseHistory
-import com.hfut.schedule.logic.model.AdmissionDetailResponsePlan
-import com.hfut.schedule.logic.model.AdmissionListResponse
-import com.hfut.schedule.logic.model.AdmissionMapBean
-import com.hfut.schedule.logic.model.AdmissionTokenResponse
-import com.hfut.schedule.logic.model.DepartmentBean
-import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
-import com.hfut.schedule.logic.model.HaiLeDeviceDetailResponse
-import com.hfut.schedule.logic.model.HaiLeNearPositionBean
-import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
-import com.hfut.schedule.logic.model.HaiLeNearPositionResponse
-import com.hfut.schedule.logic.model.MsgResponse
-import com.hfut.schedule.logic.model.OfficeHallSearchBean
-import com.hfut.schedule.logic.model.OfficeHallSearchResponse
-import com.hfut.schedule.logic.model.SearchEleResponse
-import com.hfut.schedule.logic.model.SecondClassActivitiesResponse
-import com.hfut.schedule.logic.model.SecondClassActivity
-import com.hfut.schedule.logic.model.TeacherResponse
-import com.hfut.schedule.logic.model.WorkSearchResponse
-import com.hfut.schedule.logic.model.XuanquResponse
-import com.hfut.schedule.network.model.response.zhijian.ZhiJianCourseTable
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseTableDto
-import com.hfut.schedule.logic.model.zhijian.toDto
-import com.hfut.schedule.network.model.response.zhijian.ZhiJianCourseTableResponse
+import com.hfut.schedule.logic.model.enumeration.AdmissionType
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionDetailBean
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionDetailHistoryResponse
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionDetailPlanResponse
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionListResponse
+import com.hfut.schedule.network.api.model.response.json.admission.Admission
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionTokenResponse
+import com.hfut.schedule.network.api.model.response.html.Department
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeDeviceDetailBean
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeDeviceDetailResponse
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeNearPositionBean
+import com.hfut.schedule.logic.model.dto.HaiLeNearPositionRequestDto
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeNearPositionResponse
+import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianMsgResponse
+import com.hfut.schedule.network.api.model.response.json.hall.OfficeHallSearchRecord
+import com.hfut.schedule.network.api.model.response.json.hall.OfficeHallSearchResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.OldElectricResponse
+import com.hfut.schedule.network.api.model.response.json.second.SecondClassActivitiesResponse
+import com.hfut.schedule.network.api.model.response.json.second.SecondClassActivity
+import com.hfut.schedule.network.api.model.response.json.teacher.TeacherResponse
+import com.hfut.schedule.network.api.model.response.json.work.WorkSearchResponse
+import com.hfut.schedule.network.api.model.response.html.OldDormitoryXuanCheng
+import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTable
+import com.hfut.schedule.logic.model.dto.ZhiJianCourseTableDto
+import com.hfut.schedule.logic.model.dto.toDto
+import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.network.api.AdmissionService
-import com.hfut.schedule.network.api.DormitoryScore
-import com.hfut.schedule.network.api.HaiLeWashingService
-import com.hfut.schedule.network.api.HfutService
-import com.hfut.schedule.network.api.OfficeHallService
-import com.hfut.schedule.network.api.PeService
-import com.hfut.schedule.network.api.SecondClassService
-import com.hfut.schedule.network.api.StuService
-import com.hfut.schedule.network.api.TeachersService
-import com.hfut.schedule.network.api.WorkService
-import com.hfut.schedule.network.api.ZhiJianService
-import com.hfut.schedule.network.impl.AdmissionServiceCreator
-import com.hfut.schedule.network.impl.DormitoryScoreServiceCreator
-import com.hfut.schedule.network.impl.HaiLeWashingServiceCreator
-import com.hfut.schedule.network.impl.HfutServiceCreator
-import com.hfut.schedule.network.impl.OfficeHallServiceCreator
-import com.hfut.schedule.network.impl.PeServiceCreator
-import com.hfut.schedule.network.impl.SecondClassServiceCreator
-import com.hfut.schedule.network.impl.StuServiceCreator
-import com.hfut.schedule.network.impl.TeacherServiceCreator
-import com.hfut.schedule.network.impl.WorkServiceCreator
-import com.hfut.schedule.network.impl.ZhiJianServiceCreator
-import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.AdmissionServiceCreator
+import com.hfut.schedule.network.api.impl.DormitoryScoreServiceCreator
+import com.hfut.schedule.network.api.impl.HaiLeWashingServiceCreator
+import com.hfut.schedule.network.api.impl.HfutServiceCreator
+import com.hfut.schedule.network.api.impl.OfficeHallServiceCreator
+import com.hfut.schedule.network.api.impl.PeServiceCreator
+import com.hfut.schedule.network.api.impl.SecondClassServiceCreator
+import com.hfut.schedule.network.api.impl.StuServiceCreator
+import com.hfut.schedule.network.api.impl.TeacherServiceCreator
+import com.hfut.schedule.network.api.impl.WorkServiceCreator
+import com.hfut.schedule.network.api.impl.ZhiJianServiceCreator
+import com.hfut.schedule.network.api.inf.AdmissionService
+import com.hfut.schedule.network.api.inf.DormitoryScore
+import com.hfut.schedule.network.api.inf.HaiLeWashingService
+import com.hfut.schedule.network.api.inf.HfutService
+import com.hfut.schedule.network.api.inf.OfficeHallService
+import com.hfut.schedule.network.api.inf.PeService
+import com.hfut.schedule.network.api.inf.SecondClassService
+import com.hfut.schedule.network.api.inf.StuService
+import com.hfut.schedule.network.api.inf.TeachersService
+import com.hfut.schedule.network.api.inf.WorkService
+import com.hfut.schedule.network.api.inf.ZhiJianService
+import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.flow.first
@@ -111,7 +111,7 @@ object OthersRepository {
             transformSuccess = m@{ _, json ->
                 if (json.contains("false")) {
                     val root = try {
-                        GsonInstance.fromJson(json, MsgResponse::class.java).msg ?: json
+                        GsonInstance.fromJson(json, ZhiJianMsgResponse::class.java).msg ?: json
                     } catch (e: Exception) {
                         throw e
                     }
@@ -182,7 +182,7 @@ object OthersRepository {
     suspend fun officeHallSearch(
         text : String,
         page : Int,
-        holder : UiStateHolder<List<OfficeHallSearchBean>>
+        holder : UiStateHolder<List<OfficeHallSearchRecord>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -194,7 +194,7 @@ object OthersRepository {
         transformSuccess = { _, json -> parseOfficeHallSearch(json) }
     )
     @JvmStatic
-    private fun parseOfficeHallSearch(json : String) : List<OfficeHallSearchBean> = try {
+    private fun parseOfficeHallSearch(json : String) : List<OfficeHallSearchRecord> = try {
         GsonInstance.fromJson(json, OfficeHallSearchResponse::class.java).data.records
     } catch (e : Exception) { throw e }
 
@@ -216,7 +216,7 @@ object OthersRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getAdmissionList(type : AdmissionType, holder : UiStateHolder<Pair<AdmissionType, Map<String, List<AdmissionMapBean>>>>) =
+    suspend fun getAdmissionList(type : AdmissionType, holder : UiStateHolder<Pair<AdmissionType, Map<String, List<Admission>>>>) =
         launchRequestState(
             holder = holder,
             request = { admission.getList(type.type) },
@@ -224,11 +224,11 @@ object OthersRepository {
         )
 
     @JvmStatic
-    private fun parseAdmissionList(type: AdmissionType, json : String) : Pair<AdmissionType, Map<String, List<AdmissionMapBean>>> = try {
-        Pair(type, GsonInstance.fromJson(json, AdmissionListResponse::class.java).data.list)
+    private fun parseAdmissionList(type: AdmissionType, json : String) : Pair<AdmissionType, Map<String, List<Admission>>> = try {
+        Pair(type, GsonInstance.fromJson(json, AdmissionListResponse::class.java).data.map)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAdmissionDetail(type : AdmissionType, bean : AdmissionMapBean, region: String, holder : UiStateHolder<AdmissionDetailBean>, tokenHolder : UiStateHolder<AdmissionTokenResponse>) =
+    suspend fun getAdmissionDetail(type : AdmissionType, bean : Admission, region: String, holder : UiStateHolder<AdmissionDetailBean>, tokenHolder : UiStateHolder<AdmissionTokenResponse>) =
         onListenStateHolderForNetwork(tokenHolder, holder) { token ->
             launchRequestState(
                 holder = holder,
@@ -252,11 +252,11 @@ object OthersRepository {
     private fun parseAdmissionDetail(type : AdmissionType, json : String) : AdmissionDetailBean = try {
         when(type) {
             AdmissionType.HISTORY -> {
-                val parsed = GsonInstance.fromJson(json, AdmissionDetailResponseHistory::class.java)
+                val parsed = GsonInstance.fromJson(json, AdmissionDetailHistoryResponse::class.java)
                 AdmissionDetailBean.History(parsed.data)
             }
             AdmissionType.PLAN -> {
-                val parsed = GsonInstance.fromJson(json, AdmissionDetailResponsePlan::class.java)
+                val parsed = GsonInstance.fromJson(json, AdmissionDetailPlanResponse::class.java)
                 AdmissionDetailBean.Plan(parsed.data)
             }
         }
@@ -314,7 +314,7 @@ object OthersRepository {
     @JvmStatic
     private fun parseElectric(result : String) : String = try {
         if (result.contains("query_elec_roominfo")) {
-            val msg = GsonInstance.fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
+            val msg = GsonInstance.fromJson(result, OldElectricResponse::class.java).roomInfo.msg
 
             if(msg.contains("剩余金额"))
                 msg.substringAfter("剩余金额").substringAfter(":").toDouble().roundOffString(2)
@@ -325,7 +325,7 @@ object OthersRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchDormitoryXuanCheng(code : String,dormitoryResult : UiStateHolder<List<XuanquResponse>>) =
+    suspend fun searchDormitoryXuanCheng(code : String,dormitoryResult : UiStateHolder<List<OldDormitoryXuanCheng>>) =
         launchRequestState(
             holder = dormitoryResult,
             request = { xuanChengDormitory.search(code) },
@@ -333,20 +333,20 @@ object OthersRepository {
         )
 
     @JvmStatic
-    private fun parseDormitoryXuanCheng(html : String) : List<XuanquResponse> = try {
+    private fun parseDormitoryXuanCheng(html : String) : List<OldDormitoryXuanCheng> = try {
         // 定义一个正则表达式来匹配HTML标签
         val regex = """<td rowspan="(\d+)">(\d+)</td>\s*<td>(\d+)</td>\s*<td>(\d+)</td>\s*<td rowspan="\d+">(\d{4}-\d{2}-\d{2})</td>""".toRegex()
 
         val data = html.let {
             regex.findAll(it).map {
-                XuanquResponse(score = it.groupValues[2].toInt(), date = it.groupValues[5])
+                OldDormitoryXuanCheng(score = it.groupValues[2].toInt(), date = it.groupValues[5])
             }.toList()
         }
         data
     }  catch (e : Exception) { throw e }
 
 
-    suspend fun getHaiLeNear(bean : HaiLeNearPositionRequestDTO, holder : UiStateHolder<List<HaiLeNearPositionBean>>) =
+    suspend fun getHaiLeNear(bean : HaiLeNearPositionRequestDto, holder : UiStateHolder<List<HaiLeNearPositionBean>>) =
         launchRequestState(
             holder = holder,
             request = { haiLe.getNearPlaces(bean.toRequestBody()) },
@@ -400,7 +400,7 @@ object OthersRepository {
     } catch (e: Exception) { throw e }
 
 
-    suspend fun getDepartments(holder : UiStateHolder<List<DepartmentBean>>) =
+    suspend fun getDepartments(holder : UiStateHolder<List<Department>>) =
         launchRequestState(
             holder = holder,
             request = { hfut.getDepartments() },
@@ -408,7 +408,7 @@ object OthersRepository {
         )
 
     @JvmStatic
-    private fun parseDepartments(html : String) : List<DepartmentBean> = try {
+    private fun parseDepartments(html : String) : List<Department> = try {
         val document = Jsoup.parse(html)
 
         document
@@ -432,7 +432,7 @@ object OthersRepository {
 
                 val iconUrl = rawIcon.removePrefix("../")
 
-                DepartmentBean(
+                Department(
                     name = name,
                     url = website,
                     iconUrl = Constant.HFUT_URL + iconUrl

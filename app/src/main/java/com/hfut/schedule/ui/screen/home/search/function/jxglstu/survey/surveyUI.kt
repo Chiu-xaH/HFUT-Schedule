@@ -31,11 +31,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -121,7 +120,7 @@ private fun CourseSurveyListUI(
     val list = (uiState as NetworkUiState.Success).data
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    var data by remember { mutableStateOf<forStdLessonSurveySearchVms?>(null) }
+    var data by remember { mutableStateOf<JxglstuSurveyLesson?>(null) }
     if (showBottomSheet && data != null) {
         with(data!!) {
             HazeBottomSheet(
@@ -245,7 +244,7 @@ private fun CourseSurveyListUI(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkViewModel, hazeState: HazeState,  scope: CoroutineScope,refresh : suspend () -> Unit) {
+private fun TeacherSurveyListUI(data : JxglstuSurveyLesson, vm : NetWorkViewModel, hazeState: HazeState, scope: CoroutineScope, refresh : suspend () -> Unit) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var id by remember { mutableIntStateOf(0) }
     var name by remember { mutableStateOf("") }

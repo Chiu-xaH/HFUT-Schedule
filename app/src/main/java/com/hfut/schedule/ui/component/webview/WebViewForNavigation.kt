@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.component.webview
 
-import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -12,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -27,29 +25,28 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
 
 
 import com.hfut.schedule.ui.screen.animationOpen
-import com.hfut.schedule.ui.util.webview.WebViewBackHandler
-import com.hfut.schedule.ui.util.webview.WebViewBackIcon
-import com.hfut.schedule.ui.util.webview.WebViewContent
-import com.hfut.schedule.ui.util.webview.WebViewTools
-import com.hfut.schedule.ui.util.webview.WebViewTopBar
-import com.hfut.schedule.ui.util.webview.evaluateJs
-import com.hfut.schedule.ui.util.webview.getPureUrl
-import com.hfut.schedule.ui.util.webview.getWebView
-import com.hfut.schedule.ui.util.webview.isThemeDark
-import com.hfut.schedule.ui.util.webview.scrollListener
-import com.hfut.schedule.ui.util.webview.setInitial
-import com.hfut.schedule.ui.util.webview.sharedInterceptRequest
-import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
-import com.hfut.schedule.ui.util.webview.updateTitle
-import com.hfut.schedule.ui.util.webview.updateUrl
+import com.hfut.schedule.ui.util.WebViewBackHandler
+import com.hfut.schedule.ui.util.WebViewBackIcon
+import com.hfut.schedule.ui.util.WebViewContent
+import com.hfut.schedule.ui.util.WebViewTools
+import com.hfut.schedule.ui.util.WebViewTopBar
+import com.hfut.schedule.ui.util.evaluateJs
+import com.hfut.schedule.ui.util.getPureUrl
+import com.hfut.schedule.ui.util.getWebView
+import com.hfut.schedule.ui.util.isThemeDark
+import com.hfut.schedule.ui.util.scrollListener
+import com.hfut.schedule.ui.util.setInitial
+import com.hfut.schedule.ui.util.sharedInterceptRequest
+import com.hfut.schedule.ui.util.sharedOverrideUrlLoading
+import com.hfut.schedule.ui.util.updateTitle
+import com.hfut.schedule.ui.util.updateUrl
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch

@@ -7,14 +7,14 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
-import com.hfut.schedule.logic.model.jxglstu.DatumResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTableResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppCourseTableResponse
 import com.hfut.schedule.logic.util.network.toStr
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.calendar.common.autoCalculateAndUpdateTermStartDate
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
@@ -91,7 +91,7 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
     var tag = false
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
-        val list = GsonInstance.fromJson(json, UniAppCoursesResponse::class.java).data
+        val list = GsonInstance.fromJson(json, UniAppCourseTableResponse::class.java).data
         val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
         for(item in list) {
             val courseName = item.course.nameZh
@@ -148,7 +148,7 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
 
-        val datumResponse = GsonInstance.fromJson(json, DatumResponse::class.java)
+        val datumResponse = GsonInstance.fromJson(json, JxglstuCourseTableResponse::class.java)
         val scheduleList = datumResponse.result.scheduleList
         val lessonList = datumResponse.result.lessonList
         // 根据id得到课程名

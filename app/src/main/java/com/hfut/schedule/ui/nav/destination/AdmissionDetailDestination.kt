@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.AdmissionMapBean
+import com.hfut.schedule.network.api.model.response.json.admission.Admission
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -10,7 +10,7 @@ import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.res
 
 data class AdmissionDetailDestination(
-    val bean : Map.Entry<String, List<AdmissionMapBean>>,
+    val bean : Map.Entry<String, List<Admission>>,
     val typeStr : String
 ) : NavDestination() {
     override val key = "admission_region_${bean.hashCode()}_$typeStr"

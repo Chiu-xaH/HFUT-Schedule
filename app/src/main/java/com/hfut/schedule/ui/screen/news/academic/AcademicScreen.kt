@@ -24,11 +24,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.AcademicType
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsType
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
@@ -48,7 +47,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
-    val titles = AcademicType.entries.map { it.title }
+    val titles = AcademicNewsType.entries.map { it.title }
     val pagerState = rememberPagerState(pageCount = { titles.size })
     val cookies by produceState<String?>(initialValue = null) {
         value = getWebVpnCookie()
@@ -60,7 +59,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val uiState by vm.academicResp.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = r@{
         vm.academicResp.clear()
-        vm.getAcademicNews(AcademicType.entries[pagerState.currentPage],page, totalPage = totalPage)
+        vm.getAcademicNews(AcademicNewsType.entries[pagerState.currentPage],page, totalPage = totalPage)
     }
     val context = LocalContext.current
 

@@ -8,13 +8,13 @@ import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.model.AppStatus
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.logic.model.enumeration.AppStatus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.nav.deepLinks
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.xah.navigation.registry.DeepLinkRegistry
@@ -110,7 +110,7 @@ class MyApplication : Application() {
         const val MAX_WEEK = 20
         // 三个校区的经纬度 来自高德地图坐标拾取器
         val campusLocations by lazy {
-            mapOf<Campus, Location>(
+            mapOf(
                 Campus.FCH to Location(117.20346, 31.77014),
                 Campus.TXL to Location(117.29597, 31.843905),
                 Campus.XC to Location(118.710182, 30.903593)

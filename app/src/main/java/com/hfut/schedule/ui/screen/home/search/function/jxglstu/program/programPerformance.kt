@@ -38,17 +38,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.CourseItem
-import com.hfut.schedule.logic.model.jxglstu.PlanCourses
-import com.hfut.schedule.logic.model.jxglstu.ProgramBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
-import com.hfut.schedule.logic.model.jxglstu.ProgramModule
-import com.hfut.schedule.logic.model.jxglstu.ProgramPerformanceDetailItem
-import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionCourse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionType
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionModule
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionDetail
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -129,8 +128,8 @@ fun ProgramCompetitionScreen(
 @Composable
 private fun ProgramPerformanceCustom(
     innerPadding : PaddingValues,
-    data : ProgramBean,
-    programCourseMap : Map<String, PlanCourses>,
+    data : JxglstuProgramCompetitionResponse,
+    programCourseMap : Map<String, JxglstuProgramPlanCourse>,
     programTypeMap : Map<Long,String?>
 ) {
     val navController = LocalNavController.current
@@ -146,7 +145,7 @@ private fun ProgramPerformanceCustom(
             val summary = data.outerCompletionSummary
             item { DividerText(text = "培养方案外课程") }
             item {
-                val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Outer(outCourse),programCourseMap,programTypeMap)
+                val dest = ProgramCompetitionDetailDestination(JxglstuProgramCompetitionDetail.Outer(outCourse),programCourseMap,programTypeMap)
                 CustomCard(
                     shape = NoneRoundShape,
                     color = cardNormalColor(),
@@ -200,15 +199,15 @@ private fun ProgramPerformanceCustom(
 
 @Composable
 private fun InnerItem(
-    item : ProgramModule,
+    item : JxglstuProgramCompetitionModule,
     remark : String?,
-    programCourseMap : Map<String, PlanCourses>,
+    programCourseMap : Map<String, JxglstuProgramPlanCourse>,
     programTypeMap : Map<Long, String?>
 ) {
     val navController = LocalNavController.current
     val requireInfo = item.requireInfo
     val summary = item.completionSummary
-    val dest = ProgramCompetitionDetailDestination(ProgramPerformanceDetailItem.Inner(item),programCourseMap,programTypeMap)
+    val dest = ProgramCompetitionDetailDestination(JxglstuProgramCompetitionDetail.Inner(item),programCourseMap,programTypeMap)
 
 
     DividerTextExpandedWith(text = item.nameZh) {
@@ -285,7 +284,7 @@ private fun ProgramPerformance(
     innerPadding : PaddingValues,
 ) {
     val uiState by vm.programPerformanceData.state.collectAsState()
-    val data by produceState<ProgramBean?>(initialValue = null) {
+    val data by produceState<JxglstuProgramCompetitionResponse?>(initialValue = null) {
         if(!ifSaved || uiState is NetworkUiState.Success) {
             onListenStateHolder(vm.programPerformanceData) { data ->
                 value = data
@@ -293,7 +292,7 @@ private fun ProgramPerformance(
         } else {
             val bean = try {
                 val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
-                GsonInstance.fromJson(json,ProgramBean::class.java)
+                GsonInstance.fromJson(json,JxglstuProgramCompetitionResponse::class.java)
             } catch (e : Exception) {
                 LogUtil.error(e)
                 null
@@ -353,8 +352,8 @@ private fun ProgramPerformance(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramCompetitionDetailScreen(
-    bean : ProgramPerformanceDetailItem,
-    programCourseMap : Map<String, PlanCourses>,
+    bean : JxglstuProgramCompetitionDetail,
+    programCourseMap : Map<String, JxglstuProgramPlanCourse>,
     programTypeMap : Map<Long,String?>
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -371,7 +370,7 @@ fun ProgramCompetitionDetailScreen(
                     }
      */
 
-    val isCourses = bean is ProgramPerformanceDetailItem.Inner && bean.bean.allModuleList.isEmpty()
+    val isCourses = bean is JxglstuProgramCompetitionDetail.Inner && bean.bean.allModuleList.isEmpty()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -383,10 +382,10 @@ fun ProgramCompetitionDetailScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(
                         when(bean) {
-                            is ProgramPerformanceDetailItem.Inner -> {
+                            is JxglstuProgramCompetitionDetail.Inner -> {
                                 bean.bean.nameZh
                             }
-                            is ProgramPerformanceDetailItem.Outer -> {
+                            is JxglstuProgramCompetitionDetail.Outer -> {
                                 "培养方案外课程"
                             }
                         }
@@ -395,7 +394,7 @@ fun ProgramCompetitionDetailScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        if(bean is ProgramPerformanceDetailItem.Inner) {
+                        if(bean is JxglstuProgramCompetitionDetail.Inner) {
                             val beanModule = bean.bean
                             val remark = programTypeMap[beanModule.moduleId]
                             if(remark != null) {
@@ -423,7 +422,7 @@ fun ProgramCompetitionDetailScreen(
                     }
                 )
                 if(
-                    bean is ProgramPerformanceDetailItem.Outer ||
+                    bean is JxglstuProgramCompetitionDetail.Outer ||
                     isCourses
                 ) {
                     Row(
@@ -475,14 +474,26 @@ fun ProgramCompetitionDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PerformanceInfo(
-    bean : ProgramPerformanceDetailItem,
+    bean : JxglstuProgramCompetitionDetail,
     innerPadding: PaddingValues,
     input : String,
-    programCourseMap : Map<String, PlanCourses>,
+    programCourseMap : Map<String, JxglstuProgramPlanCourse>,
     programTypeMap : Map<Long, String?>
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var itemForInfo by remember { mutableStateOf(CourseItem("","详情",0.0, listOf(""),true,"",null,null,null)) }
+    var itemForInfo by remember { mutableStateOf(
+        JxglstuProgramCompetitionCourse(
+            "",
+            "详情",
+            0.0,
+            listOf(""),
+            true,
+            "",
+            null,
+            null,
+            null
+        )
+    ) }
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -496,12 +507,12 @@ private fun PerformanceInfo(
     }
 
     when(bean) {
-        is ProgramPerformanceDetailItem.Inner -> {
+        is JxglstuProgramCompetitionDetail.Inner -> {
             val dataList = bean.bean
             val allModules = dataList.allModuleList.sortedByDescending { it.nameZh }
             if(allModules.isEmpty()) {
                 val allCourse = dataList.allCourseList
-                val filteredList = mutableListOf<CourseItem>()
+                val filteredList = mutableListOf<JxglstuProgramCompetitionCourse>()
                 allCourse.forEach { i ->
                     if(i.nameZh.contains(input) || i.code.contains(input) || programCourseMap[i.code]?.remark?.contains(input) == true) {
                         filteredList.add(i)
@@ -531,7 +542,7 @@ private fun PerformanceInfo(
                                 TransplantListItem(
                                     headlineContent = { Text(text = item.nameZh.replace("&nbsp;","") ) },
                                     supportingContent = {
-                                        if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
+                                        if(type == JxglstuProgramCompetitionType.FAILED || type == JxglstuProgramCompetitionType.PASSED) {
                                             Text(text =
                                                 "均分 ${item.score ?: "--"} 绩点 ${item.gp ?: "--"} " +
                                                         if(item.rank != null) "等级 ${item.rank ?: "--"}" else ""
@@ -560,13 +571,13 @@ private fun PerformanceInfo(
                                     },
                                     leadingContent = {
                                         Icon(
-                                            painterResource(type?.icon ?: R.drawable.help),
+                                            painterResource(type?.icon() ?: R.drawable.help),
                                             null,
                                             tint = (
-                                                    if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                                    if(type == JxglstuProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
                                                     else  LocalContentColor.current
                                                     ).copy(
-                                                    if(type == ProgramCompetitionType.UNREPAIRED && !item.compulsory) {
+                                                    if(type == JxglstuProgramCompetitionType.UNREPAIRED && !item.compulsory) {
                                                         .5f
                                                     } else {
                                                         1f
@@ -600,9 +611,9 @@ private fun PerformanceInfo(
                 }
             }
         }
-        is ProgramPerformanceDetailItem.Outer -> {
+        is JxglstuProgramCompetitionDetail.Outer -> {
             val outerCourse = bean.list
-            val filteredList = mutableListOf<CourseItem>()
+            val filteredList = mutableListOf<JxglstuProgramCompetitionCourse>()
             outerCourse.forEach { i ->
                 if(i.nameZh.contains(input) || i.code.contains(input)) {
                     filteredList.add(i)
@@ -618,7 +629,7 @@ private fun PerformanceInfo(
                         CardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
-                                if(type == ProgramCompetitionType.PASSED || type == ProgramCompetitionType.FAILED) {
+                                if(type == JxglstuProgramCompetitionType.PASSED || type == JxglstuProgramCompetitionType.FAILED) {
                                     Text(text =
                                         "均分 ${item.score} 绩点 ${item.gp} " +
                                                 if(item.rank != null) "等级 ${item.rank}" else ""
@@ -633,10 +644,10 @@ private fun PerformanceInfo(
                             },
                             leadingContent = {
                                 Icon(
-                                    painterResource(type?.icon ?: R.drawable.help),
+                                    painterResource(type?.icon() ?: R.drawable.help),
                                     null,
                                     tint = (
-                                            if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                            if(type == JxglstuProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
                                             else  LocalContentColor. current
                                             )
                                 )
@@ -667,7 +678,7 @@ fun transferTerm(term : List<String>) : List<String>? {
 }
 
 @Composable
-fun ProgramInfoItem(item : CourseItem) {
+fun ProgramInfoItem(item : JxglstuProgramCompetitionCourse) {
     val term = transferTerm(item.terms)
     val type = getProgramCompetitionType(item.resultType)
     var text = ""
@@ -702,7 +713,7 @@ fun ProgramInfoItem(item : CourseItem) {
             )
         }
 
-        if(type == ProgramCompetitionType.PASSED || type == ProgramCompetitionType.FAILED) {
+        if(type == JxglstuProgramCompetitionType.PASSED || type == JxglstuProgramCompetitionType.FAILED) {
             TransplantListItem(
                 headlineContent = {
                     Text(
@@ -719,3 +730,13 @@ fun ProgramInfoItem(item : CourseItem) {
         }
     }
 }
+
+
+private fun JxglstuProgramCompetitionType.icon() = when(this) {
+    JxglstuProgramCompetitionType.PASSED -> R.drawable.star_filled
+    JxglstuProgramCompetitionType.TAKING -> R.drawable.star_half
+    JxglstuProgramCompetitionType.UNREPAIRED -> R.drawable.star
+    JxglstuProgramCompetitionType.FAILED -> R.drawable.star
+}
+
+private fun getProgramCompetitionType(description : String)  : JxglstuProgramCompetitionType? = JxglstuProgramCompetitionType.entries.find { it.name == description }

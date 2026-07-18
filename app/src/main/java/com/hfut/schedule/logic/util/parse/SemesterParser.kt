@@ -186,7 +186,7 @@ object SemesterParser {
             reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
         } catch (e : Exception) {
             LogUtil.error(e)
-            getMy()?.semesterId?.toIntOrNull() ?: 0
+            getMy()?.semester?.toIntOrNull() ?: 0
         }
     }
 

@@ -41,13 +41,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.QWeatherNowBean
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNow
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -357,7 +357,7 @@ fun WeatherScreen(vm: NetWorkViewModel) {
         CampusRegion.HEFEI -> "合肥"
         CampusRegion.XUANCHENG -> "宣城"
     } + "市"
-    var data by remember { mutableStateOf( QWeatherNowBean("XX","XX","晴","X风","X","XX","XXX")) }
+    var data by remember { mutableStateOf( QWeatherNow("XX","XX","晴","X风","X","XX","XXX")) }
 
     LaunchedEffect(uiState) {
         if (uiState is NetworkUiState.Success) {

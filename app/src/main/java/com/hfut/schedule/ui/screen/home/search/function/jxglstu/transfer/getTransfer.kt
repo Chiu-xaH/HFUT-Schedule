@@ -1,10 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
-import com.hfut.schedule.logic.model.jxglstu.TransferData
-import com.hfut.schedule.logic.model.jxglstu.NameZh
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorMyApply
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorData
+import com.hfut.schedule.network.api.model.response.json.shared.MultiLanguageBaseData
 
 
 fun getEventCampus() : EventCampus = when(getCampusRegion()) {
@@ -17,8 +17,8 @@ enum class EventCampus  {
     HEFEI,XUANCHENG,DEFAULT
 }
 
-fun getMyTransfer(list : List<MyApplyModels>?,index : Int) : TransferData {
-    val n = TransferData(null,0,null, NameZh(""), NameZh(""),0,0)
+fun getMyTransfer(list : List<JxglstuTransferMajorMyApply>?, index : Int) : JxglstuTransferMajorData {
+    val n = JxglstuTransferMajorData(null,0,null, MultiLanguageBaseData(""), MultiLanguageBaseData(""),0,0)
     return try {
         list?.get(index)?.changeMajorSubmit ?: n
     } catch (e : Exception) {
@@ -27,7 +27,7 @@ fun getMyTransfer(list : List<MyApplyModels>?,index : Int) : TransferData {
 }
 
 
-fun getApplyStatus(list : List<MyApplyModels>?, index : Int) : Boolean? {
+fun getApplyStatus(list : List<JxglstuTransferMajorMyApply>?, index : Int) : Boolean? {
     return try {
        val data = list?.get(index)?.applyStatus ?: ""
         data == "ACCEPTED"

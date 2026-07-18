@@ -1,12 +1,12 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
 
-import com.hfut.schedule.network.model.response.community.CommunityExamResponse
-import com.hfut.schedule.network.model.response.community.CommunityExamArrangement
-import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityExamResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityExamArrangement
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppExamResponse
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuExam
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers

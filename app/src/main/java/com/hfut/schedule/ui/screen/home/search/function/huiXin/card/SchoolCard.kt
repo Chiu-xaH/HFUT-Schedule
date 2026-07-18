@@ -28,11 +28,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.network.model.response.community.CommunityToday
+import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem

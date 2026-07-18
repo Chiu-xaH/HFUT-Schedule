@@ -19,7 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.network.model.response.community.CommunityCourseFailRate
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseFailRate
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem

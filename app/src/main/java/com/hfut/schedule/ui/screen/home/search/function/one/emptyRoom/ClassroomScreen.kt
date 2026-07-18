@@ -30,8 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.getCampus
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.logic.util.helper.getCampus
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs

@@ -1,6 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
-import com.hfut.schedule.logic.model.GiteeReleaseResponse
+import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion

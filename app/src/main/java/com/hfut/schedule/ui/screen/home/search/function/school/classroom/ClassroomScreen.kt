@@ -68,19 +68,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.model.uniapp.ClassroomOccupiedCause
-import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
-import com.hfut.schedule.logic.model.uniapp.UniAppCampus
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
-import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomLesson
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.logic.util.helper.getCampus
+import com.hfut.schedule.ui.model.NavigationBarItemData
+import com.hfut.schedule.network.api.model.response.json.uniapp.ClassroomOccupiedCause
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppBuilding
+import com.hfut.schedule.network.api.util.getUinAppCampusId
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomCourse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppEmptyClassroomLesson
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
@@ -114,10 +113,8 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniApp
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.smoothToOne
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
@@ -175,7 +172,7 @@ fun ClassroomScreen(
 
     var date by rememberSaveable { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
     var campus by remember { mutableStateOf(getCampus()) }
-    val selectedBuildings = remember { mutableStateListOf<UniAppBuildingBean>() }
+    val selectedBuildings = remember { mutableStateListOf<UniAppBuilding>() }
     val selectedFloors = remember { mutableStateListOf<Int>() }
     var input by rememberSaveable { mutableStateOf("") }
 
@@ -256,12 +253,9 @@ fun ClassroomScreen(
                         // 建筑选择（可多选） 多个Chip
                         if(chipsUiState is NetworkUiState.Success) {
                             val buildingList = (chipsUiState as NetworkUiState.Success).data.filter {
-                                when(campus) {
-                                    Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
-                                    Campus.TXL -> UniAppCampus.TXL.code == it.campusAssoc
-                                    Campus.FCH -> UniAppCampus.FCH.code == it.campusAssoc
-                                    else -> true
-                                }
+                                campus?.let { it1 ->
+                                    getUinAppCampusId(it1) == it.campusAssoc
+                                } ?: true
                             }
                             LazyRow() {
                                 item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
@@ -368,7 +362,7 @@ private fun EmptyClassroomScreen(
 //    navTopController : NavHostController,
     date : String,
     campus : Campus?,
-    selectedBuildings: SnapshotStateList<UniAppBuildingBean>,
+    selectedBuildings: SnapshotStateList<UniAppBuilding>,
     selectedFloors: SnapshotStateList<Int>,
     hazeState: HazeState
 ) {
@@ -930,7 +924,7 @@ fun ClassroomLessonsScreen(
     }
 }
 
-private fun uniAppToTimeTableData(targetPlace : String, list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
+private fun uniAppToTimeTableData(targetPlace : String, list: List<UniAppClassroomCourse>): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         for(item in list) {

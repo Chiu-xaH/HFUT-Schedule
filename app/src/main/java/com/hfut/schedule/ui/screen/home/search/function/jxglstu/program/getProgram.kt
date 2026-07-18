@@ -1,12 +1,12 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
-import com.hfut.schedule.logic.model.jxglstu.PlanCourses
-import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
-import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
+import com.hfut.schedule.network.api.model.response.json.shared.ProgramSearchPlanCourse
+import com.hfut.schedule.logic.model.dto.JxglstuProgramItemDto
 import com.xah.common.logic.util.LogUtil
 
 
-fun planCoursesTransform(planCourses : PlanCourses) : ProgramPartThree? = try {
+fun planCoursesTransform(planCourses : JxglstuProgramPlanCourse) : JxglstuProgramItemDto? = try {
     with(planCourses) {
         val term = readableTerms[0]
         val course = course
@@ -20,14 +20,14 @@ fun planCoursesTransform(planCourses : PlanCourses) : ProgramPartThree? = try {
         var depart = openDepartment.nameZh
         if(depart.contains("（")) depart = depart.substringBefore("（")
 
-        ProgramPartThree(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory)
+        JxglstuProgramItemDto(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory)
     }
 } catch (e : Exception) {
     LogUtil.error(e)
     null
 }
 
-fun planCoursesTransform(planCourses : PlanCoursesSearch) : ProgramPartThree? = try {
+fun planCoursesTransform(planCourses : ProgramSearchPlanCourse) : JxglstuProgramItemDto? = try {
     with(planCourses) {
         val term = terms[0].substringAfter("_").toIntOrNull()
         val course = course
@@ -41,8 +41,9 @@ fun planCoursesTransform(planCourses : PlanCoursesSearch) : ProgramPartThree? = 
         var depart = openDepartment.nameZh
         if(depart.contains("（")) depart = depart.substringBefore("（")
 
-        ProgramPartThree(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory)
+        JxglstuProgramItemDto(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory)
     }
 } catch (e : Exception) {
+    LogUtil.error(e)
     null
 }

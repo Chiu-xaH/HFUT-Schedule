@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.supabase
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +33,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.enumeration.SortType
-import com.hfut.schedule.logic.enumeration.SupabaseScreen
-import com.hfut.schedule.logic.model.NavigationBarItemData
+import com.hfut.schedule.logic.model.enumeration.CardBarItems
+import com.hfut.schedule.logic.model.enumeration.SortType
+import com.hfut.schedule.logic.model.enumeration.SupabaseScreen
+import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon

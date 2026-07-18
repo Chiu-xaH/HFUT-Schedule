@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.common.ui.style.padding.navigationBarHeightPadding

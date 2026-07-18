@@ -47,14 +47,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.NewsBarItems
-import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.logic.model.enumeration.NewsBarItems
+import com.hfut.schedule.ui.model.NavigationBarItemData
+import com.hfut.schedule.network.api.util.CryptoUtil
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.util.WebVpnConvertor
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.util.WebVpnConvertor
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -70,7 +70,6 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.nav.destination.NewsDestination
 
-import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
@@ -92,7 +91,6 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch

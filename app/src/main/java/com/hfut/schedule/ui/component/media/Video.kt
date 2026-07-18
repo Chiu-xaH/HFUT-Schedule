@@ -35,7 +35,7 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.util.webview.isThemeDark
+import com.hfut.schedule.ui.util.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.shader.style.scaleMirror
 import com.xah.common.ui.style.mask

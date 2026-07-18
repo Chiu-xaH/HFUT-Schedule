@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.BottomBarItems
+import com.hfut.schedule.logic.model.enumeration.BottomBarItems
 import com.hfut.schedule.logic.util.sys.datetime.Celebration
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen

@@ -1,21 +1,21 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.hfut.schedule.logic.model.AcademicNewsResponse
-import com.hfut.schedule.logic.model.AcademicType
-import com.hfut.schedule.logic.model.AcademicXCType
-import com.hfut.schedule.logic.model.NewsResponse
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsList
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsType
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
+import com.hfut.schedule.network.api.model.response.html.news.News
 import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.network.api.impl.AcademicServiceCreator
+import com.hfut.schedule.network.api.impl.AcademicXCServiceCreator
+import com.hfut.schedule.network.api.impl.NewsServiceCreator
+import com.hfut.schedule.network.api.impl.XuanChengServiceCreator
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.api.AcademicService
-import com.hfut.schedule.network.api.AcademicXCService
-import com.hfut.schedule.network.api.NewsService
-import com.hfut.schedule.network.api.XuanChengService
-import com.hfut.schedule.network.impl.AcademicServiceCreator
-import com.hfut.schedule.network.impl.AcademicXCServiceCreator
-import com.hfut.schedule.network.impl.NewsServiceCreator
-import com.hfut.schedule.network.impl.XuanChengServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.network.api.inf.AcademicService
+import com.hfut.schedule.network.api.inf.AcademicXCService
+import com.hfut.schedule.network.api.inf.NewsService
+import com.hfut.schedule.network.api.inf.XuanChengService
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import okhttp3.ResponseBody
@@ -44,7 +44,7 @@ object NewsRepository {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : UiStateHolder<List<NewsResponse>>) =
+    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : UiStateHolder<List<News>>) =
         launchRequestState(
             holder = newsXuanChengResult,
             request = {
@@ -55,7 +55,7 @@ object NewsRepository {
         )
 
     @JvmStatic
-    private fun parseNewsXuanCheng(html : String) : List<NewsResponse> = try {
+    private fun parseNewsXuanCheng(html : String) : List<News> = try {
         val document = Jsoup.parse(html)
         document.select("ul.news_list > li").map { element ->
             val titleElement = element.selectFirst("span.news_title a")
@@ -63,20 +63,20 @@ object NewsRepository {
             val url = titleElement?.attr("href") ?: "未知URL"
             val date = element.selectFirst("span.news_meta")?.text() ?: "未知日期"
 
-            NewsResponse(title, date, url)
+            News(title, date, url)
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademicXC(type: AcademicXCType, page: Int = 1, holder : UiStateHolder<List<NewsResponse>>) =
+    suspend fun getAcademicXC(type: AcademicNewsXuanChengType, page: Int = 1, holder : UiStateHolder<List<News>>) =
         launchRequestState(
             holder = holder,
             request = { academicXC.getNews(type.type, page) },
             transformSuccess = { _, json -> parseAcademicNewsXC(json) },
         )
     @JvmStatic
-    private fun parseAcademicNewsXC(html : String) : List<NewsResponse> = try {
+    private fun parseAcademicNewsXC(html : String) : List<News> = try {
         val document = Jsoup.parse(html)
-        val newsList = mutableListOf<NewsResponse>()
+        val newsList = mutableListOf<News>()
 
         // by Claude 这里接口变了，重新写解析函数
         val links = document.select("td[align=left] > a[target=_blank]")
@@ -94,7 +94,7 @@ object NewsRepository {
                 ?: continue
 
             if (title.isNotEmpty() && link.isNotEmpty()) {
-                newsList.add(NewsResponse(title, date, link))
+                newsList.add(News(title, date, link))
             }
         }
         /*
@@ -117,7 +117,7 @@ object NewsRepository {
         newsList
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademic(type: AcademicType, totalPage : Int? = null, page: Int = 1, holder : UiStateHolder<AcademicNewsResponse>) =
+    suspend fun getAcademic(type: AcademicNewsType, totalPage : Int? = null, page: Int = 1, holder : UiStateHolder<AcademicNewsList>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -130,11 +130,11 @@ object NewsRepository {
             transformSuccess = { _, json -> parseAcademicNews(json) },
         )
     @JvmStatic
-    private fun parseAcademicNews(html : String) : AcademicNewsResponse = try {
+    private fun parseAcademicNews(html : String) : AcademicNewsList = try {
         val document: Document = Jsoup.parse(html)
 
         // 提取新闻列表
-        val newsList = mutableListOf<NewsResponse>()
+        val newsList = mutableListOf<News>()
         val newsElements = document.select("a.l3-news--item")
 
         for (element in newsElements) {
@@ -142,17 +142,17 @@ object NewsRepository {
             val title = element.selectFirst("div.l3-news--title")?.text() ?: ""
             val date = element.selectFirst("div.l3-news--month")?.text() ?: ""
 
-            newsList.add(NewsResponse(title = title, date = date, link = link))
+            newsList.add(News(title = title, date = date, link = link))
         }
 
         // 提取总页数，例如最后的“110”
         val pageText = document.select("span.p_no a").map { it.text() }
         val maxPage = pageText.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 1
 
-        AcademicNewsResponse(news = newsList, totalPage = maxPage)
+        AcademicNewsList(news = newsList, totalPage = maxPage)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchNews(title : String,page: Int = 1,newsResult : UiStateHolder<List<NewsResponse>>) =
+    suspend fun searchNews(title : String,page: Int = 1,newsResult : UiStateHolder<List<News>>) =
         launchRequestState(
             holder = newsResult,
             request = { news.searchNews(CryptoUtil.encodeToBase64(title), page) },
@@ -160,8 +160,8 @@ object NewsRepository {
         )
 
     @JvmStatic
-    private fun parseNews(html : String) : List<NewsResponse> = try {
-        var newsList = mutableListOf<NewsResponse>()
+    private fun parseNews(html : String) : List<News> = try {
+        var newsList = mutableListOf<News>()
         val doc: Document = Jsoup.parse(html)
         val newsItems = doc.select("ul.list li")
 
@@ -177,7 +177,7 @@ object NewsRepository {
             } else {
                 Constant.NEWS_URL + link
             }
-            newsList.add(NewsResponse(title, date, links))
+            newsList.add(News(title, date, links))
         }
         // 去重
         newsList = newsList.distinctBy { it.title + it.link + it.date }.toMutableList()

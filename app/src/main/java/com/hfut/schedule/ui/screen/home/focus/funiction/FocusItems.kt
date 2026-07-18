@@ -39,9 +39,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.model.Schedule
-import com.hfut.schedule.network.model.response.community.CommunityToday
-import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
+import com.hfut.schedule.network.api.model.response.json.github.GithubIoSchedule
+import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseDetail
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.network.MyApiParse.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
@@ -92,7 +92,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 @Composable
-fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
+fun ScheduleItem(listItem : GithubIoSchedule, isFuture: Boolean, activity : Activity) {
 
     if(prefs.getString("my","")?.contains("Schedule") == true) {
         val startTime = listItem.startTime
@@ -125,7 +125,7 @@ fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
 }
 
 @Composable
-private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Activity) {
+private fun ScheduleItemUI(listItem: GithubIoSchedule, isFuture : Boolean, activity : Activity) {
     if(!listItem.showPublic) {
         return
     }
@@ -167,7 +167,7 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
 }
 
 @Composable
-fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
+fun NetCourseItem(listItem : GithubIoSchedule, isFuture: Boolean, activity: Activity) {
     if(!listItem.showPublic) {
         return
     }

@@ -37,7 +37,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith

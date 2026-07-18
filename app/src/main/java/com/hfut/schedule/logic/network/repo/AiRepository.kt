@@ -1,8 +1,8 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.hfut.schedule.logic.enumeration.ChatModel
+import com.hfut.schedule.logic.model.enumeration.ChatModel
 import com.hfut.schedule.logic.network.impl.AiServiceCreator
-import com.hfut.schedule.network.api.AiService
+import com.hfut.schedule.network.api.inf.AiService
 
 object AiRepository {
 

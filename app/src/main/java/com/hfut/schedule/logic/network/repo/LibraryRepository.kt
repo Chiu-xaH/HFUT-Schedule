@@ -1,20 +1,20 @@
 package com.hfut.schedule.logic.network.repo
 
 
-import com.hfut.schedule.logic.model.library.BorrowedStatus
-import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
-import com.hfut.schedule.logic.model.library.LibraryBorrowedResponse
-import com.hfut.schedule.logic.model.library.LibrarySearchBean
-import com.hfut.schedule.logic.model.library.LibrarySearchResponse
-import com.hfut.schedule.logic.model.library.LibraryStatus
-import com.hfut.schedule.logic.model.library.LibraryStatusResponse
+import com.hfut.schedule.network.api.model.response.json.library.BorrowedStatus
+import com.hfut.schedule.network.api.model.response.json.library.LibraryBorrowRecord
+import com.hfut.schedule.network.api.model.response.json.library.LibraryBorrowResponse
+import com.hfut.schedule.network.api.model.response.json.library.LibrarySearchRow
+import com.hfut.schedule.network.api.model.response.json.library.LibrarySearchResponse
+import com.hfut.schedule.network.api.model.response.json.library.LibraryStatusDto
+import com.hfut.schedule.network.api.model.response.json.library.LibraryStatusResponse
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.network.api.impl.LibraryServiceCreator
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.api.LibraryService
-import com.hfut.schedule.network.impl.LibraryServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.inf.LibraryService
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 
 object LibraryRepository {
@@ -39,13 +39,13 @@ object LibraryRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getStatus(token : String,holder : UiStateHolder<LibraryStatus>) = launchRequestState(
+    suspend fun getStatus(token : String,holder : UiStateHolder<LibraryStatusDto>) = launchRequestState(
         holder = holder,
         request = { library.getStatus(auth = token) },
         transformSuccess = { _, json -> parseLibraryStatus(json) }
     )
     @JvmStatic
-    private fun parseLibraryStatus(json: String) : LibraryStatus = try {
+    private fun parseLibraryStatus(json: String) : LibraryStatusDto = try {
         if(json.contains("成功")) {
             var bookShelfCount = 0
             var borrowCount = 0
@@ -71,7 +71,7 @@ object LibraryRepository {
                     "myrecommend" -> recommendCount = item.count
                 }
             }
-            LibraryStatus(
+            LibraryStatusDto(
                 bookShelfCount,
                 borrowCount,
                 reserveCount,
@@ -87,21 +87,21 @@ object LibraryRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = Constant.DEFAULT_PAGE_SIZE, holder : UiStateHolder<List<LibraryBorrowedBean>>) =
+    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = Constant.DEFAULT_PAGE_SIZE, holder : UiStateHolder<List<LibraryBorrowRecord>>) =
         launchRequestState(
             holder = holder,
             request = { library.getBorrowed(token, page, status?.status, pageSize = pageSize) },
             transformSuccess = { _, json -> parseBorrowed(json) }
         )
     @JvmStatic
-    private fun parseBorrowed(json : String) : List<LibraryBorrowedBean> = try {
-        GsonInstance.fromJson(json, LibraryBorrowedResponse::class.java).data.list
+    private fun parseBorrowed(json : String) : List<LibraryBorrowRecord> = try {
+        GsonInstance.fromJson(json, LibraryBorrowResponse::class.java).data.list
     } catch (e : Exception) { throw e }
 
     suspend fun search(
         page : Int,
         keyword : String,
-        holder : UiStateHolder<List<LibrarySearchBean>>
+        holder : UiStateHolder<List<LibrarySearchRow>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -120,7 +120,7 @@ object LibraryRepository {
         transformSuccess = { _, json -> parseSearch(json) }
     )
     @JvmStatic
-    private fun parseSearch(json : String) : List<LibrarySearchBean> = try {
+    private fun parseSearch(json : String) : List<LibrarySearchRow> = try {
         GsonInstance.fromJson(json, LibrarySearchResponse::class.java).data.rows
     } catch (e : Exception) { throw e }
 }

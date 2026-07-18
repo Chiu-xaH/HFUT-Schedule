@@ -29,15 +29,15 @@ import androidx.compose.ui.unit.dp
 
 import com.google.gson.JsonObject
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.PostMode
-import com.hfut.schedule.logic.model.jxglstu.PostSurvey
-import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
-import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
-import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
-import com.hfut.schedule.network.model.StatusCode
+import com.hfut.schedule.logic.model.enumeration.PostMode
+import com.hfut.schedule.network.api.model.request.jxglstu.JxglstuSurveyPostRequest
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyQuestionsResponse
+import com.hfut.schedule.network.api.model.request.jxglstu.JxglstuSurveyPostBlankQuestionAnswer
+import com.hfut.schedule.network.api.model.request.jxglstu.JxglstuSurveyPostRadioQuestionAnswer
+import com.hfut.schedule.network.core.StatusCode
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -205,7 +205,7 @@ private fun SurveyList(
 suspend fun postSurvey(
     vm : NetWorkViewModel,
     mode : PostMode,
-    bean: SurveyResponse,
+    bean: JxglstuSurveyQuestionsResponse,
     comment: String = "好",
     teacherId : Int,
     teacherName : String? = null
@@ -227,21 +227,21 @@ suspend fun postSurvey(
 //true为好评，false为差评
 fun postResult(
     mode: PostMode,
-    bean : SurveyResponse,
+    bean : JxglstuSurveyQuestionsResponse,
     comment : String = "好",
     teacherId : Int,
 ): JsonObject {
     val surveyAssoc = bean.lessonSurveyLesson.surveyAssoc
     val inputList = bean.survey.blankQuestions
-    val inputNewList = mutableListOf<blankQuestionAnswer>()
+    val inputNewList = mutableListOf<JxglstuSurveyPostBlankQuestionAnswer>()
 
     for (j in inputList.indices) {
         val id = inputList[j].id
-        inputNewList.add(blankQuestionAnswer(id, comment))
+        inputNewList.add(JxglstuSurveyPostBlankQuestionAnswer(id, comment))
     }
 
     // 组装数据
-    val postSurvey = PostSurvey(surveyAssoc, teacherId, getLevel(mode,bean), inputNewList)
+    val postSurvey = JxglstuSurveyPostRequest(surveyAssoc, teacherId, getLevel(mode,bean), inputNewList)
 
     return GsonInstance.toJsonTree(postSurvey).asJsonObject
 }
@@ -250,10 +250,10 @@ fun postResult(
 // 0~4
 private fun getLevel(
     mode : PostMode,
-    bean : SurveyResponse,
-)  : List<radioQuestionAnswer> {
+    bean : JxglstuSurveyQuestionsResponse,
+)  : List<JxglstuSurveyPostRadioQuestionAnswer> {
     val choiceList = bean.survey.radioQuestions
-    val choiceNewList = mutableListOf<radioQuestionAnswer>()
+    val choiceNewList = mutableListOf<JxglstuSurveyPostRadioQuestionAnswer>()
     // 默认拿第一个选项为好评，拿最后一个为差评
 
     for (i in choiceList.indices) {
@@ -279,7 +279,7 @@ private fun getLevel(
             level
         }
         val option = optionList[finalIndex].name
-        choiceNewList.add(radioQuestionAnswer(id, option))
+        choiceNewList.add(JxglstuSurveyPostRadioQuestionAnswer(id, option))
     }
     return choiceNewList
 }

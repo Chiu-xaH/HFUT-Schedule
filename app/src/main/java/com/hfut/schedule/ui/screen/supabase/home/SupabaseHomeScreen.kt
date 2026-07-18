@@ -54,7 +54,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
-import com.hfut.schedule.logic.enumeration.SortType
+import com.hfut.schedule.logic.model.enumeration.SortType
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.toStr
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT

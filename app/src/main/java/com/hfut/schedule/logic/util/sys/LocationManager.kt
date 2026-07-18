@@ -17,7 +17,12 @@ fun getLocation(context : Context, onLocation : (com.hfut.schedule.logic.model.L
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(PROVIDER, 1000L, 1f, object : LocationListener {
             override fun onLocationChanged(location: Location) {
-                onLocation(com.hfut.schedule.logic.model.Location(location.longitude, location.latitude))
+                onLocation(
+                    com.hfut.schedule.logic.model.Location(
+                        location.longitude,
+                        location.latitude
+                    )
+                )
                 locationManager.removeUpdates(this)
             }
 

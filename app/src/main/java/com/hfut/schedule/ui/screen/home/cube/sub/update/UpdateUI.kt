@@ -46,7 +46,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.GiteeReleaseResponse
+import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 
@@ -55,7 +55,7 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.LargeButton

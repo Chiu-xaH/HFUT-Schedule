@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.theme
 import android.app.UiModeManager
 import android.content.Context
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -25,9 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.util.color.ColorMode
-import com.hfut.schedule.ui.util.color.ColorStyle
-import com.hfut.schedule.ui.util.color.deepen
+import com.hfut.schedule.ui.model.choice.ColorMode
+import com.hfut.schedule.ui.model.ColorStyle
+import com.hfut.schedule.ui.util.deepen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.rememberDynamicColorScheme
 import com.xah.common.ui.style.color.TransparentSystemBars

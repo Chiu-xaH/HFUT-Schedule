@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
+import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
+import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.xah.common.logic.state.NetworkUiState
@@ -157,12 +157,12 @@ fun AverageGradeScreen(
                         gradeList
                             .associate { it.first to it.second }
                             .map { (term, items) ->
-                                GradeJxglstuDTO(
+                                JxglstuTermGrade(
                                     term,
                                     items.filter {
                                         !(it.passed && it.gp == 0.0) && it.finalGrade != null
                                     }.map {
-                                        GradeJxglstuResponse(
+                                        JxglstuGrade(
                                             it.courseNameZh,
                                             it.credits.toString(),
                                             it.gp.toString(),
@@ -237,7 +237,7 @@ fun AverageGradeScreen(
                     }
                 }
             } else {
-                val gradeList by produceState<List<GradeJxglstuDTO>?>(initialValue = null) {
+                val gradeList by produceState<List<JxglstuTermGrade>?>(initialValue = null) {
                     scope.launch(Dispatchers.IO) {
                         LargeStringDataManager.read(LargeStringDataManager.GRADE)?.let {
                             value = parseJxglstuGrade(it)
@@ -249,7 +249,7 @@ fun AverageGradeScreen(
                         gradeList!!
                             .associate { it.term to it.list }
                             .map { (term, items) ->
-                                GradeJxglstuDTO(
+                                JxglstuTermGrade(
                                     term,
                                     items.filter { getGpa(it.gpa) != null }
                                 )

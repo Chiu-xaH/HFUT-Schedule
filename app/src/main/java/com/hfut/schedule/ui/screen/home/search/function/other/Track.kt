@@ -52,12 +52,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.GithubIssueBean
-import com.hfut.schedule.logic.model.GithubIssueLabel
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueLabelDto
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -73,11 +73,9 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -312,17 +310,17 @@ private data class CircleNode(
 
 // ── 主入口 ────────────────────────────────────────────
 @Composable
-private fun IssueFlowChart(issue: GithubIssueBean) {
+private fun IssueFlowChart(issue: GithubIssueResponse) {
     val ids = issue.labels.map { it.id }.toSet()
-    fun has(l: GithubIssueLabel) = l.id in ids
+    fun has(l: GithubIssueLabelDto) = l.id in ids
 
     val isOpen     = issue.getStateOpen()
-    val isJoin     = has(GithubIssueLabel.JOIN_PLAN)
-    val isDiscard  = has(GithubIssueLabel.DISCARD)
-    val isDesign   = has(GithubIssueLabel.IN_DESIGN)
-    val isDev      = has(GithubIssueLabel.IN_DEV)
-    val isVerity   = has(GithubIssueLabel.VERITY)
-    val isResolved = has(GithubIssueLabel.RESOLVED)
+    val isJoin     = has(GithubIssueLabelDto.JOIN_PLAN)
+    val isDiscard  = has(GithubIssueLabelDto.DISCARD)
+    val isDesign   = has(GithubIssueLabelDto.IN_DESIGN)
+    val isDev      = has(GithubIssueLabelDto.IN_DEV)
+    val isVerity   = has(GithubIssueLabelDto.VERITY)
+    val isResolved = has(GithubIssueLabelDto.RESOLVED)
     val isEval     = isJoin || isDiscard || isDesign || isDev || isVerity || isResolved
 
     val mainNodes = listOf(

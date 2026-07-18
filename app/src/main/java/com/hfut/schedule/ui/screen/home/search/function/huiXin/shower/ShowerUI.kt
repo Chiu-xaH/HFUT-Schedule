@@ -51,18 +51,18 @@ import androidx.lifecycle.Observer
 
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
-import com.hfut.schedule.network.model.response.huixin.HuiXinShowerFeeResponse
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinShowerFeeResponse
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem

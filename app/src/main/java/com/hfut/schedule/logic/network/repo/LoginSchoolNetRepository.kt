@@ -1,14 +1,14 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.network.api.LoginSchoolNetService
-import com.hfut.schedule.network.impl.LoginHefeiSchoolNetServiceCreator
-import com.hfut.schedule.network.impl.LoginXcSchoolNetServiceCreator
-import com.hfut.schedule.network.impl.LoginXcSchoolNetServiceCreator2
+import com.hfut.schedule.network.api.inf.LoginSchoolNetService
+import com.hfut.schedule.network.api.impl.LoginHefeiSchoolNetServiceCreator
+import com.hfut.schedule.network.api.impl.LoginXcSchoolNetServiceCreator
+import com.hfut.schedule.network.api.impl.LoginXcSchoolNetServiceCreator2
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo

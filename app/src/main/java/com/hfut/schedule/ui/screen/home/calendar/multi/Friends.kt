@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 
 import com.hfut.schedule.R
-import com.hfut.schedule.network.model.response.community.CommunityFriend
-import com.hfut.schedule.network.model.response.community.CommunityFriendResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityFriend
+import com.hfut.schedule.network.api.model.response.json.community.CommunityFriendResponse
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -45,7 +45,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

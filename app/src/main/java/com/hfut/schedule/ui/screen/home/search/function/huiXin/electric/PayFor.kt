@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.xah.common.ui.style.APP_HORIZONTAL_DP

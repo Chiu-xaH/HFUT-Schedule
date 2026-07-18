@@ -2,12 +2,12 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.os.Handler
 import android.os.Looper
-import com.hfut.schedule.network.model.response.huixin.HuiXinCardResponse
-import com.hfut.schedule.logic.model.ReturnCard
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinCardResponse
+import com.hfut.schedule.logic.model.dto.HuiXinCardInfoDto
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil
@@ -40,7 +40,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel) = withContext(Dispatchers.IO)
                         val balance = str
                         SharedPrefs.saveString("card", str)
                         SharedPrefs.saveString("card_account", account)
-                        GlobalUiStateHolder.cardValue = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
+                        GlobalUiStateHolder.cardValue = HuiXinCardInfoDto(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
                     } catch (e: Exception) {
                         LogUtil.error(e)
                     }

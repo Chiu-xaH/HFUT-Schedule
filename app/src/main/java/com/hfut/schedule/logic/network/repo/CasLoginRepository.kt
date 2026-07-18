@@ -1,19 +1,19 @@
 package com.hfut.schedule.logic.network.repo
 
 
-import com.hfut.schedule.logic.enumeration.CasLoginType
-import com.hfut.schedule.logic.model.CasGetFlavorBean
-import com.hfut.schedule.logic.model.CasGetFlavorResponse
+import com.hfut.schedule.logic.model.enumeration.CasLoginType
+import com.hfut.schedule.network.api.model.response.json.cas.CasGetFlavorSessionDto
+import com.hfut.schedule.network.api.model.response.json.cas.CasFlavorSessionResponse
 import com.hfut.schedule.logic.network.impl.AesKeyServiceCreator
 import com.hfut.schedule.logic.network.impl.LoginServiceCreator
 import com.hfut.schedule.logic.network.impl.OneGotoServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.network.api.impl.LoginGetCookieServiceCreator
+import com.hfut.schedule.network.api.inf.LoginService
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.api.LoginService
-import com.hfut.schedule.network.impl.LoginGetCookieServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import okhttp3.Headers
 import org.jsoup.Jsoup
@@ -37,10 +37,10 @@ object CasLoginRepository {
         login.loginGoTo(service = CasLoginType.LIBRARY.service, cookie = cookie)
     }
     suspend fun goToStu(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.STU.service, cookie = cookie)
+        login.loginGoTo(service =  CasLoginType.STU.service, cookie = cookie)
     }
     suspend fun goToPe(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.PE.service, cookie = cookie)
+        login.loginGoTo(service =  CasLoginType.PE.service, cookie = cookie)
     }
     suspend fun goToOne(cookie : String) = launchRequestNone {// 创建一个Call对象，用于发送异步请求
         casOauth.loginGoToOauth(
@@ -77,18 +77,18 @@ object CasLoginRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getEncryptKey(jSessionId : UiStateHolder<CasGetFlavorBean>) = launchRequestState(
+    suspend fun getEncryptKey(jSessionId : UiStateHolder<CasGetFlavorSessionDto>) = launchRequestState(
         holder = jSessionId,
         request = { getAESKey.getKey() },
         transformSuccess = { headers, json -> parseKey(headers, json) }
     )
     @JvmStatic
-    private fun parseKey(headers: Headers, json : String) : CasGetFlavorBean {
+    private fun parseKey(headers: Headers, json : String) : CasGetFlavorSessionDto {
         return headers["Set-Cookie"]?.let {
-            CasGetFlavorBean(
+            CasGetFlavorSessionDto(
                 jSession = it,
                 needCaptcha = try {
-                    GsonInstance.fromJson(json, CasGetFlavorResponse::class.java).needCaptcha
+                    GsonInstance.fromJson(json, CasFlavorSessionResponse::class.java).needCaptcha
                 } catch (e: Exception) {
                     throw Exception(e)
                 }

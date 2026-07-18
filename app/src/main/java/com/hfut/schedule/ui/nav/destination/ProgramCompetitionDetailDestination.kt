@@ -2,23 +2,21 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.PlanCourses
-import com.hfut.schedule.logic.model.jxglstu.ProgramPerformanceDetailItem
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionDetail
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionDetailScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.res
 
 data class ProgramCompetitionDetailDestination(
-    val item : ProgramPerformanceDetailItem,
-    val programCourseMap : Map<String, PlanCourses>,
+    val item : JxglstuProgramCompetitionDetail,
+    val programCourseMap : Map<String, JxglstuProgramPlanCourse>,
     val programTypeMap : Map<Long, String?>
 ) : NavDestination() {
     override val key = "program_competition_detail_${item.hashCode()}"
     override val description = when(item) {
-        is ProgramPerformanceDetailItem.Outer -> "培养方案外课程"
-        is ProgramPerformanceDetailItem.Inner -> item.bean.nameZh
+        is JxglstuProgramCompetitionDetail.Outer -> "培养方案外课程"
+        is JxglstuProgramCompetitionDetail.Inner -> item.bean.nameZh
     }
     override val title = TITLE
     override val icon = ICON

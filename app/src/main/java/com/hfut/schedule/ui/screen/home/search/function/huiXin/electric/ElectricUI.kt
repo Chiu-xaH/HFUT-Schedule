@@ -60,13 +60,13 @@ import androidx.compose.ui.window.Dialog
 
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
+import com.xah.common.logic.model.Campus
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampus
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuilding
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 
@@ -78,8 +78,8 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -765,7 +765,7 @@ fun ElectricHefei(
         vm.hefeiRoomsResp.emitPrepare()
     }
     val scope = rememberCoroutineScope()
-    var buildingNumber by remember { mutableStateOf<HuiXinHefeiBuildingBean?>(null) }
+    var buildingNumber by remember { mutableStateOf<HuiXinHefeiBuilding?>(null) }
     LaunchedEffect(finalRegion) {
         finalRegion?.let { final ->
             getBuildings()
@@ -803,7 +803,7 @@ fun ElectricHefei(
         }
     }
     var showRoom by remember { mutableStateOf(false) }
-    var roomNumber by remember { mutableStateOf<HuiXinHefeiBuildingBean?>(null) }
+    var roomNumber by remember { mutableStateOf<HuiXinHefeiBuilding?>(null) }
     LaunchedEffect(roomNumber) {
         roomNumber?.let {
             buildingNumber?.let { it1 ->

@@ -4,15 +4,14 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.MutableLiveData
 
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.logic.model.SupabaseEventEntity
-import com.hfut.schedule.logic.model.SupabaseEventForkCount
-import com.hfut.schedule.logic.model.SupabaseEventOutput
-import com.hfut.schedule.logic.model.SupabaseEventsInput
-import com.hfut.schedule.logic.model.SupabaseLoginResponse
-import com.hfut.schedule.logic.model.SupabaseRefreshLoginBean
-import com.hfut.schedule.logic.model.SupabaseUserLoginBean
+import com.hfut.schedule.logic.model.supabase.SupabaseEventEntity
+import com.hfut.schedule.network.api.model.request.supabase.SupabaseEventForkCountRequest
+import com.hfut.schedule.logic.model.supabase.SupabaseEventOutput
+import com.hfut.schedule.logic.model.supabase.SupabaseEventsInput
+import com.hfut.schedule.network.api.model.response.json.supabase.SupabaseLoginResponse
+import com.hfut.schedule.network.api.model.request.supabase.SupabaseLoginWithRefreshRequest
+import com.hfut.schedule.logic.model.supabase.SupabaseLoginWithPwdRequest
 import com.hfut.schedule.logic.network.api.SupabaseService
-import com.hfut.schedule.network.impl.SupabaseServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.makeRequest
@@ -22,7 +21,8 @@ import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.SupabaseServiceCreator
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -48,7 +48,7 @@ object SupabaseRepository {
     } catch (e : Exception) { throw e }
 
     fun supabaseReg(password: String,supabaseRegResp : MutableLiveData<String?>) = makeRequest(
-        supabase.reg(user = SupabaseUserLoginBean(password = password)),
+        supabase.reg(user = SupabaseLoginWithPwdRequest(password = password)),
         supabaseRegResp
     )
 
@@ -57,7 +57,7 @@ object SupabaseRepository {
             holder = holder,
             request = {
                 supabase.login(
-                    user = SupabaseUserLoginBean(password = password),
+                    user = SupabaseLoginWithPwdRequest(password = password),
                     loginType = "password"
                 )
             },
@@ -69,7 +69,7 @@ object SupabaseRepository {
             holder = holder,
             request = {
                 supabase.login(
-                    user = SupabaseRefreshLoginBean(refreshToken),
+                    user = SupabaseLoginWithRefreshRequest(refreshToken),
                     loginType = "refresh_token"
                 )
             },
@@ -121,7 +121,7 @@ object SupabaseRepository {
         if(eventForkCountCache.containsKey(eventId)) {
             return
         }
-        val call = supabase.getEventDownloadCount(authorization = "Bearer $jwt", entity = SupabaseEventForkCount(eventId = eventId))
+        val call = supabase.getEventDownloadCount(authorization = "Bearer $jwt", entity = SupabaseEventForkCountRequest(eventId = eventId))
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if(response.isSuccessful) {

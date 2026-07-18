@@ -2,10 +2,10 @@ package com.hfut.schedule.ui.screen.supabase.home
 
 
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.logic.model.SupabaseEventEntity
-import com.hfut.schedule.logic.model.SupabaseEventsInput
+import com.hfut.schedule.logic.model.supabase.SupabaseEventEntity
+import com.hfut.schedule.logic.model.supabase.SupabaseEventsInput
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil
 

@@ -45,8 +45,8 @@ import androidx.glance.text.TextStyle
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.enumeration.BottomBarItems
-import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
+import com.hfut.schedule.logic.model.enumeration.BottomBarItems
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseDetail
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager

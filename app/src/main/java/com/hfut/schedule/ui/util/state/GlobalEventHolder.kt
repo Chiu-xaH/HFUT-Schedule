@@ -1,6 +1,6 @@
 package com.hfut.schedule.ui.util.state
 
-import com.hfut.schedule.logic.model.AppStatus
+import com.hfut.schedule.logic.model.enumeration.AppStatus
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 

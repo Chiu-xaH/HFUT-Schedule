@@ -5,90 +5,87 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.JsonObject
-import com.hfut.schedule.logic.enumeration.AdmissionType
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.LibraryItems
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.AcademicNewsResponse
-import com.hfut.schedule.logic.model.AcademicType
-import com.hfut.schedule.logic.model.AcademicXCType
-import com.hfut.schedule.logic.model.AdmissionDetailBean
-import com.hfut.schedule.logic.model.AdmissionMapBean
-import com.hfut.schedule.logic.model.AdmissionTokenResponse
-import com.hfut.schedule.logic.model.BuildingMapResponseBean
-import com.hfut.schedule.logic.model.DepartmentBean
-import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.model.GithubFolderBean
-import com.hfut.schedule.logic.model.GithubIssueBean
-import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
-import com.hfut.schedule.logic.model.HaiLeNearPositionBean
-import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
-import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
-import com.hfut.schedule.logic.model.NewsResponse
-import com.hfut.schedule.logic.model.OfficeHallSearchBean
-import com.hfut.schedule.logic.model.PayData
-import com.hfut.schedule.logic.model.QWeatherNowBean
-import com.hfut.schedule.logic.model.QWeatherWarnBean
-import com.hfut.schedule.logic.model.SecondClassActivity
-import com.hfut.schedule.logic.model.SupabaseEventOutput
-import com.hfut.schedule.logic.model.SupabaseEventsInput
-import com.hfut.schedule.logic.model.SupabaseLoginResponse
-import com.hfut.schedule.logic.model.TeacherResponse
-import com.hfut.schedule.logic.model.WorkSearchResponse
-import com.hfut.schedule.logic.model.XuanquResponse
-import com.hfut.schedule.network.model.response.community.CommunityApplyingFriendRecord
-import com.hfut.schedule.network.model.response.community.CommunityGradeAverage
-import com.hfut.schedule.network.model.response.community.CommunityBookPosition
-import com.hfut.schedule.network.model.response.community.CommunityBorrowRecord
-import com.hfut.schedule.network.model.response.community.CommunityBus
-import com.hfut.schedule.network.model.response.community.CommunityDormitory
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryScore
-import com.hfut.schedule.logic.model.DormitoryWeeklyScores
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryUser
-import com.hfut.schedule.network.model.response.community.CommunityFailRateRecord
-import com.hfut.schedule.network.model.response.community.CommunityGradeAll
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
-import com.hfut.schedule.network.model.response.community.CommunityGrade
-import com.hfut.schedule.network.model.response.community.CommunityLibraryRecord
-import com.hfut.schedule.network.model.response.community.CommunitySchoolMap
-import com.hfut.schedule.network.model.response.community.CommunityStuAppDetail
-import com.hfut.schedule.network.model.response.community.CommunityToday
-import com.hfut.schedule.network.model.response.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.network.model.response.guagua.GuaGuaBillResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
-import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
-import com.hfut.schedule.logic.model.jxglstu.SelectCourse
-import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
-import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
-import com.hfut.schedule.logic.model.jxglstu.TransferResponse
-import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
-import com.hfut.schedule.logic.model.jxglstu.lessonResponse
-import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.model.library.BorrowedStatus
-import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
-import com.hfut.schedule.logic.model.library.LibrarySearchBean
-import com.hfut.schedule.logic.model.library.LibraryStatus
-import com.hfut.schedule.logic.model.one.BuildingBean
-import com.hfut.schedule.logic.model.one.ClassroomBean
-import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
-import com.hfut.schedule.logic.model.uniapp.UniAppClassmatesBean
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
-import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomBean
-import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
-import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomBean
-import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
-import com.hfut.schedule.logic.model.wx.WXClassmatesBean
-import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseTableDto
+import com.hfut.schedule.logic.model.enumeration.AdmissionType
+import com.xah.common.logic.model.Campus
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.model.enumeration.LibraryItems
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsList
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsType
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionDetailBean
+import com.hfut.schedule.network.api.model.response.json.admission.Admission
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionTokenResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubBuildingMapResponse
+import com.hfut.schedule.network.api.model.response.html.Department
+import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubFolderResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueResponse
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeDeviceDetailBean
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeNearPositionBean
+import com.hfut.schedule.logic.model.dto.HaiLeNearPositionRequestDto
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuilding
+import com.hfut.schedule.network.api.model.response.html.news.News
+import com.hfut.schedule.network.api.model.response.json.hall.OfficeHallSearchRecord
+import com.hfut.schedule.network.api.model.response.json.one.OneFeeData
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNow
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarning
+import com.hfut.schedule.network.api.model.response.json.second.SecondClassActivity
+import com.hfut.schedule.logic.model.supabase.SupabaseEventOutput
+import com.hfut.schedule.logic.model.supabase.SupabaseEventsInput
+import com.hfut.schedule.network.api.model.response.json.supabase.SupabaseLoginResponse
+import com.hfut.schedule.network.api.model.response.json.teacher.TeacherResponse
+import com.hfut.schedule.network.api.model.response.json.work.WorkSearchResponse
+import com.hfut.schedule.network.api.model.response.html.OldDormitoryXuanCheng
+import com.hfut.schedule.network.api.model.response.json.community.CommunityApplyingFriendRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeAverage
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBookPosition
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBorrowRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBus
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitory
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryScore
+import com.hfut.schedule.network.api.model.response.json.community.DormitoryWeeklyScoresDto
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletionResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryUser
+import com.hfut.schedule.network.api.model.response.json.community.CommunityFailRateRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeAll
+import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGrade
+import com.hfut.schedule.network.api.model.response.json.community.CommunityLibraryRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunitySchoolMap
+import com.hfut.schedule.network.api.model.response.json.community.CommunityStuAppDetail
+import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
+import com.hfut.schedule.network.api.model.response.json.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.network.api.model.response.json.guagua.GuaGuaBillResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinMonthBill
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTextbook
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTime
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorMyApplyResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.select.JxglstuSelectCourseResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.select.JxglstuSelectCourseDetailResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyQuestionsResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTermLessonResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
+import com.hfut.schedule.network.api.model.response.json.library.BorrowedStatus
+import com.hfut.schedule.network.api.model.response.json.library.LibraryBorrowRecord
+import com.hfut.schedule.network.api.model.response.json.library.LibrarySearchRow
+import com.hfut.schedule.network.api.model.response.json.library.LibraryStatusDto
+import com.hfut.schedule.network.api.model.response.json.one.OneBuilding
+import com.hfut.schedule.network.api.model.response.json.one.OneClassroomRecord
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppBuilding
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassmate
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomCourse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppEmptyClassroom
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppGrade
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomSearchResult
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianClassmates
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianPersonInfo
+import com.hfut.schedule.logic.model.dto.ZhiJianCourseTableDto
 import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.SupabaseRepository
@@ -100,10 +97,10 @@ import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.LibraryRepository
 import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
 import com.hfut.schedule.logic.network.repo.SchoolNetSelfRepository
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingFunction
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingSchool
+import com.hfut.schedule.network.api.model.response.html.SchoolNetMonthPayResult
+import com.hfut.schedule.network.api.model.response.html.SchoolNetSemesterUsageResult
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingFunction
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingSchool
 import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.OneRepository
 import com.hfut.schedule.logic.network.repo.OthersRepository
@@ -112,8 +109,11 @@ import com.hfut.schedule.logic.network.repo.WxRepository
 import com.hfut.schedule.logic.network.repo.XwxRepository
 
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.api.model.response.json.github.GithubProgramSearchResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchData
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
@@ -139,10 +139,10 @@ class NetWorkViewModel() : ViewModel() {
     val wxLoginResponse = UiStateHolder<String>()
     suspend fun wxLogin() = WxRepository.wxLogin(wxLoginResponse)
 
-    val wxPersonInfoResponse = UiStateHolder<WXPersonInfoBean>()
+    val wxPersonInfoResponse = UiStateHolder<WeChatZhiJianPersonInfo>()
     suspend fun wxGetPersonInfo(auth : String) = WxRepository.wxGetPersonInfo(auth,wxPersonInfoResponse)
 
-    val wxClassmatesResponse = UiStateHolder<WXClassmatesBean>()
+    val wxClassmatesResponse = UiStateHolder<WeChatZhiJianClassmates>()
     suspend fun wxGetClassmates(auth : String) = onListenStateHolderForNetwork(wxPersonInfoResponse,wxClassmatesResponse) { person ->
         WxRepository.wxGetClassmates(person.orgId,auth,wxClassmatesResponse)
     }
@@ -154,7 +154,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun wxConfirmLogin(auth : String,uuid : String) = WxRepository.wxConfirmLogin(uuid,auth,wxConfirmLoginResponse)
 
     val haiLeNearPositionResp = UiStateHolder<List<HaiLeNearPositionBean>>()
-    suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = OthersRepository.getHaiLeNear(bean,haiLeNearPositionResp)
+    suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDto) = OthersRepository.getHaiLeNear(bean,haiLeNearPositionResp)
 
     val giteeApkSizeResp = UiStateHolder<Double>()
     suspend fun getGiteeApkSize(version : String) = GithubRepository.getUpdateFileSize("$version.apk",giteeApkSizeResp)
@@ -170,13 +170,13 @@ class NetWorkViewModel() : ViewModel() {
     val githubStarsData = UiStateHolder<Int>()
     suspend fun getStarNum() = GithubRepository.getStarNum(githubStarsData)
 
-    val githubFolderResp = UiStateHolder<List<GithubFolderBean>>()
+    val githubFolderResp = UiStateHolder<List<GithubFolderResponse>>()
     suspend fun getUpdateContents() = GithubRepository.getUpdateContents(githubFolderResp)
 
-    val githubIssuesResp = UiStateHolder<List<GithubIssueBean>>()
+    val githubIssuesResp = UiStateHolder<List<GithubIssueResponse>>()
     suspend fun getIssues(page : Int) = GithubRepository.getIssues(page,githubIssuesResp)
 
-    val githubBuildingMapsResp = UiStateHolder<List<BuildingMapResponseBean>>()
+    val githubBuildingMapsResp = UiStateHolder<List<GithubBuildingMapResponse>>()
     suspend fun getBuildingMaps() = GithubRepository.getBuildingMaps(githubBuildingMapsResp)
 
     val githubFloorXmlResp = UiStateHolder<FloorMap>()
@@ -238,18 +238,18 @@ class NetWorkViewModel() : ViewModel() {
     val admissionTokenResp = UiStateHolder<AdmissionTokenResponse>()
     suspend fun getAdmissionToken() = OthersRepository.getAdmissionToken(admissionTokenResp)
 
-    val admissionListResp = UiStateHolder<Pair<AdmissionType,Map<String, List<AdmissionMapBean>>>>()
+    val admissionListResp = UiStateHolder<Pair<AdmissionType,Map<String, List<Admission>>>>()
     suspend fun getAdmissionList(type: AdmissionType) = OthersRepository.getAdmissionList(type,admissionListResp)
 
     val admissionDetailResp = UiStateHolder<AdmissionDetailBean>()
-    suspend fun getAdmissionDetail(type : AdmissionType,bean : AdmissionMapBean,region: String) = OthersRepository.getAdmissionDetail(type,bean,region,admissionDetailResp,admissionTokenResp)
+    suspend fun getAdmissionDetail(type : AdmissionType, bean : Admission, region: String) = OthersRepository.getAdmissionDetail(type,bean,region,admissionDetailResp,admissionTokenResp)
 
-    val programList = UiStateHolder<List<ProgramListBean>>()
+    val programList = UiStateHolder<List<GithubProgramSearchResponse>>()
     suspend fun getProgramList(campus : CampusRegion) = GithubRepository.getProgramList(campus,programList)
 
     fun getMyApi() = GithubRepository.getMyApi()
 
-    val programSearchData = UiStateHolder<ProgramSearchBean>()
+    val programSearchData = UiStateHolder<UniAppProgramData>()
     suspend fun getProgramListInfo(id : Int,campus : CampusRegion) = GithubRepository.getProgramListInfo(id,campus,programSearchData)
 
     fun downloadHoliday()  = GithubRepository.downloadHoliday()
@@ -269,10 +269,10 @@ class NetWorkViewModel() : ViewModel() {
 // 选课 ////////////////////////////////////////////////////////////////////////////////////////////////
     suspend fun verify(cookie: String) = JxglstuRepository.verify(cookie)
 
-    val selectCourseData = UiStateHolder<List<SelectCourse>>()
+    val selectCourseData = UiStateHolder<List<JxglstuSelectCourseResponse>>()
     suspend fun getSelectCourse(cookie: String) = JxglstuRepository.getSelectCourse(cookie,studentId, bizTypeIdResponse, selectCourseData)
 
-    val selectCourseInfoData = UiStateHolder<List<SelectCourseInfo>>()
+    val selectCourseInfoData = UiStateHolder<List<JxglstuSelectCourseDetailResponse>>()
     suspend fun getSelectCourseInfo(cookie: String, id : Int) = JxglstuRepository.getSelectCourseInfo(cookie,id,selectCourseInfoData)
 
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
@@ -282,7 +282,7 @@ class NetWorkViewModel() : ViewModel() {
     val requestIdData = UiStateHolder<String>()
     suspend fun getRequestID(cookie: String, lessonId : Int, courseId : Int, type : String) = JxglstuRepository.getRequestID(cookie,lessonId,courseId,type,studentId,requestIdData)
 
-    val selectedData = UiStateHolder<List<SelectCourseInfo>>()
+    val selectedData = UiStateHolder<List<JxglstuSelectCourseDetailResponse>>()
     suspend fun getSelectedCourse(cookie: String, courseId : Int) = JxglstuRepository.getSelectedCourse(cookie,courseId,studentId,selectedData)
 
     val selectResultData = UiStateHolder<Pair<Boolean, String>>()
@@ -290,30 +290,30 @@ class NetWorkViewModel() : ViewModel() {
 
     suspend fun checkLibraryNetwork() = LibraryRepository.checkLibraryNetwork()
 // 转专业 ////////////////////////////////////////////////////////////////////////////////////////////////
-    val transferData = UiStateHolder<TransferResponse>()
+    val transferData = UiStateHolder<JxglstuTransferMajorResponse>()
     suspend fun getTransfer(cookie: String,batchId: String) = JxglstuRepository.getTransfer(cookie,batchId,studentId,transferData)
 
     val transferListData = UiStateHolder<List<ChangeMajorInfo>>()
     suspend fun getTransferList(cookie: String) = JxglstuRepository.getTransferList(cookie,studentId,transferListData)
 
-    val myApplyData = UiStateHolder<MyApplyResponse>()
+    val myApplyData = UiStateHolder<JxglstuTransferMajorMyApplyResponse>()
     suspend fun getMyApply(cookie: String,batchId: String) = JxglstuRepository.getMyApply(cookie,batchId,studentId,myApplyData)
 
     val myApplyInfoData = UiStateHolder<MyApplyInfoBean>()
     suspend fun getMyApplyInfo(cookie: String, listId: Int) = JxglstuRepository.getMyApplyInfo(cookie,listId, studentId,myApplyInfoData)
 // 新闻 ////////////////////////////////////////////////////////////////////////////////////////////////
-    val newsResult = UiStateHolder<List<NewsResponse>>()
+    val newsResult = UiStateHolder<List<News>>()
     suspend fun searchNews(title : String,page: Int = 1) = NewsRepository.searchNews(title,page,newsResult)
 
-    val newsXuanChengResult = UiStateHolder<List<NewsResponse>>()
+    val newsXuanChengResult = UiStateHolder<List<News>>()
     fun searchXuanChengNews(title : String, page: Int = 1) = NewsRepository.searchXuanChengNews(title,page)
     suspend fun getXuanChengNews(page: Int) = NewsRepository.getXuanChengNews(page,newsXuanChengResult)
 
-    val academicResp = UiStateHolder<AcademicNewsResponse>()
-    suspend fun getAcademicNews(type: AcademicType, page: Int = 1,totalPage : Int? = null) = NewsRepository.getAcademic(type,totalPage,page,academicResp)
+    val academicResp = UiStateHolder<AcademicNewsList>()
+    suspend fun getAcademicNews(type: AcademicNewsType, page: Int = 1, totalPage : Int? = null) = NewsRepository.getAcademic(type,totalPage,page,academicResp)
 
-    val academicXCResp = UiStateHolder<List<NewsResponse>>()
-    suspend fun getAcademicXCNews(type: AcademicXCType, page: Int = 1) = NewsRepository.getAcademicXC(type,page,academicXCResp)
+    val academicXCResp = UiStateHolder<List<News>>()
+    suspend fun getAcademicXCNews(type: AcademicNewsXuanChengType, page: Int = 1) = NewsRepository.getAcademicXC(type,page,academicXCResp)
 // 核心业务 ////////////////////////////////////////////////////////////////////////////////////////////////
     suspend fun gotoCommunity(cookie : String) = CasLoginRepository.gotoCommunity(cookie)
     suspend fun gotoZhiJian(cookie : String) = CasLoginRepository.gotoZhiJian(cookie)
@@ -325,16 +325,16 @@ class NetWorkViewModel() : ViewModel() {
     val checkStuLoginResp = UiStateHolder<Boolean>()
     suspend fun checkStuLogin(cookie : String) = OthersRepository.checkStuLogin(cookie,checkStuLoginResp)
 
-    val libraryStatusResp = UiStateHolder<LibraryStatus>()
+    val libraryStatusResp = UiStateHolder<LibraryStatusDto>()
     suspend fun getLibraryStatus(token : String) = LibraryRepository.getStatus(token,libraryStatusResp)
 
     val checkLibraryLoginResp = UiStateHolder<Boolean>()
     suspend fun checkLibraryLogin(token : String) = LibraryRepository.checkLibraryLogin(token,checkLibraryLoginResp)
 
-    val libraryBorrowedResp = UiStateHolder<List<LibraryBorrowedBean>>()
+    val libraryBorrowedResp = UiStateHolder<List<LibraryBorrowRecord>>()
     suspend fun getBorrowed(token : String,page : Int,status : BorrowedStatus? = null,pageSize : Int = Constant.DEFAULT_PAGE_SIZE) = LibraryRepository.getBorrowed(token,page,status,pageSize,libraryBorrowedResp)
 
-    val librarySearchResp = UiStateHolder<List<LibrarySearchBean>>()
+    val librarySearchResp = UiStateHolder<List<LibrarySearchRow>>()
     suspend fun searchLibrary(keyword : String,page : Int) = LibraryRepository.search(page,keyword,librarySearchResp)
 
     val loginCommunityData = UiStateHolder<String>()
@@ -346,12 +346,12 @@ class NetWorkViewModel() : ViewModel() {
     val zhiJianCheckLoginResp = UiStateHolder<Boolean>()
     suspend fun zhiJianCheckLogin(token : String) = OthersRepository.zhiJianCheckLogin(token,zhiJianCheckLoginResp)
 
-    val jxglstuGradeData = UiStateHolder<List<GradeJxglstuDTO>>()
+    val jxglstuGradeData = UiStateHolder<List<JxglstuTermGrade>>()
     suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = JxglstuRepository.getGradeFromJxglstu(cookie,semester,studentId,jxglstuGradeData)
 
     fun jxglstuLogin(cookie : String) = JxglstuRepository.jxglstuLogin(cookie)
 
-    val lessonIds = UiStateHolder<lessonResponse>()
+    val lessonIds = UiStateHolder<JxglstuTermLessonResponse>()
     suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int) = JxglstuRepository.getLessonIds(cookie,studentId,bizTypeId,lessonIds)
 
     val datumData = UiStateHolder<String>()
@@ -359,31 +359,28 @@ class NetWorkViewModel() : ViewModel() {
 
     suspend fun getInfo(cookie : String) = JxglstuRepository.getInfo(cookie,studentId)
 
-    val lessonTimesResponse = UiStateHolder<List<CourseUnitBean>>()
+    val lessonTimesResponse = UiStateHolder<List<JxglstuCourseTime>>()
     suspend fun getLessonTimes(cookie: String,timeCampusId : Int) = JxglstuRepository.getLessonTimes(cookie,timeCampusId,lessonTimesResponse)
 
-    val lessonTimesResponseNext = UiStateHolder<List<CourseUnitBean>>()
-    suspend fun getLessonTimesNext(cookie: String,timeCampusId : Int) = JxglstuRepository.getLessonTimes(cookie,timeCampusId,lessonTimesResponseNext)
-
-    val programData = UiStateHolder<ProgramResponse>()
+    val programData = UiStateHolder<JxglstuProgramResponse>()
     suspend fun getProgram(cookie: String) = JxglstuRepository.getProgram(cookie,studentId,programData)
 
-    val programCompletionData = UiStateHolder<ProgramCompletionResponse>()
+    val programCompletionData = UiStateHolder<JxglstuProgramSimpleCompletionResponse>()
     suspend fun getProgramCompletion(cookie: String) = JxglstuRepository.getProgramCompletion(cookie,programCompletionData)
 
-    val programPerformanceData = UiStateHolder<ProgramBean>()
+    val programPerformanceData = UiStateHolder<JxglstuProgramCompetitionResponse>()
     suspend fun getProgramPerformance(cookie: String) = JxglstuRepository.getProgramPerformance(cookie,studentId, programPerformanceData)
 
     val teacherSearchData = UiStateHolder<TeacherResponse>()
     suspend fun searchTeacher(name: String = "", direction: String = "") = OthersRepository.searchTeacher(name = name,direction = direction,teacherSearchData)
 
-    val courseSearchResponse = UiStateHolder<List<lessons>>()
+    val courseSearchResponse = UiStateHolder<List<JxglstuLesson>>()
     suspend fun searchCourse(cookie: String, className : String?, courseName : String?, semester : Int, courseId : String?) = JxglstuRepository.searchCourse(cookie,className,courseName,semester,courseId,studentId,courseSearchResponse)
 
-    val surveyListData = UiStateHolder<List<forStdLessonSurveySearchVms>>()
+    val surveyListData = UiStateHolder<List<JxglstuSurveyLesson>>()
     suspend fun getSurveyList(cookie: String, semester : Int) = JxglstuRepository.getSurveyList(cookie,semester,studentId, surveyListData)
 
-    val surveyData = UiStateHolder<SurveyResponse>()
+    val surveyData = UiStateHolder<JxglstuSurveyQuestionsResponse>()
     suspend fun getSurvey(cookie: String, id : String) = JxglstuRepository.getSurvey(cookie,id,surveyData)
 
     val surveyToken = UiStateHolder<String>()
@@ -393,7 +390,7 @@ class NetWorkViewModel() : ViewModel() {
 
     suspend fun getPhoto(cookie : String) = JxglstuRepository.getPhoto(cookie,studentId)
 
-    val courseBookResponse = UiStateHolder<Pair<Int,Map<Long,CourseBookBean>>>()
+    val courseBookResponse = UiStateHolder<Pair<Int,Map<Long,JxglstuTextbook>>>()
     suspend fun getCourseBook(cookie: String,semester: Int) = JxglstuRepository.getCourseBook(cookie,semester,studentId,bizTypeIdResponse, courseBookResponse)
 
     suspend fun goToOne(cookie : String) = CasLoginRepository.goToOne(cookie)
@@ -464,25 +461,25 @@ class NetWorkViewModel() : ViewModel() {
     val checkOneLoginResp = UiStateHolder<Boolean>()
     suspend fun checkOneLogin(token : String) = OneRepository.checkOneLogin(token,checkOneLoginResp)
 
-    val buildingsResponse = UiStateHolder<Pair<Campus,List<BuildingBean>>>()
+    val buildingsResponse = UiStateHolder<Pair<Campus,List<OneBuilding>>>()
     suspend fun getBuildings(campus : Campus, token : String)  = OneRepository.getBuildings(campus,token,buildingsResponse)
 
-    val classroomResponse = UiStateHolder<List<ClassroomBean>>()
+    val classroomResponse = UiStateHolder<List<OneClassroomRecord>>()
     suspend fun getClassroomInfo(code : String,token : String)  = OneRepository.getClassroomInfo(code,token,classroomResponse)
 
     val mailData = UiStateHolder<MailResponse>()
     suspend fun getMailURL(token : String)  = OneRepository.getMailURL(token,mailData)
 
-    val hefeiRoomsResp = UiStateHolder<List<HuiXinHefeiBuildingBean>>()
+    val hefeiRoomsResp = UiStateHolder<List<HuiXinHefeiBuilding>>()
     suspend fun getHefeiRooms(auth : String,building : String) = HuiXinRepository.getHefeiRooms(auth,building,hefeiRoomsResp)
 
-    val hefeiBuildingsResp = UiStateHolder<List<HuiXinHefeiBuildingBean>>()
+    val hefeiBuildingsResp = UiStateHolder<List<HuiXinHefeiBuilding>>()
     suspend fun getHefeiBuildings(auth : String) = HuiXinRepository.getHefeiRooms(auth,null,hefeiBuildingsResp)
 
-    val payFeeResponse = UiStateHolder<PayData>()
+    val payFeeResponse = UiStateHolder<OneFeeData>()
     suspend fun getPay() = OneRepository.getPay(payFeeResponse)
 
-    val dormitoryResult = UiStateHolder<List<XuanquResponse>>()
+    val dormitoryResult = UiStateHolder<List<OldDormitoryXuanCheng>>()
     suspend fun searchDormitoryXuanCheng(code : String) = OthersRepository.searchDormitoryXuanCheng(code,dormitoryResult)
 
     val failRateData = UiStateHolder<Pair<String?,List<CommunityFailRateRecord>>>()
@@ -528,7 +525,7 @@ class NetWorkViewModel() : ViewModel() {
     val mapsResponse = UiStateHolder<List<CommunitySchoolMap>>()
     suspend fun getMaps(token : String) = CommunityRepository.getMaps(token,mapsResponse)
 
-    val officeHallSearchResponse = UiStateHolder<List<OfficeHallSearchBean>>()
+    val officeHallSearchResponse = UiStateHolder<List<OfficeHallSearchRecord>>()
     suspend fun officeHallSearch(text : String, page : Int) = OthersRepository.officeHallSearch(text,page,officeHallSearchResponse)
 
     val stuAppsResponse = UiStateHolder<List<CommunityStuAppDetail>>()
@@ -547,9 +544,9 @@ class NetWorkViewModel() : ViewModel() {
 
     fun checkApplying(token : String, id : String, isOk : Boolean) = CommunityRepository.checkApplying(token,id,isOk)
 
-    val weatherWarningData = UiStateHolder<List<QWeatherWarnBean>>()
+    val weatherWarningData = UiStateHolder<List<QWeatherWarning>>()
     suspend fun getWeatherWarn(campus: CampusRegion) = QWeatherRepository.getWeatherWarn(campus,weatherWarningData)
-    val qWeatherResult = UiStateHolder<QWeatherNowBean>()
+    val qWeatherResult = UiStateHolder<QWeatherNow>()
     suspend fun getWeather(campus: CampusRegion) = QWeatherRepository.getWeather(campus,qWeatherResult)
 
     val loginSchoolNetResponse = UiStateHolder<Boolean>()
@@ -571,37 +568,37 @@ class NetWorkViewModel() : ViewModel() {
     val giteeUpdatesResp = UiStateHolder<GiteeReleaseResponse>()
     suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)
 
-    val classmatesResp = UiStateHolder<List<UniAppClassmatesBean>>()
+    val classmatesResp = UiStateHolder<List<UniAppClassmate>>()
     suspend fun getClassmates(lessonId : String,token : String) = UniAppRepository.getClassmates(lessonId,token,classmatesResp)
 
-    val uniAppGradesResp = UiStateHolder<Map<String, List<UniAppGradeBean>>>()
+    val uniAppGradesResp = UiStateHolder<Map<String, List<UniAppGrade>>>()
     suspend fun getUniAppGrades(token : String) = UniAppRepository.getGrades(token,uniAppGradesResp)
 
-    val searchProgramsResp = UiStateHolder<List<UniAppSearchProgramBean>>()
+    val searchProgramsResp = UiStateHolder<List<UniAppProgramSearchData>>()
     suspend fun searchPrograms(token : String, page : Int , keyword : String) = UniAppRepository.searchPrograms(token,page,keyword,searchProgramsResp)
 
-    val departmentsResp = UiStateHolder<List<DepartmentBean>>()
+    val departmentsResp = UiStateHolder<List<Department>>()
     suspend fun getDepartments() = OthersRepository.getDepartments(departmentsResp)
 
-    val getProgramByIdResp = UiStateHolder<ProgramSearchBean>()
+    val getProgramByIdResp = UiStateHolder<UniAppProgramData>()
     suspend fun getProgramById(id : Int, token: String, ) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
 
     val dormitoryScoreResp = UiStateHolder<List<CommunityDormitoryScore>>()
     suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
 
-    val allDormitoryScoresResp = UiStateHolder<DormitoryWeeklyScores>()
+    val allDormitoryScoresResp = UiStateHolder<DormitoryWeeklyScoresDto>()
     suspend fun getAllDormitoryScores(token : String, semester : String, semesterInt : Int) = CommunityRepository.getAllDormitoryScores(token,semester,semesterInt,allDormitoryScoresResp)
 
-    val uniAppBuildingsResp = UiStateHolder<List<UniAppBuildingBean>>()
+    val uniAppBuildingsResp = UiStateHolder<List<UniAppBuilding>>()
     suspend fun getBuildings(token : String) = UniAppRepository.getBuildings(token,uniAppBuildingsResp)
 
-    val uniAppEmptyClassroomsResp = UiStateHolder<List<UniAppEmptyClassroomBean>>()
+    val uniAppEmptyClassroomsResp = UiStateHolder<List<UniAppEmptyClassroom>>()
     suspend fun getEmptyClassrooms(page : Int, date : String, campus: Campus?, buildings : List<Int>?, floors : List<Int>?, token : String, ) = UniAppRepository.getEmptyClassrooms(page,date,campus,buildings,floors,token,uniAppEmptyClassroomsResp)
 
-    val uniAppSearchClassroomsResp = UiStateHolder<List<UniAppSearchClassroomBean>>()
+    val uniAppSearchClassroomsResp = UiStateHolder<List<UniAppClassroomSearchResult>>()
     suspend fun searchClassrooms(input : String, token : String, page : Int) = UniAppRepository.searchClassrooms(input,token,page,uniAppSearchClassroomsResp)
 
-    val uniAppClassroomLessonsResp = UiStateHolder<List<UniAppClassroomLessonBean>>()
+    val uniAppClassroomLessonsResp = UiStateHolder<List<UniAppClassroomCourse>>()
     suspend fun getClassroomLessons(semester: Int, roomId : Int, token : String) = UniAppRepository.getClassroomLessons(semester,roomId,token,uniAppClassroomLessonsResp)
 
     val xwxSchoolListResp = UiStateHolder<List<XiaoWuXingSchool>>()

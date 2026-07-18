@@ -1,28 +1,28 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
-import com.hfut.schedule.network.model.response.community.CommunityTotalCourse
-import com.hfut.schedule.network.model.response.community.CommunityTotalCourseResponse
-import com.hfut.schedule.network.model.response.community.CommunityCourseBasicInfo
-import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
-import com.hfut.schedule.logic.model.jxglstu.lessonResponse
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.community.CommunityTotalCourse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityTotalCourseResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseBasicInfo
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseDetail
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTermLessonResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.xah.common.logic.util.LogUtil
 import java.time.LocalDate
 
-private fun parseDatumCourse(result: String) : List<lessons> = try {
-    GsonInstance.fromJson(result,lessonResponse::class.java).lessons
+private fun parseDatumCourse(result: String) : List<JxglstuLesson> = try {
+    GsonInstance.fromJson(result,JxglstuTermLessonResponse::class.java).lessons
 } catch (e : Exception) {
     LogUtil.error(e)
-    emptyList<lessons>()
+    emptyList<JxglstuLesson>()
 }
 
-fun getDefaultStartTerm() =  getMy()?.startDay ?: getStartWeekFromCommunity()
+fun getDefaultStartTerm() =  getMy()?.termStartDate ?: getStartWeekFromCommunity()
 
 
 
@@ -118,7 +118,7 @@ private fun getStartWeekFromCommunity() : String {
         val start = getFormCommunity()!!.start.substringBefore(" ")
         return start
     } catch (e : Exception) {
-        var start = getMy()?.startDay
+        var start = getMy()?.termStartDate
         if(start == null) {
             val month = DateTimeManager.Date_MM.toIntOrNull() ?: 9
             start = when(month) {

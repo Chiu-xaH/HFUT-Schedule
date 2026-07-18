@@ -1,23 +1,23 @@
 package com.hfut.schedule.logic.network.repo
 
 
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.model.QWeatherNowBean
-import com.hfut.schedule.logic.model.QWeatherResponse
-import com.hfut.schedule.logic.model.QWeatherWarnBean
-import com.hfut.schedule.logic.model.QWeatherWarnResponse
-import com.hfut.schedule.network.model.StatusCode
-import com.hfut.schedule.network.api.QWeatherService
-import com.hfut.schedule.network.impl.QWeatherServiceCreator
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNow
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNowResponse
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarning
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarnResponse
+import com.hfut.schedule.network.api.inf.QWeatherService
 import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.network.api.impl.QWeatherServiceCreator
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 
 object QWeatherRepository {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
-    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<List<QWeatherWarnBean>>) =
+    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<List<QWeatherWarning>>) =
         launchRequestState(
             holder = weatherWarningData,
             request = { qWeather.getWeatherWarn(locationID = getLocation(campus)) },
@@ -25,11 +25,11 @@ object QWeatherRepository {
         )
 
     @JvmStatic
-    private fun parseWeatherWarn(json : String) : List<QWeatherWarnBean> = try {
+    private fun parseWeatherWarn(json : String) : List<QWeatherWarning> = try {
         GsonInstance.fromJson(json, QWeatherWarnResponse::class.java).warning
     } catch (e : Exception) { throw e }
 
-    suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNowBean>) =
+    suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNow>) =
         launchRequestState(
             holder = qWeatherResult,
             request = { qWeather.getWeather(locationID = getLocation(campus)) },
@@ -38,9 +38,9 @@ object QWeatherRepository {
 
 
     @JvmStatic
-    private fun parseWeatherNow(json : String) : QWeatherNowBean = try {
+    private fun parseWeatherNow(json : String) : QWeatherNow = try {
         if(json.contains(StatusCode.OK.code.toString()))
-            GsonInstance.fromJson(json, QWeatherResponse::class.java).now
+            GsonInstance.fromJson(json, QWeatherNowResponse::class.java).now
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }

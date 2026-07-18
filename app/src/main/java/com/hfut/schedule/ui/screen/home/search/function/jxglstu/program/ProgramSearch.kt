@@ -35,14 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
-import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
+import com.hfut.schedule.network.api.model.response.json.shared.ProgramSearchPlanCourse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -247,7 +243,7 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, id : Int, ifSaved: Boolean, 
 
 
 @Composable
-private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,vm: NetWorkViewModel,ifSaved : Boolean) {
+private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : HazeState, vm: NetWorkViewModel, ifSaved : Boolean) {
     if(entity == null) return
     val children = entity.children
     val planCourses = entity.planCourses.sortedBy {
@@ -262,7 +258,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
     if(children.isNotEmpty()) {
-        var bean by remember { mutableStateOf<ProgramSearchBean?>(null) }
+        var bean by remember { mutableStateOf<UniAppProgramData?>(null) }
         bean?.let {
             if (showBottomSheet_Program) {
                 HazeBottomSheet (
@@ -324,7 +320,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
     if(planCourses.isNotEmpty()) {
         var input by remember { mutableStateOf("") }
 
-        var courseInfo by remember { mutableStateOf<PlanCoursesSearch?>(null) }
+        var courseInfo by remember { mutableStateOf<ProgramSearchPlanCourse?>(null) }
         var showInfo by remember { mutableStateOf(false) }
         if(showInfo) {
             courseInfo?.let {
@@ -358,7 +354,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
                 colors = textFiledTransplant(),
             )
         }
-        val searchList = mutableListOf<PlanCoursesSearch>()
+        val searchList = mutableListOf<ProgramSearchPlanCourse>()
         planCourses.forEach { item ->
             val has =
                 item.course.nameZh.contains(input,ignoreCase = true) ||

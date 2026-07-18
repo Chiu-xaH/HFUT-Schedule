@@ -40,13 +40,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.xiaowuxing.XiaoWuXingLoginInfo
+import com.hfut.schedule.logic.model.dto.XiaoWuXingLoginInfoDto
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -87,7 +87,7 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by vm.xwxFunctionsResp.state.collectAsState()
-    val savedInfo by produceState<XiaoWuXingLoginInfo?>(initialValue = null) {
+    val savedInfo by produceState<XiaoWuXingLoginInfoDto?>(initialValue = null) {
         value = getXwxLogin()
     }
     val navController = LocalNavController.current

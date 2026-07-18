@@ -38,13 +38,11 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME, MyApplicati
     private const val UNI_APP_COURSES_HEAD = "uni_app_courses_"
     const val UNI_APP_EXAMS = "uni_app_exams"
     const val DEPARTMENTS = "departments"
-    private const val DORMITORY_SCORE_HEAD = "dormitory_score_v7_"
 
     fun getTotalCoursesKey(semester: Int) = "$COURSES_HEAD$semester"
     fun getBookKey(semester: Int) = "$BOOK_INFO_HEAD$semester"
     fun getJxglstuDatumKey(semester: Int) = "$DATUM_HEAD$semester"
     fun getUniAppCoursesKey(semester: Int) = "$UNI_APP_COURSES_HEAD$semester"
-    fun getDormitoryScoreKey(semester: Int) = "$DORMITORY_SCORE_HEAD$semester"
 
     // 迁移函数 从SharePrefs迁移到这里并删除
     private suspend fun moveFromPrefs(oldKey : String, newKey : String) {

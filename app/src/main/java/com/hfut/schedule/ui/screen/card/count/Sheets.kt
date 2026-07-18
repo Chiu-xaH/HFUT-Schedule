@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinMonthBill
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 

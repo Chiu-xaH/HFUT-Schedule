@@ -1,9 +1,9 @@
 package com.hfut.schedule.ui.screen.home
 
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.HolidayBean
-import com.hfut.schedule.logic.model.HolidayResponse
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.json.holiday.Holiday
+import com.hfut.schedule.network.api.model.response.json.holiday.HolidayResponse
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
@@ -12,8 +12,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
@@ -263,6 +263,6 @@ private fun getHoliday() : HolidayResponse? {
 
 fun getHolidayYear() : String? = getHoliday()?.year
 
-fun getHolidays() : List<HolidayBean> = getHoliday()?.days ?: emptyList()
+fun getHolidays() : List<Holiday> = getHoliday()?.days ?: emptyList()
 
 

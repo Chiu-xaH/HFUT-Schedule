@@ -38,7 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.Language
+import com.hfut.schedule.logic.model.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester

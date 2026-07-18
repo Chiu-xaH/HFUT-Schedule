@@ -18,13 +18,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppCourseTableResponse
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -162,7 +162,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
             )
 
             if (json != null) {
-                val courses = GsonInstance.fromJson(json, UniAppCoursesResponse::class.java).data
+                val courses = GsonInstance.fromJson(json, UniAppCourseTableResponse::class.java).data
                 val weekCount = mutableMapOf<Int, MutableList<Pair<String, String>>>()
 
                 for (item in courses) {

@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
-import com.hfut.schedule.logic.model.jxglstu.TransferData
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorMyApply
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorData
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -212,8 +212,8 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
         refreshNetwork2()
     }
 
-    var data by remember { mutableStateOf<TransferData?>(null) }
-    var list by remember { mutableStateOf<List<MyApplyModels>?>(null) }
+    var data by remember { mutableStateOf<JxglstuTransferMajorData?>(null) }
+    var list by remember { mutableStateOf<List<JxglstuTransferMajorMyApply>?>(null) }
 
     LaunchedEffect(uiState1) {
         if(uiState1 is NetworkUiState.Success) {

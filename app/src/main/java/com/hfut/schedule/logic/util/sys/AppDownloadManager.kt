@@ -16,7 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.BroadcastAction
+import com.hfut.schedule.logic.model.enumeration.BroadcastAction
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs

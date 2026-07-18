@@ -1,15 +1,15 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayRecord
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPayResult
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetMonthPaySummary
-import com.hfut.schedule.logic.model.schoolnet.SchoolNetSemesterUsageResult
+import com.hfut.schedule.network.api.model.response.html.SchoolNetMonthPayRecord
+import com.hfut.schedule.network.api.model.response.html.SchoolNetMonthPayResult
+import com.hfut.schedule.network.api.model.response.html.SchoolNetMonthPaySummary
+import com.hfut.schedule.network.api.model.response.html.SchoolNetSemesterUsageResult
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.network.api.SchoolNetSelfService
-import com.hfut.schedule.network.impl.SchoolNetSelfServiceCreator
-import com.hfut.schedule.network.util.CryptoUtil
+import com.hfut.schedule.network.api.impl.SchoolNetSelfServiceCreator
+import com.hfut.schedule.network.api.inf.SchoolNetSelfService
+import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

@@ -3,27 +3,27 @@ package com.hfut.schedule.logic.network.repo
 import androidx.lifecycle.MutableLiveData
 
 import com.google.gson.JsonObject
-import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
-import com.hfut.schedule.logic.model.HuiXinHefeiBuildingsResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBill
-import com.hfut.schedule.network.model.response.huixin.HuiXinMonthBillResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinRangeBillResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinChangeLimitResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
-import com.hfut.schedule.network.model.response.huixin.HuiXinLoginResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinPayStep1Response
-import com.hfut.schedule.network.model.response.huixin.HuiXinPayStep2Response
-import com.hfut.schedule.network.model.response.huixin.HuiXinPayStep3Response
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuilding
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuildingResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinMonthBill
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinMonthBillResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinRangeBillResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinChangeLimitResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinLoginResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinPayStep1Response
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinPayStep2Response
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinPayStep3Response
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.xah.common.logic.state.UiStateHolder
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.api.HuiXinService
-import com.hfut.schedule.network.impl.HuiXinServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.HuiXinServiceCreator
+import com.hfut.schedule.network.api.inf.HuiXinService
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.xah.forecast.getConsumptionResult
 import com.xah.forecast.model.network.BillBean
 import com.xah.forecast.model.network.BillResponse
@@ -260,14 +260,14 @@ object HuiXinRepository {
 
 
     @JvmStatic
-    private fun parseHefeiBuildings(json : String) : List<HuiXinHefeiBuildingBean> = try {
-        GsonInstance.fromJson(json, HuiXinHefeiBuildingsResponse::class.java).map.data
+    private fun parseHefeiBuildings(json : String) : List<HuiXinHefeiBuilding> = try {
+        GsonInstance.fromJson(json, HuiXinHefeiBuildingResponse::class.java).map.data
     } catch (e : Exception) { throw e }
 
     suspend fun getHefeiRooms(
         auth: String,
         building: String?,
-        holder: UiStateHolder<List<HuiXinHefeiBuildingBean>>
+        holder: UiStateHolder<List<HuiXinHefeiBuilding>>
     ) = launchRequestState(
         request = {
             huiXin.getFee(

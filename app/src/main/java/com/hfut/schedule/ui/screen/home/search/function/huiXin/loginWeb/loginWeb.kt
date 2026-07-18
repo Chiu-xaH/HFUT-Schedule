@@ -21,13 +21,9 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.nav.window.SchoolNetWindow
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.helper.NoneRoundShape

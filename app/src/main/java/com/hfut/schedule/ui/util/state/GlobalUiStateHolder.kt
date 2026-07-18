@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.MutableLiveData
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.ReturnCard
+import com.hfut.schedule.logic.model.dto.HuiXinCardInfoDto
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
@@ -44,7 +44,6 @@ import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -80,7 +79,7 @@ object GlobalUiStateHolder {
     // 聚焦下拉刷新的进度文案 暂时设置成String，如果需要加进度可以进一步扩展
     val focusRefreshProgressFlow = MutableStateFlow<Pair<String, String>?>(null)
 
-    var cardValue by mutableStateOf<ReturnCard?>(null)
+    var cardValue by mutableStateOf<HuiXinCardInfoDto?>(null)
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     var electricValue = MutableLiveData<String?>()
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")

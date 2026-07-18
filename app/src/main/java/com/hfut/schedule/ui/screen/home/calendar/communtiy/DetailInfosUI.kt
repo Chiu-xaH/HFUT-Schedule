@@ -27,16 +27,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 import com.hfut.schedule.R
-import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
-import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
-import com.hfut.schedule.logic.model.jxglstu.lessonResponse
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseDetail
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTextbook
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseSearchResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTermLessonResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -146,7 +146,7 @@ fun CourseDetailApiScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     // fixme:改成哈希表性能优化
-    val numItem by produceState<lessons?>(initialValue = null) {
+    val numItem by produceState<JxglstuLesson?>(initialValue = null) {
         val json = LargeStringDataManager.read(
             LargeStringDataManager.getTotalCoursesKey(
                 SemesterParser.getSemester()
@@ -158,7 +158,7 @@ fun CourseDetailApiScreen(
         value = list.find { it.course.nameZh.trim() == courseName.trim() }
     }
 
-    val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
+    val courseBookData : Map<Long, JxglstuTextbook> by produceState(initialValue = emptyMap()) {
         val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
         value = withContext(Dispatchers.Default) {
             JxglstuRepository.parseCourseBook(json)
@@ -196,17 +196,17 @@ fun CourseDetailApiScreen(
 }
 
 
-private fun getTotalCourse(json : String?): MutableList<lessons>  {
-    val list = mutableListOf<lessons>()
+private fun getTotalCourse(json : String?): MutableList<JxglstuLesson>  {
+    val list = mutableListOf<JxglstuLesson>()
 
     try {
         if (json != null) {
             if(json.contains("lessonIds")) {
-                val result = GsonInstance.fromJson(json,lessonResponse::class.java).lessons
+                val result = GsonInstance.fromJson(json,JxglstuTermLessonResponse::class.java).lessons
                 return result.toMutableList()
             }
             else {
-                val result = GsonInstance.fromJson(json,CourseSearchResponse::class.java).data
+                val result = GsonInstance.fromJson(json,JxglstuCourseSearchResponse::class.java).data
                 for (i in result.indices) {
                     val courses = result[i].lesson
                     list.add(courses)

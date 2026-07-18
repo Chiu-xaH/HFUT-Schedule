@@ -2,28 +2,27 @@ package com.hfut.schedule.logic.network.repo
 
 
 import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.model.uniapp.UniAppExamResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
-import com.hfut.schedule.logic.model.uniapp.UniAppBuildingsResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppCampus
-import com.hfut.schedule.logic.model.uniapp.UniAppClassmatesBean
-import com.hfut.schedule.logic.model.uniapp.UniAppClassmatesResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonsResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppCourseBean
-import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomBean
-import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
-import com.hfut.schedule.logic.model.uniapp.UniAppGradesResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomBean
-import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomsResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
-import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramResponse
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppExamResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppBuilding
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppBuildingResponse
+import com.hfut.schedule.network.api.util.getUinAppCampusId
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassmate
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassmateResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomCourse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomCourseTableResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppCourse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppCourseTableResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppEmptyClassroom
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppEmptyClassroomResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppGrade
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppGradeResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppLoginResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomSearchResult
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomSearchResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchData
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
@@ -31,14 +30,15 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.api.UniAppService
-import com.hfut.schedule.network.impl.UniAppServiceCreator
-import com.hfut.schedule.network.model.request.UniAppEmptyClassroomRequest
-import com.hfut.schedule.network.model.request.UniAppSearchProgramRequest
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.network.helper.GsonInstance
-import com.hfut.schedule.network.model.StatusCode
+import com.hfut.schedule.network.api.impl.UniAppServiceCreator
+import com.hfut.schedule.network.api.inf.UniAppService
+import com.hfut.schedule.network.api.model.request.uniapp.UniAppEmptyClassroomRequest
+import com.hfut.schedule.network.api.model.request.uniapp.UniAppSearchProgramRequest
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.util.CryptoUtil
+import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.core.StatusCode
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchResponse
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
@@ -94,9 +94,9 @@ object UniAppRepository {
         isSuccessful : Boolean
     ) : String? = try {
         if(isSuccessful) {
-            GsonInstance.fromJson(json, UniAppLoginResponse.UniAppLoginSuccessfulResponse::class.java).data.idToken
+            GsonInstance.fromJson(json, UniAppLoginResponse.UniAppLoginSuccessResponse::class.java).data.idToken
         } else {
-            GsonInstance.fromJson(json, UniAppLoginResponse.UniAppLoginError::class.java).message
+            GsonInstance.fromJson(json, UniAppLoginResponse.UniAppLoginFailResponse::class.java).message
         }
     } catch (e : Exception) {
         LogUtil.error(e)
@@ -106,7 +106,7 @@ object UniAppRepository {
     suspend fun getClassmates(
         lessonId : String,
         token : String ,
-        holder : UiStateHolder<List<UniAppClassmatesBean>>
+        holder : UiStateHolder<List<UniAppClassmate>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getClassmates(lessonId, token) },
@@ -115,7 +115,7 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseClassmates(json : String) = try {
-        GsonInstance.fromJson(json, UniAppClassmatesResponse::class.java).data ?: emptyList()
+        GsonInstance.fromJson(json, UniAppClassmateResponse::class.java).data ?: emptyList()
     } catch (e : Exception) { throw e }
 
     suspend fun updateCourses(token : String) {
@@ -132,12 +132,12 @@ object UniAppRepository {
     }
 
     @JvmStatic
-    suspend fun parseUniAppCourses(jStr : String? = null) :  List<UniAppCourseBean> {
+    suspend fun parseUniAppCourses(jStr : String? = null) :  List<UniAppCourse> {
         val json = LargeStringDataManager.read(
             LargeStringDataManager.getUniAppCoursesKey(
                 SemesterParser.getSemester())) ?: jStr
         return try {
-            GsonInstance.fromJson(json, UniAppCoursesResponse::class.java).data
+            GsonInstance.fromJson(json, UniAppCourseTableResponse::class.java).data
         } catch (e : Exception) {
             LogUtil.error(e)
             emptyList()
@@ -146,7 +146,7 @@ object UniAppRepository {
 
     suspend fun getGrades(
         token : String ,
-        holder : UiStateHolder<Map<String, List<UniAppGradeBean>>>
+        holder : UiStateHolder<Map<String, List<UniAppGrade>>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getGrades(token) },
@@ -154,10 +154,10 @@ object UniAppRepository {
     )
 
     @JvmStatic
-    private fun parseGrades(json : String) : Map<String, List<UniAppGradeBean>> = try {
-        val originalList = GsonInstance.fromJson(json, UniAppGradesResponse::class.java).data
+    private fun parseGrades(json : String) : Map<String, List<UniAppGrade>> = try {
+        val originalList = GsonInstance.fromJson(json, UniAppGradeResponse::class.java).data
         // 按列表项目的term进行分类
-        val finalList = mutableMapOf<String, MutableList<UniAppGradeBean>>()
+        val finalList = mutableMapOf<String, MutableList<UniAppGrade>>()
         originalList.forEach { item ->
             finalList.getOrPut(item.semester.nameZh) { mutableListOf() }.add(item.copy(
                 gradeDetail = item.gradeDetail.replace(';',' ')
@@ -218,7 +218,7 @@ object UniAppRepository {
         token : String,
         page : Int ,
         keyword : String = "",
-        holder : UiStateHolder<List<UniAppSearchProgramBean>>
+        holder : UiStateHolder<List<UniAppProgramSearchData>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -234,14 +234,14 @@ object UniAppRepository {
     )
 
     @JvmStatic
-    private fun parseProgramSearch(json : String) : List<UniAppSearchProgramBean> = try {
-        GsonInstance.fromJson(json, UniAppSearchProgramResponse::class.java).data.data
+    private fun parseProgramSearch(json : String) : List<UniAppProgramSearchData> = try {
+        GsonInstance.fromJson(json, UniAppProgramSearchResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
     suspend fun getProgramById(
         id : Int,
         token: String,
-        holder : UiStateHolder<ProgramSearchBean>
+        holder : UiStateHolder<UniAppProgramData>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getProgramById(id, token) },
@@ -249,22 +249,24 @@ object UniAppRepository {
     )
 
     @JvmStatic
-    private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
-        GsonInstance.fromJson(json, ProgramSearchResponse::class.java).data
+    private fun parseProgramSearchInfo(json : String) : UniAppProgramData = try {
+        GsonInstance.fromJson(json, UniAppProgramResponse::class.java).data
     } catch (e : Exception) { throw e }
 
     suspend fun getBuildings(
         token : String,
-        holder : UiStateHolder<List<UniAppBuildingBean>>
+        holder : UiStateHolder<List<UniAppBuilding>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getBuildings(token) },
         transformSuccess = { _, json -> parseBuildings(json) }
     )
     @JvmStatic
-    private fun parseBuildings(json : String) : List<UniAppBuildingBean> = try {
-        val originalList = GsonInstance.fromJson(json, UniAppBuildingsResponse::class.java).data
-        val codeList = UniAppCampus.entries.map { it.code }
+    private fun parseBuildings(json : String) : List<UniAppBuilding> = try {
+        val originalList = GsonInstance.fromJson(json, UniAppBuildingResponse::class.java).data
+        val codeList = Campus.entries.map {
+            getUinAppCampusId(it)
+        }
         val result = originalList.filter { it.campusAssoc in codeList }
         result.map { item ->
             item.copy(
@@ -282,7 +284,7 @@ object UniAppRepository {
         buildings : List<Int>?,
         floors : List<Int>?,
         token : String,
-        holder : UiStateHolder<List<UniAppEmptyClassroomBean>>
+        holder : UiStateHolder<List<UniAppEmptyClassroom>>
     ) = launchRequestState(
         holder = holder,
         request = {
@@ -290,12 +292,7 @@ object UniAppRepository {
                 UniAppEmptyClassroomRequest(
                     currentPage = page,
                     date = date,
-                    campusAssoc = when (campus) {
-                        Campus.XC -> UniAppCampus.XC.code
-                        Campus.FCH -> UniAppCampus.FCH.code
-                        Campus.TXL -> UniAppCampus.TXL.code
-                        null -> null
-                    },
+                    campusAssoc = campus?.let { getUinAppCampusId(it) },
                     buildingIds = buildings,
                     floors = floors
                 ), token
@@ -304,7 +301,7 @@ object UniAppRepository {
         transformSuccess = { _, json -> parseEmptyClassrooms(json) }
     )
     @JvmStatic
-    private fun parseEmptyClassrooms(json : String) : List<UniAppEmptyClassroomBean>  = try {
+    private fun parseEmptyClassrooms(json : String) : List<UniAppEmptyClassroom>  = try {
         GsonInstance.fromJson(json, UniAppEmptyClassroomResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
@@ -312,7 +309,7 @@ object UniAppRepository {
         input : String,
         token : String,
         page : Int,
-        holder : UiStateHolder<List<UniAppSearchClassroomBean>>
+        holder : UiStateHolder<List<UniAppClassroomSearchResult>>
     ) = launchRequestState(
         request = {
             uniApp.searchClassrooms(
@@ -326,14 +323,14 @@ object UniAppRepository {
     )
     @JvmStatic
     private fun parseSearchClassrooms(json : String) = try {
-        GsonInstance.fromJson(json, UniAppSearchClassroomsResponse::class.java).data.data
+        GsonInstance.fromJson(json, UniAppClassroomSearchResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
     suspend fun getClassroomLessons(
         semester: Int,
         roomId : Int,
         token : String,
-        holder : UiStateHolder<List<UniAppClassroomLessonBean>>
+        holder : UiStateHolder<List<UniAppClassroomCourse>>
     ) = launchRequestState(
         request = { uniApp.getClassroomLessons(semester, roomId, token) },
         holder = holder,
@@ -341,7 +338,7 @@ object UniAppRepository {
     )
     @JvmStatic
     private fun parseClassroomLessons(json : String) = try {
-        GsonInstance.fromJson(json, UniAppClassroomLessonsResponse::class.java).data
+        GsonInstance.fromJson(json, UniAppClassroomCourseTableResponse::class.java).data
     } catch (e : Exception) { throw e }
 
 

@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.nav
 
 import android.net.Uri
-import com.hfut.schedule.logic.enumeration.BottomBarItems
+import com.hfut.schedule.logic.model.enumeration.BottomBarItems
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AgreementDestination

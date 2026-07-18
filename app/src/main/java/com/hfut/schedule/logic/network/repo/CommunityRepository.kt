@@ -2,54 +2,53 @@ package com.hfut.schedule.logic.network.repo
 
 
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.LibraryItems
-import com.hfut.schedule.network.model.response.community.CommunityApplyFriendResponse
-import com.hfut.schedule.network.model.response.community.CommunityApplyingFriendRecord
-import com.hfut.schedule.network.model.response.community.CommunityApplyingFriendResponse
-import com.hfut.schedule.network.model.response.community.CommunityGradeAverage
-import com.hfut.schedule.network.model.response.community.CommunityBookPosition
-import com.hfut.schedule.network.model.response.community.CommunityBookPositionResponse
-import com.hfut.schedule.network.model.response.community.CommunityBorrowRecord
-import com.hfut.schedule.network.model.response.community.CommunityBorrowResponse
-import com.hfut.schedule.network.model.response.community.CommunityBus
-import com.hfut.schedule.network.model.response.community.CommunityBusResponse
-import com.hfut.schedule.network.model.response.community.CommunityDormitory
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryInfoResponse
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryResponse
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryScore
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryScoreResponse
-import com.hfut.schedule.network.model.response.community.CommunityDormitoryUser
-import com.hfut.schedule.logic.model.DormitoryWeeklyScores
-import com.hfut.schedule.logic.model.WeekScore
-import com.hfut.schedule.network.model.response.community.CommunityFailRateRecord
-import com.hfut.schedule.network.model.response.community.CommunityFailRateResponse
-import com.hfut.schedule.network.model.response.community.CommunityGradeAllResponse
-import com.hfut.schedule.network.model.response.community.CommunityGradeAll
-import com.hfut.schedule.network.model.response.community.CommunityGradeAverageResponse
-import com.hfut.schedule.network.model.response.community.CommunityGradeResponse
-import com.hfut.schedule.network.model.response.community.CommunityGrade
-import com.hfut.schedule.network.model.response.community.CommunityLibraryRecord
-import com.hfut.schedule.network.model.response.community.CommunityLibraryResponse
-import com.hfut.schedule.network.model.response.community.CommunityLoginResponse
-import com.hfut.schedule.network.model.response.community.CommunitySchoolMap
-import com.hfut.schedule.network.model.response.community.CommunitySchoolMapResponse
-import com.hfut.schedule.network.model.response.community.CommunityStuAppDetail
-import com.hfut.schedule.network.model.response.community.CommunityStuAppResponse
-import com.hfut.schedule.network.model.response.community.CommunityTodayResponse
-import com.hfut.schedule.network.model.response.community.CommunityToday
+import com.hfut.schedule.logic.model.enumeration.LibraryItems
+import com.hfut.schedule.network.api.model.response.json.community.CommunityApplyFriendResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityApplyingFriendRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityApplyingFriendResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeAverage
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBookPosition
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBookPositionResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBorrowRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBorrowResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBus
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBusResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitory
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryInfoResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryScore
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryScoreResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityDormitoryUser
+import com.hfut.schedule.network.api.model.response.json.community.DormitoryWeeklyScoresDto
+import com.hfut.schedule.network.api.model.response.json.community.WeekScore
+import com.hfut.schedule.network.api.model.response.json.community.CommunityFailRateRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityFailRateResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeAllResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeAll
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeAverageResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGradeResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityGrade
+import com.hfut.schedule.network.api.model.response.json.community.CommunityLibraryRecord
+import com.hfut.schedule.network.api.model.response.json.community.CommunityLibraryResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityLoginResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunitySchoolMap
+import com.hfut.schedule.network.api.model.response.json.community.CommunitySchoolMapResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityStuAppDetail
+import com.hfut.schedule.network.api.model.response.json.community.CommunityStuAppResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityTodayResponse
+import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.impl.CommunityServiceCreator
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.hfut.schedule.network.api.CommunityService
-import com.hfut.schedule.network.impl.CommunityServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
-import com.hfut.schedule.network.model.StatusCode
+import com.hfut.schedule.network.api.inf.CommunityService
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -199,7 +198,7 @@ object CommunityRepository {
     }
 
     fun openFriend(token : String) {
-        val call = token.let { community.switchShare(it, CommunityService.RequestJson(1)) }
+        val call = token.let { community.switchShare(it,  com.hfut.schedule.network.api.inf.CommunityService.RequestJson(1)) }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
@@ -403,48 +402,23 @@ object CommunityRepository {
         token : String,
         semester : String,
         semesterInt : Int,
-        holder : UiStateHolder<DormitoryWeeklyScores>,
+        holder : UiStateHolder<DormitoryWeeklyScoresDto>,
     ) {
-        val cacheKey = LargeStringDataManager.getDormitoryScoreKey(semesterInt)
-        val cached = LargeStringDataManager.read(cacheKey)
+        LogUtil.debug("DormitoryScore: fetching all weeks, semester=$semester")
 
-        if (cached != null) {
-            LogUtil.debug("DormitoryScore: cache hit, key=$cacheKey")
-            val result = GsonInstance.fromJson(cached, DormitoryWeeklyScores::class.java)
-            if (result != null) {
-                launchRequestState(
-                    holder = holder,
-                    request = { community.getDormitoryScoreDetail(token, 0, semester) },
-                    transformSuccess = { _, _ -> result }
-                )
-            } else {
-                launchRequestState(
-                    holder = holder,
-                    request = { community.getDormitoryScoreDetail(token, 0, semester) },
-                    transformSuccess = { _, _ -> throw Exception("卫生评分缓存解析失败") }
-                )
-            }
-        } else {
-            LogUtil.debug("DormitoryScore: fetching all weeks, semester=$semester")
-
-            launchRequestState(
-                holder = holder,
-                request = { community.getDormitoryScoreDetail(token, 1, semester) },
-                transformSuccess = { _, _ ->
-                    val weekScores = fetchAllWeekScores(token, semester)
-
-                    LogUtil.debug("DormitoryScore: total weeks with data=${weekScores.size}")
-
-                    if (weekScores.isNotEmpty()) {
-                        val result = DormitoryWeeklyScores(semester, weekScores)
-                        LargeStringDataManager.save(cacheKey, GsonInstance.toJson(result))
-                        result
-                    } else {
-                        throw Exception("无卫生评分数据")
-                    }
+        launchRequestState(
+            holder = holder,
+            request = { community.getDormitoryScoreDetail(token, 1, semester) },
+            transformSuccess = { _, _ ->
+                val weekScores = fetchAllWeekScores(token, semester)
+                LogUtil.debug("DormitoryScore: total weeks with data=${weekScores.size}")
+                if (weekScores.isNotEmpty()) {
+                    DormitoryWeeklyScoresDto(semester, weekScores)
+                } else {
+                    throw Exception("无卫生评分数据")
                 }
-            )
-        }
+            }
+        )
     }
 
     private suspend fun fetchAllWeekScores(

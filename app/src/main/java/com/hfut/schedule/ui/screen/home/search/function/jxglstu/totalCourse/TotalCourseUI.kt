@@ -46,8 +46,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTextbook
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.xah.common.logic.state.NetworkUiState
@@ -115,7 +115,7 @@ fun CourseTotalUI(
     innerPadding : PaddingValues? = null,
     input : String = "",
 ) {
-    val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
+    val courseBookData : Map<Long, JxglstuTextbook> by produceState(initialValue = emptyMap()) {
         val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
         value = JxglstuRepository.parseCourseBook(json)
     }
@@ -229,8 +229,8 @@ fun CourseTotalUI(
 @Composable
 fun DetailItems(
     innerPadding : PaddingValues,
-    lessons: lessons,
-    courseBookData : Map<Long, CourseBookBean>,
+    lessons: JxglstuLesson,
+    courseBookData : Map<Long, JxglstuTextbook>,
     classroom : String? = null,
 ) {
     val navController = LocalNavController.current
@@ -318,18 +318,18 @@ fun DetailItems(
         }
         item {
             if(lessons.teacherAssignmentList != null) {
-                val teacherNum = lessons.teacherAssignmentList.size
+                val teacherNum = lessons.teacherAssignmentList!!.size
                 if(teacherNum > 0) {
                     PaddingHorizontalDivider(isDashed = true)
                 }
 
-                val onlyShowName = lessons.teacherAssignmentList.find {
+                val onlyShowName = lessons.teacherAssignmentList!!.find {
                     !(it.teacher == null && it.age == null)
                 } == null
 
                 if(onlyShowName) {
                     for (i in 0 until teacherNum step 2) {
-                        val teacherList = lessons.teacherAssignmentList[i]
+                        val teacherList = lessons.teacherAssignmentList!![i]
                         val dest = TeacherSearchApiDestination(teacherList.person.nameZh)
                         Row  {
                             TransplantListItem(
@@ -356,7 +356,7 @@ fun DetailItems(
                                     }
                             )
                             if(i+1 < teacherNum) {
-                                val teacherList2 = lessons.teacherAssignmentList[i+1]
+                                val teacherList2 = lessons.teacherAssignmentList!![i+1]
                                 val dest = TeacherSearchApiDestination(teacherList2.person.nameZh)
                                 TransplantListItem(
                                     colors = MaterialTheme.colorScheme.surface,
@@ -386,7 +386,7 @@ fun DetailItems(
                     }
                 } else {
                     for (i in 0 until teacherNum) {
-                        val teacherList = lessons.teacherAssignmentList[i]
+                        val teacherList = lessons.teacherAssignmentList!![i]
                         val dest = TeacherSearchApiDestination(teacherList.person.nameZh)
 
                         SharedContainer(

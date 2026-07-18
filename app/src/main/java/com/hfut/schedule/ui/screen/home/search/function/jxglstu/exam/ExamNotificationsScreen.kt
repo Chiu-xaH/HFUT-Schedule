@@ -29,14 +29,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
-import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.AcademicXCType
+import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.model.CampusRegion.HEFEI
+import com.xah.common.logic.model.CampusRegion.XUANCHENG
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -120,7 +120,7 @@ fun ExamNotificationsScreen(
                         val uiState by vm.academicXCResp.state.collectAsState()
                         val refreshNetwork: suspend () -> Unit = {
                             vm.academicXCResp.clear()
-                            vm.getAcademicXCNews(AcademicXCType.EXAM,page)
+                            vm.getAcademicXCNews(AcademicNewsXuanChengType.EXAM,page)
                         }
 
                         LaunchedEffect(page) {

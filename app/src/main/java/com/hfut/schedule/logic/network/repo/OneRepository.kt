@@ -1,22 +1,22 @@
 package com.hfut.schedule.logic.network.repo
 
 
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.model.PayData
-import com.hfut.schedule.logic.model.PayResponse
-import com.hfut.schedule.logic.model.one.BuildingBean
-import com.hfut.schedule.logic.model.one.BuildingResponse
-import com.hfut.schedule.logic.model.one.ClassroomBean
-import com.hfut.schedule.logic.model.one.ClassroomResponse
-import com.hfut.schedule.logic.model.one.getTokenResponse
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.network.api.model.response.json.one.OneFeeData
+import com.hfut.schedule.network.api.model.response.json.one.OneFeeResponse
+import com.hfut.schedule.network.api.model.response.json.one.OneBuilding
+import com.hfut.schedule.network.api.model.response.json.one.OneBuildingResponse
+import com.hfut.schedule.network.api.model.response.json.one.OneClassroomRecord
+import com.hfut.schedule.network.api.model.response.json.one.OneClassroomResponse
+import com.hfut.schedule.network.api.model.response.json.one.OneLoginResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.api.OneService
-import com.hfut.schedule.network.impl.OneServiceCreator
-import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.OneServiceCreator
+import com.hfut.schedule.network.api.inf.OneService
+import com.hfut.schedule.network.api.util.CryptoUtil
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
@@ -29,14 +29,14 @@ import retrofit2.Response
 object OneRepository {
     private val one = OneServiceCreator.create(OneService::class.java)
 
-    suspend fun getPay(holder : UiStateHolder<PayData>) = launchRequestState(
+    suspend fun getPay(holder : UiStateHolder<OneFeeData>) = launchRequestState(
         holder = holder,
         request = { one.getPay(getPersonInfo().getStudentIdFinally()) },
         transformSuccess = { _, json -> parsePayFee(json) }
     )
     @JvmStatic
-    private fun parsePayFee(result : String) : PayData = try {
-        GsonInstance.fromJson(result, PayResponse::class.java).data ?: throw Exception("数据为空")
+    private fun parsePayFee(result : String) : OneFeeData = try {
+        GsonInstance.fromJson(result, OneFeeResponse::class.java).data ?: throw Exception("数据为空")
     } catch (e : Exception) { throw e }
 
     suspend fun getMailURL(token : String,holder : UiStateHolder<MailResponse>)  =
@@ -59,21 +59,21 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun getClassroomInfo(code : String,token : String,holder : UiStateHolder<List<ClassroomBean>>)  =
+    suspend fun getClassroomInfo(code : String,token : String,holder : UiStateHolder<List<OneClassroomRecord>>)  =
         launchRequestState(
             holder = holder,
             request = { one.getClassroomInfo(code, token) },
             transformSuccess = { _, json -> parseClassroom(json) }
         )
     @JvmStatic
-    private fun parseClassroom(result: String) : List<ClassroomBean> = try {
+    private fun parseClassroom(result: String) : List<OneClassroomRecord> = try {
         if(result.contains("success"))
-            GsonInstance.fromJson(result, ClassroomResponse::class.java).data.records
+            GsonInstance.fromJson(result, OneClassroomResponse::class.java).data.records
         else
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun getBuildings(campus : Campus, token : String, holder: UiStateHolder<Pair<Campus, List<BuildingBean>>>)  =
+    suspend fun getBuildings(campus : Campus, token : String, holder: UiStateHolder<Pair<Campus, List<OneBuilding>>>)  =
         launchRequestState(
             holder = holder,
             request = {
@@ -87,9 +87,9 @@ object OneRepository {
             transformSuccess = { _, json -> parseBuildings(campus, json) }
         )
     @JvmStatic
-    private fun parseBuildings(campus: Campus, result: String) : Pair<Campus, List<BuildingBean>> = try {
+    private fun parseBuildings(campus: Campus, result: String) : Pair<Campus, List<OneBuilding>> = try {
         if(result.contains("success"))
-            Pair(campus, GsonInstance.fromJson(result, BuildingResponse::class.java).data)
+            Pair(campus, GsonInstance.fromJson(result, OneBuildingResponse::class.java).data)
         else
             throw Exception(result)
     } catch (e: Exception) { throw e }
@@ -115,9 +115,9 @@ object OneRepository {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
                 try {
-                    val data = GsonInstance.fromJson(json, getTokenResponse::class.java)
+                    val data = GsonInstance.fromJson(json, OneLoginResponse::class.java)
                     if (data.msg.contains("success")) {
-                        SharedPrefs.saveString("bearer", "Bearer " + data.data.access_token)
+                        SharedPrefs.saveString("bearer", "Bearer " + data.data.token)
                         showToast("信息门户登陆成功")
                     }
                 } catch (e : Exception) {

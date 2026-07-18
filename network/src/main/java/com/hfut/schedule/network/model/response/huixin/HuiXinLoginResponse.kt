@@ -1,8 +1,0 @@
-package com.hfut.schedule.network.model.response.huixin
-
-import com.google.gson.annotations.SerializedName
-
-data class HuiXinLoginResponse(
-    @SerializedName("access_token")
-    val token : String
-)

@@ -33,15 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.OfficeHallSearchBean
+import com.hfut.schedule.network.api.model.response.json.hall.OfficeHallSearchRecord
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -51,7 +49,6 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -65,7 +62,6 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -78,9 +74,9 @@ private enum class OfficeHallType(val serviceMode : String,val description: Stri
     SEARCH("11","查找"),
     HANDLE("12","办理")
 }
-private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,needLogin : Boolean) = with(bean) {
-    val finalUrl = if(url != null && isValidWebUrl(url)) {
-        url
+private suspend fun openDetail(context: Context, bean : OfficeHallSearchRecord, needLogin : Boolean) = with(bean) {
+    val finalUrl = if(url != null && isValidWebUrl(url!!)) {
+        url!!
     } else {
         Constant.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }

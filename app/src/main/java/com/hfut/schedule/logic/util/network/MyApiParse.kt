@@ -4,22 +4,22 @@ package com.hfut.schedule.logic.util.network
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.util.CustomEventMapper
-import com.hfut.schedule.logic.model.Lessons
-import com.hfut.schedule.logic.model.MyAPIResponse
-import com.hfut.schedule.logic.model.Schedule
-import com.hfut.schedule.logic.model.SettingsInfo
+import com.hfut.schedule.network.api.model.response.json.github.GithubIoSchedules
+import com.hfut.schedule.network.api.model.response.json.github.GithubIoResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubIoSchedule
+import com.hfut.schedule.network.api.model.response.json.github.GithubIoApiInfo
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object MyApiParse {
     @JvmStatic
-    fun getMy() : MyAPIResponse? {
+    fun getMy() : GithubIoResponse? {
         val json = SharedPrefs.prefs.getString("my","")
         return try {
-            GsonInstance.fromJson(json, MyAPIResponse::class.java)
+            GsonInstance.fromJson(json, GithubIoResponse::class.java)
         } catch (e : Exception) {
             LogUtil.error(e)
             null
@@ -35,12 +35,12 @@ object MyApiParse {
         }
     }
     @JvmStatic
-    fun getSettingInfo() : SettingsInfo {
+    fun getSettingInfo() : GithubIoApiInfo {
         return try {
-            getMy()!!.SettingsInfo
+            getMy()!!.apiInfo
         } catch (e: Exception) {
             LogUtil.error(e)
-            SettingsInfo(
+            GithubIoApiInfo(
                 title = "开发者接口",
                 info = "本接口在不更新APP前提下可实时更新信息",
                 show = false,
@@ -50,18 +50,18 @@ object MyApiParse {
     }
 
     @JvmStatic
-    private fun getAPISchedule(): Lessons? {
+    private fun getAPISchedule(): GithubIoSchedules? {
         return try {
-            getMy()!!.Lessons
+            getMy()!!.schedules
         } catch (e : Exception) {
             LogUtil.error(e)
             null
         }
     }
     @JvmStatic
-    fun getSchedule() : List<Schedule> {
+    fun getSchedule() : List<GithubIoSchedule> {
         try {
-            val list = getAPISchedule()?.Schedule ?: return emptyList()
+            val list = getAPISchedule()?.schedule ?: return emptyList()
             return list
         } catch (e : Exception) {
             LogUtil.error(e)
@@ -81,9 +81,9 @@ object MyApiParse {
         }
 
     @JvmStatic
-    fun getNetCourse() : List<Schedule> {
+    fun getNetCourse() : List<GithubIoSchedule> {
         try {
-            val list = getAPISchedule()?.MyList ?: return emptyList()
+            val list = getAPISchedule()?.ddl ?: return emptyList()
             return list
         } catch (e : Exception) {
             LogUtil.error(e)
@@ -93,20 +93,10 @@ object MyApiParse {
     @JvmStatic
     fun getTimeStamp() : String? {
         return try {
-            getMy()?.TimeStamp
+            getMy()?.focusBottomTip
         } catch (e : Exception) {
             LogUtil.error(e)
             null
         }
     }
-    @JvmStatic
-    fun isNextOpen() : Boolean {
-        return try {
-            getMy()!!.Next
-        } catch (e : Exception) {
-            LogUtil.error(e)
-            false
-        }
-    }
-
 }

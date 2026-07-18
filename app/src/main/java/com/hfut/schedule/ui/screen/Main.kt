@@ -29,8 +29,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
-import com.hfut.schedule.ui.util.navigation.SharedContainerFilledStrategy
-import com.hfut.schedule.ui.util.navigation.SharedNavEffect
+import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
+import com.hfut.schedule.ui.model.choice.SharedNavEffect
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.manager.AnimationSpecManager

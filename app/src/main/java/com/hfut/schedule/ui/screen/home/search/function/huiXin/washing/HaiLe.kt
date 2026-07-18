@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -35,17 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.model.HaiLeNearPositionBean
-import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
-import com.hfut.schedule.logic.model.HaiLeType
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.logic.util.helper.getCampus
+import com.hfut.schedule.network.api.model.response.json.haile.HaiLeNearPositionBean
+import com.hfut.schedule.logic.model.dto.HaiLeNearPositionRequestDto
+import com.hfut.schedule.logic.model.dto.HaiLeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.model.request.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -102,7 +100,7 @@ fun HaiLeWashingScreen(
         }
         vm.haiLeNearPositionResp.clear()
         vm.getHaiLeNearPosition(
-            HaiLeNearPositionRequestDTO(
+            HaiLeNearPositionRequestDto(
                 campus = t[pagerState.currentPage],
                 page = page
             )

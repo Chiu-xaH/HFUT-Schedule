@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
@@ -25,10 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.model.BuildingMapFloorBean
+import com.hfut.schedule.network.api.model.response.json.github.GithubBuildingMapFloor
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.UrlImage
@@ -44,7 +42,7 @@ import com.sharednav.common.helper.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 
 data class FloorMapWindow(
-    val floor : BuildingMapFloorBean,
+    val floor : GithubBuildingMapFloor,
     val vm : NetWorkViewModel,
 ) : FloatingWindow() {
     override val key = "floor_map_${floor.hashCode()}"

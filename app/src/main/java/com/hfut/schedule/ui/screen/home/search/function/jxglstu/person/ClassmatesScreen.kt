@@ -141,8 +141,8 @@ fun ClassmatesScreen(
                                             onClick = {},
                                             shape = MaterialTheme.shapes.small
                                         ) {
-                                            if(photoUrl != null && isValidWebUrl(photoUrl)) {
-                                                UrlImage(photoUrl, modifier = Modifier.size(DEFAULT_IMAGE_SIZE), shape = MaterialTheme.shapes.small)
+                                            if(photoUrl != null && isValidWebUrl(photoUrl!!)) {
+                                                UrlImage(photoUrl!!, modifier = Modifier.size(DEFAULT_IMAGE_SIZE), shape = MaterialTheme.shapes.small)
                                             } else {
                                                 Text(name.substring(0,1))
                                             }

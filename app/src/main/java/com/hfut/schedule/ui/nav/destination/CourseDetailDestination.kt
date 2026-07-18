@@ -13,8 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTextbook
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
@@ -26,8 +26,8 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 data class CourseDetailDestination(
-    val lesson : lessons,
-    val courseBookData : Map<Long, CourseBookBean> = emptyMap(),
+    val lesson : JxglstuLesson,
+    val courseBookData : Map<Long, JxglstuTextbook> = emptyMap(),
     val classroom : String? = null,
     val origin : String? = null,
 ) : NavDestination() {

@@ -41,19 +41,18 @@ import androidx.compose.ui.unit.dp
 
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.PlanCourses
-import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
-import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
-import com.hfut.schedule.logic.model.jxglstu.item
-
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletionResponse
+import com.hfut.schedule.logic.model.dto.JxglstuProgramItemDto
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletion
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -88,12 +87,12 @@ suspend fun createProgramRemarkMap() : Map<Long, String?> {
     try {
         val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
         val bean = with(Dispatchers.Default) {
-            GsonInstance.fromJson(content, ProgramResponse::class.java)
+            GsonInstance.fromJson(content, JxglstuProgramResponse::class.java)
         }
         // 将所有的PlanCourses汇总成哈希表
         val typeRemarkMap = mutableMapOf<Long, String?>()
 
-        fun collect(node: ProgramResponse) {
+        fun collect(node: JxglstuProgramResponse) {
             typeRemarkMap[node.id] = node.remark
             // 递归子节点
             node.children.forEach { child ->
@@ -109,16 +108,16 @@ suspend fun createProgramRemarkMap() : Map<Long, String?> {
     }
 }
 
-suspend fun createProgramMap() : Map<String, PlanCourses> {
+suspend fun createProgramMap() : Map<String, JxglstuProgramPlanCourse> {
     try {
         val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
         val bean = with(Dispatchers.Default) {
-            GsonInstance.fromJson(content, ProgramResponse::class.java)
+            GsonInstance.fromJson(content, JxglstuProgramResponse::class.java)
         }
         // 将所有的PlanCourses汇总成哈希表
-        val courseMap = mutableMapOf<String, PlanCourses>()
+        val courseMap = mutableMapOf<String, JxglstuProgramPlanCourse>()
 
-        fun collect(node: ProgramResponse) {
+        fun collect(node: JxglstuProgramResponse) {
             node.planCourses.forEach { course ->
                 courseMap[course.course.code] = course
             }
@@ -138,7 +137,7 @@ suspend fun createProgramMap() : Map<String, PlanCourses> {
 
 @Composable
 fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
-    val programData by produceState<ProgramResponse?>(initialValue = null) {
+    val programData by produceState<JxglstuProgramResponse?>(initialValue = null) {
         if(!ifSaved) {
             onListenStateHolder(vm.programData) { data ->
                 value = data
@@ -147,7 +146,7 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
             value = try {
                 val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
                 with(Dispatchers.Default) {
-                    GsonInstance.fromJson(content, ProgramResponse::class.java)
+                    GsonInstance.fromJson(content, JxglstuProgramResponse::class.java)
                 }
             } catch (e : Exception) {
                 LogUtil.error(e)
@@ -200,7 +199,12 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
 
 @Composable
 fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadding : PaddingValues) {
-    val emptyData = remember {  item("培养方案课程",0.0,1.0).let { nilItem -> ProgramCompletionResponse(nilItem, listOf(nilItem,nilItem,nilItem)) } }
+    val emptyData = remember {  JxglstuProgramSimpleCompletion("培养方案课程", 0.0, 1.0).let { nilItem ->
+        JxglstuProgramSimpleCompletionResponse(
+            nilItem,
+            listOf(nilItem, nilItem, nilItem)
+        )
+    } }
     val completion by produceState(initialValue = emptyData) {
         if(!ifSaved) {
             onListenStateHolder(vm.programCompletionData) { data ->
@@ -208,8 +212,8 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
             }
         } else {
             value = try {
-                val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
-                val data : List<ProgramCompletionResponse> = GsonInstance.fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
+                val listType = object : TypeToken<List<JxglstuProgramSimpleCompletionResponse>>() {}.type
+                val data : List<JxglstuProgramSimpleCompletionResponse> = GsonInstance.fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
                 data[0]
             } catch (e : Exception) {
                 LogUtil.error(e)
@@ -284,7 +288,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
 }
 
 @Composable
-fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWorkViewModel,ifSaved : Boolean) {
+fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, vm: NetWorkViewModel, ifSaved : Boolean) {
     if(entity == null) return
 
     val children = entity.children
@@ -294,7 +298,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
 
 
     if(children.isNotEmpty()) {
-        var bean by remember { mutableStateOf<ProgramResponse?>(null) }
+        var bean by remember { mutableStateOf<JxglstuProgramResponse?>(null) }
         bean?.let {
             if (showBottomSheet_Program) {
                 HazeBottomSheet (
@@ -356,7 +360,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
 
         var input by remember { mutableStateOf("") }
 
-        var courseInfo by remember { mutableStateOf<PlanCourses?>(null) }
+        var courseInfo by remember { mutableStateOf<JxglstuProgramPlanCourse?>(null) }
         var showInfo by remember { mutableStateOf(false) }
         if(showInfo) {
             courseInfo?.let {
@@ -389,7 +393,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 colors = textFiledTransplant(),
             )
         }
-        val searchList = mutableListOf<PlanCourses>()
+        val searchList = mutableListOf<JxglstuProgramPlanCourse>()
         planCourses.forEach { item ->
             val has =
                 item.course.nameZh.contains(input,ignoreCase = true) ||
@@ -454,7 +458,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
 }
 
 @Composable
-fun ProgramDetailInfo(courseInfo : ProgramPartThree,ifSaved: Boolean, onDismissRequest : () -> Unit) {
+fun ProgramDetailInfo(courseInfo : JxglstuProgramItemDto, ifSaved: Boolean, onDismissRequest : () -> Unit) {
     val context = LocalContext.current
     val navController = LocalNavController.current
 

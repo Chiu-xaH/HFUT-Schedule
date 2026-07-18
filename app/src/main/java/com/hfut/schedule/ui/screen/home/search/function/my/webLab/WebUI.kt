@@ -55,7 +55,6 @@ import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isInGraduation
 import com.hfut.schedule.logic.util.sys.datetime.isInLanding
 import com.hfut.schedule.logic.util.sys.showToast
@@ -78,14 +77,13 @@ import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HuoZaiFeiXuan
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.webview.getPureUrl
+import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
@@ -93,8 +91,6 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
-import com.xah.common.ui.style.color.ShimmerAngle
-import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer

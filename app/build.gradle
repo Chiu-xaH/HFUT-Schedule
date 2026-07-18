@@ -256,7 +256,7 @@ dependencies {
     // 消费预测
     implementation(project(':forecast'))
     // 网络
-    implementation(project(':network'))
+    implementation(project(':network-api'))
     // 基准文件模块
     baselineProfile project(":baselineProfile")
 }

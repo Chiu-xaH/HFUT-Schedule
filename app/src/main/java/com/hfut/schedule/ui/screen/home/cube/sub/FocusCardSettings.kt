@@ -43,10 +43,10 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.util.insertSafely
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeResponse
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeType
+import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -55,7 +55,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard

@@ -31,8 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
+import com.hfut.schedule.ui.model.NavigationBarItemData
+import com.hfut.schedule.ui.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.special.bottomBarBlur

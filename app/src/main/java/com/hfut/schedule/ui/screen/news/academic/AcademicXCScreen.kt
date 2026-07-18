@@ -23,10 +23,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.AcademicXCType
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
@@ -50,13 +49,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
-    val titles = AcademicXCType.entries.map { it.title }
+    val titles = AcademicNewsXuanChengType.entries.map { it.title }
     val pagerState = rememberPagerState(pageCount = { titles.size })
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.academicXCResp.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         vm.academicXCResp.clear()
-        vm.getAcademicXCNews(AcademicXCType.entries[pagerState.currentPage],page)
+        vm.getAcademicXCNews(AcademicNewsXuanChengType.entries[pagerState.currentPage],page)
     }
     val cookies by produceState<String?>(initialValue = null) {
         value = getWebVpnCookie()

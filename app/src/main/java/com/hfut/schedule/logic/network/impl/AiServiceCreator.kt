@@ -1,7 +1,6 @@
 package com.hfut.schedule.logic.network.impl
 
-import com.hfut.schedule.logic.enumeration.ChatModel
-import com.hfut.schedule.network.helper.allowAutoRedirect
+import com.hfut.schedule.network.core.allowAutoRedirect
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,7 +10,7 @@ object AiServiceCreator {
         .allowAutoRedirect(false)
         .build()
 
-    private fun getRetrofit(model : ChatModel): Retrofit {
+    private fun getRetrofit(model : com.hfut.schedule.logic.model.enumeration.ChatModel): Retrofit {
         val baseUrl = model.url
 
         return Retrofit.Builder()
@@ -21,11 +20,11 @@ object AiServiceCreator {
             .build()
     }
 
-    fun <T> create(service: Class<T>, model : ChatModel): T {
+    fun <T> create(service: Class<T>, model : com.hfut.schedule.logic.model.enumeration.ChatModel): T {
         return getRetrofit(model).create(service)
     }
 
-    inline fun <reified T> create(model : ChatModel): T {
+    inline fun <reified T> create(model : com.hfut.schedule.logic.model.enumeration.ChatModel): T {
         return create(T::class.java, model)
     }
 }

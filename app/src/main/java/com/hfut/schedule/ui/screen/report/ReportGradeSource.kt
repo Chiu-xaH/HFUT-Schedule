@@ -1,8 +1,8 @@
 package com.hfut.schedule.ui.screen.report
 
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
-import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
+import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
+import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppGrade
 
 data class ReportGradeItem(
     val courseName: String,
@@ -16,21 +16,21 @@ data class ReportGradeItem(
 )
 
 data class ReportTermGrade(
-    val dto: GradeJxglstuDTO,
+    val dto: JxglstuTermGrade,
     val passFlags: List<Boolean>
 )
 
 fun hasUniAppGradeData(
-    grades: Map<String, List<UniAppGradeBean>>?
+    grades: Map<String, List<UniAppGrade>>?
 ): Boolean = grades?.values?.any { it.isNotEmpty() } == true
 
 fun hasJxglstuGradeData(
-    grades: List<GradeJxglstuDTO>?
+    grades: List<JxglstuTermGrade>?
 ): Boolean = grades?.any { it.list.isNotEmpty() } == true
 
 fun selectReportGrades(
-    uniAppGrades: Map<String, List<UniAppGradeBean>>?,
-    jxglstuGrades: List<GradeJxglstuDTO>?
+    uniAppGrades: Map<String, List<UniAppGrade>>?,
+    jxglstuGrades: List<JxglstuTermGrade>?
 ): List<ReportGradeItem> {
     return when {
         hasUniAppGradeData(uniAppGrades) ->
@@ -41,7 +41,7 @@ fun selectReportGrades(
     }
 }
 
-fun uniAppReportGrades(gradeMap: Map<String, List<UniAppGradeBean>>): List<ReportGradeItem> {
+fun uniAppReportGrades(gradeMap: Map<String, List<UniAppGrade>>): List<ReportGradeItem> {
     return gradeMap.flatMap { (term, grades) ->
         grades.map { grade ->
             ReportGradeItem(
@@ -58,7 +58,7 @@ fun uniAppReportGrades(gradeMap: Map<String, List<UniAppGradeBean>>): List<Repor
     }
 }
 
-fun jxglstuReportGrades(terms: List<GradeJxglstuDTO>): List<ReportGradeItem> {
+fun jxglstuReportGrades(terms: List<JxglstuTermGrade>): List<ReportGradeItem> {
     return terms.flatMap { term ->
         term.list.map { grade ->
             ReportGradeItem(
@@ -99,10 +99,10 @@ private fun isJxglstuGradePassed(finalGrade: String, gp: Double): Boolean {
 fun List<ReportGradeItem>.toReportTerms(): List<ReportTermGrade> {
     return groupBy { it.term }.map { (term, grades) ->
         ReportTermGrade(
-            dto = GradeJxglstuDTO(
+            dto = JxglstuTermGrade(
                 term,
                 grades.map {
-                    GradeJxglstuResponse(
+                    JxglstuGrade(
                         it.courseName,
                         it.credits.toString(),
                         it.gp.toString(),

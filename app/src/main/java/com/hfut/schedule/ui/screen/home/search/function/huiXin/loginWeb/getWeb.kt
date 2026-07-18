@@ -1,10 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
 
-import com.hfut.schedule.network.model.response.huixin.HuiXinFeeResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil

@@ -8,27 +8,27 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.jxglstu.GradeJxglstuResponse
-import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.logic.model.jxglstu.CourseBookResponse
-import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
-import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
-import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramBean
-import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
-import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
-import com.hfut.schedule.logic.model.jxglstu.SelectCourse
-import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
-import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
-import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
-import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
-import com.hfut.schedule.logic.model.jxglstu.TransferPostResponse
-import com.hfut.schedule.logic.model.jxglstu.TransferResponse
-import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
-import com.hfut.schedule.logic.model.jxglstu.lessonResponse
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramCompetitionResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletionResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramResponse
+import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
+import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTextbook
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTextbookResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseSearchResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTime
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTimeResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorMyApplyResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.select.JxglstuSelectCourseResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.select.JxglstuSelectCourseDetailResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.select.JxglstuSelectCoursePostResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyQuestionsResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorPostResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTermLessonResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.logic.util.network.launchRequestNone
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
@@ -36,10 +36,10 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.network.api.JxglstuService
-import com.hfut.schedule.network.impl.JxglstuServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.JxglstuServiceCreator
+import com.hfut.schedule.network.api.inf.JxglstuService
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
@@ -110,7 +110,7 @@ object JxglstuRepository {
     private fun parsePostTransfer(result : String) : String = try {
         var msg = ""
         if(result.contains("result")) {
-            val data =  GsonInstance.fromJson(result, TransferPostResponse::class.java)
+            val data =  GsonInstance.fromJson(result, JxglstuTransferMajorPostResponse::class.java)
             if(data.result) {
                 msg = "成功"
             } else {
@@ -183,10 +183,10 @@ object JxglstuRepository {
         cookie: String,
         studentId : UiStateHolder<Int>,
         bizTypeIdResponse : UiStateHolder<Int>,
-        selectCourseData : UiStateHolder<List<SelectCourse>>
+        selectCourseData : UiStateHolder<List<JxglstuSelectCourseResponse>>
     ) {
-        onListenStateHolderForNetwork<Int, List<SelectCourse>>(studentId, selectCourseData) { sId ->
-            onListenStateHolderForNetwork<Int, List<SelectCourse>>(
+        onListenStateHolderForNetwork<Int, List<JxglstuSelectCourseResponse>>(studentId, selectCourseData) { sId ->
+            onListenStateHolderForNetwork<Int, List<JxglstuSelectCourseResponse>>(
                 bizTypeIdResponse,
                 selectCourseData
             ) { bizTypeId ->
@@ -201,20 +201,20 @@ object JxglstuRepository {
         }
     }
     @JvmStatic
-    private fun parseSelectedList(json : String) : List<SelectCourse> = try {
-        val courses: List<SelectCourse> = GsonInstance.fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
+    private fun parseSelectedList(json : String) : List<JxglstuSelectCourseResponse> = try {
+        val courses: List<JxglstuSelectCourseResponse> = GsonInstance.fromJson(json, object : TypeToken<List<JxglstuSelectCourseResponse>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
-    suspend fun getSelectCourseInfo(cookie: String, id : Int,holder : UiStateHolder<List<SelectCourseInfo>>) =
+    suspend fun getSelectCourseInfo(cookie: String, id : Int,holder : UiStateHolder<List<JxglstuSelectCourseDetailResponse>>) =
         launchRequestState(
             holder = holder,
             request = { jxglstu.getSelectCourseInfo(id, cookie) },
             transformSuccess = { _, json -> parseSelectCourseInfo(json) }
         )
     @JvmStatic
-    private fun parseSelectCourseInfo(json : String) : List<SelectCourseInfo> = try {
-        val courses: List<SelectCourseInfo> = GsonInstance.fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+    private fun parseSelectCourseInfo(json : String) : List<JxglstuSelectCourseDetailResponse> = try {
+        val courses: List<JxglstuSelectCourseDetailResponse> = GsonInstance.fromJson(json, object : TypeToken<List<JxglstuSelectCourseDetailResponse>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
@@ -261,9 +261,9 @@ object JxglstuRepository {
         cookie: String,
         courseId : Int,
         studentId : UiStateHolder<Int>,
-        selectedData : UiStateHolder<List<SelectCourseInfo>>
+        selectedData : UiStateHolder<List<JxglstuSelectCourseDetailResponse>>
     ) {
-        onListenStateHolderForNetwork<Int, List<SelectCourseInfo>>(studentId, selectedData) { sId ->
+        onListenStateHolderForNetwork<Int, List<JxglstuSelectCourseDetailResponse>>(studentId, selectedData) { sId ->
             launchRequestState(
                 request = {
                     jxglstu.getSelectedCourse(sId.toString(), courseId.toString(), cookie)
@@ -275,8 +275,8 @@ object JxglstuRepository {
         }
     }
     @JvmStatic
-    private fun parseSelectedCourses(json : String) : List<SelectCourseInfo> = try {
-        val courses: List<SelectCourseInfo> = GsonInstance.fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+    private fun parseSelectedCourses(json : String) : List<JxglstuSelectCourseDetailResponse> = try {
+        val courses: List<JxglstuSelectCourseDetailResponse> = GsonInstance.fromJson(json, object : TypeToken<List<JxglstuSelectCourseDetailResponse>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
@@ -299,7 +299,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSelectResult(json : String) : Pair<Boolean, String> = try {
-        val data = GsonInstance.fromJson(json, SelectPostResponse::class.java)
+        val data = GsonInstance.fromJson(json, JxglstuSelectCoursePostResponse::class.java)
         val status = data.success
         val statusText = if(status) {
             "成功"
@@ -313,7 +313,7 @@ object JxglstuRepository {
         cookie: String,
         batchId: String,
         studentId : UiStateHolder<Int>,
-        transferData : UiStateHolder<TransferResponse>
+        transferData : UiStateHolder<JxglstuTransferMajorResponse>
     ) = onListenStateHolderForNetwork(studentId, transferData) { sId ->
         launchRequestState(
             holder = transferData,
@@ -322,8 +322,8 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseTransfer(json : String) : TransferResponse = try {
-        GsonInstance.fromJson(json, TransferResponse::class.java)
+    private fun parseTransfer(json : String) : JxglstuTransferMajorResponse = try {
+        GsonInstance.fromJson(json, JxglstuTransferMajorResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun getTransferList(
@@ -368,7 +368,7 @@ object JxglstuRepository {
         cookie: String,
         batchId: String,
         studentId: UiStateHolder<Int>,
-        myApplyData : UiStateHolder<MyApplyResponse>
+        myApplyData : UiStateHolder<JxglstuTransferMajorMyApplyResponse>
     ) = onListenStateHolderForNetwork(studentId, myApplyData) { sId ->
         launchRequestState(
             holder = myApplyData,
@@ -377,8 +377,8 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseMyApply(json: String) : MyApplyResponse = try {
-        GsonInstance.fromJson(json, MyApplyResponse::class.java)
+    private fun parseMyApply(json: String) : JxglstuTransferMajorMyApplyResponse = try {
+        GsonInstance.fromJson(json, JxglstuTransferMajorMyApplyResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun getMyApplyInfo(
@@ -437,7 +437,7 @@ object JxglstuRepository {
         cookie: String,
         semester: Int?,
         studentId: UiStateHolder<Int>,
-        jxglstuGradeData : UiStateHolder<List<GradeJxglstuDTO>>
+        jxglstuGradeData : UiStateHolder<List<JxglstuTermGrade>>
     ) = onListenStateHolderForNetwork(studentId, jxglstuGradeData) { sId ->
         launchRequestState(
             holder = jxglstuGradeData,
@@ -447,7 +447,7 @@ object JxglstuRepository {
     }
 
     @JvmStatic
-    suspend fun parseJxglstuGradeInner(html: String): List<GradeJxglstuDTO> = try {
+    suspend fun parseJxglstuGradeInner(html: String): List<JxglstuTermGrade> = try {
         LargeStringDataManager.save(LargeStringDataManager.GRADE,html)
         parseJxglstuGrade(html)
     } catch (e: Exception) {
@@ -455,20 +455,20 @@ object JxglstuRepository {
     }
 
     @JvmStatic
-    suspend fun parseJxglstuGrade(html: String): List<GradeJxglstuDTO> =
+    suspend fun parseJxglstuGrade(html: String): List<JxglstuTermGrade> =
         withContext(Dispatchers.Default) {
             try {
                 val doc = Jsoup.parse(html)
                 val termElements = doc.select("h3")
                 val tableElements = doc.select("table.student-grade-table")
 
-                val result = mutableListOf<GradeJxglstuDTO>()
+                val result = mutableListOf<JxglstuTermGrade>()
 
                 for ((index, termElement) in termElements.withIndex()) {
                     val term = termElement.text()
                     val table = tableElements.getOrNull(index) ?: continue
                     val rows = table.select("tr")
-                    val list = mutableListOf<GradeJxglstuResponse>()
+                    val list = mutableListOf<JxglstuGrade>()
 
                     for (row in rows) {
                         val tds = row.select("td") // 选择tr标签下的所有td标签
@@ -480,7 +480,7 @@ object JxglstuRepository {
                             val totalGrade = tds[5].text()
                             val grades = tds[6].text()
                             list.add(
-                                GradeJxglstuResponse(
+                                JxglstuGrade(
                                     titles,
                                     scores,
                                     gpa,
@@ -491,7 +491,7 @@ object JxglstuRepository {
                             )
                         }
                     }
-                    result.add(GradeJxglstuDTO(term, list))
+                    result.add(JxglstuTermGrade(term, list))
                 }
                 result
             } catch (e: Exception) {
@@ -564,7 +564,7 @@ object JxglstuRepository {
         }
     }
 
-    suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int,holder : UiStateHolder<lessonResponse>) =
+    suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int,holder : UiStateHolder<JxglstuTermLessonResponse>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -578,12 +578,12 @@ object JxglstuRepository {
             transformSuccess = { _, json -> parseLessonIds(json) }
         )
     @JvmStatic
-    private suspend fun parseLessonIds(json : String) : lessonResponse {
+    private suspend fun parseLessonIds(json : String) : JxglstuTermLessonResponse {
         LargeStringDataManager.save(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()),json)
 //        SharedPrefs.saveString("courses", json)
         updateStartDate(json)
         try {
-            return GsonInstance.fromJson(json, lessonResponse::class.java)
+            return GsonInstance.fromJson(json, JxglstuTermLessonResponse::class.java)
         } catch (e : Exception) { throw e }
     }
 
@@ -659,7 +659,7 @@ object JxglstuRepository {
         }
     }
 
-    suspend fun getLessonTimes(cookie: String,timeCampusId : Int,holder : UiStateHolder<List<CourseUnitBean>>) =
+    suspend fun getLessonTimes(cookie: String,timeCampusId : Int,holder : UiStateHolder<List<JxglstuCourseTime>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -671,11 +671,11 @@ object JxglstuRepository {
             transformSuccess = { _, json -> parseLessonTimes(json) }
         )
     @JvmStatic
-    private suspend fun parseLessonTimes(result: String) : List<CourseUnitBean> =
+    private suspend fun parseLessonTimes(result: String) : List<JxglstuCourseTime> =
         withContext(Dispatchers.IO) {
             DataStoreManager.saveCourseTable(result)
             return@withContext try {
-                GsonInstance.fromJson(result, LessonTimesResponse::class.java).result.courseUnitList
+                GsonInstance.fromJson(result, JxglstuCourseTimeResponse::class.java).result.courseUnitList
             } catch (e: Exception) {
                 throw e
             }
@@ -684,7 +684,7 @@ object JxglstuRepository {
     suspend fun getProgram(
         cookie: String,
         studentId: UiStateHolder<Int>,
-        programData : UiStateHolder<ProgramResponse>
+        programData : UiStateHolder<JxglstuProgramResponse>
     ) = onListenStateHolderForNetwork(studentId, programData) { sId ->
         launchRequestState(
             holder = programData,
@@ -693,33 +693,33 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private suspend fun parseProgram(result: String) : ProgramResponse {
+    private suspend fun parseProgram(result: String) : JxglstuProgramResponse {
         LargeStringDataManager.save(LargeStringDataManager.PROGRAM,result)
         return try {
-            GsonInstance.fromJson(result, ProgramResponse::class.java)
+            GsonInstance.fromJson(result, JxglstuProgramResponse::class.java)
         } catch (e : Exception) {
             throw e
         }
     }
 
-    suspend fun getProgramCompletion(cookie: String,holder : UiStateHolder<ProgramCompletionResponse>) =
+    suspend fun getProgramCompletion(cookie: String,holder : UiStateHolder<JxglstuProgramSimpleCompletionResponse>) =
         launchRequestState(
             holder = holder,
             request = { jxglstu.getProgramCompletion(cookie) },
             transformSuccess = { _, json -> parseProgramCompletion(json) }
         )
     @JvmStatic
-    private fun parseProgramCompletion(json : String) : ProgramCompletionResponse = try {
+    private fun parseProgramCompletion(json : String) : JxglstuProgramSimpleCompletionResponse = try {
         SharedPrefs.saveString("PROGRAM_COMPETITION", json)
-        val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
-        val data : List<ProgramCompletionResponse> = GsonInstance.fromJson(json, listType)
+        val listType = object : TypeToken<List<JxglstuProgramSimpleCompletionResponse>>() {}.type
+        val data : List<JxglstuProgramSimpleCompletionResponse> = GsonInstance.fromJson(json, listType)
         data[0]
     } catch (e : Exception) { throw e }
 
     suspend fun getProgramPerformance(
         cookie: String,
         studentId: UiStateHolder<Int>,
-        programPerformanceData : UiStateHolder<ProgramBean>
+        programPerformanceData : UiStateHolder<JxglstuProgramCompetitionResponse>
     ) = onListenStateHolderForNetwork(studentId, programPerformanceData) { sId ->
         launchRequestState(
             holder = programPerformanceData,
@@ -728,9 +728,9 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private suspend fun parseProgramPerformance(json : String) : ProgramBean = try {
+    private suspend fun parseProgramPerformance(json : String) : JxglstuProgramCompetitionResponse = try {
         LargeStringDataManager.save(LargeStringDataManager.PROGRAM_PERFORMANCE,json)
-        GsonInstance.fromJson(json, ProgramBean::class.java)
+        GsonInstance.fromJson(json, JxglstuProgramCompetitionResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun searchCourse(
@@ -740,7 +740,7 @@ object JxglstuRepository {
         semester : Int,
         courseId : String?,
         studentId: UiStateHolder<Int>,
-        courseSearchResponse : UiStateHolder<List<lessons>>
+        courseSearchResponse : UiStateHolder<List<JxglstuLesson>>
     ) = onListenStateHolderForNetwork(studentId, courseSearchResponse) { sId ->
         launchRequestState(
             holder = courseSearchResponse,
@@ -759,15 +759,15 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseSearchCourse(result : String) : List<lessons> = try {
-        GsonInstance.fromJson(result, CourseSearchResponse::class.java).data.map { it.lesson }
+    private fun parseSearchCourse(result : String) : List<JxglstuLesson> = try {
+        GsonInstance.fromJson(result, JxglstuCourseSearchResponse::class.java).data.map { it.lesson }
     } catch (e : Exception) { throw e }
 
     suspend fun getSurveyList(
         cookie: String,
         semester : Int,
         studentId: UiStateHolder<Int>,
-        surveyListData : UiStateHolder<List<forStdLessonSurveySearchVms>>
+        surveyListData : UiStateHolder<List<JxglstuSurveyLesson>>
     ) = onListenStateHolderForNetwork(studentId, surveyListData) { sId ->
         launchRequestState(
             holder = surveyListData,
@@ -778,19 +778,19 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseSurveyList(json : String) : List<forStdLessonSurveySearchVms> = try {
-        GsonInstance.fromJson(json, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
+    private fun parseSurveyList(json : String) : List<JxglstuSurveyLesson> = try {
+        GsonInstance.fromJson(json, JxglstuSurveyResponse::class.java).list
     } catch (e : Exception) { throw e }
 
-    suspend fun getSurvey(cookie: String, id : String,holder : UiStateHolder<SurveyResponse>) =
+    suspend fun getSurvey(cookie: String, id : String,holder : UiStateHolder<JxglstuSurveyQuestionsResponse>) =
         launchRequestState(
             holder = holder,
             request = { jxglstu.getSurveyInfo(cookie, id) },
             transformSuccess = { _, json -> parseSurvey(json) }
         )
     @JvmStatic
-    private fun parseSurvey(json : String) : SurveyResponse = try {
-        GsonInstance.fromJson(json, SurveyResponse::class.java)
+    private fun parseSurvey(json : String) : JxglstuSurveyQuestionsResponse = try {
+        GsonInstance.fromJson(json, JxglstuSurveyQuestionsResponse::class.java)
     } catch (e : Exception) { throw e }
 
     suspend fun getSurveyToken(
@@ -855,7 +855,7 @@ object JxglstuRepository {
         semester: Int,
         studentId: UiStateHolder<Int>,
         bizTypeIdResponse: UiStateHolder<Int>,
-        courseBookResponse : UiStateHolder<Pair<Int, Map<Long, CourseBookBean>>>
+        courseBookResponse : UiStateHolder<Pair<Int, Map<Long, JxglstuTextbook>>>
     ) = onListenStateHolderForNetwork(studentId, courseBookResponse) { sId ->
         onListenStateHolderForNetwork(bizTypeIdResponse, courseBookResponse) { bizTypeId ->
             launchRequestState(
@@ -873,9 +873,9 @@ object JxglstuRepository {
         }
     }
     @JvmStatic
-    private suspend fun parseCourseBookNetwork(json : String,semester : Int) : Pair<Int,Map<Long, CourseBookBean>> = try {
+    private suspend fun parseCourseBookNetwork(json : String,semester : Int) : Pair<Int,Map<Long, JxglstuTextbook>> = try {
         val gson = GsonInstance
-        val data = gson.fromJson(json, CourseBookResponse::class.java).textbookAssignMap
+        val data = gson.fromJson(json, JxglstuTextbookResponse::class.java).textbookAssignMap
 //        val originMapJson = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO)
 //        val originMap = originMapJson?.let {
 //            val type = object : TypeToken<Map<String, CourseBookBean>>() {}.type
@@ -890,9 +890,9 @@ object JxglstuRepository {
         Pair(semester,parseCourseBook(json))
     } catch (e : Exception) { throw e }
     @JvmStatic
-    fun parseCourseBook(json: String) : Map<Long, CourseBookBean> = try {
-        val type = object : TypeToken<Map<String, CourseBookBean>>() {}.type
-        val data: Map<String, CourseBookBean> = GsonInstance.fromJson(json, type)
+    fun parseCourseBook(json: String) : Map<Long, JxglstuTextbook> = try {
+        val type = object : TypeToken<Map<String, JxglstuTextbook>>() {}.type
+        val data: Map<String, JxglstuTextbook> = GsonInstance.fromJson(json, type)
         // 键为id，与课程汇总对接
         // 将键转换为Long
         data.mapNotNull { (key, value) ->
@@ -906,11 +906,11 @@ object JxglstuRepository {
     }
 
     @JvmStatic
-    fun parseDatumCourse(result: String) : List<lessons> = try {
-        GsonInstance.fromJson(result, lessonResponse::class.java).lessons
+    fun parseDatumCourse(result: String) : List<JxglstuLesson> = try {
+        GsonInstance.fromJson(result, JxglstuTermLessonResponse::class.java).lessons
     } catch (e : Exception) {
         LogUtil.error(e)
-        emptyList<lessons>()
+        emptyList<JxglstuLesson>()
     }
 
 

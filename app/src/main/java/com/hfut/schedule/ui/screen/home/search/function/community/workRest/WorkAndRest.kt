@@ -195,7 +195,7 @@ fun TimeTableScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val url by produceState<String?>(initialValue = null) {
         value = try {
-            getMy()!!.SchoolCalendar
+            getMy()!!.schoolCalendarUrl
         } catch (e:Exception) {
             null
         }

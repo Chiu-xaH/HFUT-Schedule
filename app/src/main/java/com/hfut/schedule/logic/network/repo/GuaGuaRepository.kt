@@ -2,16 +2,16 @@ package com.hfut.schedule.logic.network.repo
 
 import androidx.lifecycle.MutableLiveData
 
-import com.hfut.schedule.network.model.response.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.network.model.response.guagua.GuaGuaBillResponse
-import com.hfut.schedule.network.model.response.guagua.GuaGuaUseCodeResponse
+import com.hfut.schedule.network.api.model.response.json.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.network.api.model.response.json.guagua.GuaGuaBillResponse
+import com.hfut.schedule.network.api.model.response.json.guagua.GuaGuaUseCodeResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.network.api.GuaGuaService
-import com.hfut.schedule.network.impl.GuaGuaServiceCreator
-import com.hfut.schedule.network.util.CryptoUtil
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.GuaGuaServiceCreator
+import com.hfut.schedule.network.api.inf.GuaGuaService
+import com.hfut.schedule.network.api.util.CryptoUtil
+import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
 import okhttp3.ResponseBody
 import retrofit2.Call

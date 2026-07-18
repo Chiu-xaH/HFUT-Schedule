@@ -100,11 +100,11 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.LocalEvent
-import com.hfut.schedule.logic.enumeration.getCampus
-import com.hfut.schedule.logic.model.SupabaseEventOutput
-import com.hfut.schedule.logic.model.uniapp.UniAppCampus
+import com.xah.common.logic.model.Campus
+import com.hfut.schedule.logic.model.enumeration.LocalEvent
+import com.hfut.schedule.logic.util.helper.getCampus
+import com.hfut.schedule.logic.model.supabase.SupabaseEventOutput
+import com.hfut.schedule.network.api.util.getUinAppCampusId
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
@@ -162,7 +162,6 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
-import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -1223,11 +1222,10 @@ private fun BuildingsSelector(
             if(chipsUiState is NetworkUiState.Success) {
                 val buildingList = (chipsUiState as NetworkUiState.Success).data
                     .filter {
-                        when(campus) {
-                            Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
-                            Campus.TXL -> UniAppCampus.TXL.code == it.campusAssoc
-                            Campus.FCH -> UniAppCampus.FCH.code == it.campusAssoc
-                            else -> true
+                        if(campus is Campus) {
+                            getUinAppCampusId(campus as Campus) == it.campusAssoc
+                        } else {
+                            true
                         }
                     }
                     .map { it.nameZh }

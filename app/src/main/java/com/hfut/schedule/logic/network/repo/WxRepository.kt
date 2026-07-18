@@ -2,21 +2,21 @@ package com.hfut.schedule.logic.network.repo
 
 import androidx.core.net.toUri
 
-import com.hfut.schedule.logic.model.wx.WXClassmatesBean
-import com.hfut.schedule.logic.model.wx.WXClassmatesResponse
-import com.hfut.schedule.logic.model.wx.WXLoginResponse
-import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
-import com.hfut.schedule.logic.model.wx.WXPersonInfoResponse
-import com.hfut.schedule.logic.model.wx.WXQrCodeLoginResponse
-import com.hfut.schedule.logic.model.wx.WXQrCodeResponse
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianClassmates
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianClassmateResponse
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianLoginResponse
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianPersonInfo
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianPersonInfoResponse
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianQrCodeConfirmLoginResponse
+import com.hfut.schedule.network.api.model.response.json.wechat.WeChatZhiJianQrCodeLoginResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.network.api.WxService
-import com.hfut.schedule.network.impl.WxServiceCreator
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.WxServiceCreator
+import com.hfut.schedule.network.api.inf.WxService
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
 
 object WxRepository {
     private val wx = WxServiceCreator.create(WxService::class.java)
@@ -32,11 +32,11 @@ object WxRepository {
     )
     @JvmStatic
     private suspend fun parseWxLogin(json : String) : String = try {
-        val bean = GsonInstance.fromJson(json, WXLoginResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WeChatZhiJianLoginResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             // 保存
-            val auth = bean.data.TGT
+            val auth = bean.data.ticket
             DataStoreManager.saveWxAuth(auth)
             auth
         } else {
@@ -45,15 +45,15 @@ object WxRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun wxGetPersonInfo(auth : String,holder : UiStateHolder<WXPersonInfoBean>) =
+    suspend fun wxGetPersonInfo(auth : String,holder : UiStateHolder<WeChatZhiJianPersonInfo>) =
         launchRequestState(
             holder = holder,
             request = { wx.getMyInfo(auth) },
             transformSuccess = { _, json -> parseWxPersonInfo(json) }
         )
     @JvmStatic
-    private fun parseWxPersonInfo(json : String) : WXPersonInfoBean = try {
-        val bean = GsonInstance.fromJson(json, WXPersonInfoResponse::class.java)
+    private fun parseWxPersonInfo(json : String) : WeChatZhiJianPersonInfo = try {
+        val bean = GsonInstance.fromJson(json, WeChatZhiJianPersonInfoResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             SharedPrefs.saveString("WX_PERSON_INFO", json)
@@ -64,15 +64,15 @@ object WxRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun wxGetClassmates(nodeId : String,auth : String,holder : UiStateHolder<WXClassmatesBean>) =
+    suspend fun wxGetClassmates(nodeId : String,auth : String,holder : UiStateHolder<WeChatZhiJianClassmates>) =
         launchRequestState(
             holder = holder,
             request = { wx.getClassmates(nodeId, auth) },
             transformSuccess = { _, json -> parseWxClassmates(json) }
         )
     @JvmStatic
-    private fun parseWxClassmates(json : String) : WXClassmatesBean = try {
-        val bean = GsonInstance.fromJson(json, WXClassmatesResponse::class.java)
+    private fun parseWxClassmates(json : String) : WeChatZhiJianClassmates = try {
+        val bean = GsonInstance.fromJson(json, WeChatZhiJianClassmateResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             bean.data
@@ -102,7 +102,7 @@ object WxRepository {
 
     @JvmStatic
     private fun parseWxLoginCas(json : String) : Pair<String, Boolean> = try {
-        val bean = GsonInstance.fromJson(json, WXQrCodeResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WeChatZhiJianQrCodeLoginResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             Pair("扫码成功",true)
@@ -120,7 +120,7 @@ object WxRepository {
         )
     @JvmStatic
     private fun parseWxConfirmLogin(json : String) : String = try {
-        val bean = GsonInstance.fromJson(json, WXQrCodeLoginResponse::class.java)
+        val bean = GsonInstance.fromJson(json, WeChatZhiJianQrCodeConfirmLoginResponse::class.java)
         val msg = bean.msg
         if(msg.contains("success")) {
             bean.data

@@ -37,7 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.network.model.response.community.CommunityCourseDetail
+import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseDetail
 import com.hfut.schedule.logic.util.network.MyApiParse.getCustomEvent
 import com.hfut.schedule.logic.util.network.MyApiParse.getNetCourse
 import com.hfut.schedule.logic.util.network.MyApiParse.getSchedule

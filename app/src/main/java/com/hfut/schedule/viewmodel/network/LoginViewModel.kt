@@ -2,18 +2,18 @@ package com.hfut.schedule.viewmodel.network
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.logic.enumeration.CasLoginType
-import com.hfut.schedule.logic.model.CasGetFlavorBean
-import com.hfut.schedule.network.api.LoginService
-import com.hfut.schedule.network.api.WebVpnService
+import com.hfut.schedule.logic.model.enumeration.CasLoginType
+import com.hfut.schedule.network.api.model.response.json.cas.CasGetFlavorSessionDto
+import com.hfut.schedule.network.api.inf.LoginService
+import com.hfut.schedule.network.api.inf.WebVpnService
 import com.hfut.schedule.logic.network.repo.CasLoginRepository
 import com.hfut.schedule.logic.network.impl.LoginServiceCreator
-import com.hfut.schedule.network.impl.LoginWebVpnServiceCreator
+import com.hfut.schedule.network.api.impl.LoginWebVpnServiceCreator
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.logic.util.LogUtil
@@ -34,7 +34,7 @@ class LoginViewModel : ViewModel() {
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     val location = MutableLiveData<String>()
 
-    val jSessionId = UiStateHolder<CasGetFlavorBean>() // JSESSION
+    val jSessionId = UiStateHolder<CasGetFlavorSessionDto>() // JSESSION
     suspend fun getKey() = CasLoginRepository.getEncryptKey(jSessionId)
 
     //  execution,SESSION
@@ -44,7 +44,7 @@ class LoginViewModel : ViewModel() {
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     var ticketStValue = MutableLiveData<String?>()
     suspend fun login(username : String, password : String, keys : String, imageCode : String) =
-        onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->
+        onListenStateHolderForNetwork<CasGetFlavorSessionDto,Unit>(jSessionId,null) { jId ->
             onListenStateHolderForNetwork<Pair<String, String>,Unit>(executionAndSession,null) {
                 val execution = it.first
                 val session = it.second

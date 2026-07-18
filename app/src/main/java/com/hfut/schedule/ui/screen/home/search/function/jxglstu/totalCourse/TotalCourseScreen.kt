@@ -6,13 +6,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.common.ui.component.text.ScrollText
 
 @Composable
-fun TermFirstlyInfo(list: List<lessons>) {
+fun TermFirstlyInfo(list: List<JxglstuLesson>) {
     if(list.isEmpty()) return
 
     val info = list[0].semester
@@ -32,7 +32,7 @@ fun TermFirstlyInfo(list: List<lessons>) {
 
 
 
-private fun periodsSum(list: List<lessons>) : Double {
+private fun periodsSum(list: List<JxglstuLesson>) : Double {
     var num = 0.0
     for(i in list) {
         val credit = i.course.credits

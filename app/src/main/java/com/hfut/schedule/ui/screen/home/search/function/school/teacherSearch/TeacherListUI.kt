@@ -18,10 +18,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.application.MyApplication
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -62,7 +61,7 @@ fun TeacherListUI(
                 item.let {
                     val department = it.department.replace("&nbsp;","").substringBefore("（")
                     val icon = departmentIcon(department)
-                    val jobList = listOf(it.job,it.gtutor ,it.doctorTutor).filter { it.isNotEmpty() && it.isNotBlank() }
+                    val jobList = listOf(it.job,it.tutor ,it.doctorTutor).filter { it.isNotEmpty() && it.isNotBlank() }
                     CardListItem(
                         headlineContent = {
                             Text(text = it.name, fontWeight = FontWeight.Bold)

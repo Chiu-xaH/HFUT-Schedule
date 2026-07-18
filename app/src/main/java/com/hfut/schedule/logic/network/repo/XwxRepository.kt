@@ -4,22 +4,22 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 
-import com.hfut.schedule.network.model.request.XwxDocPreviewRequest
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingDocPreviewResponse
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingFunction
-import com.hfut.schedule.network.model.request.XwxFunctionsRequest
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingFunctionResponse
-import com.hfut.schedule.network.model.request.XwxLoginRequest
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingLoginResponse
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingSchool
-import com.hfut.schedule.network.model.response.xiaowuxing.XiaoWuXingSchoolListResponse
-import com.hfut.schedule.network.api.XwxService
-import com.hfut.schedule.network.impl.XwxServiceCreator
+import com.hfut.schedule.network.api.model.request.xiaowuxing.XiaoWuXingDocPreviewRequest
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingDocPreviewResponse
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingFunction
+import com.hfut.schedule.network.api.model.request.xiaowuxing.XiaoWuXingFunctionsRequest
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingFunctionResponse
+import com.hfut.schedule.network.api.model.request.xiaowuxing.XiaoWuXingLoginRequest
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingLoginResponse
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingSchool
+import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingSchoolListResponse
+import com.hfut.schedule.network.api.inf.XwxService
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.api.impl.XwxServiceCreator
+import com.hfut.schedule.network.core.GsonInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -52,7 +52,7 @@ object XwxRepository {
         holder : UiStateHolder<Boolean>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.login(XwxLoginRequest(schoolCode = schoolCode, userId = username,password = password)) },
+        request = { xwx.login(XiaoWuXingLoginRequest(schoolCode = schoolCode, userId = username,password = password)) },
         transformSuccess = { _,json -> parseLogin(json) }
     )
     @JvmStatic
@@ -79,7 +79,7 @@ object XwxRepository {
         holder : UiStateHolder<List<XiaoWuXingFunction>>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.getFunctions(token,XwxFunctionsRequest(schoolCode = schoolCode,userId = username),) },
+        request = { xwx.getFunctions(token,XiaoWuXingFunctionsRequest(schoolCode = schoolCode,userId = username),) },
         transformSuccess = { _,json -> parseFunctions(json) }
     )
     @JvmStatic
@@ -100,7 +100,7 @@ object XwxRepository {
         holder : UiStateHolder<Bitmap>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.getDocPreview(token,XwxDocPreviewRequest(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
+        request = { xwx.getDocPreview(token,XiaoWuXingDocPreviewRequest(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
         transformSuccess = { _,json -> parseDocPreview(json) }
     )
     @JvmStatic

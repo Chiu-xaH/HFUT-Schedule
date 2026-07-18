@@ -11,7 +11,7 @@ import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
 import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.xah.common.ui.model.text.UiText

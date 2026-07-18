@@ -5,12 +5,12 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTableResponse
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
-import com.hfut.schedule.network.helper.GsonInstance
+import com.hfut.schedule.network.core.GsonInstance
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -341,7 +341,7 @@ suspend fun getJxglstuCourseSchedule(
 
     val list = mutableListOf<JxglstuCourseSchedule>()
     try {
-        val datumResponse = GsonInstance.fromJson(json, DatumResponse::class.java)
+        val datumResponse = GsonInstance.fromJson(json, JxglstuCourseTableResponse::class.java)
         val scheduleList = datumResponse.result.scheduleList
         val lessonList = datumResponse.result.lessonList
         for (i in scheduleList.indices) {

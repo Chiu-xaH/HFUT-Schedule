@@ -1,12 +1,12 @@
 package com.hfut.schedule.logic.network.api
 
 import com.google.gson.annotations.SerializedName
-import com.hfut.schedule.logic.model.SupabaseEventEntity
-import com.hfut.schedule.logic.model.SupabaseEventForkCount
-import com.hfut.schedule.logic.model.SupabaseEventForkEntity
-import com.hfut.schedule.logic.model.SupabaseUsageEntity
-import com.hfut.schedule.logic.model.SupabaseUserLoginBean
-import com.hfut.schedule.network.util.CryptoUtil.getSupabasePublicKey
+import com.hfut.schedule.logic.model.supabase.SupabaseEventEntity
+import com.hfut.schedule.network.api.model.request.supabase.SupabaseEventForkCountRequest
+import com.hfut.schedule.logic.model.supabase.SupabaseEventForkEntity
+import com.hfut.schedule.logic.model.supabase.SupabaseUserTrackRequest
+import com.hfut.schedule.logic.model.supabase.SupabaseLoginWithPwdRequest
+import com.hfut.schedule.network.api.util.CryptoUtil.getSupabasePublicKey
 import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -25,7 +25,7 @@ interface SupabaseService {
     @POST("auth/v1/signup")
     fun reg(
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
-        @Body user : SupabaseUserLoginBean
+        @Body user : SupabaseLoginWithPwdRequest
     ) : Call<ResponseBody>
 
     // 登录
@@ -93,7 +93,7 @@ interface SupabaseService {
     fun getEventDownloadCount(
         @Header("Authorization") authorization : String,
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
-        @Body entity : SupabaseEventForkCount
+        @Body entity : SupabaseEventForkCountRequest
     ) : Call<ResponseBody>
 
     // EVENT日程数量
@@ -129,7 +129,7 @@ interface SupabaseService {
     @POST("rest/v1/user_app_usage")
     fun postUsage(
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
-        @Body entity : SupabaseUsageEntity = SupabaseUsageEntity()
+        @Body entity : SupabaseUserTrackRequest = SupabaseUserTrackRequest()
     ) : Call<ResponseBody>
 
     // 查询今日访问量

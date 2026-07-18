@@ -69,15 +69,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.SelectType
-import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
+import com.hfut.schedule.logic.model.enumeration.SelectType
+import com.hfut.schedule.network.api.model.response.json.jxglstu.select.JxglstuSelectCourseDetailResponse
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
-import com.hfut.schedule.network.helper.GsonInstance
-import com.hfut.schedule.network.model.StatusCode
+import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -708,7 +708,7 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, hazeState: HazeState) {
+private fun CourseInfo(num : Int, lists : List<JxglstuSelectCourseDetailResponse>, vm: NetWorkViewModel, hazeState: HazeState) {
     val data = lists[num]
 
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }

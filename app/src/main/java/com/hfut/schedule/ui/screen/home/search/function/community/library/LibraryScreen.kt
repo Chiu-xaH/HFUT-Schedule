@@ -53,10 +53,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.model.library.BorrowedStatus
-import com.hfut.schedule.logic.model.library.LibrarySearchPositionBean
-import com.hfut.schedule.logic.model.library.LibraryStatus
+import com.hfut.schedule.ui.model.NavigationBarItemData
+import com.hfut.schedule.network.api.model.response.json.library.BorrowedStatus
+import com.hfut.schedule.network.api.model.response.json.library.LibrarySearchPosition
+import com.hfut.schedule.network.api.model.response.json.library.LibraryStatusDto
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
@@ -65,7 +65,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.helper.Constant
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -455,7 +455,7 @@ fun LibraryMineUI(
     }
 
     val loading = uiState !is NetworkUiState.Success
-    val response = (uiState as? NetworkUiState.Success)?.data ?: LibraryStatus()
+    val response = (uiState as? NetworkUiState.Success)?.data ?: LibraryStatusDto()
     val refreshing = uiState is NetworkUiState.Loading
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
@@ -705,7 +705,7 @@ private fun SearchScreenLibrary(
             refreshNetwork(page)
         }
     }
-    var detailBean: List<LibrarySearchPositionBean>? by remember { mutableStateOf(null) }
+    var detailBean: List<LibrarySearchPosition>? by remember { mutableStateOf(null) }
     var title by remember { mutableStateOf("详情") }
 
     var showBottomSheet by remember { mutableStateOf(false) }

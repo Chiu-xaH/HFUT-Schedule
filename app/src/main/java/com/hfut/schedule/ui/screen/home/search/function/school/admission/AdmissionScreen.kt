@@ -37,9 +37,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.AdmissionType
-import com.hfut.schedule.logic.model.AdmissionDetailBean
-import com.hfut.schedule.logic.model.AdmissionMapBean
+import com.hfut.schedule.logic.model.enumeration.AdmissionType
+import com.hfut.schedule.network.api.model.response.json.admission.AdmissionDetailBean
+import com.hfut.schedule.network.api.model.response.json.admission.Admission
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -172,7 +172,7 @@ fun AdmissionListUI(
 @Composable
 fun AdmissionRegionScreen(
     vm : NetWorkViewModel,
-    bean : Map.Entry<String, List<AdmissionMapBean>>,
+    bean : Map.Entry<String, List<Admission>>,
     typeStr : String,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -183,7 +183,7 @@ fun AdmissionRegionScreen(
     val titles = remember { data.value.map { it.toString() } }
     val pagerState = rememberPagerState { titles.size }
     val uiState by vm.admissionDetailResp.state.collectAsState()
-    val refreshNetwork : suspend (AdmissionType,AdmissionMapBean,String) -> Unit = { type: AdmissionType,bean: AdmissionMapBean,region: String ->
+    val refreshNetwork : suspend (AdmissionType, Admission, String) -> Unit = { type: AdmissionType, bean: Admission, region: String ->
         vm.admissionDetailResp.clear()
         vm.getAdmissionToken()
         vm.getAdmissionDetail(type,bean,region)
