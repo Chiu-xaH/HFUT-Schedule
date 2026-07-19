@@ -39,9 +39,9 @@ import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.component.text.ScrollText
-import com.xah.forecast.model.network.BillRecordBean
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,7 +95,7 @@ fun CardRow(vm : NetWorkViewModel, hazeState: HazeState) {
 @Composable
 fun TodayBills(vm: NetWorkViewModel) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
-    var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+    var infoNum by remember { mutableStateOf<HuiXinBillRecord?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if(showBottomSheet && infoNum != null) {
@@ -129,7 +129,7 @@ fun TodayBills(vm: NetWorkViewModel) {
     }
 }
 @Composable
-fun TodayCount(item : BillRecordBean,onClick : () -> Unit) = with(item) {
+fun TodayCount(item : HuiXinBillRecord,onClick : () -> Unit) = with(item) {
 
     var name = resume
     if (name.contains("有限公司")) name = name.replace("有限公司","")

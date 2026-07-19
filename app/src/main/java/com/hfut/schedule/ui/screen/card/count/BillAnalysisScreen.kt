@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.forecast.model.network.BillRecordBean
+import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.ui.style.align.CenterScreen
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -90,7 +90,7 @@ fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, page
 private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
     CommonNetworkScreen(uiState, onReload = null) {
-        var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+        var infoNum by remember { mutableStateOf<HuiXinBillRecord?>(null) }
         var showBottomSheet by remember { mutableStateOf(false) }
 
         if(showBottomSheet && infoNum != null) {

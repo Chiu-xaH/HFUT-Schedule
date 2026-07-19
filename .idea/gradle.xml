@@ -15,7 +15,8 @@
             <option value="$PROJECT_DIR$/common-logic" />
             <option value="$PROJECT_DIR$/common-ui" />
             <option value="$PROJECT_DIR$/forecast" />
-            <option value="$PROJECT_DIR$/network" />
+            <option value="$PROJECT_DIR$/network-api" />
+            <option value="$PROJECT_DIR$/network-core" />
           </set>
         </option>
       </GradleProjectSettings>

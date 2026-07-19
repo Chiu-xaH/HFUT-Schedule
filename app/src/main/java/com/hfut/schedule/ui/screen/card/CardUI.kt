@@ -72,7 +72,7 @@ private val items = listOf(
 //    val billjson = vm.BillsData.value
 //    try {
 //        if(billjson?.contains("操作成功") == true){
-//            val bill = GsonInstance.fromJson(billjson, BillResponse::class.java)
+//            val bill = GsonInstance.fromJson(billjson, HuiXinBillResponse::class.java)
 //            val data = bill.data.records
 //            val msg = bill.data.msg
 //            val totalpage = bill.data.pages

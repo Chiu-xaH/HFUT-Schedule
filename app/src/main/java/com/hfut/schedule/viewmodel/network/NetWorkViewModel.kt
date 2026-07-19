@@ -123,8 +123,8 @@ import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
-import com.xah.forecast.model.network.BillBean
-import com.xah.forecast.model.result.TotalResult
+import com.xah.common.logic.model.HuiXinBill
+import com.consumption.forecast.model.result.TotalResult
 
 class NetWorkViewModel() : ViewModel() {
     val studentId = UiStateHolder<Int>()
@@ -396,7 +396,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun goToOne(cookie : String) = CasLoginRepository.goToOne(cookie)
     suspend fun goToHuiXin(cookie : String) = CasLoginRepository.goToHuiXin(cookie)
 
-    val huiXinBillResult = UiStateHolder<BillBean>()
+    val huiXinBillResult = UiStateHolder<HuiXinBill>()
     suspend fun getCardBill(
         auth : String,
         page : Int,
@@ -450,7 +450,7 @@ class NetWorkViewModel() : ViewModel() {
     val huiXinRangeResult = UiStateHolder<Float>()
     suspend fun searchDate(auth : String, timeFrom : String, timeTo : String) = HuiXinRepository.searchDate(auth,timeFrom,timeTo,huiXinRangeResult)
 
-    val huiXinSearchBillsResult = UiStateHolder<BillBean>()
+    val huiXinSearchBillsResult = UiStateHolder<HuiXinBill>()
     suspend fun searchBills(auth : String, info: String,page : Int) = HuiXinRepository.searchBills(auth,info,page,huiXinSearchBillsResult)
 
     val huiXinMonthBillResult = UiStateHolder<List<HuiXinMonthBill>>()

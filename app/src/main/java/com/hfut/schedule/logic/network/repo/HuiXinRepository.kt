@@ -24,10 +24,10 @@ import com.hfut.schedule.network.api.impl.HuiXinServiceCreator
 import com.hfut.schedule.network.api.inf.HuiXinService
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.GsonInstance
-import com.xah.forecast.getConsumptionResult
-import com.xah.forecast.model.network.BillBean
-import com.xah.forecast.model.network.BillResponse
-import com.xah.forecast.model.result.TotalResult
+import com.consumption.forecast.getConsumptionResult
+import com.xah.common.logic.model.HuiXinBill
+import com.xah.common.logic.model.HuiXinBillResponse
+import com.consumption.forecast.model.result.TotalResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -43,16 +43,16 @@ object HuiXinRepository {
         auth : String,
         page : Int,
         size : Int = Constant.DEFAULT_PAGE_SIZE,
-        holder : UiStateHolder<BillBean>
+        holder : UiStateHolder<HuiXinBill>
     ) = launchRequestState(
         holder = holder,
         request = { huiXin.Cardget(auth, page, size.toString()) },
         transformSuccess = { _, json -> parseHuiXinBills(json) }
     )
     @JvmStatic
-    private fun parseHuiXinBills(json : String) : BillBean = try {
+    private fun parseHuiXinBills(json : String) : HuiXinBill = try {
         if(json.contains("操作成功")){
-            GsonInstance.fromJson(json, BillResponse::class.java).data
+            GsonInstance.fromJson(json, HuiXinBillResponse::class.java).data
         } else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -219,7 +219,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun searchBills(auth : String, info: String,page : Int,holder : UiStateHolder<BillBean>) =
+    suspend fun searchBills(auth : String, info: String,page : Int,holder : UiStateHolder<HuiXinBill>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -233,9 +233,9 @@ object HuiXinRepository {
             transformSuccess = { _, json -> parseHuiXinSearchBills(json) }
         )
     @JvmStatic
-    private fun parseHuiXinSearchBills(result : String) : BillBean = try {
+    private fun parseHuiXinSearchBills(result : String) : HuiXinBill = try {
         if(result.contains("操作成功")) {
-            GsonInstance.fromJson(result, BillResponse::class.java).data
+            GsonInstance.fromJson(result, HuiXinBillResponse::class.java).data
         } else {
             throw Exception(result)
         }
@@ -360,10 +360,10 @@ object HuiXinRepository {
 
     suspend fun getCardPredicted(
         auth: String,
-        huiXinBillResult : UiStateHolder<BillBean>,
+        huiXinBillResult : UiStateHolder<HuiXinBill>,
         cardPredictedResponse : UiStateHolder<TotalResult>
     ) = withContext(Dispatchers.IO) {
-        suspend fun reloadAllBills(origin: BillBean) {
+        suspend fun reloadAllBills(origin: HuiXinBill) {
             huiXinBillResult.clear()
             getCardBill(auth, page = 1, size = origin.total, huiXinBillResult)
 

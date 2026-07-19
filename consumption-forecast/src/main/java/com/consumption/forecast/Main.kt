@@ -1,14 +1,14 @@
-package com.xah.forecast
+package com.consumption.forecast
 
-import com.xah.forecast.impl.ConsumptionForecastDay
-import com.xah.forecast.impl.ConsumptionForecastMonth
-import com.xah.forecast.model.network.BillBean
-import com.xah.forecast.model.network.BillRecordBean
-import com.xah.forecast.model.result.TotalResult
+import com.consumption.forecast.impl.ConsumptionForecastDay
+import com.consumption.forecast.impl.ConsumptionForecastMonth
+import com.xah.common.logic.model.HuiXinBill
+import com.xah.common.logic.model.HuiXinBillRecord
+import com.consumption.forecast.model.result.TotalResult
 
-fun main() {
-    val list = listOf<BillRecordBean>(
-        BillRecordBean(
+internal fun main() {
+    val list = listOf(
+        HuiXinBillRecord(
             tranamt = 1300,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -17,7 +17,7 @@ fun main() {
             effectdateStr = "2025-04-01 11:26:33",
             orderId = "1"
         ),
-        BillRecordBean(
+        HuiXinBillRecord(
             tranamt = 1200,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -26,7 +26,7 @@ fun main() {
             effectdateStr = "2025-04-01 11:26:33",
             orderId = "1"
         ),
-        BillRecordBean(
+        HuiXinBillRecord(
             tranamt = 1000,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -35,7 +35,7 @@ fun main() {
             effectdateStr = "2025-04-02 11:26:33",
             orderId = "1"
         ),
-        BillRecordBean(
+        HuiXinBillRecord(
             tranamt = 1500,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -44,7 +44,7 @@ fun main() {
             effectdateStr = "2025-05-02 11:26:33",
             orderId = "1"
         ),
-        BillRecordBean(
+        HuiXinBillRecord(
             tranamt = 700,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -53,7 +53,7 @@ fun main() {
             effectdateStr = "2025-05-03 11:26:33",
             orderId = "1"
         ),
-        BillRecordBean(
+        HuiXinBillRecord(
             tranamt = 1100,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -62,7 +62,7 @@ fun main() {
             effectdateStr = "2025-06-03 11:26:33",
             orderId = "1"
         ),
-        BillRecordBean(
+        HuiXinBillRecord(
             tranamt = 500,
             resume = "安徽天和餐饮管理有限公司-持卡人消费",
             fromAccount = "24XXX",
@@ -73,15 +73,12 @@ fun main() {
         ),
 
     )
-    val bean = BillBean(list,list.size,list.size)
+    val bean = HuiXinBill(list,list.size,list.size)
 
     println(ConsumptionForecastMonth(bean).getResult())
 }
 
-
-fun getConsumptionResult(bean : BillBean) : TotalResult = TotalResult(
+fun getConsumptionResult(bean : HuiXinBill) : TotalResult = TotalResult(
     ConsumptionForecastDay(bean).getResult(),
     ConsumptionForecastMonth(bean).getResult()
 )
-
-

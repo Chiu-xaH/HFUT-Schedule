@@ -1,10 +1,12 @@
-package com.xah.forecast.inf
+package com.consumption.forecast.inf
 
-import com.xah.forecast.model.result.AnalyzeResult
-import com.xah.forecast.model.result.Result
-import com.xah.forecast.model.network.BillBean
+import com.consumption.forecast.model.result.AnalyzeResult
+import com.consumption.forecast.model.result.Result
+import com.xah.common.logic.model.HuiXinBill
+import com.consumption.forecast.helper.toDto
 
-abstract class ConsumptionForecastBase(val bean : BillBean) : ConsumptionForecast {
+internal abstract class ConsumptionForecastBase(val bean : HuiXinBill) : ConsumptionForecast {
+
     lateinit var map : Map<String, Double>
 
     init {
@@ -13,12 +15,18 @@ abstract class ConsumptionForecastBase(val bean : BillBean) : ConsumptionForecas
 
     // 洗刷数据
     override fun wash() {
-        val list = bean.toVercelForecastRequestBody()
+        val list = bean.toDto()
         // 不记录电费，电费基本是一个寝室共用，无法代表个人消费
-        val washedData = list.filter { !it.merchant.contains("电") }
+        val washedData = list.filter {
+            !it.merchant.contains("电")
+        }
         map = washedData
             .groupBy { it.date }
-            .mapValues { it.value.sumOf { it.amount.toDouble() } }
+            .mapValues {
+                it.value.sumOf {
+                    it.amount.toDouble()
+                }
+            }
     }
 
     override fun analyze() : AnalyzeResult {

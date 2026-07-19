@@ -45,7 +45,7 @@ import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.forecast.model.network.BillRecordBean
+import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.ui.style.align.RowHorizontal
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -115,7 +115,7 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
             }
 
             var showBottomSheet by remember { mutableStateOf(false) }
-            var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+            var infoNum by remember { mutableStateOf<HuiXinBillRecord?>(null) }
 
             if(showBottomSheet && infoNum != null) {
                 HazeBottomSheet (

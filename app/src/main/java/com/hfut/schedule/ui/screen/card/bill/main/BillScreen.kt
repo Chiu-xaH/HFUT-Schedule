@@ -48,12 +48,12 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
-import com.xah.forecast.model.network.BillRecordBean
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -84,7 +84,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState :
 
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+    var infoNum by remember { mutableStateOf<HuiXinBillRecord?>(null) }
 
     if(showBottomSheet && infoNum != null) {
         HazeBottomSheet (
@@ -160,7 +160,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState :
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillsInfo( bills :  BillRecordBean) {
+fun BillsInfo( bills :  HuiXinBillRecord) {
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)
         CustomCard( color = cardNormalColor()){
@@ -220,7 +220,7 @@ fun BillsInfo( bills :  BillRecordBean) {
 }
 
 
-fun processTranamt(bills : BillRecordBean) : String {
+fun processTranamt(bills : HuiXinBillRecord) : String {
     var num =( bills.tranamt ?: 1000 ).toString()
     //优化0.0X元Bug
     if(num.length == 1)

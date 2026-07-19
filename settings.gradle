@@ -31,7 +31,7 @@ dependencyResolutionManagement {
 rootProject.name = "肥工课程表"
 include ':app'
 include ':common-ui'
-include ':forecast'
+include ':consumption-forecast'
 include ':baselineProfile'
 include ':network-api'
 include ':common-logic'

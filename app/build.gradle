@@ -254,7 +254,7 @@ dependencies {
     // 共用逻辑模块
     implementation(project(':common-logic'))
     // 消费预测
-    implementation(project(':forecast'))
+    implementation(project(':consumption-forecast'))
     // 网络
     implementation(project(':network-api'))
     // 基准文件模块

@@ -19,7 +19,7 @@
 6. 模块整理：model 整理（定规矩，只有顶层数据类带Response/Request后缀，非顶层的数据类如果被其他Response/Request共用则独立文件，否则放在所属Response/Request的文件中），并移入至 network 模块  (已完成)
 7. 彻底去掉 SP (正在进行，剩余60+)
 8. 彻底去掉 LiveData (正在进行，剩余16)
-9. 彻底去掉 Groovy Gradle
+9. 彻底去掉 Groovy Gradle (正在进行，剩余app模块和外部)
 ### 开始改造
 1. 改造 Gradle，彻底弃用 Groovy 使用 Kotlin
 示例： 
