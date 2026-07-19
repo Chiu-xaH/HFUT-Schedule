@@ -331,7 +331,9 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel) = withContext(Dispatche
     if(useHefei) {
         val bean = DataStoreManager.getHefeiElectric()
         if(bean == null) {
-            GlobalUiStateHolder.electricValue.value = "--"
+            withContext(Dispatchers.Main) {
+                GlobalUiStateHolder.electricValue.value = "--"
+            }
             saveString("memoryEle","0.0")
             return@withContext
         }
