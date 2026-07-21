@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -33,12 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -46,30 +43,26 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
 import com.hfut.schedule.ui.nav.destination.GradeDestination
+import com.hfut.schedule.ui.nav.window.GradeRemarkWindow
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemJxglstuUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIUniApp
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.goToXwx
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
-import com.xah.navigation.anim.effect.IslandTransitionEffect
-import com.xah.navigation.anim.effect.TinyScalePageEffects
+import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.anim.effect.TinyScaleTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
@@ -92,31 +85,8 @@ fun GradeScreen(
     val navTopController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    var showBottomSheet by remember { mutableStateOf(false) }
     val gradeOriginList = remember { GradeDataOrigin.entries }
     val pageState = rememberPagerState(initialPage = if(ifSaved) 0 else 1 ) { gradeOriginList.size }
-
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet= false },
-            showBottomSheet = showBottomSheet,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("说明")
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    Infos()
-                }
-            }
-        }
-    }
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf("") }
@@ -134,6 +104,7 @@ fun GradeScreen(
         var buttonText by rememberSaveable { mutableStateOf<String>(AverageGradeDestination.TITLE.asString(context)) }
 
     val navController = LocalNavController.current
+    val floatingController = LocalFloatingController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -151,7 +122,9 @@ fun GradeScreen(
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             LiquidButton(
-                                onClick = { showBottomSheet = true } ,
+                                onClick = {
+                                    floatingController.push(GradeRemarkWindow)
+                                } ,
                                 isCircle = true,
                                 backdrop = backDrop
                             ) {
@@ -293,15 +266,3 @@ fun GradeScreen(
         }
     }
 }
-
-@Composable
-fun Infos() {
-    DividerTextExpandedWith("绩点与分数对应关系") {
-        GPAWithScore()
-    }
-    CardListItem(
-        headlineContent = { Text(text = "平均成绩的计算") },
-        supportingContent = { Text(text = "平均绩点：每门课的学分*绩点累加，再除以所有课的总学分\n平均分数：每门课的学分*分数累加，再除以所有课的总学分")}
-    )
-}
-

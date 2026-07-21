@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -61,6 +62,10 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.logic.util.safeDiv
+import com.xah.common.ui.component.chart.PieChart
+import com.xah.common.ui.component.chart.PieChartData
+import com.xah.common.ui.component.chart.StackedBarChart
+import com.xah.common.ui.component.chart.StackedBarData
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -199,22 +204,33 @@ fun AverageGradeScreen(
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                     BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
+                                    val creditMap = safelyList.reversed().mapIndexed { index,item ->
+                                        StackedBarData(
+                                            (index+1).toString(),
+                                            getTotalCredits(item)
+                                        )
+                                    }
+                                    Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                                    StackedBarChart(creditMap)
 
-                                    safelyList.reversed().forEach {
-                                        val totalCredits = remember { getTotalCredits(it) }
-                                        val totalGpa = remember { getTotalGpa(it) }
-                                        val totalScore = remember { getTotalScore(it) }
+                                    safelyList.reversed().forEachIndexed { index,item ->
+                                        val totalCredits = remember { getTotalCredits(item) }
+                                        val totalGpa = remember { getTotalGpa(item) }
+                                        val totalScore = remember { getTotalScore(item) }
                                         val avgGpa = totalGpa safeDiv totalCredits
                                         val avgScore = totalScore safeDiv totalCredits
 
                                         TransplantListItem(
-                                            trailingContent = {
-                                                Text("占比${(totalCredits/allTotalCredits*100).roundOffString(roundCount)}%")
+                                            supportingContent = {
+                                                ScrollText("学分 $totalCredits (占比${(totalCredits/allTotalCredits*100).roundOffString(1)}%)")
                                             },
                                             headlineContent = {
-                                                ScrollText("分数 ${avgScore.roundOffString(roundCount)} | 绩点 ${avgGpa.roundOffString(roundCount)} | 学分 $totalCredits")
+                                                ScrollText("分数 ${avgScore.roundOffString(roundCount)} | 绩点 ${avgGpa.roundOffString(roundCount)}")
                                             },
-                                            overlineContent = { Text(it.term) }
+                                            leadingContent = {
+                                                Text((index+1).toString())
+                                            },
+                                            overlineContent = { Text(item.term) }
                                         )
                                     }
                                 }
@@ -278,6 +294,14 @@ fun AverageGradeScreen(
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                     BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
+                                    val creditMap = safelyList.reversed().mapIndexed { index,item ->
+                                        StackedBarData(
+                                            (index+1).toString(),
+                                            getTotalCredits(item)
+                                        )
+                                    }
+                                    Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                                    StackedBarChart(creditMap)
 
                                     safelyList.reversed().forEach {
                                         val totalCredits = remember { getTotalCredits(it) }
@@ -287,11 +311,11 @@ fun AverageGradeScreen(
                                         val avgScore = totalScore safeDiv totalCredits
 
                                         TransplantListItem(
-                                            trailingContent = {
-                                                Text("占比${(totalCredits/allTotalCredits*100).roundOffString(0)}%")
+                                            supportingContent = {
+                                                ScrollText("学分 $totalCredits (占比${(totalCredits/allTotalCredits*100).roundOffString(1)}%)")
                                             },
                                             headlineContent = {
-                                                ScrollText("分数 ${avgScore.roundOffString(roundCount)} | 绩点 ${avgGpa.roundOffString(roundCount)} | 学分 $totalCredits")
+                                                ScrollText("分数 ${avgScore.roundOffString(roundCount)} | 绩点 ${avgGpa.roundOffString(roundCount)}")
                                             },
                                             overlineContent = { Text(it.term) }
                                         )

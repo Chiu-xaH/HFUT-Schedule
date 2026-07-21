@@ -39,6 +39,9 @@ val scoreWithGPA = listOf(
     ScoreWithGpa(0f, Score(0.0,59.9)),
 )
 
+// 期末斩杀线
+const val MIN_PASS_SCORE = 50
+
 data class ScoreWithGpaLevel(
     val gpa : Float,
     val score : Score?

@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.MIN_PASS_SCORE
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGpaLevel
 import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
@@ -78,6 +79,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
@@ -747,7 +749,8 @@ fun GradeItemUIUniApp(
 }
 
 private const val avgContent = "将期末考试、期中考试、补考成绩三者计算出平均分，其他项目得分也计算为平均分，平时因数=考试的平均分/平时的平均分，可大致反映最终成绩平时分占比：越接近1越平衡,越>1最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿"
-private fun isExam(label : String) = label.contains("期末考试") || label.contains("期中考试") || label.contains("补考")
+private fun isExam(label : String) = isFinalExam(label) || label.contains("期中考试") || label.contains("补考")
+private fun isFinalExam(label : String) = label.contains("期末考试")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -879,13 +882,15 @@ fun GradeDetailScreen(
                                 val t1 = l1.substringBefore(":")
                                 val score1 = l1.substringAfter(":")
                                 val isExamT1 = isExam(t1)
+                                val isFinalExamT1 = isFinalExam(t1)
 
                                 TransplantListItem(
                                     headlineContent = {
                                         Text(
                                             text = score1,
                                             fontWeight = if(isExamT1) FontWeight.Bold else FontWeight.Normal,
-                                            textDecoration = if(isExamT1) TextDecoration.Underline else TextDecoration.None
+                                            textDecoration = if(isExamT1) TextDecoration.Underline else TextDecoration.None,
+                                            color = if(isFailed && isFinalExamT1) MaterialTheme.colorScheme.error else Color.Unspecified
                                         ) },
                                     overlineContent = { Text(t1) },
                                     modifier = Modifier.weight(.5f),
@@ -896,12 +901,15 @@ fun GradeDetailScreen(
                                     val t2 = l2.substringBefore(":")
                                     val score2 = l2.substringAfter(":")
                                     val isExamT2 = isExam(t2)
+                                    val isFinalExamT2 = isFinalExam(t2)
+
                                     TransplantListItem(
                                         headlineContent = {
                                             Text(
                                                 text = score2,
                                                 fontWeight = if(isExamT2) FontWeight.Bold else FontWeight.Normal,
-                                                textDecoration = if(isExamT2) TextDecoration.Underline else TextDecoration.None
+                                                textDecoration = if(isExamT2) TextDecoration.Underline else TextDecoration.None,
+                                                color = if(isFailed && isFinalExamT2) MaterialTheme.colorScheme.error else Color.Unspecified
                                             ) },
                                         overlineContent = { Text(t2) },
                                         modifier = Modifier.weight(.5f),
@@ -1054,14 +1062,7 @@ fun GPAWithScore() {
                 }
             }
         }
-    }
-    CustomCard(color = cardNormalColor()) {
-//        var boldIndex =
-//             if(index?.second == ScoreGrade.entries.size - 1) {
-//                index.first
-//            } else {
-//                null
-//            }
+        PaddingHorizontalDivider()
         val item1 = ScoreGrade.A
         val item2 = ScoreGrade.B
         val item3 = ScoreGrade.C
@@ -1115,14 +1116,17 @@ fun GPAWithScore() {
                     modifier = Modifier.weight(1/3f)
                 )
             }
-            TransplantListItem(
-                supportingContent = {
-                    Text("五星制")
-                },
-                headlineContent = { Text("GPA") },
-                modifier = Modifier.weight(1/3f)
-            )
+            with(item5) {
+                Spacer(modifier = Modifier.weight(1/3f))
+            }
         }
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            supportingContent = {
+                Text("期末考试${MIN_PASS_SCORE}分及以上")
+            },
+            headlineContent = { Text("通过线") },
+        )
     }
 }
 
