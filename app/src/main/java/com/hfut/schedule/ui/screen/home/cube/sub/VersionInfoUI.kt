@@ -40,9 +40,11 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.hfut.schedule.ui.screen.grade.analysis.AverageGradeScreen
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -58,13 +60,11 @@ private const val RELEASE_DATE = "2026-07-16"
 @Composable
 fun VersionInfo() {
     VersionInfoCard()
-    // 多重个人信息保障
     // 适配iOS后版本号跳为5.0
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("重构 部分存储逻辑的代码","部分开关值发生变化属正常现象，正在重构代码")//
-//        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
-//        UpdateItems("重构 去除冗余登录流程")
+        UpdateItems("新增 平均成绩支持显示不参与计算的项目", to = To.Screen(AverageGradeDestination(false)))
+        UpdateItems("重构 部分存储逻辑的代码","部分开关被重置为默认值属正常现象，正在重构代码")//
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
 //        UpdateItems("重构 去除冗余登录流程")
 //        UpdateItems("新增 支持将转专业列表生成长截图并保存")

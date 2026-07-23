@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -51,6 +52,7 @@ import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getUnJoinedGrades
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -157,14 +159,19 @@ fun AverageGradeScreen(
                     vm.getUniAppGrades(cookie)
                 }
                 CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                    val gradeList = (uiState as NetworkUiState.Success).data.toList().sortedByDescending { it.first }
+                    val gradeList =
+                        (uiState as NetworkUiState.Success).data.toList()
+                            .sortedByDescending { it.first }
+                            .reversed()
+                            .associate { it.first to it.second }
+
                     val safelyList = remember(gradeList) {
                         gradeList
-                            .associate { it.first to it.second }
                             .map { (term, items) ->
                                 JxglstuTermGrade(
                                     term,
                                     items.filter {
+                                        // 通过且GPA为0.0，说明是不计入总成绩的课
                                         !(it.passed && it.gp == 0.0) && it.finalGrade != null
                                     }.map {
                                         JxglstuGrade(
@@ -176,6 +183,24 @@ fun AverageGradeScreen(
                                             it.lessonCode
                                         )
                                     }
+                                )
+                            }
+                    }
+
+                    val unJoinedList = remember(gradeList) {
+                        gradeList
+                            .flatMap { it.value }
+                            .filter {
+                                // 通过且GPA为0.0，说明是不计入总成绩的课
+                                !(!(it.passed && it.gp == 0.0) && it.finalGrade != null)
+                            }.map {
+                                JxglstuGrade(
+                                    it.courseNameZh,
+                                    it.credits.toString(),
+                                    it.gp.toString(),
+                                    it.gradeDetail,
+                                    it.finalGrade!!,
+                                    it.lessonCode
                                 )
                             }
                     }
@@ -203,8 +228,8 @@ fun AverageGradeScreen(
                                     title = "分数 ${allAvgScore.roundOffString(roundCount)} 绩点 ${allAvgGpa.roundOffString(roundCount)}",
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                                    BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
-                                    val creditMap = safelyList.reversed().mapIndexed { index,item ->
+                                    BarChart(safelyList.associate { it.term to getTotalGpa(it) })
+                                    val creditMap = safelyList.mapIndexed { index,item ->
                                         StackedBarData(
                                             (index+1).toString(),
                                             getTotalCredits(item)
@@ -213,7 +238,7 @@ fun AverageGradeScreen(
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                                     StackedBarChart(creditMap)
 
-                                    safelyList.reversed().forEachIndexed { index,item ->
+                                    safelyList.forEachIndexed { index,item ->
                                         val totalCredits = remember { getTotalCredits(item) }
                                         val totalGpa = remember { getTotalGpa(item) }
                                         val totalScore = remember { getTotalScore(item) }
@@ -240,37 +265,60 @@ fun AverageGradeScreen(
                         item {
                             DividerText("不参与计算的项目")
                         }
-                        item {
-                            DevelopingIcon()
+                        items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
+                            val item = unJoinedList[index]
+
+                            CardListItem(
+                                headlineContent = {
+                                    Text(item.courseName)
+                                },
+                                overlineContent = {
+                                    Text(item.lessonCode)
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.article),null)
+                                }
+                            )
                         }
-                        // TODO
-//                        items {
-//                            safelyList
-//                        }
+                        item { BottomTip("如有误判请反馈以完善成绩算法") }
                         item {
                             InnerPaddingHeight(innerPadding,false)
                         }
                     }
                 }
             } else {
-                val gradeList by produceState<List<JxglstuTermGrade>?>(initialValue = null) {
+                val gradeList by produceState<Map<String,List<JxglstuGrade>>?>(initialValue = null) {
                     scope.launch(Dispatchers.IO) {
                         LargeStringDataManager.read(LargeStringDataManager.GRADE)?.let {
                             value = parseJxglstuGrade(it)
+                                .reversed()
+                                .associate { it.term to it.list }
                         }
                     }
                 }
                 if(gradeList != null) {
                     val safelyList = remember(gradeList) {
                         gradeList!!
-                            .associate { it.term to it.list }
                             .map { (term, items) ->
                                 JxglstuTermGrade(
                                     term,
-                                    items.filter { getGpa(it.gpa) != null }
+                                    items.filter {
+                                        // GPA为--说明是不计入总学分的课
+                                        getGpa(it.gpa) != null
+                                    }
                                 )
                             }
                     }
+
+                    val unJoinedList = remember(gradeList) {
+                        gradeList!!
+                            .flatMap { it.value }
+                            .filter {
+                                // GPA为--说明是不计入总学分的课
+                                getGpa(it.gpa) == null
+                            }
+                    }
+
                     val allTotalCredits by produceState(initialValue = 0f) {
                         value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
                     }
@@ -293,8 +341,8 @@ fun AverageGradeScreen(
                                     title = "分数 ${allAvgScore.roundOffString(roundCount)} 绩点 ${allAvgGpa.roundOffString(roundCount)}",
                                 ) {
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                                    BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
-                                    val creditMap = safelyList.reversed().mapIndexed { index,item ->
+                                    BarChart(safelyList.associate { it.term to getTotalGpa(it) })
+                                    val creditMap = safelyList.mapIndexed { index,item ->
                                         StackedBarData(
                                             (index+1).toString(),
                                             getTotalCredits(item)
@@ -303,7 +351,7 @@ fun AverageGradeScreen(
                                     Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                                     StackedBarChart(creditMap)
 
-                                    safelyList.reversed().forEach {
+                                    safelyList.forEach {
                                         val totalCredits = remember { getTotalCredits(it) }
                                         val totalGpa = remember { getTotalGpa(it) }
                                         val totalScore = remember { getTotalScore(it) }
@@ -329,13 +377,22 @@ fun AverageGradeScreen(
                         item {
                             DividerText("不参与计算的项目")
                         }
-                        item {
-                            DevelopingIcon()
+                        items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
+                            val item = unJoinedList[index]
+
+                            CardListItem(
+                                headlineContent = {
+                                    Text(item.courseName)
+                                },
+                                overlineContent = {
+                                    Text(item.lessonCode)
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.article),null)
+                                }
+                            )
                         }
-                        // TODO
-//                        items {
-//                            safelyList
-//                        }
+                        item { BottomTip("如有误判请反馈以完善成绩算法") }
                         item {
                             InnerPaddingHeight(innerPadding,false)
                         }

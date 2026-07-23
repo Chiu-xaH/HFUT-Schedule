@@ -152,6 +152,14 @@ fun getTotalScore(termBean : JxglstuTermGrade) : Float {
     return totalScore
 }
 
+/**
+ * 不参与成绩计算的项目，判定条件：GpaText为--
+ */
+fun getUnJoinedGrades(list : List<JxglstuTermGrade>) : List<JxglstuGrade> = list
+    .flatMap { it.list }
+    .filter { getGpa(it.gpa) == null }
+
+
 fun avgGpaWithoutCourse(
     totalGpa: Float,
     totalCredit: Float,
