@@ -35,23 +35,24 @@ import com.hfut.schedule.network.api.inf.UniAppService
 import com.hfut.schedule.network.api.model.request.uniapp.UniAppEmptyClassroomRequest
 import com.hfut.schedule.network.api.model.request.uniapp.UniAppSearchProgramRequest
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchResponse
+import com.hfut.schedule.network.api.repo.UniAppRepositoryInf
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.util.LogUtil
 import retrofit2.awaitResponse
 
-object UniAppRepository {
+object UniAppRepository : UniAppRepositoryInf {
     private val uniApp = UniAppServiceCreator.create(UniAppService::class.java)
     private const val FAILED_TEXT = "登陆合工大教务失败"
 
-    suspend fun login() : Boolean {
+    override suspend fun login() : Boolean {
         try {
             val sId = getPersonInfo().getStudentIdFinally()
             val pwd = getJxglstuPassword()
@@ -103,7 +104,7 @@ object UniAppRepository {
         null
     }
 
-    suspend fun getClassmates(
+    override suspend fun getClassmates(
         lessonId : String,
         token : String ,
         holder : UiStateHolder<List<UniAppClassmate>>
@@ -118,7 +119,7 @@ object UniAppRepository {
         GsonInstance.fromJson(json, UniAppClassmateResponse::class.java).data ?: emptyList()
     } catch (e : Exception) { throw e }
 
-    suspend fun updateCourses(token : String) {
+    override suspend fun updateCourses(token : String) {
         try {
             val request = uniApp.getCourses(SemesterParser.getSemester(),token).awaitResponse()
             if(!request.isSuccessful) {
@@ -131,8 +132,7 @@ object UniAppRepository {
         }
     }
 
-    @JvmStatic
-    suspend fun parseUniAppCourses(jStr : String? = null) :  List<UniAppCourse> {
+    override suspend fun parseUniAppCourses(jStr : String?) :  List<UniAppCourse> {
         val json = LargeStringDataManager.read(
             LargeStringDataManager.getUniAppCoursesKey(
                 SemesterParser.getSemester())) ?: jStr
@@ -144,7 +144,7 @@ object UniAppRepository {
         }
     }
 
-    suspend fun getGrades(
+    override suspend fun getGrades(
         token : String ,
         holder : UiStateHolder<Map<String, List<UniAppGrade>>>
     ) = launchRequestState(
@@ -166,7 +166,7 @@ object UniAppRepository {
         finalList
     } catch (e : Exception) { throw e }
 
-    suspend fun updateExams(token : String) {
+    override suspend fun updateExams(token : String) {
         try {
             var request = uniApp.getExams(token).awaitResponse()
             // 登陆过期，重新刷新一次登录
@@ -214,10 +214,10 @@ object UniAppRepository {
         }
     }
 
-    suspend fun searchPrograms(
+    override suspend fun searchPrograms(
         token : String,
         page : Int ,
-        keyword : String = "",
+        keyword : String,
         holder : UiStateHolder<List<UniAppProgramSearchData>>
     ) = launchRequestState(
         holder = holder,
@@ -238,7 +238,7 @@ object UniAppRepository {
         GsonInstance.fromJson(json, UniAppProgramSearchResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
-    suspend fun getProgramById(
+    override suspend fun getProgramById(
         id : Int,
         token: String,
         holder : UiStateHolder<UniAppProgramData>
@@ -253,7 +253,7 @@ object UniAppRepository {
         GsonInstance.fromJson(json, UniAppProgramResponse::class.java).data
     } catch (e : Exception) { throw e }
 
-    suspend fun getBuildings(
+    override suspend fun getBuildings(
         token : String,
         holder : UiStateHolder<List<UniAppBuilding>>
     ) = launchRequestState(
@@ -277,7 +277,7 @@ object UniAppRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getEmptyClassrooms(
+    override suspend fun getEmptyClassrooms(
         page : Int,
         date : String,
         campus: Campus?,
@@ -305,7 +305,7 @@ object UniAppRepository {
         GsonInstance.fromJson(json, UniAppEmptyClassroomResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
-    suspend fun searchClassrooms(
+    override suspend fun searchClassrooms(
         input : String,
         token : String,
         page : Int,
@@ -326,7 +326,7 @@ object UniAppRepository {
         GsonInstance.fromJson(json, UniAppClassroomSearchResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 
-    suspend fun getClassroomLessons(
+    override suspend fun getClassroomLessons(
         semester: Int,
         roomId : Int,
         token : String,
@@ -341,8 +341,7 @@ object UniAppRepository {
         GsonInstance.fromJson(json, UniAppClassroomCourseTableResponse::class.java).data
     } catch (e : Exception) { throw e }
 
-
-    suspend fun checkLogin(
+    override suspend fun checkLogin(
         token : String
     ) = launchRequestNone {
         uniApp.getExams(token)

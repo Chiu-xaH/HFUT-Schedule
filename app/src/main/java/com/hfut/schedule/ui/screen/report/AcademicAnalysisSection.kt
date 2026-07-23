@@ -35,7 +35,7 @@ import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.component.chart.RadarChart
 import com.xah.common.ui.component.chart.RadarData
 import com.hfut.schedule.logic.database.repository.ExamHistoryRepository
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.LogUtil
 import java.time.LocalDate

@@ -6,6 +6,7 @@ import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppExamRespon
 import com.hfut.schedule.logic.network.repo.JxglstuRepository.parseJxglstuExam
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.xah.common.logic.util.LogUtil
@@ -55,12 +56,6 @@ fun getExam() : List<CommunityExamArrangement> {
 //    }
 //}
 
-data class JxglstuExam(
-    val name : String,
-    val dateTime : String,
-    val place : String?,
-    val type : String? = null
-)
 
 
 suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO) {

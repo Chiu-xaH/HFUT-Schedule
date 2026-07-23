@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.database.repository
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ExamRecordEntity
 import com.hfut.schedule.logic.util.parse.groupExamsBySemester
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

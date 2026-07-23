@@ -1,6 +1,6 @@
 package com.hfut.schedule.network.api.inf
 
-import com.hfut.schedule.network.api.model.request.chat.ChatRequest
+import com.hfut.schedule.network.api.model.request.ai.AiChatRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -13,6 +13,6 @@ interface AiService {
     @Headers("Content-Type: application/json")
     fun chat(
         @Header("Authorization") auth : String,
-        @Body body : ChatRequest
+        @Body body : AiChatRequest
     ) : Call<ResponseBody>
 }

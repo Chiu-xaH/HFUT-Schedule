@@ -35,6 +35,3 @@ fun getApplyStatus(list : List<JxglstuTransferMajorMyApply>?, index : Int) : Boo
         null
     }
 }
-
-
-data class ChangeMajorInfo(val title: String, val batchId: String, val applicationDate: String, val admissionDate: String)

@@ -36,3 +36,17 @@ data class ZhiJianCourseTable(
     @SerializedName("cxjc")
     val period : String
 )
+
+data class ZhiJianCourseTableDto(
+    val courseName : String,
+    val startPeriod : Int,
+    val endPeriod : Int,
+    val place : String?,
+    val teacher : String,
+    val department : String,
+    val classes : String,
+    val date : String,
+    val code : String,
+    val type : String,
+    val weekday : Int,
+)

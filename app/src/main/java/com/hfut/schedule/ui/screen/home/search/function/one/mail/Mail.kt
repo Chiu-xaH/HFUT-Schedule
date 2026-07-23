@@ -176,9 +176,3 @@ fun MailUI(vm: NetWorkViewModel) {
         }
     }
 }
-
-data class MailResponse(
-    val msg : String?,
-    val data : String?
-)
-

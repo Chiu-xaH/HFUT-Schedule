@@ -3,4 +3,4 @@ package com.hfut.schedule.network.api.impl
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.BaseServiceCreator
 
-object XwxServiceCreator : BaseServiceCreator(Constant.XWX_URL)
+object XiaoWuXingServiceCreator : BaseServiceCreator(Constant.XWX_URL)

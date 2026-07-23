@@ -3,8 +3,9 @@ package com.hfut.schedule.logic.network.repo
 import com.hfut.schedule.logic.model.enumeration.ChatModel
 import com.hfut.schedule.logic.network.impl.AiServiceCreator
 import com.hfut.schedule.network.api.inf.AiService
+import com.hfut.schedule.network.api.repo.AiRepositoryInf
 
-object AiRepository {
+object AiRepository : AiRepositoryInf {
 
     private fun createService(): AiService {
         return AiServiceCreator.create(AiService::class.java, ChatModel.ChatAnywhere)
@@ -12,7 +13,7 @@ object AiRepository {
 
     private var ai = createService()
 
-    fun updateService() {
+    override fun updateService() {
         ai = createService()
     }
 

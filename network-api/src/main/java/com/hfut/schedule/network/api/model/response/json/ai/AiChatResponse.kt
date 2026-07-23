@@ -2,13 +2,13 @@ package com.hfut.schedule.network.api.model.response.json.ai
 
 import com.google.gson.annotations.SerializedName
 
-data class ChatResponse(
-    val usage : ChatUsageBean,
+data class AiChatResponse(
+    val usage : AiChatUsageBean,
     val model : String,
-    val choices : List<ChatChoice>
+    val choices : List<AiChatChoice>
 )
 
-data class ChatUsageBean(
+data class AiChatUsageBean(
     @SerializedName("prompt_tokens")
     val promptTokens : Int,
     @SerializedName("completion_tokens")
@@ -17,14 +17,14 @@ data class ChatUsageBean(
     val totalTokens : Int
 )
 
-data class ChatChoice(
-    val message: ChatMsg,
+data class AiChatChoice(
+    val message: AiChatMsg,
     val index : Int,
     @SerializedName("finish_reason")
     val finishReason : String
 )
 
-data class ChatMsg(
+data class AiChatMsg(
     val role : String,
     val content : String
 )

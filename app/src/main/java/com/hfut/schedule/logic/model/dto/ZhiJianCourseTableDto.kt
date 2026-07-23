@@ -1,23 +1,10 @@
 package com.hfut.schedule.logic.model.dto
 
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTable
+import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
 import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.xah.common.logic.util.LogUtil
-
-data class ZhiJianCourseTableDto(
-    val courseName : String,
-    val startPeriod : Int,
-    val endPeriod : Int,
-    val place : String?,
-    val teacher : String,
-    val department : String,
-    val classes : String,
-    val date : String,
-    val code : String,
-    val type : String,
-    val weekday : Int,
-)
 
 fun ZhiJianCourseTable.toDto() : ZhiJianCourseTableDto? =
     try {

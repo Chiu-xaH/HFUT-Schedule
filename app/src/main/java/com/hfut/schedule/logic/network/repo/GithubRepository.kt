@@ -2,19 +2,7 @@ package com.hfut.schedule.logic.network.repo
 
 
 import com.google.gson.reflect.TypeToken
-import com.xah.common.logic.model.CampusRegion
-import com.xah.common.logic.model.CampusRegion.HEFEI
-import com.xah.common.logic.model.CampusRegion.XUANCHENG
-import com.hfut.schedule.network.api.model.response.json.github.GithubBuildingMapResponse
-import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
-import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
-import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramResponse
-import com.hfut.schedule.network.api.model.response.json.github.GithubRepoResponse
-import com.hfut.schedule.network.api.model.response.json.github.GithubFolderResponse
-import com.hfut.schedule.network.api.model.response.json.github.GithubIssueResponse
-import com.hfut.schedule.network.api.model.response.json.github.GithubIssueLabelDto
 import com.hfut.schedule.logic.util.network.launchRequestState
-import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.network.api.impl.GiteeServiceCreator
@@ -25,10 +13,23 @@ import com.hfut.schedule.network.api.inf.GiteeService
 import com.hfut.schedule.network.api.inf.GithubRawService
 import com.hfut.schedule.network.api.inf.GithubService
 import com.hfut.schedule.network.api.inf.MyService
-import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.api.model.response.html.FloorMap
+import com.hfut.schedule.network.api.model.response.html.RoomRect
+import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubBuildingMapResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubFolderResponse
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueLabelDto
+import com.hfut.schedule.network.api.model.response.json.github.GithubIssueResponse
 import com.hfut.schedule.network.api.model.response.json.github.GithubProgramSearchResponse
-import com.hfut.schedule.ui.screen.home.search.function.other.life.FloorMap
-import com.hfut.schedule.ui.screen.home.search.function.other.life.RoomRect
+import com.hfut.schedule.network.api.model.response.json.github.GithubRepoResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramResponse
+import com.hfut.schedule.network.api.repo.GithubRepositoryInf
+import com.hfut.schedule.network.core.GsonInstance
+import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.model.CampusRegion.HEFEI
+import com.xah.common.logic.model.CampusRegion.XUANCHENG
+import com.xah.common.logic.state.UiStateHolder
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -37,14 +38,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-object GithubRepository {
+object GithubRepository : GithubRepositoryInf {
     private val github = GithubServiceCreator.create(GithubService::class.java)
     private val githubRaw = GithubRawServiceCreator.create(GithubRawService::class.java)
     private val gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val myAPI = MyServiceCreator.create(MyService::class.java)
 
 
-    fun getMyApi() {
+    override fun getMyApi() {
         val call = myAPI.my()
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -54,7 +55,7 @@ object GithubRepository {
         })
     }
 
-    suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : UiStateHolder<UniAppProgramData>) =
+    override suspend fun getProgramListInfo(id : Int, campus : CampusRegion, holder : UiStateHolder<UniAppProgramData>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -72,7 +73,7 @@ object GithubRepository {
         GsonInstance.fromJson(json, UniAppProgramResponse::class.java).data
     } catch (e : Exception) { throw e }
 
-    suspend fun getProgramList(campus : CampusRegion,holder : UiStateHolder<List<GithubProgramSearchResponse>>) =
+    override suspend fun getProgramList(campus : CampusRegion, holder : UiStateHolder<List<GithubProgramSearchResponse>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -91,7 +92,7 @@ object GithubRepository {
         data
     } catch (e : Exception) { throw e }
 
-    suspend fun getStarNum(githubStarsData : UiStateHolder<Int>) = launchRequestState(
+    override suspend fun getStarNum(githubStarsData : UiStateHolder<Int>) = launchRequestState(
         holder = githubStarsData,
         request = { github.getRepoInfo() },
         transformSuccess = { _, json -> parseGithubStarNum(json) }
@@ -102,7 +103,7 @@ object GithubRepository {
         GsonInstance.fromJson(json,GithubRepoResponse::class.java).stargazersCount
     } catch (e : Exception) { throw e }
 
-    suspend fun getUpdateContents(holder : UiStateHolder<List<GithubFolderResponse>>) =
+    override suspend fun getUpdateContents(holder : UiStateHolder<List<GithubFolderResponse>>) =
         launchRequestState(
             holder = holder,
             request = { github.getFolderContent() },
@@ -116,7 +117,7 @@ object GithubRepository {
         data
     } catch (e : Exception) { throw e }
 
-    fun downloadHoliday()  {
+    override fun downloadHoliday()  {
         val call = githubRaw.getYearHoliday(DateTimeManager.Date_yyyy)
 
         call.enqueue(object : Callback<ResponseBody> {
@@ -130,7 +131,7 @@ object GithubRepository {
     }
 
 
-    suspend fun getUpdateFileSize(fileName : String,holder : UiStateHolder<Double>) =
+    override suspend fun getUpdateFileSize(fileName : String, holder : UiStateHolder<Double>) =
         launchRequestState(
             holder = holder,
             request = { gitee.download(fileName) },
@@ -143,7 +144,7 @@ object GithubRepository {
         contentLength.toDouble() / (1024 * 1024)
     } catch (e: Exception) { throw e }
 
-    suspend fun getUpdate(holder : UiStateHolder<GiteeReleaseResponse>) = launchRequestState(
+    override suspend fun getUpdate(holder : UiStateHolder<GiteeReleaseResponse>) = launchRequestState(
         request = { gitee.getUpdate() },
         holder = holder,
         transformSuccess = { _, json -> parseGiteeUpdates(json) }
@@ -160,7 +161,7 @@ object GithubRepository {
         GiteeReleaseResponse(versionName,data.body,list)
     } catch (e : Exception) { throw e }
 
-    suspend fun getIssues(page : Int,holder : UiStateHolder<List<GithubIssueResponse>>) = launchRequestState(
+    override suspend fun getIssues(page : Int, holder : UiStateHolder<List<GithubIssueResponse>>) = launchRequestState(
         request = { github.getIssues(page) },
         holder = holder,
         transformSuccess = { _, json -> parseGithubIssues(json) }
@@ -182,7 +183,7 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun getBuildingMaps(holder : UiStateHolder<List<GithubBuildingMapResponse>>) = launchRequestState(
+    override suspend fun getBuildingMaps(holder : UiStateHolder<List<GithubBuildingMapResponse>>) = launchRequestState(
         request = { githubRaw.getBuildingMaps() },
         holder = holder,
         transformSuccess = { _, json -> parseBuildingMaps(json) }
@@ -193,7 +194,7 @@ object GithubRepository {
         GsonInstance.fromJson(json,listType) as List<GithubBuildingMapResponse>
     } catch (e : Exception) { throw e }
 
-    suspend fun getFloorXml(filename : String,holder : UiStateHolder<FloorMap>) = launchRequestState(
+    override suspend fun getFloorXml(filename : String, holder : UiStateHolder<FloorMap>) = launchRequestState(
         request = { githubRaw.getFloorXml(filename) },
         holder = holder,
         transformSuccess = { _, xml -> parseFloorXml(xml) }

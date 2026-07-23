@@ -48,6 +48,8 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.html.FloorMap
+import com.hfut.schedule.network.api.model.response.html.RoomRect
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -202,19 +204,6 @@ fun StarterScreen() {
 }
 
 
-data class FloorMap(
-    val width: Float,
-    val height: Float,
-    val rooms: List<RoomRect>
-)
-
-data class RoomRect(
-    val id: String,
-    val left: Float,
-    val top: Float,
-    val right: Float,
-    val bottom: Float
-)
 
 @Composable
 fun RoomMap(

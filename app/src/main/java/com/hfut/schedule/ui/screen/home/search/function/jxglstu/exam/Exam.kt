@@ -35,6 +35,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -192,7 +193,7 @@ private fun ExamItems(item : Int,status : Boolean) {
 
 //status参数判断是聚焦还是界面，若为聚焦则解析显示未考的，若为界面都显示
 @Composable
-fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
+fun JxglstuExamUI(item : JxglstuExam, status : Boolean) {
     //时隔一年修补这里的Bug
     val newDate = DateTimeManager.Date_yyyy_MM_dd
     val newToday = newDate.replace("-","").toLongOrNull() ?: 0

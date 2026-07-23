@@ -28,6 +28,7 @@ import com.consumption.forecast.getConsumptionResult
 import com.xah.common.logic.model.HuiXinBill
 import com.xah.common.logic.model.HuiXinBillResponse
 import com.consumption.forecast.model.result.TotalResult
+import com.hfut.schedule.network.api.repo.HuiXinRepositoryInf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -36,13 +37,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-object HuiXinRepository {
+object HuiXinRepository : HuiXinRepositoryInf {
     private val huiXin = HuiXinServiceCreator.create(HuiXinService::class.java)
 
-    suspend fun getCardBill(
+    override suspend fun getCardBill(
         auth : String,
         page : Int,
-        size : Int = Constant.DEFAULT_PAGE_SIZE,
+        size : Int,
         holder : UiStateHolder<HuiXinBill>
     ) = launchRequestState(
         holder = holder,
@@ -71,7 +72,7 @@ object HuiXinRepository {
         })
     }
 
-    suspend fun checkHuiXinLogin(auth : String,holder : UiStateHolder<Boolean>)= launchRequestState(
+    override suspend fun checkHuiXinLogin(auth : String, holder : UiStateHolder<Boolean>)= launchRequestState(
         holder = holder,
         request = { huiXin.checkLogin(auth) },
         transformSuccess = { _, json -> parseCheckLHuiXinLogin(json) }
@@ -85,7 +86,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw  e }
 
-    suspend fun huiXinSingleLogin(studentId : String,password: String,holder : UiStateHolder<String>) {
+    override suspend fun huiXinSingleLogin(studentId : String, password: String, holder : UiStateHolder<String>) {
         launchRequestState(
             holder = holder,
             request = { huiXin.login(studentId = studentId, password = password) },
@@ -102,7 +103,7 @@ object HuiXinRepository {
         throw  e
     }
 
-    suspend fun payStep1(auth: String, json: String, pay : Float, type: HuiXinFeeType, holder : UiStateHolder<String>) =
+    override suspend fun payStep1(auth: String, json: String, pay : Float, type: HuiXinFeeType, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -132,7 +133,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun payStep2(auth: String, orderId : String, type : HuiXinFeeType, holder : UiStateHolder<Map<String, String>>) =
+    override suspend fun payStep2(auth: String, orderId : String, type : HuiXinFeeType, holder : UiStateHolder<Map<String, String>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -162,7 +163,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: HuiXinFeeType, holder : UiStateHolder<String>) =
+    override suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: HuiXinFeeType, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -192,7 +193,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun changeLimit(auth: String, json: JsonObject, holder : UiStateHolder<String>) =
+    override suspend fun changeLimit(auth: String, json: JsonObject, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.changeLimit(auth, json) },
@@ -203,7 +204,7 @@ object HuiXinRepository {
         GsonInstance.fromJson(json, HuiXinChangeLimitResponse::class.java).msg
     } catch (e : Exception) { throw e }
 
-    suspend fun searchDate(auth : String, timeFrom : String, timeTo : String,holder : UiStateHolder<Float>) =
+    override suspend fun searchDate(auth : String, timeFrom : String, timeTo : String, holder : UiStateHolder<Float>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.searchDate(auth, timeFrom, timeTo) },
@@ -219,7 +220,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun searchBills(auth : String, info: String,page : Int,holder : UiStateHolder<HuiXinBill>) =
+    override suspend fun searchBills(auth : String, info: String, page : Int, holder : UiStateHolder<HuiXinBill>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -241,7 +242,7 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getMonthBills(auth : String, dateStr: String,holder : UiStateHolder<List<HuiXinMonthBill>>) =
+    override suspend fun getMonthBills(auth : String, dateStr: String, holder : UiStateHolder<List<HuiXinMonthBill>>) =
         launchRequestState(
             holder = holder,
             request = { huiXin.getMonthYue(auth, dateStr) },
@@ -264,7 +265,7 @@ object HuiXinRepository {
         GsonInstance.fromJson(json, HuiXinHefeiBuildingResponse::class.java).map.data
     } catch (e : Exception) { throw e }
 
-    suspend fun getHefeiRooms(
+    override suspend fun getHefeiRooms(
         auth: String,
         building: String?,
         holder: UiStateHolder<List<HuiXinHefeiBuilding>>

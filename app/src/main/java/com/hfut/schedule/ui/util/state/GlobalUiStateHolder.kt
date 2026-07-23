@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.dto.HuiXinCardInfoDto
 import com.hfut.schedule.logic.network.repo.JxglstuRepository
+import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.AlumniDestination
@@ -43,7 +44,6 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -83,7 +83,7 @@ object GlobalUiStateHolder {
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
     var electricValue = MutableLiveData<String?>()
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")
-    var webValue = MutableLiveData<WebInfo>()
+    var webValue = MutableLiveData<SchoolNetInfo>()
 
     // 用过的ID 不要再用了，比如之前删除的功能ID
     val funcDefault = listOf(

@@ -15,6 +15,7 @@ import com.hfut.schedule.network.api.inf.AcademicXCService
 import com.hfut.schedule.network.api.inf.NewsService
 import com.hfut.schedule.network.api.inf.XuanChengService
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.repo.NewsRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
@@ -25,13 +26,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-object NewsRepository {
+object NewsRepository : NewsRepositoryInf {
     private val news = NewsServiceCreator.create(NewsService::class.java)
     private val academic = AcademicServiceCreator.create(AcademicService::class.java)
     private val academicXC = AcademicXCServiceCreator.create(AcademicXCService::class.java)
     private val xuanCheng = XuanChengServiceCreator.create(XuanChengService::class.java)
 
-    fun searchXuanChengNews(title : String, page: Int = 1) {
+    override fun searchXuanChengNews(title : String, page: Int) {
 
         val postData = transferToPostData(title, page)
         val call = xuanCheng.searchNotications(postData)
@@ -44,7 +45,7 @@ object NewsRepository {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : UiStateHolder<List<News>>) =
+    override suspend fun getXuanChengNews(page: Int, newsXuanChengResult : UiStateHolder<List<News>>) =
         launchRequestState(
             holder = newsXuanChengResult,
             request = {
@@ -67,7 +68,7 @@ object NewsRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademicXC(type: AcademicNewsXuanChengType, page: Int = 1, holder : UiStateHolder<List<News>>) =
+    override suspend fun getAcademicXC(type: AcademicNewsXuanChengType, page: Int, holder : UiStateHolder<List<News>>) =
         launchRequestState(
             holder = holder,
             request = { academicXC.getNews(type.type, page) },
@@ -117,7 +118,7 @@ object NewsRepository {
         newsList
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademic(type: AcademicNewsType, totalPage : Int? = null, page: Int = 1, holder : UiStateHolder<AcademicNewsList>) =
+    override suspend fun getAcademic(type: AcademicNewsType, totalPage : Int?, page: Int, holder : UiStateHolder<AcademicNewsList>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -152,7 +153,7 @@ object NewsRepository {
         AcademicNewsList(news = newsList, totalPage = maxPage)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchNews(title : String,page: Int = 1,newsResult : UiStateHolder<List<News>>) =
+    override suspend fun searchNews(title : String, page: Int, newsResult : UiStateHolder<List<News>>) =
         launchRequestState(
             holder = newsResult,
             request = { news.searchNews(CryptoUtil.encodeToBase64(title), page) },

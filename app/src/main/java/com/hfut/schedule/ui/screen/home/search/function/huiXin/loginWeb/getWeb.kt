@@ -4,6 +4,7 @@ package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -12,9 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-
-data class WebInfo(val fee : String, val flow : String,val postJson : String = "")
-
 
 suspend fun getXwxPsk() : String? = withContext(Dispatchers.IO) {
     return@withContext try {
@@ -51,7 +49,7 @@ suspend fun getCardPsk() : String? = withContext(Dispatchers.IO) {
 }
 
 
-fun getWebInfo(vm: NetWorkViewModel) : WebInfo? {
+fun getWebInfo(vm: NetWorkViewModel) : SchoolNetInfo? {
     val json = vm.infoValue.value
     try {
         if(json != null && json.contains("success")&& !json.contains("账号不存在")) {
@@ -65,7 +63,7 @@ fun getWebInfo(vm: NetWorkViewModel) : WebInfo? {
 
             val webInfo = data["本期已使用流量"]?.let {
                 data["储值余额"]?.let { it1 ->
-                    WebInfo(
+                    SchoolNetInfo(
                         it1.substringBefore("（"),
                         it.substringBefore("（"),
                         postJson

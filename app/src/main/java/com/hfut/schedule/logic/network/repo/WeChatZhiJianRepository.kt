@@ -13,14 +13,15 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.network.api.impl.WxServiceCreator
-import com.hfut.schedule.network.api.inf.WxService
+import com.hfut.schedule.network.api.impl.WeChaeZhiJianServiceCreator
+import com.hfut.schedule.network.api.inf.WeChatZhiJianService
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.repo.WeChatZhiJianRepositoryInf
 import com.hfut.schedule.network.core.GsonInstance
 
-object WxRepository {
-    private val wx = WxServiceCreator.create(WxService::class.java)
-    suspend fun wxLogin(holder : UiStateHolder<String>) = launchRequestState(
+object WeChatZhiJianRepository : WeChatZhiJianRepositoryInf {
+    private val wx = WeChaeZhiJianServiceCreator.create(WeChatZhiJianService::class.java)
+    override suspend fun wxLogin(holder : UiStateHolder<String>) = launchRequestState(
         holder = holder,
         request = {
             wx.login(
@@ -45,7 +46,7 @@ object WxRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun wxGetPersonInfo(auth : String,holder : UiStateHolder<WeChatZhiJianPersonInfo>) =
+    override suspend fun wxGetPersonInfo(auth : String, holder : UiStateHolder<WeChatZhiJianPersonInfo>) =
         launchRequestState(
             holder = holder,
             request = { wx.getMyInfo(auth) },
@@ -64,7 +65,7 @@ object WxRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun wxGetClassmates(nodeId : String,auth : String,holder : UiStateHolder<WeChatZhiJianClassmates>) =
+    override suspend fun wxGetClassmates(nodeId : String, auth : String, holder : UiStateHolder<WeChatZhiJianClassmates>) =
         launchRequestState(
             holder = holder,
             request = { wx.getClassmates(nodeId, auth) },
@@ -81,7 +82,7 @@ object WxRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun wxLoginCas(url : String,auth : String,holder : UiStateHolder<Pair<String, Boolean>>) =
+    override suspend fun wxLoginCas(url : String, auth : String, holder : UiStateHolder<Pair<String, Boolean>>) =
         launchRequestState(
             holder = holder,
             request = {
@@ -112,7 +113,7 @@ object WxRepository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun wxConfirmLogin(uuid : String,auth : String,holder : UiStateHolder<String>) =
+    override suspend fun wxConfirmLogin(uuid : String, auth : String, holder : UiStateHolder<String>) =
         launchRequestState(
             holder = holder,
             request = { wx.confirmLogin(uuid, auth) },

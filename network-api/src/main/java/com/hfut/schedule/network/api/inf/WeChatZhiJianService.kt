@@ -10,7 +10,7 @@ import retrofit2.http.Url
 
 private const val ROOT_NODE_ID = "-1"
 
-interface WxService {
+interface WeChatZhiJianService {
     @GET("api/auth/bsauth/getTgtWx")
     fun login(
         @Header("x-stamp") stamp : String = CryptoUtil.encryptTimestamp(),

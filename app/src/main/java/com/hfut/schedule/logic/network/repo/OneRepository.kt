@@ -15,10 +15,11 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.impl.OneServiceCreator
 import com.hfut.schedule.network.api.inf.OneService
+import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
+import com.hfut.schedule.network.api.repo.OneRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.common.logic.util.LogUtil
 import okhttp3.ResponseBody
@@ -26,10 +27,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-object OneRepository {
+object OneRepository : OneRepositoryInf {
     private val one = OneServiceCreator.create(OneService::class.java)
 
-    suspend fun getPay(holder : UiStateHolder<OneFeeData>) = launchRequestState(
+    override suspend fun getPay(holder : UiStateHolder<OneFeeData>) = launchRequestState(
         holder = holder,
         request = { one.getPay(getPersonInfo().getStudentIdFinally()) },
         transformSuccess = { _, json -> parsePayFee(json) }
@@ -39,7 +40,7 @@ object OneRepository {
         GsonInstance.fromJson(result, OneFeeResponse::class.java).data ?: throw Exception("数据为空")
     } catch (e : Exception) { throw e }
 
-    suspend fun getMailURL(token : String,holder : UiStateHolder<MailResponse>)  =
+    override suspend fun getMailURL(token : String, holder : UiStateHolder<OneSchoolEmailResponse>)  =
         launchRequestState(
             holder = holder,
             request = {
@@ -52,14 +53,14 @@ object OneRepository {
             transformSuccess = { _, json -> parseMailUrl(json) }
         )
     @JvmStatic
-    private fun parseMailUrl(result: String) : MailResponse = try {
+    private fun parseMailUrl(result: String) : OneSchoolEmailResponse = try {
         if(result.contains("success"))
-            GsonInstance.fromJson(result, MailResponse::class.java)
+            GsonInstance.fromJson(result, OneSchoolEmailResponse::class.java)
         else
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun getClassroomInfo(code : String,token : String,holder : UiStateHolder<List<OneClassroomRecord>>)  =
+    override suspend fun getClassroomInfo(code : String, token : String, holder : UiStateHolder<List<OneClassroomRecord>>)  =
         launchRequestState(
             holder = holder,
             request = { one.getClassroomInfo(code, token) },
@@ -73,7 +74,7 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun getBuildings(campus : Campus, token : String, holder: UiStateHolder<Pair<Campus, List<OneBuilding>>>)  =
+    override suspend fun getBuildings(campus : Campus, token : String, holder: UiStateHolder<Pair<Campus, List<OneBuilding>>>)  =
         launchRequestState(
             holder = holder,
             request = {
@@ -94,7 +95,7 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun checkOneLogin(token : String,holder : UiStateHolder<Boolean>) = launchRequestState(
+    override suspend fun checkOneLogin(token : String, holder : UiStateHolder<Boolean>) = launchRequestState(
         holder = holder,
         request = { one.checkLogin(token) },
         transformSuccess = { _, json -> parseCheckOneLogin(json) }
@@ -108,7 +109,7 @@ object OneRepository {
         }
     } catch (e : Exception) { throw  e }
 
-    fun loginOne(code : String)  {
+    override fun loginOne(code : String)  {
         val call = one.getToken(code,code.substringAfter("code="))
 
         call.enqueue(object : Callback<ResponseBody> {

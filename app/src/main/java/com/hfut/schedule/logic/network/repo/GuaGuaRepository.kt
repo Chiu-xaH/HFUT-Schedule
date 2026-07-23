@@ -10,6 +10,7 @@ import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.network.api.impl.GuaGuaServiceCreator
 import com.hfut.schedule.network.api.inf.GuaGuaService
+import com.hfut.schedule.network.api.repo.GuaGuaRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
@@ -19,7 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.Locale
 
-object GuaGuaRepository {
+object GuaGuaRepository : GuaGuaRepositoryInf {
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
 
     fun getGuaGuaUserInfo(guaGuaUserInfo : MutableLiveData<String?>) {
@@ -36,14 +37,14 @@ object GuaGuaRepository {
     }
 
 
-    suspend fun guaGuaLogin(phoneNumber : String, password : String,loginResult : UiStateHolder<GuaGuaLoginResponse>) =
+    override suspend fun guaGuaLogin(phoneNumber : String, password : String, loginResult : UiStateHolder<GuaGuaLoginResponse>) =
         launchRequestState(
             holder = loginResult,
             request = { guaGua.login(phoneNumber, password) },
             transformSuccess = { _, json -> parseGuaGuaLogin(json) },
         )
 
-    suspend fun guaGuaStartShower(phoneNumber: String, macLocation : String, loginCode : String,startShowerResult : UiStateHolder<String>) =
+    override suspend fun guaGuaStartShower(phoneNumber: String, macLocation : String, loginCode : String, startShowerResult : UiStateHolder<String>) =
         launchRequestState(
             holder = startShowerResult,
             request = {
@@ -56,7 +57,7 @@ object GuaGuaRepository {
             transformSuccess = { _, json -> parseGuaGuaStartShower(json) },
         )
 
-    suspend fun guaGuaGetBills(billsResult : UiStateHolder<GuaGuaBillResponse>) =
+    override suspend fun guaGuaGetBills(billsResult : UiStateHolder<GuaGuaBillResponse>) =
         launchRequestState(
             holder = billsResult,
             request = {
@@ -68,7 +69,7 @@ object GuaGuaRepository {
             transformSuccess = { _, json -> parseGuaGuaBills(json) },
         )
 
-    suspend fun guaGuaGetUseCode(useCodeResult : UiStateHolder<String>) = launchRequestState(
+    override suspend fun guaGuaGetUseCode(useCodeResult : UiStateHolder<String>) = launchRequestState(
         holder = useCodeResult,
         request = {
             guaGua.getUseCode(
@@ -79,7 +80,7 @@ object GuaGuaRepository {
         transformSuccess = { _, json -> parseGuaGuaUseCode(json) }
     )
 
-    suspend fun guaGuaReSetUseCode(newCode : String,reSetCodeResult : UiStateHolder<String>) =
+    override suspend fun guaGuaReSetUseCode(newCode : String, reSetCodeResult : UiStateHolder<String>) =
         launchRequestState(
             holder = reSetCodeResult,
             request = {

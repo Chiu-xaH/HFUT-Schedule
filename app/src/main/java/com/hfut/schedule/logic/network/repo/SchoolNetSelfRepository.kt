@@ -9,6 +9,7 @@ import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.network.api.impl.SchoolNetSelfServiceCreator
 import com.hfut.schedule.network.api.inf.SchoolNetSelfService
+import com.hfut.schedule.network.api.repo.SchoolNetSelfRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -28,12 +29,12 @@ private data class AllSemesterUsageQueryContext(
     val uniqueYears: List<Int>
 )
 
-object SchoolNetSelfRepository {
+object SchoolNetSelfRepository : SchoolNetSelfRepositoryInf {
 
     private val service = SchoolNetSelfServiceCreator.create(SchoolNetSelfService::class.java)
     private var selfServiceLoggedIn = false
 
-    suspend fun loginAndGetMonthPay(
+    override suspend fun loginAndGetMonthPay(
         year: Int,
         holder: UiStateHolder<SchoolNetMonthPayResult>
     ) = launchRequestState(
@@ -48,7 +49,7 @@ object SchoolNetSelfRepository {
         transformSuccess = { _, html -> parseMonthPay(html) }
     )
 
-    suspend fun getMonthPayAfterLogin(
+    override suspend fun getMonthPayAfterLogin(
         year: Int,
         holder: UiStateHolder<SchoolNetMonthPayResult>
     ) = launchRequestState(
@@ -62,6 +63,7 @@ object SchoolNetSelfRepository {
         transformSuccess = { _, html -> parseMonthPay(html) }
     )
 
+    @JvmStatic
     private suspend fun doLoginAndFetch(year: Int): retrofit2.Call<okhttp3.ResponseBody> {
         val account = getPersonInfo().getStudentIdFinally() ?: throw Exception("未获取到学号")
         val rawPassword = getCardPsk() ?: throw Exception("未获取到校园卡密码")
@@ -256,7 +258,7 @@ object SchoolNetSelfRepository {
         )
     } catch (e : Exception) { throw e }
 
-    suspend fun loginAndGetSemesterUsage(
+    override suspend fun loginAndGetSemesterUsage(
         semester: Int,
         holder: UiStateHolder<SchoolNetSemesterUsageResult>
     ) {
@@ -292,7 +294,7 @@ object SchoolNetSelfRepository {
         )
     }
 
-    suspend fun loginAndGetAllSemestersUsage(
+    override suspend fun loginAndGetAllSemestersUsage(
         allSemesters: List<Int>,
         holder: UiStateHolder<SchoolNetSemesterUsageResult>
     ) {

@@ -9,19 +9,20 @@ import com.hfut.schedule.network.api.inf.LoginSchoolNetService
 import com.hfut.schedule.network.api.impl.LoginHefeiSchoolNetServiceCreator
 import com.hfut.schedule.network.api.impl.LoginXcSchoolNetServiceCreator
 import com.hfut.schedule.network.api.impl.LoginXcSchoolNetServiceCreator2
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
+import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
+import com.hfut.schedule.network.api.repo.SchoolNetRepositoryInf
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object LoginSchoolNetRepository {
+object SchoolNetRepository : SchoolNetRepositoryInf {
     private val loginWebHefei = LoginHefeiSchoolNetServiceCreator.create(LoginSchoolNetService::class.java)
     private val loginWeb = LoginXcSchoolNetServiceCreator.create(LoginSchoolNetService::class.java)
     private val loginWeb2 = LoginXcSchoolNetServiceCreator2.create(LoginSchoolNetService::class.java)
 
-    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : UiStateHolder<Boolean>) =
+    override suspend fun loginSchoolNet(campus: CampusRegion, loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().getStudentIdFinally()?.let { uid ->
                 getCardPsk()?.let { pwd ->
@@ -62,7 +63,10 @@ object LoginSchoolNetRepository {
                 }
             }
         }
-    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : UiStateHolder<Boolean>) =
+
+    suspend fun loginSchoolNet(loginSchoolNetResponse : UiStateHolder<Boolean>) = loginSchoolNet(getCampusRegion(),loginSchoolNetResponse)
+
+    override suspend fun logoutSchoolNet(campus: CampusRegion, loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().getStudentIdFinally()?.let { uid ->
                 getCardPsk()?.let { pwd ->
@@ -98,6 +102,9 @@ object LoginSchoolNetRepository {
                 }
             }
         }
+
+    suspend fun logoutSchoolNet(loginSchoolNetResponse : UiStateHolder<Boolean>) = logoutSchoolNet(getCampusRegion(),loginSchoolNetResponse)
+
     // 目前仅适配了宣区
     @JvmStatic
     private fun parseLoginSchoolNet(result : String) : Boolean = try {
@@ -110,19 +117,19 @@ object LoginSchoolNetRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getWebInfo(infoWebValue : UiStateHolder<WebInfo>) = launchRequestState(
+    override suspend fun getWebInfo(infoWebValue : UiStateHolder<SchoolNetInfo>) = launchRequestState(
         holder = infoWebValue,
         request = { loginWeb.getInfo() },
         transformSuccess = { _, json -> parseWebInfo(json) }
     )
 
-    suspend fun getWebInfo2(infoWebValue : UiStateHolder<WebInfo>) = launchRequestState(
+    override suspend fun getWebInfo2(infoWebValue : UiStateHolder<SchoolNetInfo>) = launchRequestState(
         holder = infoWebValue,
         request = { loginWeb2.getInfo() },
         transformSuccess = { _, json -> parseWebInfo(json) }
     )
     @JvmStatic
-    private fun parseWebInfo(html : String) : WebInfo = try {
+    private fun parseWebInfo(html : String) : SchoolNetInfo = try {
         //本段照搬前端
         val flow = html.substringAfter("flow").substringBefore(" ").substringAfter("'").toDouble()
         val fee = html.substringAfter("fee").substringBefore(" ").substringAfter("'").toDouble()
@@ -130,13 +137,13 @@ object LoginSchoolNetRepository {
         val flow1 = flow - flow0
         flow0 *= 1000
         flow0 -= flow0 % 1024
-        var fee1 = fee - fee % 100
+        val fee1 = fee - fee % 100
         var flow3 = "."
         if (flow0 / 1024 < 10) flow3 = ".00"
         else { if (flow0 / 1024 < 100) flow3 = ".0"; }
         val resultFee = (fee1 / 10000).toString()
         val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
-        val result = WebInfo(resultFee, resultFlow)
+        val result = SchoolNetInfo(resultFee, resultFlow)
         SharedPrefs.saveString("memoryWeb", result.flow)
         result
     } catch (e : Exception) { throw e }

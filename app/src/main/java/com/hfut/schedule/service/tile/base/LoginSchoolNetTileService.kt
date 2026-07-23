@@ -8,7 +8,7 @@ import android.service.quicksettings.TileService
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import com.xah.common.logic.model.CampusRegion
-import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
+import com.hfut.schedule.logic.network.repo.SchoolNetRepository
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
@@ -37,7 +37,7 @@ open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileSe
         val job = Job()
         CoroutineScope(job).launch {
             loginSchoolNetResponse.clear()
-            LoginSchoolNetRepository.loginSchoolNet(campus = campus,loginSchoolNetResponse = loginSchoolNetResponse)
+            SchoolNetRepository.loginSchoolNet(campus = campus,loginSchoolNetResponse = loginSchoolNetResponse)
             onListenStateHolder(loginSchoolNetResponse, onError = { codeInt, e ->
                 val code = codeInt?.toString() ?: ""
                 val eMsg = e?.message

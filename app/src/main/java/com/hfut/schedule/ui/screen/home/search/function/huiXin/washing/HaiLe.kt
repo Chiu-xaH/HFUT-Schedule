@@ -38,12 +38,12 @@ import com.hfut.schedule.R
 import com.xah.common.logic.model.Campus
 import com.hfut.schedule.logic.util.helper.getCampus
 import com.hfut.schedule.network.api.model.response.json.haile.HaiLeNearPositionBean
-import com.hfut.schedule.logic.model.dto.HaiLeNearPositionRequestDto
-import com.hfut.schedule.logic.model.dto.HaiLeType
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
+import com.hfut.schedule.network.api.model.request.haile.HaiLeNearPositionRequestDto
+import com.hfut.schedule.network.api.model.request.haile.HaiLeType
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor

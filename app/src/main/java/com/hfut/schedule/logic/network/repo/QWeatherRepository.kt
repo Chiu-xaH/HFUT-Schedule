@@ -9,15 +9,16 @@ import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarnRe
 import com.hfut.schedule.network.api.inf.QWeatherService
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.network.api.impl.QWeatherServiceCreator
+import com.hfut.schedule.network.api.repo.QWeatherRepositoryInf
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 
-object QWeatherRepository {
+object QWeatherRepository : QWeatherRepositoryInf {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
-    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<List<QWeatherWarning>>) =
+    override suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<List<QWeatherWarning>>) =
         launchRequestState(
             holder = weatherWarningData,
             request = { qWeather.getWeatherWarn(locationID = getLocation(campus)) },
@@ -29,13 +30,12 @@ object QWeatherRepository {
         GsonInstance.fromJson(json, QWeatherWarnResponse::class.java).warning
     } catch (e : Exception) { throw e }
 
-    suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNow>) =
+    override suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNow>) =
         launchRequestState(
             holder = qWeatherResult,
             request = { qWeather.getWeather(locationID = getLocation(campus)) },
             transformSuccess = { _, json -> parseWeatherNow(json) }
         )
-
 
     @JvmStatic
     private fun parseWeatherNow(json : String) : QWeatherNow = try {
@@ -44,6 +44,5 @@ object QWeatherRepository {
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
-
 
 }

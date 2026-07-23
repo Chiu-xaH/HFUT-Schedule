@@ -13,18 +13,18 @@ import com.hfut.schedule.logic.util.network.launchRequestState
 import com.hfut.schedule.network.api.impl.LibraryServiceCreator
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.api.inf.LibraryService
-import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.repo.LibraryRepositoryInf
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 
-object LibraryRepository {
+object LibraryRepository : LibraryRepositoryInf {
     private val library = LibraryServiceCreator.create(LibraryService::class.java)
 
-    suspend fun checkLibraryNetwork() = launchRequestNone {
+    override suspend fun checkLibraryNetwork() = launchRequestNone {
         library.check()
     }
 
-    suspend fun checkLibraryLogin(token : String,holder : UiStateHolder<Boolean>) =
+    override suspend fun checkLibraryLogin(token : String,holder : UiStateHolder<Boolean>) =
         launchRequestState(
             holder = holder,
             request = { library.checkLogin(token) },
@@ -39,7 +39,7 @@ object LibraryRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getStatus(token : String,holder : UiStateHolder<LibraryStatusDto>) = launchRequestState(
+    override suspend fun getStatus(token : String,holder : UiStateHolder<LibraryStatusDto>) = launchRequestState(
         holder = holder,
         request = { library.getStatus(auth = token) },
         transformSuccess = { _, json -> parseLibraryStatus(json) }
@@ -87,7 +87,7 @@ object LibraryRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = Constant.DEFAULT_PAGE_SIZE, holder : UiStateHolder<List<LibraryBorrowRecord>>) =
+    override suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus?, pageSize : Int, holder : UiStateHolder<List<LibraryBorrowRecord>>) =
         launchRequestState(
             holder = holder,
             request = { library.getBorrowed(token, page, status?.status, pageSize = pageSize) },
@@ -98,7 +98,7 @@ object LibraryRepository {
         GsonInstance.fromJson(json, LibraryBorrowResponse::class.java).data.list
     } catch (e : Exception) { throw e }
 
-    suspend fun search(
+    override suspend fun search(
         page : Int,
         keyword : String,
         holder : UiStateHolder<List<LibrarySearchRow>>

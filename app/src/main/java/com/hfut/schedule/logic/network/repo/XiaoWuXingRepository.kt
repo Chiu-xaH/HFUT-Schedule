@@ -13,23 +13,24 @@ import com.hfut.schedule.network.api.model.request.xiaowuxing.XiaoWuXingLoginReq
 import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingLoginResponse
 import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingSchool
 import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingSchoolListResponse
-import com.hfut.schedule.network.api.inf.XwxService
+import com.hfut.schedule.network.api.inf.XiaoWuXingService
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.api.impl.XwxServiceCreator
+import com.hfut.schedule.network.api.impl.XiaoWuXingServiceCreator
+import com.hfut.schedule.network.api.repo.XiaoWuXingRepositoryInf
 import com.hfut.schedule.network.core.GsonInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object XwxRepository {
-    private val xwx = XwxServiceCreator.create(XwxService::class.java)
+object XiaoWuXingRepository : XiaoWuXingRepositoryInf {
+    private val xwx = XiaoWuXingServiceCreator.create(XiaoWuXingService::class.java)
 
     private fun isXwxRequestSuccessful(code: String) : Boolean = code == "0"
 
-    suspend fun getSchoolList(
+    override suspend fun getSchoolList(
         holder: UiStateHolder<List<XiaoWuXingSchool>>
     ) = launchRequestState(
         holder = holder,
@@ -45,7 +46,7 @@ object XwxRepository {
         result.result.data.flatMap { it.list }
     } catch (e : Exception) { throw e }
 
-    suspend fun login(
+    override suspend fun login(
         schoolCode : Long,
         username : String,
         password : String,
@@ -72,7 +73,7 @@ object XwxRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getFunctions(
+    override suspend fun getFunctions(
         schoolCode : Long,
         username : String,
         token : String,
@@ -91,7 +92,7 @@ object XwxRepository {
         result.result.data
     } catch (e: Exception) { throw e }
 
-    suspend fun getDocPreview(
+    override suspend fun getDocPreview(
         schoolCode : Long,
         username : String,
         filePropertyType : Int,
@@ -106,7 +107,7 @@ object XwxRepository {
     @JvmStatic
     private fun parseDocPreview(json : String) : Bitmap = try {
         val result = GsonInstance.fromJson(json, XiaoWuXingDocPreviewResponse::class.java)
-        if(isXwxRequestSuccessful(result.code) == false) {
+        if(!isXwxRequestSuccessful(result.code)) {
             throw Exception("登录状态失效")
         }
         val decodedByteArray = Base64.decode(result.result.imageBase64String.substringAfter("base64,").trimIndent(),Base64.DEFAULT)
