@@ -1,13 +1,3 @@
-buildscript {
-    ext {}
-    dependencies {}
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
-        google()
-    }
-}
-
 plugins {
     // KSP
     alias(libs.plugins.googleKsp) apply false

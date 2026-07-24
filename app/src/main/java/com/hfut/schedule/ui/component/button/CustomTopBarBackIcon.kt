@@ -150,7 +150,7 @@ fun TopBarNavigationIcon() {
 //                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
 //                            onClick = {
 //                                scope.launch {
-//                                    navController.push(navController.startDestination, LaunchMode.Single(reuse = true, actionType = ActionType.POP))
+//                                    Starter.backToHome(navController)
 //                                    showToast("已回到首页")
 //                                    displayDialog = false
 //                                }
