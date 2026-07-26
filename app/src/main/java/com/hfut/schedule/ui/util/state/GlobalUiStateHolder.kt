@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
+import com.hfut.schedule.ui.screen.util.TAB_STACK
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -78,6 +79,8 @@ object GlobalUiStateHolder {
 
     // 聚焦下拉刷新的进度文案 暂时设置成String，如果需要加进度可以进一步扩展
     val focusRefreshProgressFlow = MutableStateFlow<Pair<String, String>?>(null)
+
+    var controllerCenterTab by mutableIntStateOf(TAB_STACK)
 
     var cardValue by mutableStateOf<HuiXinCardInfoDto?>(null)
     @Deprecated("LiveData已不再作为本项目主力，请使用UiStateHolder")

@@ -27,6 +27,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -134,10 +135,12 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
 import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
+import com.hfut.schedule.ui.nav.effect.ControlCenterTransitionEffect
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
@@ -176,10 +179,10 @@ import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.rememberShaderState
-import com.xah.common.ui.shader.style.largeStyle
-import com.xah.common.ui.shader.style.smallStyle
+import com.xah.shader.state.ShaderState
+import com.xah.shader.state.rememberShaderState
+import com.hfut.schedule.ui.style.shader.largeStyle
+import com.hfut.schedule.ui.style.shader.smallStyle
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.TransparentSystemBars
@@ -187,6 +190,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.anim.effect.Direction
 import com.xah.navigation.anim.effect.SlideTransitionEffect
+import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -343,6 +347,32 @@ fun MainScreen(
     val count by produceState(initialValue = 0) {
         value = calculatedReadNotificationCount()
     }
+    var drag by remember { mutableFloatStateOf(0f) }
+    val surfaceColor = MaterialTheme.colorScheme.surface
+
+    fun Modifier.controlCenterDrag() : Modifier = this.pointerInput(Unit) {
+        detectVerticalDragGestures(
+            onVerticalDrag = { _, dragAmount ->
+                if (dragAmount > 0) {
+                    drag += dragAmount
+                    if (drag >= 300f) {
+                        drag = 0f
+                        navHostTopController.push(
+                            destination = ControlCenterDestination,
+                            effect = ControlCenterTransitionEffect(compositeOverColor = surfaceColor),
+                            launchMode = LaunchMode.Push(keepPreviousAlive = true)
+                        )
+                    }
+                }
+            },
+            onDragEnd = {
+                drag = 0f
+            },
+            onDragCancel = {
+                drag = 0f
+            }
+        )
+    }
 
     Scaffold (
         modifier = Modifier.let {
@@ -409,7 +439,12 @@ fun MainScreen(
                                 }
                             }
                         },
-                        title = { Text(topBarText(targetPage,context)) },
+                        title = {
+                            Text(
+                                topBarText(targetPage,context),
+                                modifier = Modifier.controlCenterDrag()
+                            )
+                        },
                         actions = {
                             when (targetPage) {
                                 FUNCTIONS -> {
@@ -600,7 +635,13 @@ fun MainScreen(
                                         ),
                                     color = Color.Transparent
                                 ) {
-                                    Text(topBarText(CALENDAR,context), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
+                                    Text(
+                                        topBarText(CALENDAR,context),
+                                        modifier = Modifier
+                                            .padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3)
+                                            .controlCenterDrag(),
+                                        fontSize = 20.5.sp
+                                    )
                                 }
                             },
                             title = {
@@ -744,7 +785,10 @@ fun MainScreen(
                         TopAppBar(
                             colors = topBarTransplantColor(),
                             title = {
-                                Text(topBarText(CALENDAR,context))
+                                Text(
+                                    topBarText(CALENDAR,context),
+                                    modifier = Modifier.controlCenterDrag()
+                                )
                             },
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }

@@ -56,8 +56,8 @@ import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.sharednav.common.helper.NoneRoundShape
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.style.largeStyle
+import com.xah.shader.state.ShaderState
+import com.hfut.schedule.ui.style.shader.largeStyle
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 

@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.common.ui.shader.ShaderState
+import com.xah.shader.state.ShaderState
 
 
 import com.xah.navigation.util.LocalNavController

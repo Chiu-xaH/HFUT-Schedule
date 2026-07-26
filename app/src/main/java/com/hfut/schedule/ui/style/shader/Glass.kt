@@ -1,4 +1,4 @@
-package com.xah.common.ui.shader.style
+package com.hfut.schedule.ui.style.shader
 
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
@@ -22,8 +22,8 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.recordPosition
+import com.xah.shader.state.ShaderState
+import com.xah.shader.state.recordPosition
 import org.intellij.lang.annotations.Language
 
 data class GlassStyle(

@@ -244,6 +244,7 @@ dependencies {
         implementation(files("libs/navigation-${tag}.aar"))
         implementation(files("libs/shared-container-${tag}.aar"))
         implementation(files("libs/floating-window-${tag}.aar"))
+        implementation(files("libs/shader-${tag}.aar"))
     } else {
         implementation(libs.sharednav)
     }

@@ -63,7 +63,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.floating.util.LocalFloatingController
-import com.xah.navigation.anim.effect.TinyScaleTransitionEffect
+import com.xah.navigation.anim.effect.ScaleTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -226,7 +226,7 @@ fun GradeScreen(
                                         }
                                     }
                                 ),
-                                effect = TinyScaleTransitionEffect(true,false)
+                                effect = ScaleTransitionEffect(true, false)
                             )
                         },
                         icon = AverageGradeDestination.ICON,

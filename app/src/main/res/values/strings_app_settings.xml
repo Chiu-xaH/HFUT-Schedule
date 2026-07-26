@@ -6,9 +6,6 @@
     <string name="app_settings_predictive_back_gesture_description_supported">When the return gesture between some interfaces of the same Activity is not released, the interface that follows the hand shrinks.</string>
     <string name="app_settings_predictive_back_gesture_description_unsupported">Require Android 13+</string>
 
-    <string name="app_settings_control_center_title">Launch Center</string>
-    <string name="app_settings_control_center_description">Swipe right from the top bar or long press the back icon in the upper left to bring it up (some interfaces do not support this for the time being), which can quickly switch to the recently opened window and adjust some Settings. The sensitivity of sliding up and down after opening will decrease.</string>
-
     <string name="app_settings_study_interaction_title">Study interaction</string>
     <string name="app_settings_study_interaction_description">Study the gesture interaction operations within the application.</string>
 

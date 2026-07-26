@@ -5,8 +5,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -40,45 +41,42 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.Starter.backToHome
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.TopBarNavigationIconForControlCenter
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.SmallCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.HomeDestination
-
-import com.hfut.schedule.ui.screen.home.cube.screen.SharedAppearanceSettingsScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.nav.effect.CONTROL_CENTER_ALPHA
+import com.hfut.schedule.ui.screen.home.cube.screen.SharedAppearanceSettingsScreen
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
-import com.xah.container.util.LocalSharedRegistry
-import com.xah.navigation.controller.NavigationController
-import com.xah.navigation.model.action.ActionType
-import com.xah.navigation.model.action.LaunchMode
-import com.xah.navigation.util.LocalNavController
-import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 fun Modifier.limitDrawerSwipeArea(
@@ -108,44 +106,19 @@ fun Char.isChinese(): Boolean = this in '\u4e00'..'\u9fff'
 
 fun containsChinese(str: String): Boolean = str.any { it.isChinese() }
 
-
-fun getLabel(route : String) : String? {
-    val str = route.substringAfter("?")
-    val isFirstCharUpperCase = str.firstOrNull()?.isUpperCase() == true
-    if(isFirstCharUpperCase) {
-        return null
-    }
-    // 以&分割 类似 key=value&key=value
-    val list = str.split("&")
-    list.forEach { item ->
-        val key = item.substringBefore("=")
-        val value = item.substringAfter("=")
-        if((key.contains("title") || key.contains("name") || (key.contains("type")  && containsChinese(value)))) {
-            return value
-        }
-    }
-    return null
-}
-private const val TAB_STACK = 0
+const val TAB_STACK = 0
 private const val TAB_SETTINGS = 1
 private const val TAB_SEARCH = 2
-
-
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun ControlCenterScreen(
-    navController: NavigationController,
-    onExit : () -> Unit
-) {
-    val globalColor = MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+fun ControlCenterScreen() {
+    val navController = LocalNavController.current
+    val globalColor = MaterialTheme.colorScheme.surface.copy(1- CONTROL_CENTER_ALPHA)
     val state = rememberScrollState()
     // 项目到达底部
-    val currentRoute = navController.current()
-    var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val scope = rememberCoroutineScope()
     val contentColor = MaterialTheme.colorScheme.onSurface
 
     Scaffold(
@@ -161,7 +134,7 @@ fun ControlCenterScreen(
                     ),
                     title = {
                         Text(
-                            when(tab) {
+                            when(GlobalUiStateHolder.controllerCenterTab) {
                                 TAB_STACK -> "启动台"
                                 TAB_SEARCH -> "搜索"
                                 TAB_SETTINGS -> "外观设置"
@@ -172,16 +145,15 @@ fun ControlCenterScreen(
                     actions = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             var height by remember { mutableStateOf(0.dp) }
-                            if(tab == TAB_STACK && currentRoute?.destination != navController.startDestination){
+                            if(GlobalUiStateHolder.controllerCenterTab == TAB_STACK && navController.previousDestination() !is HomeDestination){
                                 IconButton (
                                     onClick = {
-                                        scope.launch {
-                                            Starter.backToHome(navController)
+                                        GlobalScope.launch {
+                                            navController.pop()
+                                            delay(50)
+                                            navController.awaitTransition()
+                                            navController.backToHome()
                                             showToast("已回到首页")
-                                            snapshotFlow { navController.isTransitioning }
-                                                .filter { !it }
-                                                .first()
-                                            onExit()
                                         }
                                     },
                                     modifier = Modifier.measureDpSize { _,h -> height = h },
@@ -197,9 +169,9 @@ fun ControlCenterScreen(
                                 VerticalDivider(modifier = Modifier.height(height/2))
                             }
                             IconButton(
-                                onClick = { tab = TAB_STACK },
+                                onClick = { GlobalUiStateHolder.controllerCenterTab = TAB_STACK },
                                 colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = if(tab == TAB_STACK) {
+                                    containerColor = if(GlobalUiStateHolder.controllerCenterTab == TAB_STACK) {
                                         globalColor.copy(.85f)
                                     } else {
                                         Color.Unspecified
@@ -209,9 +181,9 @@ fun ControlCenterScreen(
                                 Icon(painterResource(R.drawable.flash_on),null, tint = contentColor, modifier = Modifier.size(25.5.dp))
                             }
                             IconButton(
-                                onClick = { tab = TAB_SETTINGS },
+                                onClick = { GlobalUiStateHolder.controllerCenterTab = TAB_SETTINGS },
                                 colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = if(tab == TAB_SETTINGS) {
+                                    containerColor = if(GlobalUiStateHolder.controllerCenterTab == TAB_SETTINGS) {
                                         globalColor.copy(.85f)
                                     } else {
                                         Color.Unspecified
@@ -221,9 +193,9 @@ fun ControlCenterScreen(
                                 Icon(painterResource(R.drawable.format_paint),null, tint = contentColor)
                             }
                             IconButton(
-                                onClick = { tab = TAB_SEARCH },
+                                onClick = { GlobalUiStateHolder.controllerCenterTab = TAB_SEARCH },
                                 colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = if(tab == TAB_SEARCH) {
+                                    containerColor = if(GlobalUiStateHolder.controllerCenterTab == TAB_SEARCH) {
                                         globalColor.copy(.85f)
                                     } else {
                                         Color.Unspecified
@@ -236,14 +208,17 @@ fun ControlCenterScreen(
                         }
                     },
                     navigationIcon = {
+//                        TopBarNavigationIconForControlCenter(tint = contentColor)
                         IconButton(
-                            onClick = onExit
+                            onClick = {
+                                navController.pop()
+                            }
                         ) {
                             Icon(painterResource(R.drawable.arrow_back),null, tint = contentColor)
                         }
                     },
                 )
-                if(tab == TAB_SEARCH) {
+                if(GlobalUiStateHolder.controllerCenterTab == TAB_SEARCH) {
 //                    TextField(
 //                        modifier = Modifier
 //                            .fillMaxWidth()
@@ -272,7 +247,7 @@ fun ControlCenterScreen(
             }
         },
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(state)
@@ -280,11 +255,12 @@ fun ControlCenterScreen(
         ) {
             Box() {
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = tab == TAB_SEARCH,
+                    visible = GlobalUiStateHolder.controllerCenterTab == TAB_SEARCH,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
-//                    val list = GlobalUIStateHolder.funcMaps.filter { it.name.contains(input,ignoreCase = true) }
+                    val list = GlobalUiStateHolder.funcMaps
+//                        .filter { it.name.contains(input,ignoreCase = true) }
 //                    Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
 //                        for(i in list.indices step 2) {
 //                            val item = list[i]
@@ -293,7 +269,7 @@ fun ControlCenterScreen(
 //                                    .padding(horizontal = 3.dp, vertical = 3.dp)
 //                                    .weight(.5f)) {
 //                                    TransplantListItem(
-//                                        headlineContent = { ScrollText(item.name) },
+//                                        headlineContent = { ScrollText(stringResource(item.name)) },
 //                                        leadingContent = {
 //                                            Icon(painterResource(item.icon),null)
 //                                        },
@@ -308,7 +284,7 @@ fun ControlCenterScreen(
 //                                        .padding(horizontal = 3.dp, vertical = 3.dp)
 //                                        .weight(.5f)) {
 //                                        TransplantListItem(
-//                                            headlineContent = { ScrollText(item2.name) },
+//                                            headlineContent = { ScrollText(stringResource(item2.name)) },
 //                                            leadingContent = {
 //                                                Icon(painterResource(item2.icon),null)
 //                                            },
@@ -325,7 +301,7 @@ fun ControlCenterScreen(
 //                    }
                 }
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = tab == TAB_SETTINGS,
+                    visible = GlobalUiStateHolder.controllerCenterTab == TAB_SETTINGS,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
@@ -338,11 +314,11 @@ fun ControlCenterScreen(
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = tab == TAB_STACK,
+                    visible = GlobalUiStateHolder.controllerCenterTab == TAB_STACK,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
-                    RecentlyStackUI(navController,contentColor,globalColor,onExit)
+                    RecentlyStackUI(contentColor,globalColor)
                 }
             }
 //            InnerPaddingHeight(innerPadding,false)
@@ -352,30 +328,25 @@ fun ControlCenterScreen(
 
 @Composable
 fun RecentlyStackUI(
-    navController: NavigationController,
     contentColor : Color,
     globalColor : Color,
-    onExit : () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val queue = navController.stack.reversed()
+    val navController = LocalNavController.current
+    val queue = navController.stack.reversed().drop(1)
     val currentRoute = navController.stack.lastOrNull()
     Column {
-//                        DividerTextExpandedWith("固定项目") {
-
-//                        }
         if(queue.isNotEmpty()) {
-            DividerTextExpandedWith("最近使用",contentColor=contentColor) {
+            DividerTextExpandedWith("返回栈",contentColor=contentColor) {
                 LazyRow {
                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
                     items(queue.size) { index ->
                         val item = queue[index]
                         val dest = item.destination as NavDestination
-                        if(currentRoute == item ) {
+                        if(queue.first() == item) {
                             FilledTonalButton(
                                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = globalColor),
                                 onClick = {
-                                    onExit()
+                                    navController.pop()
                                 },
                             ) {
                                 Text(
@@ -387,16 +358,14 @@ fun RecentlyStackUI(
                             FilledTonalIconButton(
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = globalColor),
                                 onClick = {
-                                    scope.launch {
-                                        navController.push(item.destination, LaunchMode.PopToExisting())
-                                        snapshotFlow { navController.isTransitioning }
-                                            .filter { !it }
-                                            .first()
-                                        onExit()
+                                    GlobalScope.launch {
+                                        navController.pop()
+                                        delay(50)
+                                        navController.awaitTransition()
+                                        navController.push(dest, launchMode = LaunchMode.PopToExisting())
                                     }
                                 },
                             ) {
-//                                Icon(painterResource(R.drawable.stacks),null, tint = contentColor)
                                 Icon(painterResource(dest.icon),null, tint = contentColor)
                             }
                         }
@@ -420,14 +389,18 @@ fun RecentlyStackUI(
                             }
                         },
                         leadingContent = {
-//                            Icon(painterResource(R.drawable.stacks),null, tint = contentColor)
                             Icon(painterResource(dest.icon),null, tint = if(isCurrent) MaterialTheme.colorScheme.primary else  LocalContentColor. current)
                         },
                         trailingContent = {
                             if(index == 0 && item.destination != navController.startDestination) {
                                 FilledTonalIconButton (
                                     onClick = {
-                                        navController.pop()
+                                        GlobalScope.launch {
+                                            navController.pop()
+                                            delay(50)
+                                            navController.awaitTransition()
+                                            navController.pop()
+                                        }
                                     },
                                 ) {
                                     Icon(painterResource(R.drawable.delete),null)
@@ -437,20 +410,31 @@ fun RecentlyStackUI(
                         color = globalColor,
                         modifier = Modifier.clickable {
                             if(isCurrent) {
-                                onExit()
+                                navController.pop()
                             } else {
-                                scope.launch {
-                                    navController.push(item.destination, LaunchMode.PopToExisting())
-                                    snapshotFlow { navController.isTransitioning }
-                                        .filter { !it }
-                                        .first()
-                                    onExit()
+                                GlobalScope.launch {
+                                    navController.pop()
+                                    delay(50)
+                                    navController.awaitTransition()
+                                    navController.push(dest, launchMode = LaunchMode.PopToExisting())
                                 }
                             }
                         }
                     )
                 }
             }
+        }
+        DividerTextExpandedWith("历史",contentColor=contentColor) {
+            CardListItem(
+                headlineContent = { Text("正在开发") },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.history),null)
+                },
+                modifier = Modifier.clickable {
+
+                },
+                color = MaterialTheme.colorScheme.surface.copy(1-CONTROL_CENTER_ALPHA)
+            )
         }
     }
 }

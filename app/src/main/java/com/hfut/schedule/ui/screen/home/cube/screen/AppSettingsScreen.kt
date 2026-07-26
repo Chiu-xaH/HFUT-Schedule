@@ -94,7 +94,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
     ) {
         Spacer(modifier = Modifier.height(5.dp))
 //        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
-        val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
         val enableShowOverdueFocus by DataStoreManager.enableShowOverdueFocus.collectAsState(initial = false)
 //        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 
@@ -145,23 +144,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     },
                     modifier = Modifier.clickable {
                         scope.launch { DataStoreManager.savePredict(!enablePredictive) }
-                    }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(stringResource(R.string.app_settings_control_center_title)) },
-                    supportingContent = {
-                        Text("整改升级中，敬请期待")
-//                        Text(stringResource(R.string.app_settings_control_center_description))
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.flash_on),null)
-                    },
-                    trailingContent = {
-                        Switch(enabled = false, checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
-                    },
-                    modifier = Modifier.clickable {
-//                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
                     }
                 )
             }

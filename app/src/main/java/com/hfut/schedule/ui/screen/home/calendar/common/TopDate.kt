@@ -40,8 +40,8 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.style.smallStyle
+import com.xah.shader.state.ShaderState
+import com.hfut.schedule.ui.style.shader.smallStyle
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import java.time.LocalDate
 

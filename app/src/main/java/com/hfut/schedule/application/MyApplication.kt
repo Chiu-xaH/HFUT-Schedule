@@ -133,8 +133,6 @@ class MyApplication : Application() {
         const val APP_NAME = "聚在工大"
         // 邮箱后缀
         const val EMAIL = "@mail.hfut.edu.cn"
-        // 启动台遮罩
-        const val CONTROL_CENTER_BACKGROUND_MASK_ALPHA = 0.125f
         // Activity栈
         private val activities = Collections.synchronizedList(mutableListOf<Activity>())
         // 安全地退出App

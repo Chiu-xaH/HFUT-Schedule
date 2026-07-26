@@ -56,8 +56,8 @@ import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.logic.util.safeDiv
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.style.largeStyle
+import com.xah.shader.state.ShaderState
+import com.hfut.schedule.ui.style.shader.largeStyle
 import com.xah.container.util.LocalSharedRegistrySafely
 import kotlinx.coroutines.launch
 import kotlin.math.abs

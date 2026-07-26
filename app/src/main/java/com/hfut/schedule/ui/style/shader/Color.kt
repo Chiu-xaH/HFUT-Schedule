@@ -1,4 +1,4 @@
-package com.xah.common.ui.shader.style
+package com.hfut.schedule.ui.style.shader
 
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader

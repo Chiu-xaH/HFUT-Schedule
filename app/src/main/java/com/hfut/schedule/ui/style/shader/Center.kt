@@ -1,4 +1,4 @@
-package com.xah.common.ui.shader.style
+package com.hfut.schedule.ui.style.shader
 
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
@@ -16,7 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
-import com.xah.common.ui.shader.recordPosition
+import com.xah.shader.state.recordPosition
 import org.intellij.lang.annotations.Language
 import kotlin.math.abs
 

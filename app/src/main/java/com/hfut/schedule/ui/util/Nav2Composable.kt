@@ -7,6 +7,8 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
+import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.xah.floating.component.FloatingBackHandler
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.component.NavigationBackHandler
@@ -23,7 +25,6 @@ fun NavGraphBuilder.nav2Composable(
         arguments = arguments,
     ) {
         SharedNavBackHandler()
-//        DefaultBackHandler()
         this.content(it)
     }
 }
@@ -33,6 +34,11 @@ private fun SharedNavBackHandler() {
     val floatingController = LocalFloatingControllerSafely.current
     val navController = LocalNavControllerSafely.current
 
+    if(
+        navController?.currentDestination is ControlCenterDestination
+    ) {
+        NavigationBackHandler()
+    }
     if(navController?.isTransitioning == true) {
         NavigationBackHandler()
     }

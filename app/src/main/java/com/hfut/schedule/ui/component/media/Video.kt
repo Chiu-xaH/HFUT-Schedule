@@ -37,7 +37,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.util.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.common.ui.shader.style.scaleMirror
+import com.hfut.schedule.ui.style.shader.scaleMirror
 import com.xah.common.ui.style.mask
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers

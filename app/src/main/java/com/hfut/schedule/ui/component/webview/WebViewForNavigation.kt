@@ -29,9 +29,6 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
-
-
-import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.util.WebViewBackHandler
 import com.hfut.schedule.ui.util.WebViewBackIcon
 import com.hfut.schedule.ui.util.WebViewContent
@@ -79,7 +76,6 @@ fun WebViewScreenForNavigation(
         if (it.luminance() < 0.5f) Color.White else Color.Black
     } ?: MaterialTheme.colorScheme.primary
 
-    val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val route = remember { WebViewDestination.getKey(url) }
     LaunchedEffect(topColor) {
@@ -103,14 +99,6 @@ fun WebViewScreenForNavigation(
             url,
             onSearch = { showSearch = !showSearch }
         ) {
-            if(enableControlCenter) {
-                IconButton(onClick = {
-                    scope.launch {
-                        visible = false
-                        drawerState.animationOpen()
-                    }
-                }) { Icon(painterResource(id = R.drawable.flash_on), contentDescription = "") }
-            }
         }
     }
 

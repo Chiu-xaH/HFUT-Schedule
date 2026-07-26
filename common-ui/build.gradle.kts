@@ -38,6 +38,6 @@ dependencies {
     // 透明状态栏
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.activity.compose)
-    implementation(project(":common-logic"))
     implementation(libs.androidx.vectordrawable)
+    implementation(project(":common-logic"))
 }

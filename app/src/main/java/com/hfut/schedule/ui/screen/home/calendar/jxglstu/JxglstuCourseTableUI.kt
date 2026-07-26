@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safe
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.status.LoadingUI
-import com.xah.common.ui.shader.ShaderState
+import com.xah.shader.state.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.navigationBarHeightPadding

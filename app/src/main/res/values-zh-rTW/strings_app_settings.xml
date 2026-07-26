@@ -6,9 +6,6 @@
     <string name="app_settings_predictive_back_gesture_description_supported">部分界面通过系统返回手势不松手时有跟手的效果</string>
     <string name="app_settings_predictive_back_gesture_description_unsupported">需 Android 13+</string>
 
-    <string name="app_settings_control_center_title">启动台</string>
-    <string name="app_settings_control_center_description">从顶栏位置的向右轻扫或长按左上返回图标唤出(部分界面暂未支持)，可快速切换到最近打开的窗口和调整一些设置;打开后上下滑动的灵敏度会降低</string>
-
     <string name="app_settings_study_interaction_title">交互学习</string>
     <string name="app_settings_study_interaction_description">学习应用内的手势交互操作</string>
 

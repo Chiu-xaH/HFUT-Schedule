@@ -39,8 +39,8 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.style.largeStyle
+import com.xah.shader.state.ShaderState
+import com.hfut.schedule.ui.style.shader.largeStyle
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.NavigationBarSpacer
 import dev.chrisbanes.haze.HazeState

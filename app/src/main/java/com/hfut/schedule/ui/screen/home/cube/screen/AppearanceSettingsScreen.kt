@@ -124,13 +124,14 @@ import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.model.choice.SharedNavEffect
+import com.hfut.schedule.ui.nav.effect.CONTROL_CENTER_ALPHA
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.manager.AnimationSpecManager
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
-import com.xah.common.ui.shader.style.scaleMirror
+import com.hfut.schedule.ui.style.shader.scaleMirror
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
@@ -140,6 +141,7 @@ import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.shader.pixelExtension
 import com.xah.navigation.model.anim.EffectLevel
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -233,7 +235,7 @@ fun SharedAppearanceSettingsScreen(
     navController: NavigationController,
 ) {
     val backgroundColor =  if(isControlCenter) {
-        MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+        MaterialTheme.colorScheme.surface.copy(1- CONTROL_CENTER_ALPHA)
     } else {
         MaterialTheme.colorScheme.surface
     }
@@ -880,7 +882,14 @@ fun SharedAppearanceSettingsScreen(
                                 Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
                             },
                             modifier = Modifier.clickable {
-                                navController.push(CornerSettingsDestination)
+                                scope.launch {
+                                    if(isControlCenter) {
+                                        navController.pop()
+                                        delay(50)
+                                        navController.awaitTransition()
+                                    }
+                                    navController.push(CornerSettingsDestination)
+                                }
                             },
                             leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
                         )

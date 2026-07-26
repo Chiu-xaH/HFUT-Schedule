@@ -39,18 +39,19 @@ import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
 import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.largeCardColor
+import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
-import com.xah.common.ui.shader.ShaderState
-import com.xah.common.ui.shader.shaderSource
-import com.xah.common.ui.shader.style.GlassStyle
-import com.xah.common.ui.shader.style.glassLayer
-import com.xah.common.ui.shader.style.largeStyle
+import com.xah.shader.state.ShaderState
+import com.hfut.schedule.ui.style.shader.GlassStyle
+import com.hfut.schedule.ui.style.shader.glassLayer
+import com.hfut.schedule.ui.style.shader.largeStyle
 import com.xah.container.util.LocalSharedRegistrySafely
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.shader.state.shaderSource
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
@@ -64,6 +65,9 @@ fun enableEffect() : Boolean {
     val navController = LocalNavControllerSafely.current
     val floatingController = LocalFloatingControllerSafely.current
     val registry = LocalSharedRegistrySafely.current
+    if(navController?.currentDestination is ControlCenterDestination) {
+        return false
+    }
     if(navController?.isTransitioning == true) {
         return false
     }

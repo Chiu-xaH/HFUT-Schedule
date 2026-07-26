@@ -165,16 +165,20 @@ object Starter {
         context.startActivity(it)
     }
     @JvmStatic
-    fun backToHome(
-        navController: NavigationController,
+    fun NavigationController.backToHome(
         subStartDestination : BottomBarItems = BottomBarItems.FOCUS,
-        effect : TransitionEffect = navController.defaultTransitionEffect
     ) {
-        navController.push(
-            HomeDestination(subStartDestination),
-            launchMode = LaunchMode.Single(reuse = true, actionType = ActionType.POP),
-            effect = effect
-        )
+//        if(navController.containsDestination(navController.startDestination)) {
+//            navController.push(
+//                HomeDestination(subStartDestination),
+//                launchMode = LaunchMode.PopToExisting(),
+//            )
+//        } else {
+            push(
+                HomeDestination(subStartDestination),
+                launchMode = LaunchMode.Clear(),
+            )
+//        }
     }
     @JvmStatic
     suspend fun startWebUrlInner(
