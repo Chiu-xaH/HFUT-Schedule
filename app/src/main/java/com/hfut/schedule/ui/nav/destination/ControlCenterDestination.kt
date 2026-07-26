@@ -10,6 +10,7 @@ object ControlCenterDestination : NavDestination() {
     override val key = "control_center"
     override val title = text("启动台")
     override val icon = R.drawable.flash_on
+    override val enforcePlaceHolder = false
 
     @Composable
     override fun Content() {

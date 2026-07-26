@@ -226,7 +226,6 @@ private suspend fun deleteCustomBackground(context: Context) = withContext(Dispa
 
 
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun SharedAppearanceSettingsScreen(
     modifier : Modifier = Modifier,
@@ -1298,7 +1297,6 @@ fun CalendarUISettings(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
     if(animationSpeed == 0) return
