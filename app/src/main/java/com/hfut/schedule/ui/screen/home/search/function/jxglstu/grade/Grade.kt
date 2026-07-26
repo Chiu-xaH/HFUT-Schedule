@@ -5,9 +5,13 @@ import android.content.Context
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +30,7 @@ import com.hfut.schedule.ui.nav.destination.GradeDestination
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
@@ -42,8 +47,9 @@ fun Grade(
 )  {
     val navController = LocalNavController.current
     var loading by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+    val gradeCount by GlobalEventHolder.gradeCountChanged.flow.collectAsState(initial = null)
     val scope = rememberCoroutineScope()
+
     TransplantListItem(
         headlineContent = {
             ScrollText(text = GradeDestination.TITLE.asString())
@@ -52,7 +58,18 @@ fun Grade(
             if(loading) {
                 LoadingIcon()
             } else {
-                Icon(painterResource(GradeDestination.ICON), contentDescription = null)
+                BadgedBox(badge = {
+                    if(gradeCount != null && gradeCount != 0) {
+                        Badge {
+                            Text(text = gradeCount.toString())
+                        }
+                    }
+                }) {
+                    Icon(
+                        painterResource(id = R.drawable.article),
+                        contentDescription = "",
+                    )
+                }
             }
         },
         trailingContent = {
@@ -74,6 +91,7 @@ fun Grade(
             }
         },
         modifier = Modifier.clickable {
+            GlobalEventHolder.gradeCountChanged.clear()
             navController.push(GradeDestination(ifSaved))
         }
     )

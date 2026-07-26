@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,8 +67,10 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.model.choice.GradeAutoCheckMode
+import com.hfut.schedule.ui.nav.destination.GradeDestination
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
+import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -78,6 +82,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
@@ -255,7 +260,7 @@ fun FocusCard(
     val showWeb by DataStoreManager.enableShowFocusSchoolNet.collectAsState(true)
     val showCard by DataStoreManager.enableShowFocusSchoolCard.collectAsState(true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
-    val showGrade by DataStoreManager.enableShowFocusGrade.collectAsState(GradeAutoCheckMode.ONLY_VACATION.code)
+    val gradeCount by GlobalEventHolder.gradeCountChanged.flow.collectAsState(initial = null)
 
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
@@ -286,6 +291,45 @@ fun FocusCard(
                                 LoginWeb(true,vm,hazeState)
                             }
                     }
+                if(gradeCount != null && gradeCount != 0) {
+                    val dest = GradeDestination(ifSaved = false)
+                    AnimatedVisibility(
+                        visible = true,
+                        exit = AppAnimationManager.fadeAnimation.exit,
+                        enter = AppAnimationManager.fadeAnimation.enter
+                    ) {
+                        SharedContainer(
+                            key = null,
+//                            key = dest.key,
+                            shape = NoneRoundShape,
+                            containerColor = cardNormalColor()
+                        ) {
+                            TransplantListItem(
+                                colors = cardNormalColor(),
+                                headlineContent = {
+                                    Text(
+                                        if(gradeCount == 0) {
+                                            "无新出成绩"
+                                        } else {
+                                            "新出${gradeCount}门"
+                                        }
+                                    )
+                                },
+                                overlineContent = { Text("成绩单")},
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(id = R.drawable.article),
+                                        contentDescription = "",
+                                    )
+                                },
+                                modifier = Modifier.clickable {
+                                    GlobalEventHolder.gradeCountChanged.clear()
+                                    navController.push(dest)
+                                },
+                            )
+                        }
+                    }
+                }
                 Special()
                 if(showWeather) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()

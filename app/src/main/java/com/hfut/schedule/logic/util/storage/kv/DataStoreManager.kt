@@ -182,6 +182,7 @@ object DataStoreManager : IDataStore {
     private val SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON = booleanPreferencesKey("show_focus_school_card_add_button")
     private val SHOW_FOCUS_GRADE = intPreferencesKey("show_focus_grade")
     private val CAN_USE = booleanPreferencesKey("can_use")
+    private val UNI_APP_GRADE_COUNT = intPreferencesKey("uni_app_grade_count")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -271,6 +272,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableFocusSchoolCardAddButton(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON, value)
     suspend fun saveEnableUse(value: Boolean) = saveValue(CAN_USE, value)
     suspend fun saveEnableShowFocusGrade(value: GradeAutoCheckMode) = saveValue(SHOW_FOCUS_GRADE, value.code)
+    suspend fun saveUniAppGradeCount(value: Int) = saveValue(UNI_APP_GRADE_COUNT, value)
 
 
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
@@ -359,6 +361,7 @@ object DataStoreManager : IDataStore {
     val enableShowFocusGrade = getFlow(SHOW_FOCUS_GRADE,GradeAutoCheckMode.ONLY_VACATION.code)
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
     val enableUse = getFlow(CAN_USE, false)
+    val uniAppGradeCount = getFlow(UNI_APP_GRADE_COUNT, -1)
 
     fun getSyncDefaultCalendar(): Int? {
         return runBlocking {

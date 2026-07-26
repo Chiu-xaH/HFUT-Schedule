@@ -14,11 +14,14 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.ui.model.choice.GradeAutoCheckMode
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.UiStateHolder
 
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -158,6 +161,38 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
         }
         launch {
             UniAppRepository.updateExams(uniAppJwt)
+        }
+        launch {
+            val enableShowFocusGrade = when(DataStoreManager.enableShowFocusGrade.first()) {
+                GradeAutoCheckMode.ONLY_VACATION.code -> DateTimeManager.isInVacation()
+                GradeAutoCheckMode.ALWAYS.code -> true
+                else -> false
+            }
+            if(!enableShowFocusGrade) {
+                return@launch
+            }
+            var nowCount = (vm.uniAppGradesResp.state.first() as? NetworkUiState.Success)?.data?.flatMap { it.value }?.size
+            if(nowCount == null) {
+                // 未加载成绩
+                vm.getUniAppGrades(uniAppJwt)
+                nowCount = (vm.uniAppGradesResp.state.first() as? NetworkUiState.Success)?.data?.flatMap { it.value }?.size
+            }
+            if(nowCount == null) {
+                return@launch
+            }
+            val originalCount = DataStoreManager.uniAppGradeCount.first()
+            if(originalCount < 0) {
+                // 未初始化
+                DataStoreManager.saveUniAppGradeCount(nowCount)
+            } else {
+                // 比对数量是否一致
+                if(originalCount == nowCount) {
+                    GlobalEventHolder.gradeCountChanged.emit(0)
+                } else {
+                    GlobalEventHolder.gradeCountChanged.emit(nowCount - originalCount)
+                    DataStoreManager.saveUniAppGradeCount(nowCount)
+                }
+            }
         }
         // 检查更新
         launch {
