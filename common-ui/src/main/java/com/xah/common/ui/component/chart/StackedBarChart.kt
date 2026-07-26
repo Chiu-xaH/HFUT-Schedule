@@ -1,5 +1,6 @@
 package com.xah.common.ui.component.chart
 
+import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +31,8 @@ data class StackedBarData(
     val value: Float
 )
 
+private val NoneRoundShape = RoundedCornerShape(0.dp)
+
 @Composable
 fun StackedBarChart(
     data: List<StackedBarData>,
@@ -36,6 +40,7 @@ fun StackedBarChart(
     showLabel: Boolean = true,
     title: String? = null,
     baseColor: Color = MaterialTheme.colorScheme.primary,
+    shape : CornerBasedShape = MaterialTheme.shapes.extraSmall,
     colors: List<Color>? = null,
     barHeight: Float = 24f,
 ) {
@@ -69,10 +74,10 @@ fun StackedBarChart(
                         .background(
                             color = segmentColors.getOrElse(index) { baseColor },
                             shape = RoundedCornerShape(
-                                topStart = if (index == 0) 6.dp else 0.dp,
-                                bottomStart = if (index == 0) 6.dp else 0.dp,
-                                topEnd = if (index == data.lastIndex) 6.dp else 0.dp,
-                                bottomEnd = if (index == data.lastIndex) 6.dp else 0.dp,
+                                topStart = if (index == 0) shape.topStart else NoneRoundShape.topStart,
+                                bottomStart = if (index == 0) shape.bottomStart else NoneRoundShape.bottomStart,
+                                topEnd = if (index == data.lastIndex) shape.topEnd else NoneRoundShape.topEnd,
+                                bottomEnd = if (index == data.lastIndex) shape.bottomEnd else NoneRoundShape.bottomEnd,
                             )
                         ),
                     contentAlignment = Alignment.Center

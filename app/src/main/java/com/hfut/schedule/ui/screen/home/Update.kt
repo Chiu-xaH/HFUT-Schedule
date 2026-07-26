@@ -62,9 +62,9 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
         val communityToken = prefs.getString("TOKEN","")
         val jxglstuCookie = prefs.getString("redirect", "")
         val showToday = DataStoreManager.enableShowFocusToday.first()
-        val showEle = DataStoreManager.enableFocusElectric.first()
-        val showWeb = DataStoreManager.enableFocusSchoolNet.first()
-        val showCard = DataStoreManager.enableFocusSchoolCard.first()
+        val showEle = DataStoreManager.enableShowFocusElectric.first()
+        val showWeb = DataStoreManager.enableShowFocusSchoolNet.first()
+        val showCard = DataStoreManager.enableShowFocusSchoolCard.first()
 
         val webVpnCookie = Constant.WEBVPN_COOKIE_HEADER + DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         val uniAppJwt = DataStoreManager.uniAppJwt.first()

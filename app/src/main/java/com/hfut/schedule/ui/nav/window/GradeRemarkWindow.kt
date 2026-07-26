@@ -86,7 +86,7 @@ object GradeRemarkWindow: FloatingWindow() {
                             innerPadding,
                             Modifier
                                 .align(Alignment.TopStart)
-                                .padding(vertical = APP_HORIZONTAL_DP/2, horizontal = APP_HORIZONTAL_DP)
+                                .padding(vertical = APP_HORIZONTAL_DP/2, horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP/2)
                         )
                         LiquidButton(
                             modifier =

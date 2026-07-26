@@ -162,9 +162,7 @@ private fun CustomItemUI(item: CustomEventDTO,activity: Activity,hazeState: Haze
         },
         modifier = Modifier.combinedClickable(
             onClick = { description?.let { openOperation(it,context) } },
-            onDoubleClick = {
-                //双击操作
-            },
+            onDoubleClick = null,
             onLongClick = {
                 //长按操作
                 id = item.id

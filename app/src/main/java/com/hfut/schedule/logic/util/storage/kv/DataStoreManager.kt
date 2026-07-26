@@ -25,6 +25,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.model.choice.ColorMode
 import com.hfut.schedule.ui.model.ColorStyle
+import com.hfut.schedule.ui.model.choice.GradeAutoCheckMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.model.choice.SharedNavEffect
@@ -179,6 +180,7 @@ object DataStoreManager : IDataStore {
     private val SHOW_FOCUS_SCHOOL_CARD = booleanPreferencesKey("show_focus_school_card")
     private val SHOW_FOCUS_TODAY = booleanPreferencesKey("show_focus_today")
     private val SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON = booleanPreferencesKey("show_focus_school_card_add_button")
+    private val SHOW_FOCUS_GRADE = intPreferencesKey("show_focus_grade")
     private val CAN_USE = booleanPreferencesKey("can_use")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -268,6 +270,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableFocusSchoolCard(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD, value)
     suspend fun saveEnableFocusSchoolCardAddButton(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON, value)
     suspend fun saveEnableUse(value: Boolean) = saveValue(CAN_USE, value)
+    suspend fun saveEnableShowFocusGrade(value: GradeAutoCheckMode) = saveValue(SHOW_FOCUS_GRADE, value.code)
 
 
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
@@ -349,10 +352,11 @@ object DataStoreManager : IDataStore {
     val enableUserTrack = getFlow(USER_TRACK, true)
     val termStartDate = getFlow(TERM_START_DATE, getDefaultStartTerm())
     val enableShowFocusToday = getFlow(SHOW_FOCUS_TODAY,true)
-    val enableFocusElectric = getFlow(SHOW_FOCUS_ELECTRIC,true)
-    val enableFocusSchoolNet = getFlow(SHOW_FOCUS_SCHOOL_NET,true)
-    val enableFocusSchoolCard = getFlow(SHOW_FOCUS_SCHOOL_CARD,true)
-    val enableFocusSchoolCardAddButton = getFlow(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON,true)
+    val enableShowFocusElectric = getFlow(SHOW_FOCUS_ELECTRIC,true)
+    val enableShowFocusSchoolNet = getFlow(SHOW_FOCUS_SCHOOL_NET,true)
+    val enableShowFocusSchoolCard = getFlow(SHOW_FOCUS_SCHOOL_CARD,true)
+    val enableShowFocusSchoolCardAddButton = getFlow(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON,true)
+    val enableShowFocusGrade = getFlow(SHOW_FOCUS_GRADE,GradeAutoCheckMode.ONLY_VACATION.code)
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
     val enableUse = getFlow(CAN_USE, false)
 

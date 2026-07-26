@@ -20,6 +20,9 @@ import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
 import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseSearchResponse
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTime
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTimeResponse
@@ -62,6 +65,8 @@ import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
+import java.util.Locale.getDefault
 
 object JxglstuRepository : JxglstuRepositoryInf {
     private fun createJSONService(): JxglstuService {
@@ -954,4 +959,39 @@ object JxglstuRepository : JxglstuRepositoryInf {
         }
         exams
     } catch (e:Exception) { throw e }
+
+    override suspend fun getSelectCourseConfirmation(
+        cookie: String,
+        studentId: UiStateHolder<Int>,
+        holder: UiStateHolder<Map<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>>>
+    )  {
+        onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
+            launchRequestState(
+                holder = holder,
+                transformSuccess = { _, html -> parseSelectCourseConfirmation(html) },
+                request = { jxglstu.getSelectCourseConfirmation(cookie, sId, SemesterParser.getSemester()) }
+            )
+        }
+    }
+
+    @JvmStatic
+    private fun parseSelectCourseConfirmation(json : String) : Map<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>> = try {
+        val list = GsonInstance.fromJson(json, JxglstuSelectedCourseConfirmationResponse::class.java).detailModels
+        val result = mutableMapOf<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>>()
+        for (item in list) {
+            when(item.key.uppercase(getDefault())) {
+                JxglstuSelectedCourseConfirmationType.CURRENT_SEMESTER.name -> {
+                    result[JxglstuSelectedCourseConfirmationType.CURRENT_SEMESTER] = item.value
+                }
+                JxglstuSelectedCourseConfirmationType.HISTORY_SEMESTER.name -> {
+                    result[JxglstuSelectedCourseConfirmationType.HISTORY_SEMESTER] = item.value
+                }
+                JxglstuSelectedCourseConfirmationType.NAVER_NOT_PASSED.name -> {
+                    result[JxglstuSelectedCourseConfirmationType.NAVER_NOT_PASSED] = item.value
+                }
+            }
+        }
+        result
+    } catch (e:Exception) { throw e }
+
 }

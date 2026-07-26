@@ -88,9 +88,7 @@ fun PersonPart() {
                         onClick = {
                             navController.push(PersonInfoDestination)
                         },
-                        onDoubleClick = {
-                            showToast("长按展开，单击进入个人信息页面")
-                        }
+                        onDoubleClick = null
                     )
                 )
 

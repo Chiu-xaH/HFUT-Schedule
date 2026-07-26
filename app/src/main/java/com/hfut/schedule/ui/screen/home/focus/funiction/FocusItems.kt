@@ -553,9 +553,7 @@ fun CustomItemUI(
             onClick = {
                 navController.push(dest)
             },
-            onDoubleClick = {
-                showToast("长按删除，单击编辑")
-            },
+            onDoubleClick = null,
             onLongClick = {
                 //长按操作
                 id = item.id

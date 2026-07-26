@@ -124,6 +124,8 @@ import com.hfut.schedule.network.api.model.request.haile.HaiLeNearPositionReques
 import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
 
@@ -628,4 +630,7 @@ class NetWorkViewModel() : ViewModel() {
 
     var resetCodeResp = UiStateHolder<String>()
     suspend fun resetGuaGuaUseCode(newCode : String) = GuaGuaRepository.guaGuaReSetUseCode(newCode,resetCodeResp)
+
+    val jxglstuSelectedCourseConfirmationResp = UiStateHolder<Map<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>>>()
+    suspend fun getSelectCourseConfirmation(cookie : String) = JxglstuRepository.getSelectCourseConfirmation(cookie,studentId,jxglstuSelectedCourseConfirmationResp)
 }

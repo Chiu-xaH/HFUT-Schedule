@@ -14,6 +14,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -114,7 +115,9 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     }
     Column {
         InnerPaddingHeight(innerPadding,true)
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
             AssistChip(
                 onClick = { showItemYear = true },
@@ -139,11 +142,11 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
         }
 
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-            val context = LocalContext.current
             val bean = (uiState as NetworkUiState.Success).data
             val list = bean.scoreInfoList
-            if(list.isEmpty()) EmptyIcon()
-            else {
+            if(list.isEmpty()) {
+                EmptyIcon()
+            } else {
                 LazyColumn {
                     item { TotalGrade(vm) }
                     items(list.size) { index ->
@@ -153,21 +156,20 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             supportingContent = { Text("学分: " + item.credit + "   绩点: " + item.gpa + "   分数: ${item.score}") },
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.article),
+                                    painterResource(
+                                        if(item.passed) {
+                                            R.drawable.check_circle
+                                        } else {
+                                            R.drawable.error
+                                        }
+                                    ),
+                                    tint = if(item.passed) {
+                                        LocalContentColor.current
+                                    } else {
+                                        MaterialTheme.colorScheme.error
+                                    },
                                     contentDescription = "Localized description",
                                 )
-                            },
-//                            trailingContent = { Text(if (item.pass) "通过" else "未通过") },
-//                            index = index
-                        )
-                    }
-                    item {
-                        CardListItem(
-                            headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
-                            supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
-                            trailingContent = { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") },
-                            modifier = Modifier.clickable {
-                                refreshLogin(context)
                             },
                         )
                     }

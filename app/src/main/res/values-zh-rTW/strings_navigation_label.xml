@@ -26,6 +26,7 @@
     <string name="navigation_label_teacher_search">教师检索</string>
     <string name="navigation_label_work">就业</string>
     <string name="navigation_label_person_info">个人信息</string>
+    <string name="navigation_label_program_confirmation">选课确认</string>
     <string name="navigation_label_exam">考试</string>
     <string name="navigation_label_dormitory">寝室</string>
     <string name="navigation_label_notifications">消息中心</string>

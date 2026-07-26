@@ -66,7 +66,7 @@ fun SchoolCardItem(isFromFocus : Boolean) {
         if(text == "00") { text = context.getString(R.string.navigation_label_school_card_not_login) }
     }
 
-    val showAdd by DataStoreManager.enableFocusSchoolCardAddButton.collectAsState(true)
+    val showAdd by DataStoreManager.enableShowFocusSchoolCardAddButton.collectAsState(true)
 
     TransplantListItem(
         colors = cardNormalColor(),

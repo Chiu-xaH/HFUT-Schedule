@@ -5,11 +5,15 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,14 +42,17 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
+import com.hfut.schedule.ui.nav.destination.ProgramConfirmationDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
@@ -135,36 +142,68 @@ fun ProgramScreen(
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         bottomBar = {
-            val dest = ProgramCompetitionDestination(ifSaved)
             AnimatedVisibility(
                 visible = pageState.currentPage == PAGE_COMPETITION,
                 exit = AppAnimationManager.toBottomAnimation.exit,
                 enter = AppAnimationManager.toBottomAnimation.enter
             ) {
-                Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
+                val dest = ProgramCompetitionDestination(ifSaved)
+                Column (modifier = Modifier
+                    .bottomBarBlur(hazeState)
+                    .navigationBarsPadding()) {
                     NoPadding {
-                        LargeButton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(APP_HORIZONTAL_DP)
-                                .sharedContainer(
-                                    dest.key,
-                                    MaterialTheme.shapes.large,
-                                    MaterialTheme.colorScheme.surfaceVariant
-                                ),
-                            onClick = {
-                                scope.launch {
-                                    val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
-                                    if(json?.contains("children") == true || !ifSaved) navController.push(dest)
-                                    else refreshLogin(context)
-                                }
-                            },
-                            icon = ProgramCompetitionDestination.ICON,
-                            text = ProgramCompetitionDestination.TITLE.asString(),
-                            shape = NoneRoundShape,
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        )
+                        Row(
+                            modifier = Modifier.padding(APP_HORIZONTAL_DP)
+                        ) {
+                            LargeButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(.5f)
+                                    .sharedContainer(
+                                        dest.key,
+                                        MaterialTheme.shapes.medium,
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                onClick = {
+                                    scope.launch {
+                                        val json =
+                                            LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
+                                        if (json?.contains("children") == true || !ifSaved) navController.push(
+                                            dest
+                                        )
+                                        else refreshLogin(context)
+                                    }
+                                },
+                                icon = ProgramCompetitionDestination.ICON,
+                                text = "完成情况",
+                                shape = NoneRoundShape,
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.secondary
+                            )
+                            Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                            LargeButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(.5f)
+                                    .sharedContainer(
+                                        ProgramConfirmationDestination.key,
+                                        MaterialTheme.shapes.medium,
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                onClick = {
+                                    if (!ifSaved) {
+                                        navController.push(ProgramConfirmationDestination)
+                                    } else {
+                                        refreshLogin(context)
+                                    }
+                                },
+                                icon = ProgramConfirmationDestination.icon,
+                                text = ProgramConfirmationDestination.title.asString(),
+                                shape = NoneRoundShape,
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                     }
                 }
             }

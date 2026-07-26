@@ -89,7 +89,7 @@ fun GradeScreen(
     val pageState = rememberPagerState(initialPage = if(ifSaved) 0 else 1 ) { gradeOriginList.size }
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
-    var input by remember { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()

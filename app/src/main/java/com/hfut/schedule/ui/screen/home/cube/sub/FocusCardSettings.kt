@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.model.choice.GradeAutoCheckMode
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -79,7 +80,9 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
@@ -95,16 +98,15 @@ import kotlinx.coroutines.withContext
 fun FocusCardSettings(innerPadding : PaddingValues) {
 
     val enableShowFocusToday by DataStoreManager.enableShowFocusToday.collectAsState(true)
-    val enableFocusElectric by DataStoreManager.enableFocusElectric.collectAsState(true)
-    val enableFocusSchoolNet by DataStoreManager.enableFocusSchoolNet.collectAsState(true)
-    val enableFocusSchoolCard by DataStoreManager.enableFocusSchoolCard.collectAsState(true)
-    val enableFocusSchoolCardAddButton by DataStoreManager.enableFocusSchoolCardAddButton.collectAsState(true)
-
-    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
+    val enableShowFocusElectric by DataStoreManager.enableShowFocusElectric.collectAsState(true)
+    val enableShowFocusSchoolNet by DataStoreManager.enableShowFocusSchoolNet.collectAsState(true)
+    val enableShowFocusSchoolCard by DataStoreManager.enableShowFocusSchoolCard.collectAsState(true)
+    val enableShowFocusSchoolCardAddButton by DataStoreManager.enableShowFocusSchoolCardAddButton.collectAsState(true)
+    val enableShowFocusGrade by DataStoreManager.enableShowFocusGrade.collectAsState(GradeAutoCheckMode.ONLY_VACATION.code)
+    val enableShowFocusWeatherWarn by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
+    val electricUseHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
 
     val scope = rememberCoroutineScope()
-    val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
-
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
@@ -122,20 +124,20 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                     trailingContent = {
                         Row {
                             Switch(
-                                checked = enableFocusSchoolCardAddButton,
+                                checked = enableShowFocusSchoolCardAddButton,
                                 onCheckedChange = {
                                     scope.launch {
-                                        DataStoreManager.saveEnableFocusSchoolCardAddButton(!enableFocusSchoolCardAddButton)
+                                        DataStoreManager.saveEnableFocusSchoolCardAddButton(!enableShowFocusSchoolCardAddButton)
                                     }
                                 },
                                 thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")}
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Switch(
-                                checked = enableFocusSchoolCard,
+                                checked = enableShowFocusSchoolCard,
                                 onCheckedChange = {
                                     scope.launch {
-                                        DataStoreManager.saveEnableFocusSchoolCard(!enableFocusSchoolCard)
+                                        DataStoreManager.saveEnableFocusSchoolCard(!enableShowFocusSchoolCard)
                                     }
                                 }
                             )
@@ -152,7 +154,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                                 onClick = {
                                     scope.launch { DataStoreManager.saveUseHefeiElectric(true) }
                                 },
-                                selected = useHefei,
+                                selected = electricUseHefei,
                                 label = { Text("合肥校区") }
                             )
                             Spacer(Modifier.width(CARD_NORMAL_DP*2))
@@ -160,17 +162,17 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                                 onClick = {
                                     scope.launch { DataStoreManager.saveUseHefeiElectric(false) }
                                 },
-                                selected = !useHefei,
+                                selected = !electricUseHefei,
                                 label = { Text("宣城校区") }
                             )
                         }
                     },
                     trailingContent = {
                         Switch(
-                            checked = enableFocusElectric,
+                            checked = enableShowFocusElectric,
                             onCheckedChange = {
                                 scope.launch {
-                                    DataStoreManager.saveEnableFocusElectric(!enableFocusElectric)
+                                    DataStoreManager.saveEnableFocusElectric(!enableShowFocusElectric)
                                 }
                             }
                         )
@@ -182,10 +184,10 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
                     trailingContent = {
                         Switch(
-                            checked = enableFocusSchoolNet,
+                            checked = enableShowFocusSchoolNet,
                             onCheckedChange = {
                                 scope.launch {
-                                    DataStoreManager.saveEnableFocusSchoolNet(!enableFocusSchoolNet)
+                                    DataStoreManager.saveEnableFocusSchoolNet(!enableShowFocusSchoolNet)
                                 }
                             }
                         )
@@ -209,16 +211,30 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "气象预警(需要时显示)")} ,
+                    headlineContent = { Text(text = "气象预警")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.warning), contentDescription = "")},
-                    trailingContent = { Switch(checked = showWeather, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowWeatherWarn(!showWeather) } })}
+                    trailingContent = { Switch(checked = enableShowFocusWeatherWarn, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowWeatherWarn(!enableShowFocusWeatherWarn) } })}
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "调休提示(需要时显示)")} ,
+                    headlineContent = { Text(text = "调休提示")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.beach_access), contentDescription = "")},
                     trailingContent = { Switch(checked = true, onCheckedChange = { }, enabled = false)}
                 )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "成绩单")} ,
+                    supportingContent = { Text(text = "检查是否出现新的成绩")},
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.article), contentDescription = "")},
+                )
+                CustomSingleChoiceRow<GradeAutoCheckMode>(
+                    selected = enableShowFocusGrade,
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                ) {
+                    scope.launch {
+                        DataStoreManager.saveEnableShowFocusGrade(it)
+                    }
+                }
             }
         }
         InnerPaddingHeight(innerPadding,false)
@@ -235,11 +251,12 @@ fun FocusCard(
 ) {
     val navController = LocalNavController.current
     val showToday by DataStoreManager.enableShowFocusToday.collectAsState(true)
-    val showEle by DataStoreManager.enableFocusElectric.collectAsState(true)
-    val showWeb by DataStoreManager.enableFocusSchoolNet.collectAsState(true)
-    val showCard by DataStoreManager.enableFocusSchoolCard.collectAsState(true)
-
+    val showEle by DataStoreManager.enableShowFocusElectric.collectAsState(true)
+    val showWeb by DataStoreManager.enableShowFocusSchoolNet.collectAsState(true)
+    val showCard by DataStoreManager.enableShowFocusSchoolCard.collectAsState(true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
+    val showGrade by DataStoreManager.enableShowFocusGrade.collectAsState(GradeAutoCheckMode.ONLY_VACATION.code)
+
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = cardNormalColor(),

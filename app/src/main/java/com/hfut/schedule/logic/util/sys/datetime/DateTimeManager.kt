@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.util.sys.datetime
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.xah.common.logic.util.LogUtil
@@ -32,6 +33,8 @@ object DateTimeManager {
         )
        currentWeek =  ChronoUnit.WEEKS.between(firstWeekStartJxglstu, today) + 1
     }
+
+    fun isInVacation() : Boolean = currentWeek !in 1..MyApplication.MAX_WEEK
 
 
     // 解析

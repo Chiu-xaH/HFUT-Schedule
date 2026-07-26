@@ -78,6 +78,8 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.component.chart.StackedBarChart
+import com.xah.common.ui.component.chart.StackedBarData
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -242,7 +244,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
         modifier = Modifier.verticalScroll(state)
     ) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("详情",openBlurAnimation = false) {
+        DividerTextExpandedWith("进度",openBlurAnimation = false) {
             completion.let {
                 LoadingLargeCard(
                     prepare = false,
@@ -267,6 +269,13 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                                     modifier = Modifier.weight(.5f)
                                 )
                         }
+                    val list = completion.other.map {
+                        StackedBarData(
+                            label = it.name.substringBefore("课程"),
+                            value = it.full.toFloat()
+                        )
+                    }
+                    StackedBarChart(list)
                 }
             }
             Spacer(Modifier.height(APP_HORIZONTAL_DP))
@@ -325,7 +334,36 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
         }
 
 
-        LazyColumn() {
+        LazyColumn {
+            entity.requireInfo?.let { requireInfo ->
+                if(requireInfo.requiredCredits == 0.0) {
+                    return@let
+                }
+                item {
+                    val list = children.map {
+                        StackedBarData(
+                            label = it.type?.nameZh?.substringBefore("课程") ?: "--",
+                            value = it.requireInfo?.requiredCredits?.toFloat() ?: 0f
+                        )
+                    }
+                    CustomCard(color = MaterialTheme.colorScheme.secondaryContainer) {
+                        TransplantListItem(
+                            headlineContent = {
+                                Text(
+                                    "要求 " +
+                                            requireInfo.requiredCredits.let { num ->
+                                                if(num == 0.0) "" else "" + num + "学分"
+                                            }
+                                )
+                            },
+                            supportingContent = {
+                                entity.remark?.let { Text(it) }
+                            }
+                        )
+                        StackedBarChart(list)
+                    }
+                }
+            }
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
                 CardListItem(
@@ -337,21 +375,6 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
                     },
                 )
             }
-            entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0) {
-                    return@let
-                }
-                item {
-                    BottomTip(
-                        "要求 " +
-                                it.requiredCredits.let { num ->
-                                    if(num == 0.0) "" else "" + num + "学分"
-                                }
-                    )
-                }
-            }
-            entity.remark?.let { item { BottomTip(str = it) } }
-
         }
     }
     if(planCourses.isNotEmpty()) {
@@ -408,6 +431,27 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
 
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
         LazyColumn(state = state) {
+            entity.requireInfo?.let { requireInfo ->
+                if(requireInfo.requiredCredits == 0.0) {
+                    return@let
+                }
+                item {
+                    CardListItem(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        headlineContent = {
+                            Text(
+                                "要求 " +
+                                        requireInfo.requiredCredits.let { num ->
+                                            if(num == 0.0) "" else "" + num + "学分"
+                                        }
+                            )
+                        },
+                        supportingContent = {
+                            entity.remark?.let { Text(it) }
+                        }
+                    )
+                }
+            }
             items(searchList.size, key = { it }) {item ->
                 val listItem = searchList[item]
                 val course = listItem.course
@@ -439,20 +483,6 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
                     }
                 }
             }
-            entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0) {
-                    return@let
-                }
-                item {
-                    BottomTip(
-                        "要求 " +
-                                it.requiredCredits.let { num ->
-                                    if(num == 0.0) "" else "" + num + "学分"
-                                }
-                    )
-                }
-            }
-            entity.remark?.let { item { BottomTip(str = it) } }
         }
     }
 }

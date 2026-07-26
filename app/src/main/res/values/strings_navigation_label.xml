@@ -26,6 +26,7 @@
     <string name="navigation_label_teacher_search">Search teachers</string>
     <string name="navigation_label_work">Work</string>
     <string name="navigation_label_person_info">Person info</string>
+    <string name="navigation_label_program_confirmation">Course selection confirmation</string>
     <string name="navigation_label_exam">Exam</string>
     <string name="navigation_label_dormitory">Dormitory</string>
     <string name="navigation_label_notifications">Notification</string>

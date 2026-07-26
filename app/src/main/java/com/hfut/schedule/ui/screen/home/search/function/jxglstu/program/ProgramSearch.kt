@@ -41,11 +41,15 @@ import com.hfut.schedule.network.api.model.response.json.shared.ProgramSearchPla
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 
@@ -62,6 +66,8 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.ui.component.chart.StackedBarChart
+import com.xah.common.ui.component.chart.StackedBarData
 
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -77,7 +83,6 @@ import kotlinx.coroutines.launch
 fun ProgramSearchScreen(
     vm : NetWorkViewModel,
     ifSaved: Boolean,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -110,7 +115,18 @@ fun ProgramSearchScreen(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar(title)
+                    HazeBottomSheetTopBar(title) {
+                        LiquidButton(
+                            onClick = {
+                                // TODO json分享
+                                showDevelopingToast()
+                            },
+                            isCircle = true,
+                            backdrop = backdrop
+                        ) {
+                            Icon(painterResource(R.drawable.ios_share),null)
+                        }
+                    }
                 },
             ) { innerPadding ->
                 Column(
@@ -137,6 +153,18 @@ fun ProgramSearchScreen(
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
+                    actions = {
+                        LiquidButton(
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            onClick = {
+                                // TODO json分享
+                                showDevelopingToast()
+                            },
+                            backdrop = backdrop
+                        ) {
+                            Text("从文件导入")
+                        }
+                    }
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -174,7 +202,6 @@ fun ProgramSearchScreen(
                     )
                 }
             }
-
         },
     ) { innerPadding ->
         Column(
@@ -235,7 +262,7 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, id : Int, ifSaved: Boolean, 
         refreshNetwork()
     }
 
-    CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "培养方案较大 加载中") {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val bean = (uiState as NetworkUiState.Success).data
         ProgramSearchChildrenUI(bean,hazeState,vm,ifSaved)
     }
@@ -286,6 +313,35 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
 
 
         LazyColumn {
+            entity.requireInfo?.let { requireInfo ->
+                if(requireInfo.requiredCredits == 0.0) {
+                    return@let
+                }
+                item {
+                    val list = children.map {
+                        StackedBarData(
+                            label = it.type?.nameZh?.substringBefore("课程") ?: "--",
+                            value = it.requireInfo?.requiredCredits?.toFloat() ?: 0f
+                        )
+                    }
+                    CustomCard(color = MaterialTheme.colorScheme.secondaryContainer) {
+                        TransplantListItem(
+                            headlineContent = {
+                                Text(
+                                    "要求 " +
+                                            requireInfo.requiredCredits.let { num ->
+                                                if(num == 0.0) "" else "" + num + "学分"
+                                            }
+                                )
+                            },
+                            supportingContent = {
+                                entity.remark?.let { Text(it) }
+                            }
+                        )
+                        StackedBarChart(list)
+                    }
+                }
+            }
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
                 CardListItem(
@@ -297,24 +353,6 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
                     }
                 )
             }
-            entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
-                    return@let
-                }
-                item {
-                    BottomTip(
-                        "要求 " +
-                                it.requiredCredits.let { num ->
-                                    if(num == 0.0) "" else "" + num + "学分"
-                                }
-                                +
-                                it.requiredCourseNum.let { num ->
-                                    if(num == 0) "" else " " + num + "门"
-                                }
-                    )
-                }
-            }
-            entity.remark?.let { item { BottomTip(str = it) } }
         }
     }
     if(planCourses.isNotEmpty()) {
@@ -369,6 +407,27 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
 
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
         LazyColumn {
+            entity.requireInfo?.let { requireInfo ->
+                if(requireInfo.requiredCredits == 0.0) {
+                    return@let
+                }
+                item {
+                    CardListItem(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        headlineContent = {
+                            Text(
+                                "要求 " +
+                                        requireInfo.requiredCredits.let { num ->
+                                            if(num == 0.0) "" else "" + num + "学分"
+                                        }
+                            )
+                        },
+                        supportingContent = {
+                            entity.remark?.let { Text(it) }
+                        }
+                    )
+                }
+            }
             items(searchList.size, key = { it }) {item ->
                 val listItem = searchList[item]
                 val course = listItem.course
@@ -387,24 +446,6 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
                     },
                 )
             }
-            entity.requireInfo?.let {
-                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
-                    return@let
-                }
-                item {
-                    BottomTip(
-                        "要求 " +
-                                it.requiredCredits.let { num ->
-                                    if(num == 0.0) "" else "" + num + "学分"
-                                }
-                                +
-                                it.requiredCourseNum.let { num ->
-                                    if(num == 0) "" else " " + num + "门"
-                                }
-                    )
-                }
-            }
-            entity.remark?.let { item { BottomTip(str = it) } }
         }
     }
 }

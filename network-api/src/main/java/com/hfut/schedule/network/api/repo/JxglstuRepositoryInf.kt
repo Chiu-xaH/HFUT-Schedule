@@ -4,6 +4,8 @@ import com.google.gson.JsonObject
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
+import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTime
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuLesson
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTermLessonResponse
@@ -157,5 +159,5 @@ interface JxglstuRepositoryInf {
     fun parseDatumCourse(result: String) : List<JxglstuLesson>
     suspend fun getExam(cookie: String, studentId : UiStateHolder<Int>, examHolder : UiStateHolder<List<JxglstuExam>>)
     suspend fun parseJxglstuExam(html : String) : List<JxglstuExam>
-
+    suspend fun getSelectCourseConfirmation(cookie: String, studentId : UiStateHolder<Int>, holder : UiStateHolder< Map<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>>>)
 }

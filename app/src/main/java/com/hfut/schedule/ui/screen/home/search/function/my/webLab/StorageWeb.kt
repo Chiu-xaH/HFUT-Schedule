@@ -116,7 +116,7 @@ fun StorageWeb(hazeState : HazeState) {
                                             Starter.startWebUrlInner(context,url,name, icon = WebFolderDestination.icon)
                                         }
                                     },
-                                    onDoubleClick = {},
+                                    onDoubleClick = null,
                                     onLongClick = {
                                         selectedDelTitle = name
                                         selectedDelId = id
