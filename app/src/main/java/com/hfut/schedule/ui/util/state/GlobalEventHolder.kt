@@ -7,15 +7,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * 全局事件放在这里，用Flow模拟事件总线
- *
- * 用于跨页面通知，不是用来存状态的，存状态去GlobalUiStateHolder或者ViewModel
+ * 全局事件放在这里，用Flow模拟事件总线，用于跨页面通知，GlobalEventHolder强调事件驱动
  */
 object GlobalEventHolder {
     /**
-     * 普通事件，发送后不会保存，没人接收就丢失
+     * 事件发送后，被消费后即清除
      */
-    class EventFlow<T> {
+    class AutoEventFlow<T> {
         private val _flow = MutableSharedFlow<T>(extraBufferCapacity = 1)
         val flow = _flow.asSharedFlow()
 
@@ -23,21 +21,14 @@ object GlobalEventHolder {
     }
 
     /**
-     * 可消费事件，事件会一直保存，直到手动消费
+     * 事件发送后，即使被消费也不会被清除，直到手动clear
      */
-    class SavedEventFlow<T> {
+    class ManualEventFlow<T> {
         private val _flow = MutableStateFlow<T?>(null)
         val flow = _flow.asStateFlow()
 
         fun emit(value: T) {
             _flow.value = value
-        }
-
-        fun consume(block: (T) -> Unit) {
-            _flow.value?.let {
-                block(it)
-                _flow.value = null
-            }
         }
 
         fun clear() {
@@ -49,19 +40,25 @@ object GlobalEventHolder {
     }
 
     // 前台、后台
-    val appStatusChanged = EventFlow<AppStatus>()
+    val appStatusChanged = AutoEventFlow<AppStatus>()
     // 调休日设置
-    val specialWorkDayChanged = EventFlow<Unit>()
-    val gradeCountChanged = SavedEventFlow<Int>()
+    val specialWorkDayChanged = AutoEventFlow<Unit>()
+    val gradeCountChanged = ManualEventFlow<Int>()
+
     /**
-     * //  发射
-     * GlobalEventHolder.isLoginEvent.emit(true)
+     * // 发射
+     * GlobalEventHolder.gradeCountChanged.emit(0)
      *
-     * //  收集
+     * // 收集
      * LaunchedEffect(Unit) {
-     *     GlobalEventHolder.isLoginEvent.flow.collect { event ->
-     *         XX
+     *     GlobalEventHolder.gradeCountChanged.flow.collect { event ->
+     *         XXX
      *     }
+     * }
+     * // 收集
+     * val gradeCount by GlobalEventHolder.gradeCountChanged.flow.collectAsState(initial = null)
+     * if (gradeCount != null) {
+     *     XXX
      * }
      */
 }

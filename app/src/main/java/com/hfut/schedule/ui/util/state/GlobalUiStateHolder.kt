@@ -45,15 +45,20 @@ import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.util.TAB_STACK
+import com.xah.shader.state.ShaderState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
- * 全局共享的UI变量放在这里
+ * 全局共享的UI状态放在这里，GlobalUiStateHolder强调UI的状态
+ *
+ * 有些应该放在 GlobalEventHolder，比如 refreshImageCode，是一个事件驱动，有时间挪一下
  */
 object GlobalUiStateHolder {
     var postedUse = false
     var excludeJxglstu by mutableStateOf(false)
     var refreshImageCode by mutableIntStateOf(1)
+
+    var shaderState by mutableStateOf<ShaderState?>(null)
 
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
