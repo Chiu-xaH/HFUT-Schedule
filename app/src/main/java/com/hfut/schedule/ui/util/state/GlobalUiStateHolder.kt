@@ -56,7 +56,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 object GlobalUiStateHolder {
     var postedUse = false
     var excludeJxglstu by mutableStateOf(false)
-    var refreshImageCode by mutableIntStateOf(1)
 
     var shaderState by mutableStateOf<ShaderState?>(null)
 

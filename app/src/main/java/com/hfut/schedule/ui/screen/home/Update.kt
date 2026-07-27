@@ -21,7 +21,6 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.common.logic.state.UiStateHolder
 
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -187,9 +186,9 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
             } else {
                 // 比对数量是否一致
                 if(originalCount == nowCount) {
-                    GlobalEventHolder.gradeCountChanged.emit(0)
+                    GlobalEventHolder.gradeCountCheckCallback.emit(0)
                 } else {
-                    GlobalEventHolder.gradeCountChanged.emit(nowCount - originalCount)
+                    GlobalEventHolder.gradeCountCheckCallback.emit(nowCount - originalCount)
                     DataStoreManager.saveUniAppGradeCount(nowCount)
                 }
             }

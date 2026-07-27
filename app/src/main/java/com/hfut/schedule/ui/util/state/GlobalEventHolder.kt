@@ -39,23 +39,26 @@ object GlobalEventHolder {
             get() = _flow.value
     }
 
-    // 前台、后台
-    val appStatusChanged = AutoEventFlow<AppStatus>()
-    // 调休日设置
-    val specialWorkDayChanged = AutoEventFlow<Unit>()
-    val gradeCountChanged = ManualEventFlow<Int>()
+    // 应用前后台切换
+    val appStatusChangeCallback = AutoEventFlow<AppStatus>()
+    // 调休日发生修改
+    val specialWorkDayChangeCallback = AutoEventFlow<Unit>()
+    // 检查成绩单数目是否发现变化
+    val gradeCountCheckCallback = ManualEventFlow<Int>()
+    // 刷新图片验证码
+    val captchaRefreshCallback = AutoEventFlow<Unit>()
 
     /**
      * // 发射
      * GlobalEventHolder.gradeCountChanged.emit(0)
      *
-     * // 收集
+     * // AutoEventFlow收集方法
      * LaunchedEffect(Unit) {
      *     GlobalEventHolder.gradeCountChanged.flow.collect { event ->
      *         XXX
      *     }
      * }
-     * // 收集
+     * // ManualEventFlow收集方法
      * val gradeCount by GlobalEventHolder.gradeCountChanged.flow.collectAsState(initial = null)
      * if (gradeCount != null) {
      *     XXX

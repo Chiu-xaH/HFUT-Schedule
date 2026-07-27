@@ -36,7 +36,7 @@ class MyApplication : Application() {
         // 初始化日志工具
         LogUtil.init(APP_NAME)
         // 控制SharedNav库的日志 需要联调排查SharedNav错误时传入debug=BuildConfig.DEBUG，平常时不需要开启日志。要不然Debug包动画有点卡
-        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",true)
+        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",false)
         // 注册DeepLink
         DeepLinkRegistry.init(deepLinks)
         GlobalScope.launch {
@@ -52,11 +52,11 @@ class MyApplication : Application() {
         ProcessLifecycleOwner.get().lifecycle.addObserver(
             object : DefaultLifecycleObserver {
                 override fun onStart(owner: LifecycleOwner) {
-                    GlobalEventHolder.appStatusChanged.emit(AppStatus.FOREGROUND)
+                    GlobalEventHolder.appStatusChangeCallback.emit(AppStatus.FOREGROUND)
                 }
 
                 override fun onStop(owner: LifecycleOwner) {
-                    GlobalEventHolder.appStatusChanged.emit(AppStatus.BACKGROUND)
+                    GlobalEventHolder.appStatusChangeCallback.emit(AppStatus.BACKGROUND)
                 }
             }
         )

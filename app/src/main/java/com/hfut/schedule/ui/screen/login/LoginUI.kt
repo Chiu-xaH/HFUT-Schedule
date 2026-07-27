@@ -104,6 +104,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -172,7 +173,7 @@ private fun loginClick(
                                     refresh(vm)
                                 }
                                 StatusCode.UNAUTHORIZED.code.toString() -> {
-                                    scope.launch { refresh(vm) }
+                                    onResult("密码错误")
                                     refresh(vm)
                                 }
                                 StatusCode.OK.code.toString() -> {
@@ -237,9 +238,15 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
         val cookies = if(GlobalUiStateHolder.webVpn) Constant.WEBVPN_COOKIE_HEADER + webVpnCookie else {
             (jSessionId as? NetworkUiState.Success)?.data?.jSession
         }
-
+        LaunchedEffect(Unit) {
+            GlobalEventHolder.captchaRefreshCallback.flow.collect {
+                LogUtil.debug("refreshCaptcha for captchaRefreshCallback")
+                imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
+            }
+        }
         // webVpn开关变化时重载
-        LaunchedEffect(GlobalUiStateHolder.webVpn, GlobalUiStateHolder.refreshImageCode,cookies) {
+        LaunchedEffect(GlobalUiStateHolder.webVpn,cookies) {
+            LogUtil.debug("refreshCaptcha")
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
         }
         // 请求图片
@@ -644,7 +651,7 @@ private suspend fun refresh(vm: LoginViewModel) = withContext(Dispatchers.IO) {
         vm.executionAndSession.clear()
         vm.getCookie()
     }
-    launch { GlobalUiStateHolder.refreshImageCode++ }
+    launch { GlobalEventHolder.captchaRefreshCallback.emit(Unit) }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

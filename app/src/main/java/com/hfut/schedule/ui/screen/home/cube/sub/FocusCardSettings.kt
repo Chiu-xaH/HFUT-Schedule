@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,7 +68,6 @@ import com.hfut.schedule.ui.model.choice.GradeAutoCheckMode
 import com.hfut.schedule.ui.nav.destination.GradeDestination
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
-import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -260,7 +257,7 @@ fun FocusCard(
     val showWeb by DataStoreManager.enableShowFocusSchoolNet.collectAsState(true)
     val showCard by DataStoreManager.enableShowFocusSchoolCard.collectAsState(true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
-    val gradeCount by GlobalEventHolder.gradeCountChanged.flow.collectAsState(initial = null)
+    val gradeCount by GlobalEventHolder.gradeCountCheckCallback.flow.collectAsState(initial = null)
 
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
@@ -323,7 +320,7 @@ fun FocusCard(
                                     )
                                 },
                                 modifier = Modifier.clickable {
-                                    GlobalEventHolder.gradeCountChanged.clear()
+                                    GlobalEventHolder.gradeCountCheckCallback.clear()
                                     navController.push(dest)
                                 },
                             )
@@ -466,7 +463,7 @@ fun Special(
     }
     LaunchedEffect(showBottomSheet) {
         if(!showBottomSheet) {
-            GlobalEventHolder.specialWorkDayChanged.emit(Unit)
+            GlobalEventHolder.specialWorkDayChangeCallback.emit(Unit)
         }
     }
 

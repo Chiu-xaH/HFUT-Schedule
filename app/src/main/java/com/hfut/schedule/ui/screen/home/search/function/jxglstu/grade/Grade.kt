@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
@@ -18,12 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.nav.destination.GradeDestination
@@ -47,7 +44,7 @@ fun Grade(
 )  {
     val navController = LocalNavController.current
     var loading by remember { mutableStateOf(false) }
-    val gradeCount by GlobalEventHolder.gradeCountChanged.flow.collectAsState(initial = null)
+    val gradeCount by GlobalEventHolder.gradeCountCheckCallback.flow.collectAsState(initial = null)
     val scope = rememberCoroutineScope()
 
     TransplantListItem(
@@ -91,7 +88,7 @@ fun Grade(
             }
         },
         modifier = Modifier.clickable {
-            GlobalEventHolder.gradeCountChanged.clear()
+            GlobalEventHolder.gradeCountCheckCallback.clear()
             navController.push(GradeDestination(ifSaved))
         }
     )

@@ -68,12 +68,7 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 选课确认功能","位于 查询中心-培养方案-选课确认")//
-        UpdateItems("新增 在聚焦首页可检查新出成绩并提示","位于 选项-偏好与配置-聚焦首卡片功能-成绩，默认已经开启此功能",to = To.Screen(SettingsFocusCardDestination))//
-        UpdateItems("新增 平均成绩支持显示不参与计算的项目", to = To.Screen(AverageGradeDestination(false)))//
-        UpdateItems("回归 启动台","永远开启，不再设置开关，在左上角返回箭头处下拉即可唤出")//
-        UpdateItems("重构 部分存储逻辑的代码","部分开关被重置为默认值属正常现象，正在重构代码")//
-        UpdateItems("优化 部分点击事件的延迟")//
+        UpdateItems("修复 应用转场动画性能略下降的问题","由于之前在做模块联调时临时打开了全量日志，然后忘记关闭了，导致在正式版也频繁打印日志，造成性能略有下降")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("反射扫描destination文件夹")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")

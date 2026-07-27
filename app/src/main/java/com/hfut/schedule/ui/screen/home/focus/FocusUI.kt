@@ -145,7 +145,7 @@ fun TodayScreen(
 
         refresh()
 
-        GlobalEventHolder.specialWorkDayChanged.flow.collect {
+        GlobalEventHolder.specialWorkDayChangeCallback.flow.collect {
             refresh()
         }
     }
@@ -158,7 +158,7 @@ fun TodayScreen(
 
         refresh()
 
-        GlobalEventHolder.specialWorkDayChanged.flow.collect {
+        GlobalEventHolder.specialWorkDayChangeCallback.flow.collect {
             refresh()
         }
     }
