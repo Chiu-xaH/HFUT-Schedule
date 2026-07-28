@@ -24,15 +24,15 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.BarChart
@@ -55,7 +55,14 @@ fun AcademicReportSection(
     val communityGradeState by vm.gradeFromCommunityResponse.state.collectAsState()
     val allCommunityGradesState by vm.allSemestersGradesFromCommunityResponse.state.collectAsState()
     var initialSemesterSet by remember { mutableStateOf(false) }
-    val communityToken = prefs.getString("TOKEN", "").orEmpty()
+    val communityToken by DataStoreManager.communityToken.collectAsState(initial = "")
+    val storedJxglstuCookie by DataStoreManager.jxglstuCookie.collectAsState(initial = "")
+    val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
+    val jxglstuCookie = if (GlobalUiStateHolder.webVpn) {
+        if (webVpnCookie.isNotEmpty()) Constant.WEBVPN_COOKIE_HEADER + webVpnCookie else ""
+    } else {
+        storedJxglstuCookie
+    }
 
     val uniAppGrades = (uniAppState as? NetworkUiState.Success)?.data
     val jxglstuGrades = (jxglstuState as? NetworkUiState.Success)?.data
@@ -70,9 +77,9 @@ fun AcademicReportSection(
     }
 
     val refreshNetwork: suspend () -> Unit = m@ {
-        getJxglstuCookie()?.let { cookie ->
+        if (jxglstuCookie.isNotEmpty()) {
             vm.jxglstuGradeData.clear()
-            vm.getGradeFromJxglstu(cookie, null)
+            vm.getGradeFromJxglstu(jxglstuCookie, null)
         }
         if (!hasUniAppGradeData(uniAppGrades)) {
             var cookie = DataStoreManager.uniAppJwt.first()
@@ -85,7 +92,7 @@ fun AcademicReportSection(
         }
     }
 
-    LaunchedEffect(Unit) { refreshNetwork() }
+    LaunchedEffect(jxglstuCookie) { refreshNetwork() }
 
     LaunchedEffect(semester, communityToken) {
         if (semester <= 0) return@LaunchedEffect

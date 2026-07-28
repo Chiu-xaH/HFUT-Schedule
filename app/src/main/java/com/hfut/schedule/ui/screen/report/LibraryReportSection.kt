@@ -18,8 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -35,18 +34,17 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期") {
     val libraryStatus by vm.libraryStatusResp.state.collectAsState()
     val borrowedBooks by vm.libraryBorrowedResp.state.collectAsState()
+    val libraryToken by DataStoreManager.libraryToken.collectAsState(initial = "")
 
-    LaunchedEffect(Unit) {
-        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "") ?: ""
-        if (token.isNotEmpty() && libraryStatus !is NetworkUiState.Success) {
+    LaunchedEffect(libraryToken) {
+        if (libraryToken.isNotEmpty() && libraryStatus !is NetworkUiState.Success) {
             vm.libraryStatusResp.clear()
-            vm.getLibraryStatus(token)
+            vm.getLibraryStatus(libraryToken)
         }
     }
 
     DividerTextExpandedWith("图书馆报表") {
-        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "") ?: ""
-        if (token.isEmpty()) {
+        if (libraryToken.isEmpty()) {
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
                     headlineContent = { Text("未登录图书馆") },

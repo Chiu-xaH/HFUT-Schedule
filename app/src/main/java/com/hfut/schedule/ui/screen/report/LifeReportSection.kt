@@ -26,7 +26,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -48,44 +48,43 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
     val weeklyScoresState by vm.allDormitoryScoresResp.state.collectAsState()
     val huiXinSchoolNetState by vm.huiXinSchoolNetInfoResp.state.collectAsState()
     val schoolNetUsageState by vm.schoolNetSemesterUsageResp.state.collectAsState()
+    val communityToken by DataStoreManager.communityToken.collectAsState(initial = "")
+    val huiXinAuth by DataStoreManager.huiXinAuth.collectAsState(initial = "")
 
     val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
     val isXuanCheng = remember { getCampusRegion() == CampusRegion.XUANCHENG }
 
     val refreshHuiXinSchoolNet: suspend () -> Unit = {
         try {
-            val auth = prefs.getString("auth", "") ?: ""
-            if (auth.isEmpty()) {
+            if (huiXinAuth.isEmpty()) {
                 vm.clearHuiXinSchoolNetInfo()
             } else {
-                vm.getHuiXinSchoolNetInfo("bearer $auth")
+                vm.getHuiXinSchoolNetInfo("bearer $huiXinAuth")
             }
         } catch (e: Exception) {
             LogUtil.error(e)
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(communityToken) {
         try {
-            val token = prefs.getString("TOKEN", "") ?: ""
-            if (token.isEmpty()) return@LaunchedEffect
+            if (communityToken.isEmpty()) return@LaunchedEffect
 
             vm.dormitoryFromCommunityResp.clear()
-            vm.getDormitory(token)
+            vm.getDormitory(communityToken)
 
             vm.dormitoryInfoFromCommunityResp.clear()
-            vm.getDormitoryInfo(token)
+            vm.getDormitoryInfo(communityToken)
         } catch (e: Exception) {
             LogUtil.error(e)
         }
     }
 
-    LaunchedEffect(semester, allSemesters) {
+    LaunchedEffect(semester, allSemesters, communityToken) {
         try {
-            val token = prefs.getString("TOKEN", "") ?: ""
-            if (token.isNotEmpty()) {
+            if (communityToken.isNotEmpty()) {
                 val semStr = SemesterParser.parseSemesterForDormitory(semester)
-                vm.getAllDormitoryScores(token, semStr, semester)
+                vm.getAllDormitoryScores(communityToken, semStr, semester)
             }
         } catch (e: Exception) {
             LogUtil.error(e)
@@ -102,7 +101,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         }
     }
 
-    LaunchedEffect(isXuanCheng) {
+    LaunchedEffect(isXuanCheng, huiXinAuth) {
         if (isXuanCheng) refreshHuiXinSchoolNet()
     }
 

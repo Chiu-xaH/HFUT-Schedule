@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import com.xah.common.logic.state.NetworkUiState
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -23,16 +23,16 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 @Composable
 fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
     val uiState by vm.cardPredictedResponse.state.collectAsState()
+    val huiXinAuth by DataStoreManager.huiXinAuth.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = rN@ {
         if (uiState is NetworkUiState.Success) return@rN
-        val auth = prefs.getString("auth", "")
-        if (auth.isNullOrEmpty()) return@rN
+        if (huiXinAuth.isEmpty()) return@rN
         vm.cardPredictedResponse.clear()
-        vm.getCardPredicted("bearer $auth")
+        vm.getCardPredicted("bearer $huiXinAuth")
     }
 
-    LaunchedEffect(Unit) { refreshNetwork() }
+    LaunchedEffect(huiXinAuth) { refreshNetwork() }
 
     DividerTextExpandedWith("消费报表", false) {
         when (uiState) {

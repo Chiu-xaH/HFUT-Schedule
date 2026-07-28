@@ -21,7 +21,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.status.LoadingUI
@@ -61,17 +61,17 @@ private fun classifyMeal(resume: String, time: String): String {
 fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: String = "本学期") {
     val billState by vm.huiXinBillResult.state.collectAsState()
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
+    val huiXinAuth by DataStoreManager.huiXinAuth.collectAsState(initial = "")
 
-    LaunchedEffect(Unit) {
-        val auth = prefs.getString("auth", "") ?: ""
-        if (auth.isNotEmpty()) {
+    LaunchedEffect(huiXinAuth) {
+        if (huiXinAuth.isNotEmpty()) {
             if (billState !is NetworkUiState.Success) {
                 vm.huiXinBillResult.clear()
-                vm.getCardBill("bearer $auth", 1, 500)
+                vm.getCardBill("bearer $huiXinAuth", 1, 500)
             }
             if (predictedState !is NetworkUiState.Success) {
                 vm.cardPredictedResponse.clear()
-                vm.getCardPredicted("bearer $auth")
+                vm.getCardPredicted("bearer $huiXinAuth")
             }
         }
     }
