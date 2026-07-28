@@ -13,7 +13,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.xah.common.logic.model.CampusRegion
-import com.xah.common.logic.util.LogUtil
 import com.hfut.schedule.logic.model.enumeration.Language
 import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.isExistModule
@@ -182,10 +181,6 @@ object DataStoreManager : IDataStore {
     private val SHOW_FOCUS_GRADE = intPreferencesKey("show_focus_grade")
     private val CAN_USE = booleanPreferencesKey("can_use")
     private val UNI_APP_GRADE_COUNT = intPreferencesKey("uni_app_grade_count")
-    private val COMMUNITY_TOKEN = stringPreferencesKey("community_token")
-    private val HUI_XIN_AUTH = stringPreferencesKey("hui_xin_auth")
-    private val LIBRARY_TOKEN = stringPreferencesKey("library_token")
-    private val JXGLSTU_COOKIE = stringPreferencesKey("jxglstu_cookie")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -275,22 +270,6 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableUse(value: Boolean) = saveValue(CAN_USE, value)
     suspend fun saveEnableShowFocusGrade(value: GradeAutoCheckMode) = saveValue(SHOW_FOCUS_GRADE, value.code)
     suspend fun saveUniAppGradeCount(value: Int) = saveValue(UNI_APP_GRADE_COUNT, value)
-    suspend fun syncTermReportCredentials() {
-        try {
-            val legacyPreferences = MyApplication.context.getSharedPreferences(
-                "${AppVersion.appPackageName}_preferences",
-                Context.MODE_PRIVATE
-            )
-            dataStore.edit { preferences ->
-                preferences[COMMUNITY_TOKEN] = legacyPreferences.getString("TOKEN", EMPTY_STRING).orEmpty()
-                preferences[HUI_XIN_AUTH] = legacyPreferences.getString("auth", EMPTY_STRING).orEmpty()
-                preferences[LIBRARY_TOKEN] = legacyPreferences.getString("LibraryToken", EMPTY_STRING).orEmpty()
-                preferences[JXGLSTU_COOKIE] = legacyPreferences.getString("redirect", EMPTY_STRING).orEmpty()
-            }
-        } catch (e: Exception) {
-            LogUtil.error(e)
-        }
-    }
 
 
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
@@ -379,10 +358,6 @@ object DataStoreManager : IDataStore {
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
     val enableUse = getFlow(CAN_USE, false)
     val uniAppGradeCount = getFlow(UNI_APP_GRADE_COUNT, -1)
-    val communityToken = getFlow(COMMUNITY_TOKEN, EMPTY_STRING)
-    val huiXinAuth = getFlow(HUI_XIN_AUTH, EMPTY_STRING)
-    val libraryToken = getFlow(LIBRARY_TOKEN, EMPTY_STRING)
-    val jxglstuCookie = getFlow(JXGLSTU_COOKIE, EMPTY_STRING)
 
     fun getSyncDefaultCalendar(): Int? {
         return runBlocking {

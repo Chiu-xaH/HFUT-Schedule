@@ -72,6 +72,8 @@ import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -471,7 +473,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     val uniAppGradeState by vm.uniAppGradesResp.state.collectAsState()
     val jxglstuGradeState by vm.jxglstuGradeData.state.collectAsState()
     val communityGradeState by vm.gradeFromCommunityResponse.state.collectAsState()
-    val allCommunityGradesState by vm.allSemestersGradesFromCommunityResponse.state.collectAsState()
+    val allCommunityRankingsState by vm.allSemestersRankingsFromCommunityResponse.state.collectAsState()
     val billState by vm.huiXinBillResult.state.collectAsState()
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
     val libraryState by vm.libraryStatusResp.state.collectAsState()
@@ -492,10 +494,18 @@ fun TermReportScreen(vm: NetWorkViewModel) {
         }
         terms.mapNotNull(SemesterParser::parseSemester).distinct()
     }
-    val communityToken by DataStoreManager.communityToken.collectAsState(initial = "")
-    val huiXinAuth by DataStoreManager.huiXinAuth.collectAsState(initial = "")
-    val libraryToken by DataStoreManager.libraryToken.collectAsState(initial = "")
-    val storedJxglstuCookie by DataStoreManager.jxglstuCookie.collectAsState(initial = "")
+    val communityToken = remember(preparationAttempt) {
+        prefs.getString("TOKEN", "").orEmpty()
+    }
+    val huiXinAuth = remember(preparationAttempt) {
+        prefs.getString("auth", "").orEmpty()
+    }
+    val libraryToken = remember(preparationAttempt) {
+        prefs.getString(SharedPrefs.LIBRARY_TOKEN, "").orEmpty()
+    }
+    val storedJxglstuCookie = remember(preparationAttempt) {
+        prefs.getString("redirect", "").orEmpty()
+    }
     val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
     val hasJxglstuCredential = if (GlobalUiStateHolder.webVpn) {
         webVpnCookie.isNotEmpty()
@@ -537,7 +547,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
         status = if (communityToken.isEmpty()) {
             ReportPreparationStatus.UNAVAILABLE
         } else if (isGraduating) {
-            when (val state = allCommunityGradesState) {
+            when (val state = allCommunityRankingsState) {
                 is NetworkUiState.Success -> when {
                     allSemesters.isEmpty() -> ReportPreparationStatus.LOADING
                     state.data.keys.containsAll(allSemesters) ->
@@ -689,7 +699,6 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     val backdrop = rememberLayerBackdrop()
 
     LaunchedEffect(Unit) {
-        DataStoreManager.syncTermReportCredentials()
         initialSemester = SemesterParser.getSemester()
         semester = initialSemester
         exportSemester = initialSemester

@@ -62,6 +62,7 @@ import kotlinx.coroutines.ensureActive
 
 object CommunityRepository : CommunityRepositoryInf {
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
+    private var allSemestersRankingsToken: String? = null
 
     override suspend fun loginCommunity(ticket : String, holder : UiStateHolder<String>) = launchRequestState(
         holder = holder,
@@ -118,11 +119,23 @@ object CommunityRepository : CommunityRepositoryInf {
             transformSuccess = { _, json -> parseGradeFromCommunity(json) }
         )
 
-    override suspend fun getAllSemestersGrades(
+    // 仅用于智慧社区独有的班级、专业排名，成绩主体仍由教务数据源提供。
+    override suspend fun getAllSemestersRankings(
         token: String,
         semesters: List<Int>,
         holder: UiStateHolder<Map<Int, CommunityGrade>>
     ) {
+        val requestedSemesters = semesters.toSet()
+        val currentState = holder.state.value
+        if (
+            token == allSemestersRankingsToken &&
+            currentState is NetworkUiState.Success &&
+            currentState.data.keys.containsAll(requestedSemesters)
+        ) {
+            return
+        }
+
+        allSemestersRankingsToken = token
         holder.setLoading()
         val result = buildMap {
             semesters.distinct().forEach { semester ->

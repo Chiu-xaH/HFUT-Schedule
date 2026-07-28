@@ -25,14 +25,14 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.BarChart
@@ -53,16 +53,9 @@ fun AcademicReportSection(
     val uniAppState by vm.uniAppGradesResp.state.collectAsState()
     val jxglstuState by vm.jxglstuGradeData.state.collectAsState()
     val communityGradeState by vm.gradeFromCommunityResponse.state.collectAsState()
-    val allCommunityGradesState by vm.allSemestersGradesFromCommunityResponse.state.collectAsState()
+    val allCommunityRankingsState by vm.allSemestersRankingsFromCommunityResponse.state.collectAsState()
     var initialSemesterSet by remember { mutableStateOf(false) }
-    val communityToken by DataStoreManager.communityToken.collectAsState(initial = "")
-    val storedJxglstuCookie by DataStoreManager.jxglstuCookie.collectAsState(initial = "")
-    val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
-    val jxglstuCookie = if (GlobalUiStateHolder.webVpn) {
-        if (webVpnCookie.isNotEmpty()) Constant.WEBVPN_COOKIE_HEADER + webVpnCookie else ""
-    } else {
-        storedJxglstuCookie
-    }
+    val communityToken = prefs.getString("TOKEN", "").orEmpty()
 
     val uniAppGrades = (uniAppState as? NetworkUiState.Success)?.data
     val jxglstuGrades = (jxglstuState as? NetworkUiState.Success)?.data
@@ -77,9 +70,9 @@ fun AcademicReportSection(
     }
 
     val refreshNetwork: suspend () -> Unit = m@ {
-        if (jxglstuCookie.isNotEmpty()) {
+        getJxglstuCookie()?.takeIf(String::isNotEmpty)?.let { cookie ->
             vm.jxglstuGradeData.clear()
-            vm.getGradeFromJxglstu(jxglstuCookie, null)
+            vm.getGradeFromJxglstu(cookie, null)
         }
         if (!hasUniAppGradeData(uniAppGrades)) {
             var cookie = DataStoreManager.uniAppJwt.first()
@@ -92,7 +85,7 @@ fun AcademicReportSection(
         }
     }
 
-    LaunchedEffect(jxglstuCookie) { refreshNetwork() }
+    LaunchedEffect(Unit) { refreshNetwork() }
 
     LaunchedEffect(semester, communityToken) {
         if (semester <= 0) return@LaunchedEffect
@@ -107,10 +100,10 @@ fun AcademicReportSection(
     LaunchedEffect(allSemesters, communityToken) {
         if (allSemesters.isEmpty()) return@LaunchedEffect
         if (communityToken.isEmpty()) {
-            vm.clearAllSemestersGradesFromCommunity()
+            vm.allSemestersRankingsFromCommunityResponse.clear()
             return@LaunchedEffect
         }
-        vm.getAllSemestersGrades(communityToken, allSemesters)
+        vm.getAllSemestersRankings(communityToken, allSemesters)
     }
 
     DividerTextExpandedWith("学业报表") {
@@ -167,17 +160,13 @@ fun AcademicReportSection(
                         headlineContent = { Text("专业 ${communityGrade.majorRanking}", style = MaterialTheme.typography.headlineMedium) }
                     )
                     TransplantListItem(
-                        overlineContent = { Text("GPA") },
-                        headlineContent = { Text(communityGrade.gpa.roundOffString(2), style = MaterialTheme.typography.titleMedium) }
-                    )
-                    TransplantListItem(
-                        headlineContent = { Text("智慧社区成绩更新可能不及时，排名不准确", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        headlineContent = { Text("智慧社区排名更新可能不及时", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                     )
                 }
             }
 
             val communityRankingMap =
-                (allCommunityGradesState as? NetworkUiState.Success)
+                (allCommunityRankingsState as? NetworkUiState.Success)
                     ?.data
                     .orEmpty()
                     .filterKeys { it in allSemesters }

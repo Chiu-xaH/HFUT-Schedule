@@ -38,9 +38,12 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.YearMonth
 
 object HuiXinRepository : HuiXinRepositoryInf {
     private val huiXin = HuiXinServiceCreator.create(HuiXinService::class.java)
+    private var schoolNetInfoAuth: String? = null
+    private var schoolNetInfoMonth: YearMonth? = null
 
     override suspend fun getCardBill(
         auth : String,
@@ -286,7 +289,20 @@ object HuiXinRepository : HuiXinRepositoryInf {
         transformSuccess = { _, json -> parseHefeiBuildings(json) }
     )
 
-    override suspend fun getSchoolNetInfo(auth: String, holder: UiStateHolder<SchoolNetInfo>) =
+    override suspend fun getSchoolNetInfo(auth: String, holder: UiStateHolder<SchoolNetInfo>) {
+        val currentMonth = YearMonth.now()
+        val currentState = holder.state.value
+        if (
+            auth == schoolNetInfoAuth &&
+            currentMonth == schoolNetInfoMonth &&
+            (currentState is NetworkUiState.Success || currentState is NetworkUiState.Loading)
+        ) {
+            return
+        }
+
+        schoolNetInfoAuth = auth
+        schoolNetInfoMonth = currentMonth
+        holder.clear()
         launchRequestState(
             holder = holder,
             request = {
@@ -300,6 +316,7 @@ object HuiXinRepository : HuiXinRepositoryInf {
             },
             transformSuccess = { _, json -> parseSchoolNetInfo(json) }
         )
+    }
 
     @JvmStatic
     private fun parseSchoolNetInfo(json: String): SchoolNetInfo = try {

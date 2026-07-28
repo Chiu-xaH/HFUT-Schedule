@@ -26,7 +26,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -48,8 +48,8 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
     val weeklyScoresState by vm.allDormitoryScoresResp.state.collectAsState()
     val huiXinSchoolNetState by vm.huiXinSchoolNetInfoResp.state.collectAsState()
     val schoolNetUsageState by vm.schoolNetSemesterUsageResp.state.collectAsState()
-    val communityToken by DataStoreManager.communityToken.collectAsState(initial = "")
-    val huiXinAuth by DataStoreManager.huiXinAuth.collectAsState(initial = "")
+    val communityToken = prefs.getString("TOKEN", "").orEmpty()
+    val huiXinAuth = prefs.getString("auth", "").orEmpty()
 
     val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
     val isXuanCheng = remember { getCampusRegion() == CampusRegion.XUANCHENG }
@@ -57,7 +57,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
     val refreshHuiXinSchoolNet: suspend () -> Unit = {
         try {
             if (huiXinAuth.isEmpty()) {
-                vm.clearHuiXinSchoolNetInfo()
+                vm.huiXinSchoolNetInfoResp.clear()
             } else {
                 vm.getHuiXinSchoolNetInfo("bearer $huiXinAuth")
             }
@@ -66,7 +66,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         }
     }
 
-    LaunchedEffect(communityToken) {
+    LaunchedEffect(Unit) {
         try {
             if (communityToken.isEmpty()) return@LaunchedEffect
 
@@ -80,7 +80,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         }
     }
 
-    LaunchedEffect(semester, allSemesters, communityToken) {
+    LaunchedEffect(semester, allSemesters) {
         try {
             if (communityToken.isNotEmpty()) {
                 val semStr = SemesterParser.parseSemesterForDormitory(semester)
@@ -101,7 +101,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         }
     }
 
-    LaunchedEffect(isXuanCheng, huiXinAuth) {
+    LaunchedEffect(isXuanCheng) {
         if (isXuanCheng) refreshHuiXinSchoolNet()
     }
 
