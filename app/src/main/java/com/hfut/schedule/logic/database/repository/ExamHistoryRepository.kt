@@ -12,12 +12,18 @@ object ExamHistoryRepository {
 
     private val dao get() = DataBaseManager.examRecordDao
 
-    suspend fun getExams(semester: Int): List<JxglstuExam> = withContext(Dispatchers.IO) {
+    suspend fun getExams(semester: Int): List<JxglstuExam> =
+        getExamsWithSources(semester).first
+
+    suspend fun getExamsWithSources(
+        semester: Int
+    ): Pair<List<JxglstuExam>, Set<String>> = withContext(Dispatchers.IO) {
         try {
-            dao.getBySemester(semester).mergeSources()
+            val records = dao.getBySemester(semester)
+            records.mergeSources() to records.map { it.source }.toSet()
         } catch (e: Exception) {
             LogUtil.error(e, "从Room读取考试记录失败")
-            emptyList()
+            emptyList<JxglstuExam>() to emptySet()
         }
     }
 

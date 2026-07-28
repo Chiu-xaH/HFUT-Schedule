@@ -104,6 +104,7 @@ import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.network.repo.WeChatZhiJianRepository
 import com.hfut.schedule.logic.network.repo.XiaoWuXingRepository
 
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
@@ -128,6 +129,7 @@ import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelected
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
+import java.time.YearMonth
 
 class NetWorkViewModel() : ViewModel() {
     val studentId = UiStateHolder<Int>()
@@ -497,6 +499,33 @@ class NetWorkViewModel() : ViewModel() {
     val gradeFromCommunityResponse = UiStateHolder<CommunityGrade>()
     suspend fun getGrade(token: String, year : String, term : String) = CommunityRepository.getGrade(token,year,term,gradeFromCommunityResponse)
 
+    val allSemestersGradesFromCommunityResponse = UiStateHolder<Map<Int, CommunityGrade>>()
+    private var allSemestersGradesCommunityToken: String? = null
+    suspend fun getAllSemestersGrades(token: String, semesters: List<Int>) {
+        val requestedSemesters = semesters.toSet()
+        val currentState = allSemestersGradesFromCommunityResponse.state.value
+        if (
+            token == allSemestersGradesCommunityToken &&
+            currentState is NetworkUiState.Success &&
+            currentState.data.keys.containsAll(requestedSemesters)
+        ) {
+            return
+        }
+
+        allSemestersGradesCommunityToken = token
+        allSemestersGradesFromCommunityResponse.clear()
+        CommunityRepository.getAllSemestersGrades(
+            token,
+            semesters,
+            allSemestersGradesFromCommunityResponse
+        )
+    }
+
+    suspend fun clearAllSemestersGradesFromCommunity() {
+        allSemestersGradesCommunityToken = null
+        allSemestersGradesFromCommunityResponse.clear()
+    }
+
     val avgData = UiStateHolder<CommunityGradeAverage>()
     suspend fun getAvgGrade(token: String) = CommunityRepository.getAvgGrade(token,avgData)
 
@@ -567,6 +596,32 @@ class NetWorkViewModel() : ViewModel() {
     val schoolNetSemesterUsageResp = UiStateHolder<SchoolNetSemesterUsageResult>()
     suspend fun loginAndGetSchoolNetSemesterUsage(semester: Int) = SchoolNetSelfRepository.loginAndGetSemesterUsage(semester, schoolNetSemesterUsageResp)
     suspend fun loginAndGetSchoolNetAllSemestersUsage(allSemesters: List<Int>) = SchoolNetSelfRepository.loginAndGetAllSemestersUsage(allSemesters, schoolNetSemesterUsageResp)
+
+    val huiXinSchoolNetInfoResp = UiStateHolder<SchoolNetInfo>()
+    private var huiXinSchoolNetInfoAuth: String? = null
+    private var huiXinSchoolNetInfoMonth: YearMonth? = null
+    suspend fun getHuiXinSchoolNetInfo(auth: String) {
+        val currentMonth = YearMonth.now()
+        val currentState = huiXinSchoolNetInfoResp.state.value
+        if (
+            auth == huiXinSchoolNetInfoAuth &&
+            currentMonth == huiXinSchoolNetInfoMonth &&
+            (currentState is NetworkUiState.Success || currentState is NetworkUiState.Loading)
+        ) {
+            return
+        }
+
+        huiXinSchoolNetInfoAuth = auth
+        huiXinSchoolNetInfoMonth = currentMonth
+        huiXinSchoolNetInfoResp.clear()
+        HuiXinRepository.getSchoolNetInfo(auth, huiXinSchoolNetInfoResp)
+    }
+
+    suspend fun clearHuiXinSchoolNetInfo() {
+        huiXinSchoolNetInfoAuth = null
+        huiXinSchoolNetInfoMonth = null
+        huiXinSchoolNetInfoResp.clear()
+    }
 
     val giteeUpdatesResp = UiStateHolder<GiteeReleaseResponse>()
     suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)

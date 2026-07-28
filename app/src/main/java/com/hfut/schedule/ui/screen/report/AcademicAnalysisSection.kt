@@ -52,8 +52,15 @@ private data class ExamAnalysisResult(
     val monthStats: List<Pair<String, Int>>,
     val maxConsecutiveDays: Int,
     val consecutiveStart: LocalDate?,
-    val consecutiveEnd: LocalDate?
+    val consecutiveEnd: LocalDate?,
+    val sources: Set<String>
 )
+
+private fun examSourceName(source: String): String? = when (source) {
+    "jxglstu" -> "教务系统"
+    "uniapp" -> "合工大教务"
+    else -> null
+}
 
 private fun gradeTextToDouble(grade: String): Double? {
     return grade.toDoubleOrNull() ?: when (grade) {
@@ -190,8 +197,7 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
         value = null
 
         try {
-            val allExams = ExamHistoryRepository.getExams(semester)
-            val exams = allExams
+            val (exams, sources) = ExamHistoryRepository.getExamsWithSources(semester)
 
             if (exams.isNotEmpty()) {
                 val monthGroups = exams.groupBy {
@@ -247,7 +253,8 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                     monthStats = monthStats,
                     maxConsecutiveDays = maxCons,
                     consecutiveStart = maxStart,
-                    consecutiveEnd = maxEnd
+                    consecutiveEnd = maxEnd,
+                    sources = sources
                 )
             }
         } catch (e: Exception) {
@@ -439,6 +446,19 @@ fun AcademicAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: St
                 }
                 }
             }
+
+            ReportDataSourceText(
+                buildList {
+                    when {
+                        useUniApp -> add("合工大教务")
+                        hasJxglstuGradeData(jxglstuGrades) -> add("教务系统")
+                    }
+                    if (courseAnalysis != null) add("合工大教务")
+                    examAnalysis?.sources
+                        ?.mapNotNull(::examSourceName)
+                        ?.let(::addAll)
+                }
+            )
         }
     }
 }

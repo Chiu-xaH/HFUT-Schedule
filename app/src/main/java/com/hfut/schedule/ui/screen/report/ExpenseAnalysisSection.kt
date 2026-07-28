@@ -99,6 +99,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(headlineContent = { Text("暂无消费记录") })
                     }
+                    ReportDataSourceText("慧新易校")
                     return@DividerTextExpandedWith
                 }
 
@@ -502,6 +503,9 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                     LoadingUI()
                 }
             }
+        }
+        if (billState is NetworkUiState.Success) {
+            ReportDataSourceText("慧新易校")
         }
     }
 }

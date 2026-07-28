@@ -161,5 +161,8 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
                 }
             }
         }
+        if (libraryStatus is NetworkUiState.Success) {
+            ReportDataSourceText("图书馆")
+        }
     }
 }

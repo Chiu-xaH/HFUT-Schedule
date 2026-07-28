@@ -38,6 +38,8 @@ import com.hfut.schedule.network.api.model.response.json.community.CommunityStuA
 import com.hfut.schedule.network.api.model.response.json.community.CommunityTodayResponse
 import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
 import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
@@ -115,6 +117,32 @@ object CommunityRepository : CommunityRepositoryInf {
             request = { community.getGrade(token, year, term) },
             transformSuccess = { _, json -> parseGradeFromCommunity(json) }
         )
+
+    override suspend fun getAllSemestersGrades(
+        token: String,
+        semesters: List<Int>,
+        holder: UiStateHolder<Map<Int, CommunityGrade>>
+    ) {
+        holder.setLoading()
+        val result = buildMap {
+            semesters.distinct().forEach { semester ->
+                val (year, term) = SemesterParser.parseSemesterForCommunity(semester)
+                    ?: return@forEach
+                val gradeHolder = UiStateHolder<CommunityGrade>()
+                getGrade(token, year, term, gradeHolder)
+                currentCoroutineContext().ensureActive()
+                val grade = (gradeHolder.state.value as? NetworkUiState.Success)?.data
+                    ?: return@forEach
+                put(semester, grade)
+            }
+        }
+        if (result.isEmpty()) {
+            holder.emitError(IllegalStateException("智慧社区各学期排名请求失败"))
+        } else {
+            holder.emitData(result)
+        }
+    }
+
     @JvmStatic
     private fun parseGradeFromCommunity(json : String) : CommunityGrade = try {
         if(json.contains("success"))
