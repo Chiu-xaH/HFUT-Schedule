@@ -37,7 +37,7 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
     val borrowedBooks by vm.libraryBorrowedResp.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "") ?: ""
+        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "").orEmpty()
         if (token.isNotEmpty() && libraryStatus !is NetworkUiState.Success) {
             vm.libraryStatusResp.clear()
             vm.getLibraryStatus(token)
@@ -45,7 +45,7 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
     }
 
     DividerTextExpandedWith("图书馆报表") {
-        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "") ?: ""
+        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "").orEmpty()
         if (token.isEmpty()) {
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
@@ -160,6 +160,9 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
                     LoadingUI()
                 }
             }
+        }
+        if (libraryStatus is NetworkUiState.Success) {
+            ReportDataSourceText("图书馆")
         }
     }
 }

@@ -497,6 +497,14 @@ class NetWorkViewModel() : ViewModel() {
     val gradeFromCommunityResponse = UiStateHolder<CommunityGrade>()
     suspend fun getGrade(token: String, year : String, term : String) = CommunityRepository.getGrade(token,year,term,gradeFromCommunityResponse)
 
+    val allSemestersRankingsFromCommunityResponse = UiStateHolder<Map<Int, CommunityGrade>>()
+    suspend fun getAllSemestersRankings(token: String, semesters: List<Int>) =
+        CommunityRepository.getAllSemestersRankings(
+            token,
+            semesters,
+            allSemestersRankingsFromCommunityResponse
+        )
+
     val avgData = UiStateHolder<CommunityGradeAverage>()
     suspend fun getAvgGrade(token: String) = CommunityRepository.getAvgGrade(token,avgData)
 
@@ -567,6 +575,10 @@ class NetWorkViewModel() : ViewModel() {
     val schoolNetSemesterUsageResp = UiStateHolder<SchoolNetSemesterUsageResult>()
     suspend fun loginAndGetSchoolNetSemesterUsage(semester: Int) = SchoolNetSelfRepository.loginAndGetSemesterUsage(semester, schoolNetSemesterUsageResp)
     suspend fun loginAndGetSchoolNetAllSemestersUsage(allSemesters: List<Int>) = SchoolNetSelfRepository.loginAndGetAllSemestersUsage(allSemesters, schoolNetSemesterUsageResp)
+
+    val huiXinSchoolNetInfoResp = UiStateHolder<SchoolNetInfo>()
+    suspend fun getHuiXinSchoolNetInfo(auth: String) =
+        HuiXinRepository.getSchoolNetInfo(auth, huiXinSchoolNetInfoResp)
 
     val giteeUpdatesResp = UiStateHolder<GiteeReleaseResponse>()
     suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)

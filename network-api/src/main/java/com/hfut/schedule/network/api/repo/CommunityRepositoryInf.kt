@@ -24,6 +24,11 @@ interface CommunityRepositoryInf {
     suspend fun searchFailRate(token : String, name: String, page : Int,code : String?,holder : UiStateHolder<Pair<String?,List<CommunityFailRateRecord>>>)
     suspend fun checkCommunityLogin(token: String,holder : UiStateHolder<Boolean>)
     suspend fun getGrade(token: String, year : String, term : String,holder : UiStateHolder<CommunityGrade>)
+    suspend fun getAllSemestersRankings(
+        token: String,
+        semesters: List<Int>,
+        holder: UiStateHolder<Map<Int, CommunityGrade>>
+    )
     suspend fun getAvgGrade(token: String,holder : UiStateHolder<CommunityGradeAverage>)
     suspend fun getAllAvgGrade(token: String,holder : UiStateHolder<List<CommunityGradeAll>>)
     suspend fun searchBooks(token: String, name: String, page: Int,holder : UiStateHolder<List<CommunityLibraryRecord>>)

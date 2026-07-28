@@ -93,6 +93,7 @@ fun TermReportExportContent(
                 AcademicReportSection(
                     vm = vm,
                     semester = semester,
+                    allSemesters = if (isGraduating) allSemesters else emptyList(),
                     onLatestSemester = {}
                 )
             }

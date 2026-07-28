@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
@@ -24,6 +25,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -34,14 +36,26 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.BarChart
+import com.xah.common.ui.component.chart.LineChart
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.flow.first
 
+private fun parseCommunityRanking(ranking: String): Float? =
+    Regex("""\d+(?:\.\d+)?""").find(ranking)?.value?.toFloatOrNull()
+
 @Composable
-fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester: (Int) -> Unit) {
+fun AcademicReportSection(
+    vm: NetWorkViewModel,
+    semester: Int,
+    allSemesters: List<Int> = emptyList(),
+    onLatestSemester: (Int) -> Unit
+) {
     val uniAppState by vm.uniAppGradesResp.state.collectAsState()
     val jxglstuState by vm.jxglstuGradeData.state.collectAsState()
+    val communityGradeState by vm.gradeFromCommunityResponse.state.collectAsState()
+    val allCommunityRankingsState by vm.allSemestersRankingsFromCommunityResponse.state.collectAsState()
     var initialSemesterSet by remember { mutableStateOf(false) }
+    val communityToken = prefs.getString("TOKEN", "").orEmpty()
 
     val uniAppGrades = (uniAppState as? NetworkUiState.Success)?.data
     val jxglstuGrades = (jxglstuState as? NetworkUiState.Success)?.data
@@ -56,7 +70,7 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     }
 
     val refreshNetwork: suspend () -> Unit = m@ {
-        getJxglstuCookie()?.let { cookie ->
+        getJxglstuCookie()?.takeIf(String::isNotEmpty)?.let { cookie ->
             vm.jxglstuGradeData.clear()
             vm.getGradeFromJxglstu(cookie, null)
         }
@@ -72,6 +86,25 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
     }
 
     LaunchedEffect(Unit) { refreshNetwork() }
+
+    LaunchedEffect(semester, communityToken) {
+        if (semester <= 0) return@LaunchedEffect
+        vm.gradeFromCommunityResponse.clear()
+        if (communityToken.isNotEmpty()) {
+            SemesterParser.parseSemesterForCommunity(semester)?.let { (year, term) ->
+                vm.getGrade(communityToken, year, term)
+            }
+        }
+    }
+
+    LaunchedEffect(allSemesters, communityToken) {
+        if (allSemesters.isEmpty()) return@LaunchedEffect
+        if (communityToken.isEmpty()) {
+            vm.allSemestersRankingsFromCommunityResponse.clear()
+            return@LaunchedEffect
+        }
+        vm.getAllSemestersRankings(communityToken, allSemesters)
+    }
 
     DividerTextExpandedWith("学业报表") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
@@ -115,6 +148,79 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                 TransplantListItem(overlineContent = { Text("总学分") }, headlineContent = { Text(tc.roundOffString(2), style = MaterialTheme.typography.headlineMedium) })
             }
 
+            val communityGrade = (communityGradeState as? NetworkUiState.Success)?.data
+            if (semester > 0 && communityGrade != null) {
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                CustomCard(color = cardNormalColor()) {
+                    TransplantListItem(
+                        overlineContent = { Text("智慧社区排名") },
+                        headlineContent = { Text("班级 ${communityGrade.classRanking}", style = MaterialTheme.typography.headlineMedium) }
+                    )
+                    TransplantListItem(
+                        headlineContent = { Text("专业 ${communityGrade.majorRanking}", style = MaterialTheme.typography.headlineMedium) }
+                    )
+                    TransplantListItem(
+                        headlineContent = { Text("智慧社区排名更新可能不及时", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    )
+                }
+            }
+
+            val communityRankingMap =
+                (allCommunityRankingsState as? NetworkUiState.Success)
+                    ?.data
+                    .orEmpty()
+                    .filterKeys { it in allSemesters }
+            if (semester == 0 && communityRankingMap.isNotEmpty()) {
+                val classRankingData = remember(communityRankingMap) {
+                    communityRankingMap.toSortedMap().mapNotNull { (sem, result) ->
+                        val label = SemesterParser.parseSemesterSimply(sem)
+                        parseCommunityRanking(result.classRanking)?.let { label to it }
+                    }.toMap()
+                }
+                val majorRankingData = remember(communityRankingMap) {
+                    communityRankingMap.toSortedMap().mapNotNull { (sem, result) ->
+                        val label = SemesterParser.parseSemesterSimply(sem)
+                        parseCommunityRanking(result.majorRanking)?.let { label to it }
+                    }.toMap()
+                }
+
+                if (classRankingData.size >= 2 || majorRankingData.size >= 2) {
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                    CustomCard(color = cardNormalColor()) {
+                        TransplantListItem(
+                            overlineContent = { Text("智慧社区排名趋势") },
+                            headlineContent = { Text("共 ${communityRankingMap.size} 个学期数据", style = MaterialTheme.typography.titleMedium) }
+                        )
+                        if (classRankingData.size >= 2) {
+                            TransplantListItem(headlineContent = { Text("班级排名", style = MaterialTheme.typography.titleSmall) })
+                            LineChart(
+                                data = classRankingData,
+                                showLabel = true,
+                                modifier = Modifier
+                                    .padding(horizontal = APP_HORIZONTAL_DP)
+                                    .height(180.dp),
+                                xLabelSpacing = if (classRankingData.size > 8) 2 else 1
+                            )
+                        }
+                        if (majorRankingData.size >= 2) {
+                            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                            TransplantListItem(headlineContent = { Text("专业排名", style = MaterialTheme.typography.titleSmall) })
+                            LineChart(
+                                data = majorRankingData,
+                                showLabel = true,
+                                modifier = Modifier
+                                    .padding(horizontal = APP_HORIZONTAL_DP)
+                                    .height(180.dp),
+                                xLabelSpacing = if (majorRankingData.size > 8) 2 else 1
+                            )
+                        }
+                        TransplantListItem(
+                            headlineContent = { Text("智慧社区源更新可能不及时，排名不准确", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        )
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
             if (allTermList.size > 1) {
@@ -148,8 +254,22 @@ fun AcademicReportSection(vm: NetWorkViewModel, semester: Int, onLatestSemester:
                     }
                 }
                 }
+
+            ReportDataSourceText(
+                buildList {
+                    when {
+                        useUniApp -> add("合工大教务")
+                        hasJxglstuGradeData(jxglstuGrades) -> add("教务系统")
+                    }
+                    if (
+                        (semester > 0 && communityGrade != null) ||
+                        (semester == 0 && communityRankingMap.isNotEmpty())
+                    ) {
+                        add("智慧社区")
+                    }
+                }
+            )
             }
         }
     }
 }
-

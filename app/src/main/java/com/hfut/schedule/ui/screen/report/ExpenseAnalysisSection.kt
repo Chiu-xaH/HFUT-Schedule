@@ -63,7 +63,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        val auth = prefs.getString("auth", "") ?: ""
+        val auth = prefs.getString("auth", "").orEmpty()
         if (auth.isNotEmpty()) {
             if (billState !is NetworkUiState.Success) {
                 vm.huiXinBillResult.clear()
@@ -99,6 +99,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(headlineContent = { Text("暂无消费记录") })
                     }
+                    ReportDataSourceText("慧新易校")
                     return@DividerTextExpandedWith
                 }
 
@@ -502,6 +503,9 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                     LoadingUI()
                 }
             }
+        }
+        if (billState is NetworkUiState.Success) {
+            ReportDataSourceText("慧新易校")
         }
     }
 }

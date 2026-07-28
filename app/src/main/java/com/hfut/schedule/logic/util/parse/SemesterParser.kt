@@ -93,6 +93,22 @@ object SemesterParser {
         }
     }
 
+    /** Int → 智慧社区API专用格式，如 Pair("2023-2024", "1") */
+    @JvmStatic
+    fun parseSemesterForCommunity(semester : Int) : Pair<String, String>? {
+        if (semester <= 0) return null
+        val codes = (semester - 4) / 10
+        val year = 2017
+        val code = 3
+        val years = (year + (codes - code) / 4) + 1
+        val upOrDown = when (codes % 4) {
+            3 -> 1
+            1 -> 2
+            else -> return null
+        }
+        return "${years}-${years + 1}" to upOrDown.toString()
+    }
+
     /** Int → 宿舍评分专用格式，如 "2023-2024学年第一学期" (中文数字) */
     @JvmStatic
     fun parseSemesterForDormitory(semester : Int) : String {

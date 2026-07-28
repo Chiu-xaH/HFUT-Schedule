@@ -2,6 +2,7 @@ package com.hfut.schedule.network.api.repo
 
 import com.google.gson.JsonObject
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuilding
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinMonthBill
@@ -32,6 +33,7 @@ interface HuiXinRepositoryInf {
         building: String?,
         holder: UiStateHolder<List<HuiXinHefeiBuilding>>
     )
+    suspend fun getSchoolNetInfo(auth: String, holder: UiStateHolder<SchoolNetInfo>)
     /*
     fun getFee(
         auth: String,

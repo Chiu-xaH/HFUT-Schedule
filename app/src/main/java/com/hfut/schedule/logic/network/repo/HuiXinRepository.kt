@@ -3,6 +3,8 @@ package com.hfut.schedule.logic.network.repo
 import androidx.lifecycle.MutableLiveData
 
 import com.google.gson.JsonObject
+import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuilding
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuildingResponse
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinMonthBill
@@ -36,9 +38,12 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.YearMonth
 
 object HuiXinRepository : HuiXinRepositoryInf {
     private val huiXin = HuiXinServiceCreator.create(HuiXinService::class.java)
+    private var schoolNetInfoAuth: String? = null
+    private var schoolNetInfoMonth: YearMonth? = null
 
     override suspend fun getCardBill(
         auth : String,
@@ -283,6 +288,55 @@ object HuiXinRepository : HuiXinRepositoryInf {
         holder = holder,
         transformSuccess = { _, json -> parseHefeiBuildings(json) }
     )
+
+    override suspend fun getSchoolNetInfo(auth: String, holder: UiStateHolder<SchoolNetInfo>) {
+        val currentMonth = YearMonth.now()
+        val currentState = holder.state.value
+        if (
+            auth == schoolNetInfoAuth &&
+            currentMonth == schoolNetInfoMonth &&
+            (currentState is NetworkUiState.Success || currentState is NetworkUiState.Loading)
+        ) {
+            return
+        }
+
+        schoolNetInfoAuth = auth
+        schoolNetInfoMonth = currentMonth
+        holder.clear()
+        launchRequestState(
+            holder = holder,
+            request = {
+                huiXin.getFee(
+                    auth = auth,
+                    typeId = HuiXinFeeType.NET_XUANCHENG.code,
+                    type = "IEC",
+                    level = "0",
+                    campus = null
+                )
+            },
+            transformSuccess = { _, json -> parseSchoolNetInfo(json) }
+        )
+    }
+
+    @JvmStatic
+    private fun parseSchoolNetInfo(json: String): SchoolNetInfo = try {
+        val data = GsonInstance.fromJson(json, HuiXinFeeResponse::class.java).map.showData
+        val flow = data["本期已使用流量"]
+            ?.substringBefore("（")
+            ?.substringBefore("(")
+            ?.trim()
+            ?.takeIf(String::isNotEmpty)
+            ?: throw IllegalStateException("慧新易校校园网流量字段缺失")
+        val fee = data["储值余额"]
+            ?.substringBefore("（")
+            ?.substringBefore("(")
+            ?.trim()
+            ?.takeIf(String::isNotEmpty)
+            ?: throw IllegalStateException("慧新易校校园网余额字段缺失")
+        SchoolNetInfo(fee = fee, flow = flow)
+    } catch (e: Exception) {
+        throw IllegalStateException("慧新易校校园网数据解析失败", e)
+    }
 
 
     fun getFee(

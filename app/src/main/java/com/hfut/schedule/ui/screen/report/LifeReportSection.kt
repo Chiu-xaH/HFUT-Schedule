@@ -18,7 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.logic.util.helper.getCampusRegion
+import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.api.model.response.html.SchoolNetSemesterUsageResult
+import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
@@ -28,6 +31,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -42,20 +46,35 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
     val dormitoryInfo by vm.dormitoryFromCommunityResp.state.collectAsState()
     val dormitoryUsers by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
     val weeklyScoresState by vm.allDormitoryScoresResp.state.collectAsState()
+    val huiXinSchoolNetState by vm.huiXinSchoolNetInfoResp.state.collectAsState()
     val schoolNetUsageState by vm.schoolNetSemesterUsageResp.state.collectAsState()
+    val communityToken = prefs.getString("TOKEN", "").orEmpty()
+    val huiXinAuth = prefs.getString("auth", "").orEmpty()
 
     val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
+    val isXuanCheng = remember { getCampusRegion() == CampusRegion.XUANCHENG }
+
+    val refreshHuiXinSchoolNet: suspend () -> Unit = {
+        try {
+            if (huiXinAuth.isEmpty()) {
+                vm.huiXinSchoolNetInfoResp.clear()
+            } else {
+                vm.getHuiXinSchoolNetInfo("bearer $huiXinAuth")
+            }
+        } catch (e: Exception) {
+            LogUtil.error(e)
+        }
+    }
 
     LaunchedEffect(Unit) {
         try {
-            val token = prefs.getString("TOKEN", "") ?: ""
-            if (token.isEmpty()) return@LaunchedEffect
+            if (communityToken.isEmpty()) return@LaunchedEffect
 
             vm.dormitoryFromCommunityResp.clear()
-            vm.getDormitory(token)
+            vm.getDormitory(communityToken)
 
             vm.dormitoryInfoFromCommunityResp.clear()
-            vm.getDormitoryInfo(token)
+            vm.getDormitoryInfo(communityToken)
         } catch (e: Exception) {
             LogUtil.error(e)
         }
@@ -63,10 +82,9 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
 
     LaunchedEffect(semester, allSemesters) {
         try {
-            val token = prefs.getString("TOKEN", "") ?: ""
-            if (token.isNotEmpty()) {
+            if (communityToken.isNotEmpty()) {
                 val semStr = SemesterParser.parseSemesterForDormitory(semester)
-                vm.getAllDormitoryScores(token, semStr, semester)
+                vm.getAllDormitoryScores(communityToken, semStr, semester)
             }
         } catch (e: Exception) {
             LogUtil.error(e)
@@ -81,6 +99,10 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
         } catch (e: Exception) {
             LogUtil.error(e)
         }
+    }
+
+    LaunchedEffect(isXuanCheng) {
+        if (isXuanCheng) refreshHuiXinSchoolNet()
     }
 
     DividerTextExpandedWith("生活报表") {
@@ -309,7 +331,59 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
             else -> {}
         }
 
+        if (isXuanCheng) {
+            HuiXinSchoolNetMonthlyCard(
+                state = huiXinSchoolNetState,
+                onReload = refreshHuiXinSchoolNet
+            )
+        }
         SchoolNetUsageReportCard(state = schoolNetUsageState)
+        ReportDataSourceText(
+            buildList {
+                if (
+                    dormitoryInfo is NetworkUiState.Success ||
+                    dormitoryUsers is NetworkUiState.Success ||
+                    weeklyScoresState is NetworkUiState.Success
+                ) {
+                    add("智慧社区")
+                }
+                if (isXuanCheng && huiXinSchoolNetState is NetworkUiState.Success) add("慧新易校")
+                if (schoolNetUsageState is NetworkUiState.Success) add("校园网自服务接口")
+            }
+        )
+    }
+}
+
+@Composable
+private fun HuiXinSchoolNetMonthlyCard(
+    state: NetworkUiState<SchoolNetInfo>,
+    onReload: suspend () -> Unit
+) {
+    if (state == NetworkUiState.Prepare) return
+
+    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+    CustomCard(color = cardNormalColor()) {
+        CommonNetworkScreen(
+            uiState = state,
+            isFullScreen = false,
+            modifier = Modifier.fillMaxWidth(),
+            onReload = onReload
+        ) {
+            val data = (state as NetworkUiState.Success).data
+            Column {
+                TransplantListItem(
+                    overlineContent = { Text("本月校园网使用 · 慧新易校") },
+                    headlineContent = {
+                        Text(formatHuiXinSchoolNetFlow(data.flow), style = MaterialTheme.typography.headlineMedium)
+                    },
+                    supportingContent = { Text("本期已使用流量") }
+                )
+                TransplantListItem(
+                    overlineContent = { Text("网费储值余额") },
+                    headlineContent = { Text("￥${data.fee}", style = MaterialTheme.typography.titleMedium) }
+                )
+            }
+        }
     }
 }
 
@@ -436,6 +510,11 @@ private fun SchoolNetUsageReportCard(
 }
 
 private fun formatSchoolNetFlow(mb: Double): String = if (mb >= 1024) "${(mb / 1024.0).roundOffString(2)} GB" else "${mb.roundOffString(2)} MB"
+
+private fun formatHuiXinSchoolNetFlow(flow: String): String {
+    val mb = flow.toDoubleOrNull() ?: return "$flow MB"
+    return formatSchoolNetFlow(mb)
+}
 
 private fun formatSchoolNetDuration(minutes: Int): String {
     val hours = minutes / 60
