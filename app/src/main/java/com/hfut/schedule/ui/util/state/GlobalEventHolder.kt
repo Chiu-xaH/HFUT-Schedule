@@ -47,6 +47,8 @@ object GlobalEventHolder {
     val gradeCountCheckCallback = ManualEventFlow<Int>()
     // 刷新图片验证码
     val captchaRefreshCallback = AutoEventFlow<Unit>()
+    // 刷新教务成绩列表（评教完成后）
+    val gradeRefreshCallback = AutoEventFlow<Unit>()
 
     /**
      * // 发射
