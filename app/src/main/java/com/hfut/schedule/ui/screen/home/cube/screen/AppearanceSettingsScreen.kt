@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -18,9 +19,15 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,10 +44,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -87,6 +96,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -94,7 +106,6 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
-
 import com.hfut.schedule.logic.util.parse.roundOff
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -110,6 +121,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
+import com.hfut.schedule.ui.component.status.FancySwitch
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -141,7 +153,6 @@ import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.shader.pixelExtension
 import com.xah.navigation.model.anim.EffectLevel
 import com.xah.common.logic.util.LogUtil
-import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -258,6 +269,11 @@ fun SharedAppearanceSettingsScreen(
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.LOW.levelNum)
         val containerSharedSpeed by DataStoreManager.sharedNavSpeedRadio.collectAsState(initial = 1f)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
+        val systemIsDark = isSystemInDarkTheme()
+        val isFollowingSystem = currentColorModeIndex == ColorMode.AUTO.code
+        val isDarkMode = currentColorModeIndex == ColorMode.DARK.code || systemIsDark
+        val lightModeString = stringResource(id = R.string.appearance_settings_choice_theme_light)
+        val darkModeString = stringResource(id = R.string.appearance_settings_choice_theme_dark)
         val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
         val defaultTransitionEffectIndex by DataStoreManager.defaultTransitionEffect.collectAsState(initial = SharedNavEffect.DEFAULT.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
@@ -424,6 +440,39 @@ fun SharedAppearanceSettingsScreen(
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.appearance_settings_theme_title)) },
+                    supportingContent = {
+                        Text(text = stringResource(id = R.string.appearance_settings_theme_description))
+                    },
+                    modifier = Modifier
+                        .toggleable(
+                            value = isFollowingSystem,
+                            onValueChange = { checked ->
+                                scope.launch {
+                                    if (checked) {
+                                        DataStoreManager.saveColorMode(ColorMode.AUTO)
+                                    } else {
+                                        val targetMode = if (systemIsDark) ColorMode.DARK else ColorMode.LIGHT
+                                        DataStoreManager.saveColorMode(targetMode)
+                                    }
+                                }
+                            },
+                            role = Role.Checkbox
+                        ),
+                    trailingContent = {
+                        Checkbox(
+                            checked = isFollowingSystem,
+                            onCheckedChange = { checked ->
+                                scope.launch {
+                                    if (checked) {
+                                        DataStoreManager.saveColorMode(ColorMode.AUTO)
+                                    } else {
+                                        val targetMode = if (systemIsDark) ColorMode.DARK else ColorMode.LIGHT
+                                        DataStoreManager.saveColorMode(targetMode)
+                                    }
+                                }
+                            }
+                        )
+                    },
                     leadingContent = { Icon(painterResource(
                         when(currentColorModeIndex) {
                             ColorMode.DARK.code -> R.drawable.dark_mode
@@ -432,14 +481,96 @@ fun SharedAppearanceSettingsScreen(
                         }
                     ), contentDescription = "Localized description",) },
                 )
-                CustomSingleChoiceRow<ColorMode>(
-                    selected = currentColorModeIndex,
-                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                AnimatedVisibility(
+                    visible = !isFollowingSystem,
+                    enter = expandVertically(
+                        expandFrom = Alignment.Top,
+                        animationSpec = tween(
+                            durationMillis = 200,
+                            easing = FastOutSlowInEasing
+                        )
+                    ) + fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 180
+                        )
+                    ),
+                    exit = shrinkVertically(
+                        shrinkTowards = Alignment.Top,
+                        animationSpec = tween(
+                            durationMillis = 200,
+                            easing = FastOutSlowInEasing
+                        )
+                    ) + fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 180
+                        )
+                    )
                 ) {
-                    scope.launch {
-                        DataStoreManager.saveColorMode(it)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .toggleable(
+                                value = isDarkMode,
+                                onValueChange = { checked ->
+                                    val newMode = if (checked) ColorMode.DARK else ColorMode.LIGHT
+                                    scope.launch {
+                                        DataStoreManager.saveColorMode(newMode)
+                                    }
+                                },
+                                role = Role.Switch
+                            )
+                            // 不过话又说回来了
+                            // 这里用无障碍真的有必要吗
+                            // 我怎么感觉特殊群体用户 “看” 深色和浅色没什么意义呢
+                            .semantics(mergeDescendants = true){
+                                stateDescription = if (currentColorModeIndex == ColorMode.LIGHT.code) {
+                                    lightModeString
+                                } else {
+                                    darkModeString
+                                }
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(start = 56.dp, end = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.appearance_settings_choice_theme,
+                                    when(currentColorModeIndex) {
+                                        ColorMode.DARK.code -> stringResource(id = R.string.appearance_settings_choice_theme_dark)
+                                        ColorMode.LIGHT.code -> stringResource(id = R.string.appearance_settings_choice_theme_light)
+                                        else -> stringResource(id = R.string.appearance_settings_choice_theme_auto)
+                                    }
+                                ),
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            FancySwitch(
+                                checked = isDarkMode,
+                                onCheckedChange = { checked ->
+                                    val newMode = if (checked) ColorMode.DARK else ColorMode.LIGHT
+                                    scope.launch {
+                                        DataStoreManager.saveColorMode(newMode)
+                                    }
+                                },
+                                isDark = systemIsDark // 感觉这个好像也多此一举
+                            )
+                        }
                     }
                 }
+//                CustomSingleChoiceRow<ColorMode>(
+//                    selected = currentColorModeIndex,
+//                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+//                ) {
+//                    scope.launch {
+//                        DataStoreManager.saveColorMode(it)
+//                    }
+//                }
             }
         }
         DividerTextExpandedWith(stringResource(R.string.appearance_settings_color_half_title),contentColor=contentColor) {
