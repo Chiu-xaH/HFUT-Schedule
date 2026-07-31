@@ -20,6 +20,8 @@
     <string name="appearance_settings_choice_theme_light">浅色</string>
     <string name="appearance_settings_choice_theme_dark">深色</string>
     <string name="appearance_settings_choice_theme_auto">跟随系统</string>
+    <string name="appearance_settings_theme_description">启用设备深浅色</string>
+    <string name="appearance_settings_choice_theme">自定义深浅色, 当前: %s</string>
     <string name="appearance_settings_effect_half_title">特效</string>
     <string name="appearance_settings_motion_blur_title">运动模糊</string>
     <string name="appearance_settings_motion_blur_description_supported">部分组件的运动过程伴随实时模糊效果%1$s</string>

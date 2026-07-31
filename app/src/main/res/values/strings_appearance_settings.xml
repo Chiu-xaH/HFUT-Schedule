@@ -20,6 +20,8 @@
     <string name="appearance_settings_choice_theme_light">Light</string>
     <string name="appearance_settings_choice_theme_dark">Dark</string>
     <string name="appearance_settings_choice_theme_auto">Auto</string>
+    <string name="appearance_settings_theme_description">Follow system theme</string>
+    <string name="appearance_settings_choice_theme">Custom Mode, current: %s</string>
     <string name="appearance_settings_effect_half_title">Effect</string>
     <string name="appearance_settings_motion_blur_title">Motion blur</string>
     <string name="appearance_settings_motion_blur_description_supported">The movement process of some components is accompanied by real-time blurring effects.%1$s</string>
