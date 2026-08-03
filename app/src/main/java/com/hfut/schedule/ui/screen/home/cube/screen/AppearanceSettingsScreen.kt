@@ -144,6 +144,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.hfut.schedule.ui.style.shader.scaleMirror
+import com.hfut.schedule.ui.util.isThemeDark
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
@@ -269,11 +270,7 @@ fun SharedAppearanceSettingsScreen(
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.LOW.levelNum)
         val containerSharedSpeed by DataStoreManager.sharedNavSpeedRadio.collectAsState(initial = 1f)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
-        val systemIsDark = isSystemInDarkTheme()
-        val isFollowingSystem = currentColorModeIndex == ColorMode.AUTO.code
-        val isDarkMode = currentColorModeIndex == ColorMode.DARK.code || systemIsDark
-        val lightModeString = stringResource(id = R.string.appearance_settings_choice_theme_light)
-        val darkModeString = stringResource(id = R.string.appearance_settings_choice_theme_dark)
+        val isDarkMode = isThemeDark()
         val currentContainerFilledModeIndex by DataStoreManager.containerFilledStrategy.collectAsState(initial = SharedContainerFilledStrategy.DEFAULT.code)
         val defaultTransitionEffectIndex by DataStoreManager.defaultTransitionEffect.collectAsState(initial = SharedNavEffect.DEFAULT.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
@@ -286,7 +283,6 @@ fun SharedAppearanceSettingsScreen(
         val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
         val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
-//        val enableKeepPreviousPage by DataStoreManager.enableKeepPreviousPage.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -440,137 +436,40 @@ fun SharedAppearanceSettingsScreen(
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.appearance_settings_theme_title)) },
-                    supportingContent = {
-                        Text(text = stringResource(id = R.string.appearance_settings_theme_description))
-                    },
-                    modifier = Modifier
-                        .toggleable(
-                            value = isFollowingSystem,
-                            onValueChange = { checked ->
-                                scope.launch {
-                                    if (checked) {
-                                        DataStoreManager.saveColorMode(ColorMode.AUTO)
-                                    } else {
-                                        val targetMode = if (systemIsDark) ColorMode.DARK else ColorMode.LIGHT
-                                        DataStoreManager.saveColorMode(targetMode)
-                                    }
+                    leadingContent = {
+                        Icon(
+                            painterResource(
+                                when(currentColorModeIndex) {
+                                    ColorMode.DARK.code -> R.drawable.dark_mode
+                                    ColorMode.LIGHT.code -> R.drawable.light_mode
+                                    else -> R.drawable.routine
                                 }
-                            },
-                            role = Role.Checkbox
-                        ),
+                            ),
+                            contentDescription = "Localized description",
+                        )
+                    },
                     trailingContent = {
-                        Checkbox(
-                            checked = isFollowingSystem,
+                        // FancySwitch: by@Today1337
+                        FancySwitch(
+                            checked = isDarkMode,
                             onCheckedChange = { checked ->
+                                val newMode = if (checked) ColorMode.DARK else ColorMode.LIGHT
                                 scope.launch {
-                                    if (checked) {
-                                        DataStoreManager.saveColorMode(ColorMode.AUTO)
-                                    } else {
-                                        val targetMode = if (systemIsDark) ColorMode.DARK else ColorMode.LIGHT
-                                        DataStoreManager.saveColorMode(targetMode)
-                                    }
-                                }
-                            }
-                        )
-                    },
-                    leadingContent = { Icon(painterResource(
-                        when(currentColorModeIndex) {
-                            ColorMode.DARK.code -> R.drawable.dark_mode
-                            ColorMode.LIGHT.code -> R.drawable.light_mode
-                            else -> R.drawable.routine
-                        }
-                    ), contentDescription = "Localized description",) },
-                )
-                AnimatedVisibility(
-                    visible = !isFollowingSystem,
-                    enter = expandVertically(
-                        expandFrom = Alignment.Top,
-                        animationSpec = tween(
-                            durationMillis = 200,
-                            easing = FastOutSlowInEasing
-                        )
-                    ) + fadeIn(
-                        animationSpec = tween(
-                            durationMillis = 180
-                        )
-                    ),
-                    exit = shrinkVertically(
-                        shrinkTowards = Alignment.Top,
-                        animationSpec = tween(
-                            durationMillis = 200,
-                            easing = FastOutSlowInEasing
-                        )
-                    ) + fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 180
-                        )
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .toggleable(
-                                value = isDarkMode,
-                                onValueChange = { checked ->
-                                    val newMode = if (checked) ColorMode.DARK else ColorMode.LIGHT
-                                    scope.launch {
-                                        DataStoreManager.saveColorMode(newMode)
-                                    }
-                                },
-                                role = Role.Switch
-                            )
-                            // 不过话又说回来了
-                            // 这里用无障碍真的有必要吗
-                            // 我怎么感觉特殊群体用户 “看” 深色和浅色没什么意义呢
-                            .semantics(mergeDescendants = true){
-                                stateDescription = if (currentColorModeIndex == ColorMode.LIGHT.code) {
-                                    lightModeString
-                                } else {
-                                    darkModeString
+                                    DataStoreManager.saveColorMode(newMode)
                                 }
                             },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(start = 56.dp, end = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.appearance_settings_choice_theme,
-                                    when(currentColorModeIndex) {
-                                        ColorMode.DARK.code -> stringResource(id = R.string.appearance_settings_choice_theme_dark)
-                                        ColorMode.LIGHT.code -> stringResource(id = R.string.appearance_settings_choice_theme_light)
-                                        else -> stringResource(id = R.string.appearance_settings_choice_theme_auto)
-                                    }
-                                ),
-                                maxLines = 1,
-                                modifier = Modifier.basicMarquee(),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            FancySwitch(
-                                checked = isDarkMode,
-                                onCheckedChange = { checked ->
-                                    val newMode = if (checked) ColorMode.DARK else ColorMode.LIGHT
-                                    scope.launch {
-                                        DataStoreManager.saveColorMode(newMode)
-                                    }
-                                },
-                                isDark = systemIsDark // 感觉这个好像也多此一举
-                            )
-                        }
+                            isDark = isDarkMode // 感觉这个好像也多此一举
+                        )
+                    },
+                )
+                CustomSingleChoiceRow<ColorMode>(
+                    selected = currentColorModeIndex,
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                ) {
+                    scope.launch {
+                        DataStoreManager.saveColorMode(it)
                     }
                 }
-//                CustomSingleChoiceRow<ColorMode>(
-//                    selected = currentColorModeIndex,
-//                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
-//                ) {
-//                    scope.launch {
-//                        DataStoreManager.saveColorMode(it)
-//                    }
-//                }
             }
         }
         DividerTextExpandedWith(stringResource(R.string.appearance_settings_color_half_title),contentColor=contentColor) {
@@ -1003,10 +902,10 @@ fun SharedAppearanceSettingsScreen(
                             topEnd = CornerSize(0.dp),
                             topStart = CornerSize(0.dp),
                         ),
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = backgroundColor
                     ) {
                         TransplantListItem(
-                            colors = MaterialTheme.colorScheme.surface,
+                            colors = backgroundColor,
                             headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
                             supportingContent = {
                                 Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))
