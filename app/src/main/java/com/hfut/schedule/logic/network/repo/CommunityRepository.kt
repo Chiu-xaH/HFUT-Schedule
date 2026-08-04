@@ -125,34 +125,39 @@ object CommunityRepository : CommunityRepositoryInf {
         semesters: List<Int>,
         holder: UiStateHolder<Map<Int, CommunityGrade>>
     ) {
-        val requestedSemesters = semesters.toSet()
-        val currentState = holder.state.value
-        if (
-            token == allSemestersRankingsToken &&
-            currentState is NetworkUiState.Success &&
-            currentState.data.keys.containsAll(requestedSemesters)
-        ) {
-            return
-        }
-
-        allSemestersRankingsToken = token
-        holder.setLoading()
-        val result = buildMap {
-            semesters.distinct().forEach { semester ->
-                val (year, term) = SemesterParser.parseSemesterForCommunity(semester)
-                    ?: return@forEach
-                val gradeHolder = UiStateHolder<CommunityGrade>()
-                getGrade(token, year, term, gradeHolder)
-                currentCoroutineContext().ensureActive()
-                val grade = (gradeHolder.state.value as? NetworkUiState.Success)?.data
-                    ?: return@forEach
-                put(semester, grade)
+        try {
+            val requestedSemesters = semesters.toSet()
+            val currentState = holder.state.value
+            if (
+                token == allSemestersRankingsToken &&
+                currentState is NetworkUiState.Success &&
+                currentState.data.keys.containsAll(requestedSemesters)
+            ) {
+                return
             }
-        }
-        if (result.isEmpty()) {
-            holder.emitError(IllegalStateException("智慧社区各学期排名请求失败"))
-        } else {
-            holder.emitData(result)
+
+            allSemestersRankingsToken = token
+            holder.setLoading()
+            val result = buildMap {
+                semesters.distinct().forEach { semester ->
+                    val (year, term) = SemesterParser.parseSemesterForCommunity(semester)
+                        ?: return@forEach
+                    val gradeHolder = UiStateHolder<CommunityGrade>()
+                    getGrade(token, year, term, gradeHolder)
+                    currentCoroutineContext().ensureActive()
+                    val grade = (gradeHolder.state.value as? NetworkUiState.Success)?.data
+                        ?: return@forEach
+                    put(semester, grade)
+                }
+            }
+            currentCoroutineContext().ensureActive()
+            if (result.isEmpty()) {
+                holder.emitError(IllegalStateException("智慧社区各学期排名请求失败"), null)
+            } else {
+                holder.emitData(result)
+            }
+        } catch(e : Exception) {
+            holder.emitError(e)
         }
     }
 
