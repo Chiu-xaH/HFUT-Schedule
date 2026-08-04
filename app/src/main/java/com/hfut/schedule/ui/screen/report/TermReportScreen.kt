@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.screen.report
 import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -34,7 +33,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
@@ -107,7 +105,7 @@ import kotlinx.coroutines.launch
 
 private const val REPORT_PREPARATION_TIMEOUT_MILLIS = 30_000L
 
-private val REPORT_DATA_AGREEMENT_TEXT = """
+private val REPORT_DATA_USAGE_TEXT = """
     为生成学期报告，本功能会在你主动开始后，使用应用内已经保存的登录状态，从以下数据源获取与你相关的数据：
 
     1. 教务系统、合工大教务：成绩、学分和绩点；
@@ -150,18 +148,8 @@ private fun WelcomeScreen(
     onStartReport: (isGraduating: Boolean) -> Unit
 ) {
     var isGraduating by remember { mutableStateOf(false) }
-    var agreedToReportDataAccess by remember { mutableStateOf(false) }
     var showAgreement by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
-    val agreementCardColor by animateColorAsState(
-        targetValue = if (agreedToReportDataAccess) {
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
-        } else {
-            cardNormalColor()
-        },
-        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED),
-        label = "报告数据授权卡片颜色"
-    )
     val contentAlpha by animateFloatAsState(
         targetValue = if (contentVisible) 1f else 0f,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED),
@@ -180,14 +168,11 @@ private fun WelcomeScreen(
     if (showAgreement) {
         LittleDialog(
             onDismissRequest = { showAgreement = false },
-            onConfirmation = {
-                agreedToReportDataAccess = true
-                showAgreement = false
-            },
-            dialogTitle = "学期报告数据使用协议",
-            dialogText = REPORT_DATA_AGREEMENT_TEXT,
-            conformText = "同意",
-            dismissText = "暂不同意"
+            onConfirmation = { showAgreement = false },
+            dialogTitle = "学期报告数据使用说明",
+            dialogText = REPORT_DATA_USAGE_TEXT,
+            conformText = "知道了",
+            dismissText = "关闭"
         )
     }
 
@@ -311,31 +296,22 @@ private fun WelcomeScreen(
 
             Spacer(Modifier.height(20.dp))
             Text(
-                text = "数据授权",
+                text = "数据说明",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
             )
             Spacer(Modifier.height(6.dp))
-            CustomCard(color = agreementCardColor) {
+            CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
                     headlineContent = {
                         Text(
-                            text = "允许获取报告所需数据",
+                            text = "报告数据来源",
                             style = MaterialTheme.typography.titleMedium
                         )
                     },
                     supportingContent = {
                         Text("教务、慧新易校、图书馆、智慧社区及校园网")
-                    },
-                    leadingContent = {
-                        Checkbox(
-                            checked = agreedToReportDataAccess,
-                            onCheckedChange = { agreedToReportDataAccess = it }
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        agreedToReportDataAccess = !agreedToReportDataAccess
                     }
                 )
                 PaddingHorizontalDivider()
@@ -345,7 +321,7 @@ private fun WelcomeScreen(
                         .align(Alignment.End)
                         .padding(end = 8.dp)
                 ) {
-                    Text("查看数据使用协议")
+                    Text("查看详细说明")
                 }
             }
 
@@ -359,7 +335,6 @@ private fun WelcomeScreen(
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = { onStartReport(isGraduating) },
-                enabled = agreedToReportDataAccess,
                 modifier = Modifier
                     .padding(horizontal = APP_HORIZONTAL_DP)
                     .fillMaxWidth()
