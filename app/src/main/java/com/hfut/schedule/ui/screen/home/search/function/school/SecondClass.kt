@@ -97,7 +97,7 @@ fun SecondClassScreen(
         cookie?.let {
             vm.secondClassActivitiesResp.clear()
             vm.getSecondClassActivities(cookie,page)
-        } ?: vm.secondClassActivitiesResp.emitError(null, StatusCode.UNAUTHORIZED.code)
+        } ?: vm.secondClassActivitiesResp.emitError(Exception("登录失效"), StatusCode.UNAUTHORIZED.code)
     }
     val uiState by vm.secondClassActivitiesResp.state.collectAsState()
     val scope = rememberCoroutineScope()

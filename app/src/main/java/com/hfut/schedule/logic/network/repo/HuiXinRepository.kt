@@ -425,7 +425,7 @@ object HuiXinRepository : HuiXinRepositoryInf {
             val newState = huiXinBillResult.state.first()
             when (newState) {
                 is NetworkUiState.Error -> {
-                    cardPredictedResponse.emitError(newState.exception, newState.code)
+                    cardPredictedResponse.emitError(newState.exception ?: Exception("未知错误"), newState.code)
                 }
 
                 is NetworkUiState.Success -> {

@@ -1,33 +1,28 @@
 package com.xah.common.logic.state
 
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-private interface IStateHolder<in T> {
-    fun emitData(data : T)
-    fun emitError(e: Throwable?, code: Int? = null)
-    fun clear()
-    fun setLoading()
-}
-
-class UiStateHolder<T> : IStateHolder<T> {
+class UiStateHolder<T> {
     private val _state = MutableStateFlow<NetworkUiState<T>>(NetworkUiState.Loading)
     val state: StateFlow<NetworkUiState<T>> get() = _state
 
-    override fun emitData(data: T) {
+    fun emitData(data: T) {
         _state.value = NetworkUiState.Success(data)
     }
 
-    override fun emitError(e: Throwable?, code: Int?) {
+    fun emitError(e: Throwable, code: Int? = null) {
+        LogUtil.error(e,"code=$code")
         _state.value = NetworkUiState.Error(e, code)
     }
 
 
-    override fun setLoading() {
+    fun setLoading() {
         _state.value = NetworkUiState.Loading
     }
 
-    override fun clear() {
+    fun clear() {
         _state.value = NetworkUiState.Loading
     }
 

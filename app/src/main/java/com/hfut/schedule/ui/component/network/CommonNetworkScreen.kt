@@ -268,7 +268,7 @@ suspend fun <T,F> onListenStateHolderForNetwork(
         is NetworkUiState.Error -> {
             val codeInt = state.code
             val e = state.exception
-            resultHolder?.emitError(e,codeInt) ?: e?.message?.let { showToast(it) }
+            resultHolder?.emitError(e ?: Exception("未知错误"),codeInt) ?: e?.message?.let { showToast(it) }
         }
         is NetworkUiState.Loading -> {
             val t = "本操作依赖于上一网络请求，上一网络请求处于加载状态"

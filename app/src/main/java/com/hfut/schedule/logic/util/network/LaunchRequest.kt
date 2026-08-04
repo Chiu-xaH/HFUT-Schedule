@@ -65,7 +65,6 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformSuccess(headers, bodyString)
         } catch (e: Exception) {
-            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -76,7 +75,6 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformRedirect!!(headers)
         } catch (e: Exception) {
-            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -87,8 +85,7 @@ suspend fun <T> launchRequestState(
         holder.emitError(HttpException(response), response.code())
     }
 } catch (e: Exception) {
-    LogUtil.error(e)
-    holder.emitError(e,null)
+    holder.emitError(e)
 }
 // 空响应
 suspend fun <T> launchRequestState(
@@ -106,7 +103,6 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformSuccess(headers)
         } catch (e: Exception) {
-            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -117,7 +113,6 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformRedirect!!(headers)
         } catch (e: Exception) {
-            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -128,8 +123,7 @@ suspend fun <T> launchRequestState(
         holder.emitError(HttpException(response), response.code())
     }
 } catch (e: Exception) {
-    LogUtil.error(e)
-    holder.emitError(e,null)
+    holder.emitError(e)
 }
 // 无需关心内容 只关心请求结果
 suspend fun launchRequestNone(
