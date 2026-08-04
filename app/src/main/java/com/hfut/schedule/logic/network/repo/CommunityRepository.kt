@@ -149,8 +149,9 @@ object CommunityRepository : CommunityRepositoryInf {
                 put(semester, grade)
             }
         }
+        currentCoroutineContext().ensureActive()
         if (result.isEmpty()) {
-            holder.emitError(IllegalStateException("智慧社区各学期排名请求失败"))
+            holder.emitError(IllegalStateException("智慧社区各学期排名请求失败"), null)
         } else {
             holder.emitData(result)
         }
