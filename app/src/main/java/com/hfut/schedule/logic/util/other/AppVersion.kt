@@ -1,11 +1,17 @@
 package com.hfut.schedule.logic.util.other
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
 import com.xah.common.logic.util.LogUtil
+import java.io.ByteArrayInputStream
 import java.security.MessageDigest
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object AppVersion {
     enum class SplitType(val code : Int,val description: String) {
@@ -107,4 +113,47 @@ object AppVersion {
     val isRunningOnAvd = deviceName.startsWith("sdk_gphone") == true || deviceName.startsWith("Android SDK built for") == true
     val isRunningOnWsa = deviceName.startsWith("Subsystem for Android")
     val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
+
+    data class SignatureInfo(
+        val issuer: String,
+        val subject: String,
+        val validFrom: String,
+        val validUntil: String
+    )
+
+    fun Context.getSignatureInfo(): SignatureInfo? {
+        return try {
+            val packageInfo = if (sdkInt >= Build.VERSION_CODES.P) {
+                packageManager.getPackageInfo(
+                    packageName,
+                    PackageManager.GET_SIGNING_CERTIFICATES
+                )
+            } else {
+                packageManager.getPackageInfo(
+                    packageName,
+                    PackageManager.GET_SIGNATURES
+                )
+            }
+
+            val signatureBytes = if (sdkInt >= Build.VERSION_CODES.P) {
+                packageInfo.signingInfo?.apkContentsSigners?.firstOrNull()?.toByteArray()
+            } else {
+                packageInfo.signatures?.firstOrNull()?.toByteArray()
+            } ?: return null
+
+            val cert = CertificateFactory.getInstance("X.509").generateCertificate(ByteArrayInputStream(signatureBytes)) as X509Certificate
+
+            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+            SignatureInfo(
+                issuer = cert.issuerX500Principal.name,
+                subject = cert.subjectX500Principal.name,
+                validFrom = formatter.format(cert.notBefore),
+                validUntil = formatter.format(cert.notAfter)
+            )
+        } catch (e: Exception) {
+            LogUtil.error(e)
+            null
+        }
+    }
 }

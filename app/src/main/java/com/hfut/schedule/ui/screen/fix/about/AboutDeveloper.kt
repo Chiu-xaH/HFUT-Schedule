@@ -38,15 +38,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.other.AppVersion.getSignatureInfo
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -55,6 +57,8 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.welcome.arguments
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.theme.greenColor
+import com.hfut.schedule.ui.theme.warnColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
@@ -62,7 +66,6 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -329,7 +332,41 @@ fun About(vm : NetWorkViewModel) {
                     modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP*2)
                 )
             }
-
+            val signatureInfo = remember { MyApplication.context.getSignatureInfo() }
+            signatureInfo?.let { info ->
+                val isValid = AppVersion.isSignatureValid
+                DividerTextExpandedWith("开发者签名") {
+                    CardListItem(
+                        headlineContent = {
+                            Text(info.issuer)
+                        },
+                        supportingContent = {
+                            Text("有效期至 ${info.validFrom}")
+                        },
+                        leadingContent = {
+                            if(isValid) {
+                                Icon(
+                                    painterResource(R.drawable.verified),
+                                    null,
+                                    tint = greenColor()
+                                )
+                            } else {
+                                Icon(
+                                    painterResource(
+                                        if(AppVersion.isDebug) {
+                                            R.drawable.error
+                                        } else {
+                                            R.drawable.build
+                                        }
+                                    ),
+                                    null,
+                                    tint = warnColor()
+                                )
+                            }
+                        },
+                    )
+                }
+            }
             DividerTextExpandedWith("开源引用") {
                 CustomCard (color = cardNormalColor()){
                     for(index in openSourceProjects.indices step 2) {

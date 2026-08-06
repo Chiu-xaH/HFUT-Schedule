@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -18,3 +19,21 @@ fun greenColor() = if(isSystemInDarkTheme()) {
 } else {
     Color(0xFF2E7D32)
 }
+
+@Composable
+fun warnColor() = if(isSystemInDarkTheme()) {
+    Color(0xFFE0A350)
+} else {
+    Color(0xffba7f25)
+}
+
+@Composable
+fun pureMaskColor() = if(!isSystemInDarkTheme()) {
+    Color.Black
+} else {
+    Color.White
+}
+
+// 实际使用时用MaterialTheme.colorScheme.error
+@Composable
+fun errorColor() = MaterialTheme.colorScheme.error

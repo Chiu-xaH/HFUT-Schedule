@@ -19,8 +19,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-
-val birthdayColor = Color(0xffba7f25)
+import com.hfut.schedule.ui.theme.warnColor
 
 @Composable
 fun APIIcons(celebration: Boolean) {
@@ -62,7 +61,7 @@ fun MyAPIItem(
                         },
                         supportingContent = { Text("Happy Birthday")},
                         leadingContent = {
-                            Icon(painterResource(R.drawable.cake), contentDescription = "Localized description", tint = birthdayColor)
+                            Icon(painterResource(R.drawable.cake), contentDescription = "Localized description", tint = warnColor())
                         },
                     )
                 }
