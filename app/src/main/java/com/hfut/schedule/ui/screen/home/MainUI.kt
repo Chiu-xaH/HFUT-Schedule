@@ -512,8 +512,6 @@ fun MainScreen(
                                 }
                                 SETTINGS -> {
                                    Row {
-                                       // DeviceOs.isHarmonyOsNextAndroidCompatible();
-                                       // AppVersion.getSplitType
                                        if(AppVersion.isDebug) {
                                            IconButton(
                                                onClick = {
@@ -521,7 +519,7 @@ fun MainScreen(
                                                }
                                            ) {
                                                Icon(
-                                                   painterResource(R.drawable.build),
+                                                   painterResource(R.drawable.construction),
                                                    null,
                                                    tint = MaterialTheme.colorScheme.primary
                                                )

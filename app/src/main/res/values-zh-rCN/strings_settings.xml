@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_person_info_default_name">游客</string>
-    <string name="settings_person_info_tag_debug">Debug版本</string>
-    <string name="settings_person_info_tag_preview">内部开发版本</string>
-    <string name="settings_person_info_tag_avd">运行在开发设备</string>
-    <string name="settings_person_info_tag_wsa">运行在Windows</string>
+    <string name="settings_person_info_tag_debug">当前为Debug版本，仅供开发时用，应用性能较差</string>
+    <string name="settings_person_info_tag_preview">当前为内部开发版本，不代表最终正式版</string>
+    <string name="settings_person_info_tag_avd">当前运行在开发设备上</string>
+    <string name="settings_person_info_tag_wsa">当前运行在Windows系统上</string>
+    <string name="settings_person_info_tag_harmonry_next">当前运行在鸿蒙系统上，部分功能和体验可能降级</string>
     <string name="settings_person_info_tag_normal">已过 %1$s%%</string>
     <string name="settings_person_info_student_id_description">学号</string>
     <string name="settings_person_info_half_title">个人信息</string>
@@ -43,5 +44,4 @@
     <string name="settings_update_patch_button_download_to_version">更新至 %1$s</string>
     <string name="settings_update_patch_button__download_to_latest">下载</string>
     <string name="settings_person_info_tag_sign">非开发者签名</string>
-    <string name="settings_person_info_tag_harmonry_next">运行在鸿蒙NEXT内</string>
 </resources>

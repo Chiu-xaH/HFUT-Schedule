@@ -122,6 +122,18 @@ object AppVersion {
     )
 
     fun Context.getSignatureInfo(): SignatureInfo? {
+        val cert = getSignature() ?: return null
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        return SignatureInfo(
+            issuer = cert.issuerX500Principal.name,
+            subject = cert.subjectX500Principal.name,
+            validFrom = formatter.format(cert.notBefore),
+            validUntil = formatter.format(cert.notAfter)
+        )
+    }
+
+    private fun Context.getSignature(): X509Certificate? {
         return try {
             val packageInfo = if (sdkInt >= Build.VERSION_CODES.P) {
                 packageManager.getPackageInfo(
@@ -142,15 +154,7 @@ object AppVersion {
             } ?: return null
 
             val cert = CertificateFactory.getInstance("X.509").generateCertificate(ByteArrayInputStream(signatureBytes)) as X509Certificate
-
-            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-            SignatureInfo(
-                issuer = cert.issuerX500Principal.name,
-                subject = cert.subjectX500Principal.name,
-                validFrom = formatter.format(cert.notBefore),
-                validUntil = formatter.format(cert.notAfter)
-            )
+            return cert
         } catch (e: Exception) {
             LogUtil.error(e)
             null

@@ -4,17 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -46,6 +51,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -55,11 +61,13 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.GradeDetailDestination
 import com.hfut.schedule.ui.screen.welcome.arguments
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.ui.theme.warnColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -67,6 +75,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
+import kotlin.text.split
 
 
 private val openSourceProjects = listOf(
@@ -338,10 +347,59 @@ fun About(vm : NetWorkViewModel) {
                 DividerTextExpandedWith("开发者签名") {
                     CardListItem(
                         headlineContent = {
-                            Text(info.issuer)
-                        },
-                        supportingContent = {
-                            Text("有效期至 ${info.validFrom}")
+                            val text = info.issuer
+                            val list = try {
+                                text.split(',').map {
+                                    val subList = it.split('=')
+                                    subList[0] to subList[1]
+                                } + listOf(
+                                    "起" to info.validFrom,
+                                    "止" to info.validUntil
+                                )
+                            } catch (e : Exception) {
+                                LogUtil.error(e)
+                                null
+                            }
+                            if(list == null) {
+                                Text(text + "(${info.validFrom} ~ ${info.validUntil})")
+                            } else {
+                                NoPadding {
+                                    FlowRow(modifier = Modifier.padding(top = CARD_NORMAL_DP * 3)) {
+                                        list.forEach { item ->
+                                            AssistChip(
+                                                onClick = {
+                                                    showToast(
+                                                        when(item.first) {
+                                                            "C" -> "国家/地区"
+                                                            "ST" -> "省/州"
+                                                            "L" -> "城市"
+                                                            "O" -> "组织/公司"
+                                                            "OU" -> "部门/团队"
+                                                            "CN" -> "名"
+                                                            "起" -> "颁发时间"
+                                                            "止" -> "期限时间"
+                                                            else -> "未知"
+                                                        }
+                                                    )
+                                                },
+                                                label = {
+                                                    Text(item.second)
+                                                },
+                                                leadingIcon = {
+                                                    Text(item.first)
+                                                },
+                                                border = null,
+                                                colors = AssistChipDefaults.assistChipColors(
+                                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                                ),
+                                                modifier = Modifier
+                                                    .padding(end = CARD_NORMAL_DP * 3)
+                                                    .padding(bottom = CARD_NORMAL_DP * 3)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         },
                         leadingContent = {
                             if(isValid) {
@@ -354,13 +412,17 @@ fun About(vm : NetWorkViewModel) {
                                 Icon(
                                     painterResource(
                                         if(AppVersion.isDebug) {
-                                            R.drawable.error
+                                            R.drawable.construction
                                         } else {
-                                            R.drawable.build
+                                            R.drawable.help
                                         }
                                     ),
                                     null,
-                                    tint = warnColor()
+                                    tint = if(AppVersion.isDebug) {
+                                        LocalContentColor.current
+                                    } else {
+                                        warnColor()
+                                    }
                                 )
                             }
                         },
