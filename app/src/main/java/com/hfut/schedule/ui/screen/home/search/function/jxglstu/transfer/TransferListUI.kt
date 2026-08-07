@@ -44,9 +44,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,6 +83,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDestination
 import com.hfut.schedule.ui.nav.destination.TransferMajorDetailDestination
+import com.hfut.schedule.ui.nav.window.TransferMajorDetailOptionsWindow
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
@@ -100,11 +103,16 @@ import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
+import com.xah.shader.state.rememberShaderState
+import com.xah.shader.state.shaderSource
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
+import kotlin.collections.getValue
+import kotlin.collections.setValue
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
     ExperimentalMaterialApi::class
@@ -333,7 +341,9 @@ fun TransferDetailScreen(
             }
         }
     }
-    var input by remember { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf("") }
+    var sortByHot by rememberSaveable { mutableStateOf(false) }
+    val floatingController = LocalFloatingController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -353,19 +363,50 @@ fun TransferDetailScreen(
                                     showBottomSheet_apply = true
                                 },
                                 backdrop = backDrop
-                                ) {
+                            ) {
                                 Text("我的申请")
                             }
                             Spacer(modifier = Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                onClick = {
-                                    // TODO 图片形式保存
-                                    showDevelopingToast()
-                                },
-                                isCircle = true,
-                                backdrop = backDrop
+//                            LiquidButton(
+//                                onClick = {
+//                                    // TODO 图片形式保存
+//                                    showDevelopingToast()
+//                                },
+//                                isCircle = true,
+//                                backdrop = backDrop
+//                            ) {
+//                                Icon(painterResource(R.drawable.ios_share),null)
+//                            }
+                            val window = TransferMajorDetailOptionsWindow(sortByHot) {
+                                sortByHot = it
+                            }
+                            SharedContainer(
+                                window.key,
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
-                                Icon(painterResource(R.drawable.ios_share),null)
+                                if(floatingController.isRunning) {
+                                    LiquidButton(
+                                        onClick = {
+                                            floatingController.push(window)
+                                        },
+                                        isCircle = true,
+                                        shape = NoneRoundShape,
+                                        backdrop = backDrop
+                                    ) {
+                                        Icon(painterResource(R.drawable.more_vert),null)
+                                    }
+                                } else {
+                                    LiquidButton(
+                                        onClick = {
+                                            floatingController.push(window)
+                                        },
+                                        isCircle = true,
+                                        backdrop = backDrop
+                                    ) {
+                                        Icon(painterResource(R.drawable.more_vert),null)
+                                    }
+                                }
                             }
                         }
                     }
@@ -410,10 +451,9 @@ fun TransferDetailScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            TransferUI(vm,batchId,hazeState,isHidden,input,innerPadding)
+            TransferUI(vm,batchId,hazeState,isHidden,input,innerPadding,sortByHot)
         }
     }
-//    }
 }
 
 
@@ -425,7 +465,8 @@ private fun TransferUI(
     hazeState: HazeState,
     isHidden : Boolean = false,
     input : String,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    sortByHot : Boolean
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheet_select by remember { mutableStateOf(false) }
@@ -551,15 +592,28 @@ private fun TransferUI(
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as NetworkUiState.Success).data
-        val list = response.data.let {
-            if(input.isEmpty() || input.isBlank()) {
-                it
-            } else {
-                it.filter { item ->
-                    item.department.nameZh.contains(input) || item.major.nameZh.contains(input)
+        val list = response.data
+            .let {
+                if(input.isEmpty() || input.isBlank()) {
+                    it
+                } else {
+                    it.filter { item ->
+                        item.department.nameZh.contains(input) || item.major.nameZh.contains(input)
+                    }
                 }
             }
-        }.sortedBy { it.department.nameZh }
+            .let { l ->
+                if(sortByHot) {
+                    l.sortedByDescending {
+                        it.applyStdCount.toDouble() safeDiv it.preparedStdCount.toDouble()
+                    }
+                } else {
+                    l.sortedBy {
+                        it.department.nameZh
+                    }
+                }
+            }
+
 
         LazyColumn() {
             item { InnerPaddingHeight(innerPadding,true) }
@@ -591,7 +645,7 @@ private fun TransferUI(
                 val count = dataItem.applyStdCount
                 val limit = dataItem.preparedStdCount
                 val isFull = count >= limit
-                var successRate = limit.toDouble() safeDiv count.toDouble()
+                val successRate = limit.toDouble() safeDiv count.toDouble()
 
                 // 已申请 $count / $limit
                 CustomCard(
