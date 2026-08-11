@@ -134,6 +134,12 @@ import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.model.ExperimentalNavigationBarApi
+import com.hfut.schedule.ui.model.IconType
+import com.hfut.schedule.ui.model.NavigationBar
+import com.hfut.schedule.ui.model.NavigationBarArrangement
+import com.hfut.schedule.ui.model.NavigationBarIcon
+import com.hfut.schedule.ui.model.NewNavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
 import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
@@ -183,6 +189,9 @@ import com.xah.shader.state.ShaderState
 import com.xah.shader.state.rememberShaderState
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.shader.smallStyle
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.TransparentSystemBars
@@ -192,7 +201,11 @@ import com.xah.navigation.anim.effect.Direction
 import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -222,7 +235,8 @@ fun smoothToOne(scaleFactor: MutableState<Float>) {
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
-    ExperimentalGlideComposeApi::class, ExperimentalAnimationGraphicsApi::class
+    ExperimentalGlideComposeApi::class, ExperimentalAnimationGraphicsApi::class,
+    ExperimentalHazeMaterialsApi::class
 )
 @Composable
 fun MainScreen(
@@ -636,7 +650,10 @@ fun MainScreen(
                                     Text(
                                         topBarText(CALENDAR,context),
                                         modifier = Modifier
-                                            .padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3)
+                                            .padding(
+                                                vertical = CARD_NORMAL_DP * 2,
+                                                horizontal = CARD_NORMAL_DP * 3
+                                            )
                                             .controlCenterDrag(),
                                         fontSize = 20.5.sp
                                     )
@@ -857,6 +874,46 @@ fun MainScreen(
             }
         },
         bottomBar = {
+            @OptIn(ExperimentalNavigationBarApi::class)
+            val newItems = remember(showBadge, update) {
+                listOf(
+                    NewNavigationBarItemData(
+                        icon = NavigationBarIcon.Resource(
+                            resId = R.drawable.avd_calendar
+                        ),
+                        iconType = IconType.ANIMATED,
+                        text = "课程表",
+                        route = CALENDAR.name
+                    ),
+                    NewNavigationBarItemData(
+                        icon = NavigationBarIcon.Resource(
+                            resId = R.drawable.avd_lightbulb
+                        ),
+                        iconType = IconType.ANIMATED,
+                        text = "聚焦",
+                        route = FOCUS.name
+                    ),
+                    NewNavigationBarItemData(
+                        icon = NavigationBarIcon.Resource(
+                            resId = R.drawable.avd_category_search
+                        ),
+                        iconType = IconType.ANIMATED,
+                        text = "查询中心",
+                        route = FUNCTIONS.name
+                    ),
+                    NewNavigationBarItemData(
+                        icon = NavigationBarIcon.Resource(
+                            resId = if (showBadge) R.drawable.avd_deployed_code_update else R.drawable.avd_deployed_code
+                        ),
+                        iconType = IconType.ANIMATED,
+                        text = "选项",
+                        badge = {
+                            if (showBadge) Badge{ Text("1") }
+                        },
+                        route = SETTINGS.name
+                    )
+                )
+            }
             val items = listOf(
                 NavigationBarItemDataDynamic(
                     CALENDAR.name,
@@ -902,6 +959,55 @@ fun MainScreen(
                     }
                 )
             )
+            if ( 1 == 2 ){
+                @OptIn(ExperimentalNavigationBarApi::class)
+                NavigationBar(
+                    fillTrack = true,
+                    arrangement = NavigationBarArrangement.VERTICAL,
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    hapticsEnabled = false,
+                    aimAssist = true,
+                    aimAssistAnimationDurationMillis = 20,
+                    preview = false,
+                    itemHorizontalPadding = 0.dp,
+                    hazeModifier = Modifier
+                        .bottomBarBlur(hazeState = hazeState),
+//                    .hazeEffect(
+//                        state = hazeState,
+//                        style = HazeStyle.Unspecified.copy(
+//                            blurRadius = 8.dp,
+//                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant
+//                        )
+//                    )
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .navigationBarsPadding(),
+                ) {
+                    newItems.forEachIndexed { _, data ->
+                        val selected = navController.isCurrentRouteWithoutArgs(data.route)
+                        /*
+                         * 我试着在内部做校验， 但是内部
+                         * items.isNotEmpty() 和 items.count { it.selected }  ==  1 都不能作为验证，
+                         * 因为在初始阶段这样无意义且一定会返回失败相关的部分
+                         * 所以使用时尽量用单点源， 如果一下子多个 Item 声明自己被选中， 会发生什么我也不清楚
+                         * */
+                        NavigationBarItem(
+                            selected = selected,
+                            icon = data.icon,
+                            iconType = data.iconType,
+                            text = data.text,
+                            badge = data.badge,
+                            route = data.route,
+                            onClick = {
+                                if (!selected) {
+                                    navController.navigateForBottomBar(data.route)
+                                }
+                            },
+                        )
+                    }
+                }
+            }
             if(useCustomBackground && targetPage == CALENDAR) {
                 SpecialBottomBar(backGroundSource,items,navController,isEnabled)
             } else {
