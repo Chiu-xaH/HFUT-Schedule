@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.screen.home.cube.screen
 
 
 import android.graphics.Bitmap
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -62,6 +63,7 @@ import com.hfut.schedule.ui.screen.fix.fix.BugShare
 import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
@@ -96,7 +98,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-                        val qrPainter = createQRCodeBitmap(Constant.GITEE_UPDATE_URL + "releases/tag/Android",1000,1000)
+                        val qrPainter = rememberCreateQrCode(Constant.GITEE_UPDATE_URL + "releases/tag/Android")
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
                     Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
@@ -305,47 +307,54 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
 }
 
 
+/**
+ * TODO 通用组件 展示二维码和URL，URL支持打开、分享
+ */
+
 @Composable
-fun createQRCodeBitmap(
+fun rememberCreateQrCode(
     content: String,
-    width: Int,
-    height: Int,
+    contentColor : Color = MaterialTheme.colorScheme.primary,
+    backgroundColor : Color = Color.Transparent,
+    size: Int = 1000,
+) : Bitmap? = remember(content,contentColor,backgroundColor,size) {
+    createQrCode(content,contentColor,backgroundColor,size)
+}
+
+fun createQrCode(
+    content: String,
+    contentColor : Color = Color.Black,
+    backgroundColor : Color = Color.Transparent,
+    size: Int = 1000,
 ): Bitmap? {
-    if (width < 0 || height < 0) {
+    if (size < 0) {
         return null
     }
-  //  try {
+    try {
         val hints: Hashtable<EncodeHintType, String> = Hashtable()
-//        if (character_set.isNotEmpty()) {
-            hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
-//        }
-//        if (error_correction.isNotEmpty()) {
-            hints[EncodeHintType.ERROR_CORRECTION] = "H"
-//        }
-//        if (margin.isNotEmpty()) {
-            hints[EncodeHintType.MARGIN] = "1"
-//        }
-        val bitMatrix = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, width, height, hints)
+        hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+        hints[EncodeHintType.ERROR_CORRECTION] = "H"
+        hints[EncodeHintType.MARGIN] = "1"
+        val bitMatrix = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, size, size, hints)
 
-        val colorPrimary = MaterialTheme.colorScheme.primary.toArgb()
-        val colorBackground = Color.TRANSPARENT
-
-        val pixels = IntArray(width * height)
-        for (y in 0 until height) {
-            for (x in 0 until width) {
+        val pixels = IntArray(size * size)
+        for (y in 0 until size) {
+            for (x in 0 until size) {
                 if (bitMatrix[x, y]) {
-                    pixels[y * width + x] = colorPrimary
+                    pixels[y * size + x] = contentColor.toArgb()
                 } else {
-                    pixels[y * width + x] = colorBackground
+                    pixels[y * size + x] = backgroundColor.toArgb()
                 }
             }
         }
 
-        val bitmap = createBitmap(width, height)
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+        val bitmap = createBitmap(size, size)
+        bitmap.setPixels(pixels, 0, size, 0, 0, size, size)
         return bitmap
-   // } catch (e: WriterException) {
-  //      LogUtil.error(e)
-  //  }
-   // return null
+    } catch (e: Exception) {
+        LogUtil.error(e)
+        return null
+    }
 }
+
+val QR_CODE_PADDING = CARD_NORMAL_DP*4
