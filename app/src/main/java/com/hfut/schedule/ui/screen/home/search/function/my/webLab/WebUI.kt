@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.my.webLab
 
+import android.graphics.Bitmap
 import android.util.Patterns
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.LinearEasing
@@ -7,10 +8,12 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,12 +40,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,11 +63,13 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.isInGraduation
 import com.hfut.schedule.logic.util.sys.datetime.isInLanding
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -75,6 +82,9 @@ import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
 import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
+import com.hfut.schedule.ui.screen.home.cube.screen.QR_CODE_PADDING
+import com.hfut.schedule.ui.screen.home.cube.screen.createQrCode
+import com.hfut.schedule.ui.screen.home.cube.screen.rememberCreateQrCode
 
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
@@ -287,28 +297,50 @@ fun WebNavigationScreen(
             InnerPaddingHeight(innerPadding,true)
             DividerTextExpandedWith(text = "浏览器") {
                 Column() {
+                    val color = MaterialTheme.colorScheme.primary
+                    var qrPainter by remember { mutableStateOf<Bitmap?>(null) }
+
                     CustomTextField(
                         input = input,
-                        label = { Text("输入合法链接") },
+                        label = { Text("输入链接") },
                         singleLine = false,
                         trailingIcon = {
-                            IconButton(
-                                enabled = isValidWebUrl(input),
-                                onClick = {
-                                    scope.launch {
-                                        Starter.startWebUrlInner(
-                                            context,
-                                            url = input,
-                                            title = getPureUrl(input),
-                                            cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
-                                        )
-                                    }
-                                },
-                            ) {
-                                Icon(painterResource(R.drawable.arrow_forward),null)
+                            Row {
+                                IconButton(
+                                    enabled = input.isNotEmpty() && input.isNotBlank(),
+                                    onClick = {
+                                        qrPainter = createQrCode(input,color)
+                                    },
+                                ) {
+                                    Icon(painterResource(R.drawable.qr_code_2),null)
+                                }
+                                IconButton(
+                                    enabled = isValidWebUrl(input),
+                                    onClick = {
+                                        scope.launch {
+                                            Starter.startWebUrlInner(
+                                                context,
+                                                url = input,
+                                                title = getPureUrl(input),
+                                                cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
+                                            )
+                                        }
+                                    },
+                                ) {
+                                    Icon(painterResource(R.drawable.arrow_forward),null)
+                                }
                             }
                         }
                     ) { input = it }
+
+                    qrPainter?.let {
+                        DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP).padding(top = QR_CODE_PADDING))
+                        Image(
+                            it.asImageBitmap(),
+                            contentDescription = "",
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - QR_CODE_PADDING)
+                        )
+                    }
 
                     /*
                     Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
