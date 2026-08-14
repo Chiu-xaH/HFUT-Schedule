@@ -16,6 +16,8 @@ fun DepartmentIcons(name : String, modifier: Modifier = Modifier) = Icon(
 /**
  * 学院图标重绘
  * @param name 学院名称
+ *
+ * CNM，总改学院名，总要重新适配，加个“智能”字眼就起飞了是吧，直接叫合肥工业智能大学得了呗
  */
 fun departmentIcon(name : String) : Int =
     // 学院
@@ -31,7 +33,8 @@ fun departmentIcon(name : String) : Int =
     else if(name.contains("化学与化工学院")) R.drawable.science
     else if(name.contains("经济学院")) R.drawable.currency_pound
     else if(name.contains("文法学院")) R.drawable.newsstand
-    else if(name.contains("管理学院")) R.drawable.account_tree
+    // 新名字：管理与智能科学学院，旧名字：管理学院
+    else if(name.contains("管理")) R.drawable.account_tree
     else if(name.contains("仪器科学与光电工程学院")) R.drawable.body_fat
     else if(name.contains("建筑与艺术学院")) R.drawable.domain
     else if(name.contains("食品与生物工程学院")) R.drawable.genetics

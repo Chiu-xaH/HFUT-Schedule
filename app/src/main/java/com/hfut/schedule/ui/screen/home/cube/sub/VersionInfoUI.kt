@@ -71,10 +71,8 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 完善学期报告生成流程与多数据源展示",to = To.Screen(TermReportDestination), developers = listOf("Junpgle"))
-        UpdateItems("新增 一个日夜开关","位于 选项-外观-深浅色",to = To.Screen(SettingsAppearanceDestination), developers = listOf("Today1337"))
-        UpdateItems("修复 应用转场动画性能略下降的问题","之前做模块联调时临时打开了全量日志，然后忘记关闭了")
-        UpdateItems("优化 返回动画时的手势体验")
+        // 重新引入历史记录，然后持久化到本地数据库，统计其次数。
+        UpdateItems("新增 对管理学院更名的图标适配")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("反射扫描destination文件夹")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
