@@ -245,10 +245,12 @@ fun UniAppCoursesScreen(
             }
         }
 
+        val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+
         DraggableWeekButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding() - if(enableNewBottomBar) 0.dp else navigationBarHeightPadding)
                 .padding(APP_HORIZONTAL_DP),
             containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
             expanded = shouldShowAddButton,

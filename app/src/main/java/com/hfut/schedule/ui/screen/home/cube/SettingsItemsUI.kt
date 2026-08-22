@@ -92,7 +92,7 @@ fun SettingsItemsUI() {
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             TransplantListItem(
-                colors = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surface,
                 headlineContent = { Text(text = stringResource(R.string.appearance_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.appearance_settings_description))},
                 leadingContent = {
@@ -108,7 +108,7 @@ fun SettingsItemsUI() {
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             TransplantListItem(
-                colors = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surface,
                 headlineContent = { Text(text = stringResource(R.string.app_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.app_settings_description))},
                 leadingContent = {
@@ -126,7 +126,7 @@ fun SettingsItemsUI() {
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             TransplantListItem(
-                colors = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surface,
                 headlineContent = { Text(text = stringResource(R.string.network_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.network_settings_description))},
                 leadingContent = {
@@ -147,7 +147,7 @@ fun SettingsItemsUI() {
             containerColor = MaterialTheme.colorScheme.surface
         ) {
             TransplantListItem(
-                colors = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surface,
                 headlineContent = { Text(text = stringResource(R.string.about_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.about_settings_description))},
                 leadingContent = {
@@ -351,7 +351,7 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
                 containerColor = MaterialTheme.colorScheme.surface
             ) {
                 TransplantListItem(
-                    colors = MaterialTheme.colorScheme.surface,
+                    color = MaterialTheme.colorScheme.surface,
                     headlineContent = { Text(text = VersionInfoDestination.title.asString()) },
                     supportingContent = { Text(text = if(isPreview) stringResource(R.string.settings_version_info_description_preview) else stringResource(
                         R.string.settings_version_info_description, currentVersion

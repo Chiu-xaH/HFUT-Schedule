@@ -302,7 +302,7 @@ fun FocusCard(
                             containerColor = cardNormalColor()
                         ) {
                             TransplantListItem(
-                                colors = cardNormalColor(),
+                                color = cardNormalColor(),
                                 headlineContent = {
                                     Text(
                                         if(gradeCount == 0) {
@@ -351,7 +351,7 @@ fun FocusCard(
                                     containerColor = cardNormalColor()
                                 ) {
                                     TransplantListItem(
-                                        colors = cardNormalColor(),
+                                        color = cardNormalColor(),
                                         headlineContent = { Text(title) },
                                         overlineContent = { Text(typeName)},
                                         leadingContent = { Icon(painterResource(R.drawable.temp_preferences_eco),null)},

@@ -63,7 +63,7 @@ fun LoginWeb( card : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
             painterResource(R.drawable.net),
             contentDescription = "Localized description",
         ) },
-        colors = cardNormalColor(),
+        color = cardNormalColor(),
         modifier = Modifier
             .let {
                 if(card) {

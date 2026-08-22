@@ -591,7 +591,7 @@ fun LibraryMineUI(
                         supportingContent = {
                             Text("新图书馆官网(有时需校园网)")
                         },
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         leadingContent = {
                             Icon(painterResource(R.drawable.globe_book),null)
                         },
@@ -618,7 +618,7 @@ fun LibraryMineUI(
                         leadingContent = {
                             Icon(painterResource(R.drawable.net),null)
                         },
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
@@ -642,7 +642,7 @@ fun LibraryMineUI(
                         leadingContent = {
                             Icon(painterResource(R.drawable.table_restaurant),null)
                         },
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
@@ -666,7 +666,7 @@ fun LibraryMineUI(
                         leadingContent = {
                             Icon(painterResource(R.drawable.meeting_room),null)
                         },
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {

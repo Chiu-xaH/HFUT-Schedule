@@ -152,7 +152,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = VersionInfoDestination.title.asString()) },
                         supportingContent = { Text(text = stringResource(R.string.about_settings_version_info_description))},
                         modifier = Modifier.clickable {
@@ -169,7 +169,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.about_settings_about_title)) },
                         supportingContent = { Text(text = stringResource(R.string.about_settings_about_description))},
                         modifier = Modifier.combinedClickable(
@@ -202,7 +202,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.about_settings_tips_title)) },
                         supportingContent = { Text(text = stringResource(
                             R.string.about_settings_tips_description,
@@ -291,7 +291,7 @@ fun AboutSettingsScreen(innerPadding : PaddingValues,) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.about_settings_developer_title)) },
                         supportingContent = { Text(text = stringResource(R.string.about_settings_developer_description))},
                         modifier = Modifier.clickable {

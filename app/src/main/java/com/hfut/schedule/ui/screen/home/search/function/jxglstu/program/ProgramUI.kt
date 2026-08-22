@@ -528,7 +528,7 @@ fun ProgramDetailInfo(courseInfo : JxglstuProgramItemDto, ifSaved: Boolean, onDi
                     leadingContent = {
                         Icon(painterResource(R.drawable.verified),null)
                     },
-                    colors = if(specially) MaterialTheme.colorScheme.errorContainer else null,
+                    color = if(specially) MaterialTheme.colorScheme.errorContainer else null,
                     overlineContent = { Text("真实选修性") },
                     modifier = Modifier
                         .weight(.5f)

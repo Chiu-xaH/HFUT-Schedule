@@ -905,7 +905,7 @@ fun SharedAppearanceSettingsScreen(
                         containerColor = backgroundColor
                     ) {
                         TransplantListItem(
-                            colors = backgroundColor,
+                            color = backgroundColor,
                             headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
                             supportingContent = {
                                 Text(stringResource(R.string.appearance_settings_transition_screen_corner_description))

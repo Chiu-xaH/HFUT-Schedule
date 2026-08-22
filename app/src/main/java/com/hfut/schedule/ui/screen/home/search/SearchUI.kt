@@ -42,6 +42,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -139,6 +140,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.Backdrop
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -331,6 +333,7 @@ fun SearchScreen(
 @Composable
 fun SearchFuncs(
     input: String,
+    backdrop : Backdrop,
     onShow : (Boolean) -> Unit,
     onInputChanged: (String) -> Unit
 ) {
@@ -344,6 +347,7 @@ fun SearchFuncs(
 
         TextField(
             modifier = Modifier
+                .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
                 .weight(1f),
             value = input,
             onValueChange = onInputChanged,

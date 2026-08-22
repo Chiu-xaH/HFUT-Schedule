@@ -99,7 +99,7 @@ fun NetworkSettingsScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.network_settings_school_card_password_title)) },
                         supportingContent = { Text(text = stringResource(R.string.network_settings_school_card_password_description)) },
                         leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
@@ -115,7 +115,7 @@ fun NetworkSettingsScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.network_settings_jxglstu_password_title)) },
                         supportingContent = { Text(text = stringResource(R.string.network_settings_jxglstu_password_description)) },
                         leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
@@ -142,7 +142,7 @@ fun NetworkSettingsScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.network_settings_ai_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.network_settings_ai_description))

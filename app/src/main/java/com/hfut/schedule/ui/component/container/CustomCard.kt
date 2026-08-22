@@ -95,7 +95,7 @@ fun TransplantListItem(
     supportingContent : @Composable() (() -> Unit)? = null,
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
-    colors : Color? = null,
+    color : Color? = null,
     usePadding : Boolean = true,
     modifier: Modifier = Modifier
 ) {
@@ -103,7 +103,7 @@ fun TransplantListItem(
         headlineContent = headlineContent,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
-        colors = ListItemDefaults.colors(containerColor = colors ?: Color.Transparent) ,
+        colors = ListItemDefaults.colors(containerColor = color ?: Color.Transparent) ,
         trailingContent = trailingContent,
         leadingContent = leadingContent,
         modifier = modifier.padding(horizontal =

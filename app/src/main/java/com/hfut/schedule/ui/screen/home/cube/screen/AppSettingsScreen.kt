@@ -51,6 +51,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfi
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
@@ -63,6 +64,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
 import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
+import com.hfut.schedule.ui.nav.destination.SettingsLabDestination
 import com.hfut.schedule.ui.nav.destination.SettingsOcrDestination
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -74,6 +76,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -285,7 +288,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_account_title)) },
                         supportingContent = {
                             Text(stringResource(R.string.app_settings_default_calendar_account_description))
@@ -306,7 +309,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.app_settings_focus_card_title)) },
                         supportingContent = { Text(text = stringResource(R.string.app_settings_focus_card_description)) },
                         leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
@@ -322,7 +325,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.app_settings_auto_fill_captcha_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.app_settings_auto_fill_captcha_description))
@@ -343,7 +346,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = stringResource(R.string.app_settings_shortcut_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.app_settings_shortcut_description))
@@ -367,7 +370,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(text = SettingsDeepLinkDestination.title.asString()) },
                         supportingContent = {
                             Text(text = "向外界应用与网页提供跳转能力")
@@ -424,7 +427,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = { Text(stringResource(R.string.app_settings_backup_and_restore_title)) },
                         leadingContent = { Icon(painterResource(R.drawable.database),null)},
                         supportingContent = {
@@ -464,7 +467,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         headlineContent = {
                             Text(stringResource(R.string.app_settings_widget_focus_title))
                         },
@@ -511,6 +514,37 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     },
                 )
             }
+        }
+        DividerTextExpandedWith("其他") {
+//            CustomCard(color = MaterialTheme.colorScheme.surface) {
+//                SharedContainer(
+//                    key = SettingsLabDestination.key,
+//                    shape = MaterialTheme.shapes.medium,
+//                    containerColor = MaterialTheme.colorScheme.surface
+//                ) {
+                    CardListItem(
+                        cardModifier = Modifier.sharedContainer(
+                            key = SettingsLabDestination.key,
+                            shape = MaterialTheme.shapes.medium,
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        shape = NoneRoundShape,
+                        color =  MaterialTheme.colorScheme.surface,
+                        headlineContent = {
+                            Text("实验室")
+                        },
+                        supportingContent = {
+                            Text("启用一些未完善的功能")
+                        },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsLabDestination)
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.science),null)
+                        },
+                    )
+//                }
+//            }
         }
         InnerPaddingHeight(innerPaddings,false)
     }

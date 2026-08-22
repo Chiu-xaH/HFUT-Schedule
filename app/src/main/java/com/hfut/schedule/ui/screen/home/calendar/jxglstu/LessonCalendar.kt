@@ -743,12 +743,14 @@ fun JxglstuCourseTableSearch(
             }
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,false) }
         }
+        val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+
         // 中间
         DraggableWeekButton(
             shaderState = backGroundHaze,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
+                .padding(bottom = innerPadding.calculateBottomPadding() - if(enableNewBottomBar) 0.dp else if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP

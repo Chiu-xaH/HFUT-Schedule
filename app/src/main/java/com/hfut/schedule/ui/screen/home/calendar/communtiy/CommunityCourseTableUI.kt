@@ -254,11 +254,12 @@ fun CommunityCourseTableUI(
                 floatingController.push(TimeTableSquareWindow(list))
             }
         }
+        val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
         DraggableWeekButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = innerPaddings.calculateBottomPadding() - navigationBarHeightPadding)
+                .padding(bottom = innerPaddings.calculateBottomPadding() - if(enableNewBottomBar) 0.dp else navigationBarHeightPadding)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
             containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
             shaderState = backGroundHaze,

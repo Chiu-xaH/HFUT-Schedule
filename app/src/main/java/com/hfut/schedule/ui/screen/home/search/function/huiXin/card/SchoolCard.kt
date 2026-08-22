@@ -69,7 +69,7 @@ fun SchoolCardItem(isFromFocus : Boolean) {
     val showAdd by DataStoreManager.enableShowFocusSchoolCardAddButton.collectAsState(true)
 
     TransplantListItem(
-        colors = cardNormalColor(),
+        color = cardNormalColor(),
         headlineContent = {
             ScrollText(
                 text = "￥$text",

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -59,6 +60,7 @@ import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.logic.util.safeDiv
 import com.xah.shader.state.ShaderState
 import com.hfut.schedule.ui.style.shader.largeStyle
+import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.container.util.LocalSharedRegistrySafely
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -436,4 +438,89 @@ fun NoPadding(content: @Composable () -> Unit) {
     ) {
         content()
     }
+}
+
+@Composable
+fun Modifier.bottomBarBackDrop(
+    backdrop: Backdrop,
+    enabled : Boolean = true,
+    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
+) : Modifier {
+    val progressAnimation = remember { Animatable(0f) }
+    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val tint = Color.Unspecified
+    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
+    val interactiveHighlightShader = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RuntimeShader(SHADER)
+        } else {
+            Unit
+        }
+    }
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+
+    return this.drawBackdrop(
+        highlight = {
+            Highlight.Default.copy(width = 0.25.dp)
+        },
+        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+        shape = {
+            ScreenCornerHelper.corner.let {
+//                if(it == 0.dp) {
+                    CircleShape
+//                } else {
+//                    RoundedCornerShape(it)
+//                }
+            } as Shape
+        },
+        effects = {
+            vibrancy()
+//            blur(1f)
+            lens(22.5f.dp.toPx(), 20f.dp.toPx())
+        },
+        shadow = null,
+        onDrawSurface = {
+            if (tint.isSpecified) {
+                drawRect(tint, blendMode = BlendMode.Hue)
+                drawRect(tint.copy(alpha = 0.75f))
+            }
+            if (surfaceColor.isSpecified) {
+                drawRect(surfaceColor)
+            }
+            if (enabled) {
+                val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
+                if (progress > 0f) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
+                        drawRect(
+                            Color.White.copy(0.1f * progress),
+                            blendMode = BlendMode.Plus
+                        )
+                        interactiveHighlightShader.apply {
+                            val offset = pressStartPosition + offsetAnimation.value
+                            setFloatUniform("size", size.width, size.height)
+                            setColorUniform(
+                                "color",
+                                Color.White.copy(0.15f * progress).toArgb()
+                            )
+                            setFloatUniform("radius", size.maxDimension)
+                            setFloatUniform(
+                                "offset",
+                                offset.x.fastCoerceIn(0f, size.width),
+                                offset.y.fastCoerceIn(0f, size.height)
+                            )
+                        }
+                        drawRect(
+                            ShaderBrush(interactiveHighlightShader),
+                            blendMode = BlendMode.Plus
+                        )
+                    } else {
+                        drawRect(
+                            Color.White.copy(0.25f * progress),
+                            blendMode = BlendMode.Plus
+                        )
+                    }
+                }
+            }
+        }
+    )
 }

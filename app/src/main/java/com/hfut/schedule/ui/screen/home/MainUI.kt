@@ -124,6 +124,8 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.bottomBarBackDrop
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -192,6 +194,7 @@ import com.hfut.schedule.ui.style.shader.smallStyle
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.TransparentSystemBars
@@ -250,6 +253,7 @@ fun MainScreen(
     var isEnabled by rememberSaveable { mutableStateOf(!isLogin) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
+    val backdrop = rememberLayerBackdrop()
 
     val update by produceState<GiteeReleaseResponse?>(initialValue = null) {
         value = getUpdates(vm)
@@ -613,7 +617,7 @@ fun MainScreen(
                         FOCUS -> CustomTabRow(pagerState, titles)
                         FUNCTIONS -> {
                             if (showSearch) {
-                                SearchFuncs(searchText, onShow = {
+                                SearchFuncs(searchText,backdrop, onShow = {
                                     searchText = ""
                                     showSearch = it
                                 }) {
@@ -959,30 +963,19 @@ fun MainScreen(
                     }
                 )
             )
-            if ( 1 == 2 ){
+            val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+            if (enableNewBottomBar){
                 @OptIn(ExperimentalNavigationBarApi::class)
                 NavigationBar(
-                    fillTrack = true,
-                    arrangement = NavigationBarArrangement.VERTICAL,
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
                     hapticsEnabled = false,
                     aimAssist = true,
-                    aimAssistAnimationDurationMillis = 20,
-                    preview = false,
                     itemHorizontalPadding = 0.dp,
-                    hazeModifier = Modifier
-                        .bottomBarBlur(hazeState = hazeState),
-//                    .hazeEffect(
-//                        state = hazeState,
-//                        style = HazeStyle.Unspecified.copy(
-//                            blurRadius = 8.dp,
-//                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-//                        )
-//                    )
+                    hazeModifier = Modifier.bottomBarBackDrop(backdrop),
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .navigationBarsPadding(),
+//                        .bottomBarBlur(hazeState = hazeState)
+                        .padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP)
+                        .navigationBarsPadding()
+                    ,
                 ) {
                     newItems.forEachIndexed { _, data ->
                         val selected = navController.isCurrentRouteWithoutArgs(data.route)
@@ -1007,11 +1000,12 @@ fun MainScreen(
                         )
                     }
                 }
-            }
-            if(useCustomBackground && targetPage == CALENDAR) {
-                SpecialBottomBar(backGroundSource,items,navController,isEnabled)
             } else {
-                HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
+                if(useCustomBackground && targetPage == CALENDAR) {
+                    SpecialBottomBar(backGroundSource,items,navController,isEnabled)
+                } else {
+                    HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
+                }
             }
         },
     ) { innerPadding ->
@@ -1024,7 +1018,9 @@ fun MainScreen(
             exitTransition = {
                 AppAnimationManager.centerAnimation.exit
             },
-            modifier = Modifier.hazeSource(state = hazeState)
+            modifier = Modifier
+                .hazeSource(state = hazeState)
+                .backDropSource(backdrop)
         ) {
             nav2Composable(CALENDAR.name) {
                 Box(modifier = Modifier.fillMaxSize()) {

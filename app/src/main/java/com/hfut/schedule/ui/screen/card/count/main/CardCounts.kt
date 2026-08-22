@@ -179,7 +179,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 headlineContent = { Text(text = "￥${total.roundOffString(2)}") },
                                 overlineContent = { Text(text = "支出总和")},
                                 leadingContent = { Icon(painterResource(R.drawable.toll), contentDescription = "Localized description",) },
-                                colors = MaterialTheme.colorScheme.secondaryContainer,
+                                color = MaterialTheme.colorScheme.secondaryContainer,
                             )
                         }
                     }
@@ -190,7 +190,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 headlineContent = { Text(text = "￥$sumFloat") },
                                 overlineContent = { Text(text = "支出平均")},
                                 leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
-                                colors =  MaterialTheme.colorScheme.secondaryContainer,
+                                color =  MaterialTheme.colorScheme.secondaryContainer,
                             )
                         }
                     }

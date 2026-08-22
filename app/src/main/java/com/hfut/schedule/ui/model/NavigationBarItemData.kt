@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -67,6 +68,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -83,6 +85,9 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.sharednav.common.helper.ScreenCornerHelper
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
@@ -262,15 +267,15 @@ fun NavigationBar(
     fillTrack: Boolean = true,
     arrangement: NavigationBarArrangement = NavigationBarArrangement.VERTICAL,
     trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    trackHeight: Dp = if (arrangement == NavigationBarArrangement.HORIZONTAL) 54.dp else 64.dp,
+    trackHeight: Dp = if (arrangement == NavigationBarArrangement.HORIZONTAL) 54.dp else 69.dp,
     // 指示器颜色
-    indicatorColor: Color = MaterialTheme.colorScheme.primary,
+    indicatorColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     // 选中项内容颜色
-    selectedContentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    selectedContentColor: Color = MaterialTheme.colorScheme.secondary,
     // 阴影
-    elevation: Dp = 12.dp,
-    indicatorPadding: Dp = 6.dp,
+    elevation: Dp = APP_HORIZONTAL_DP,
+    indicatorPadding: Dp = CARD_NORMAL_DP*2,
     // 指示器默认大小
     indicatorNormalScale: Float = 1f,
     // 指示器按下时的缩小比例
@@ -377,7 +382,13 @@ fun NavigationBar(
             modifier = Modifier
                 .width(trackWidth.coerceAtLeast(1.dp))
                 .height(trackHeight),
-            shape = CircleShape,
+            shape = ScreenCornerHelper.corner.let {
+//                if(it == 0.dp) {
+                    CircleShape
+//                } else {
+//                    RoundedCornerShape(it)
+//                }
+            } as Shape,
             color = trackColor,
             shadowElevation = elevation,
         ) {

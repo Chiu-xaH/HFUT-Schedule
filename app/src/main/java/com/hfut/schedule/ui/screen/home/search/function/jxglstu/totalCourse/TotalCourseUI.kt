@@ -277,7 +277,7 @@ fun DetailItems(
             Row {
                 lessons.stdCount?.let {
                     TransplantListItem(
-                        colors = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surface,
                         overlineContent = { Text("同班同学" ) },
                         headlineContent = { Text(it.toString() + "人") },
                         leadingContent = {
@@ -333,7 +333,7 @@ fun DetailItems(
                         val dest = TeacherSearchApiDestination(teacherList.person.nameZh)
                         Row  {
                             TransplantListItem(
-                                colors = MaterialTheme.colorScheme.surface,
+                                color = MaterialTheme.colorScheme.surface,
                                 overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
                                 headlineContent = {
                                     Text( teacherList.person.nameZh )
@@ -359,7 +359,7 @@ fun DetailItems(
                                 val teacherList2 = lessons.teacherAssignmentList!![i+1]
                                 val dest = TeacherSearchApiDestination(teacherList2.person.nameZh)
                                 TransplantListItem(
-                                    colors = MaterialTheme.colorScheme.surface,
+                                    color = MaterialTheme.colorScheme.surface,
                                     overlineContent = { Text("教师 " + (i+1+1).toString()) },
                                     headlineContent = {
                                         Text( teacherList2.person.nameZh )
@@ -578,7 +578,7 @@ fun DetailItems(
                 TransplantListItem(
                     overlineContent = { Text("上课安排") },
                     headlineContent = { Text(it) },
-                    colors = MaterialTheme.colorScheme.surface,
+                    color = MaterialTheme.colorScheme.surface,
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.schedule),
@@ -627,7 +627,7 @@ fun DetailItems(
                                     contentDescription = "Localized description",
                                 )
                             },
-                            colors = cardNormalColor(),
+                            color = cardNormalColor(),
                             modifier = Modifier.clickable {
                                 navController.push(dest)
                             }
@@ -646,7 +646,7 @@ fun DetailItems(
                             supportingContent = {
                                 Text(it)
                             },
-                            colors = cardNormalColor(),
+                            color = cardNormalColor(),
                             headlineContent = { Text("教室状态查询") },
                             leadingContent = {
                                 Icon(
@@ -673,7 +673,7 @@ fun DetailItems(
                         containerColor = cardNormalColor()
                     ) {
                         TransplantListItem(
-                            colors = cardNormalColor(),
+                            color = cardNormalColor(),
                             headlineContent = { Text(text =FailRateDestination.title.asString() + "查询") },
                             leadingContent = {
                                 Icon(
