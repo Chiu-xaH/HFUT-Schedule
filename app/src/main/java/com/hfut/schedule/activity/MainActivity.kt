@@ -13,6 +13,7 @@ import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
 import com.hfut.schedule.ui.nav.destination.AgreementDestination
 import com.hfut.schedule.ui.nav.destination.ExceptionDestination
 import com.hfut.schedule.ui.nav.destination.HomeDestination
+import com.hfut.schedule.ui.nav.destination.TestDestination
 import com.hfut.schedule.ui.nav.destination.UpdateSuccessfullyDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.MainHost
@@ -25,6 +26,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity() {
+
+    private fun getDebugStartDestination() : NavDestination? {
+        // 如需测试某页面，可以改这里
+        return null
+    }
+
     @Composable
     override fun UI() {
         val startDestination: NavDestination =
@@ -40,6 +47,12 @@ class MainActivity : BaseActivity() {
                 } else {
                     destination as NavDestination
                 }
+            } ?:
+            // 接口3 测试专用 清单文件中配置 仅Debug调试下可用
+            if(AppVersion.isDebug) {
+                getDebugStartDestination()
+            } else {
+                null
             } ?:
             // 默认预设第一屏
             getDefaultStartDestination()
@@ -67,6 +80,7 @@ class MainActivity : BaseActivity() {
             ExceptionDestination(e)
         }
     }
+
     private fun getDefaultStartDestination() : NavDestination {
         return if(DataStoreManager.getSyncEnableUse()) {
             if(!haveImportantUpdate()) {
@@ -109,7 +123,6 @@ class MainActivity : BaseActivity() {
             return false
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

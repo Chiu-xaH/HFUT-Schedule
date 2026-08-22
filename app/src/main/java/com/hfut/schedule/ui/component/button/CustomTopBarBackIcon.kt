@@ -55,7 +55,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarNavigationIcon() {
+fun TopBarNavigationIcon(
+    tint : Color = MaterialTheme.colorScheme.primary
+) {
     val activity = LocalActivity.current
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
@@ -236,7 +238,7 @@ fun TopBarNavigationIcon() {
                     }
                 ),
                 contentDescription = null,
-                tint =  MaterialTheme.colorScheme.primary
+                tint =  tint
             )
         }
     }

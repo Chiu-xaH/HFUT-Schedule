@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -234,19 +235,30 @@ fun ControlCenterScreen() {
             }
         },
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(state)
-                .fillMaxSize()
-        ) {
-            Box() {
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = GlobalUiStateHolder.controllerCenterTab == TAB_SEARCH,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ){
-                    val list = GlobalUiStateHolder.funcMaps
+        Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        navController.pop()
+                    }
+            )
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(state)
+                    .fillMaxSize()
+            ) {
+                Box() {
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = GlobalUiStateHolder.controllerCenterTab == TAB_SEARCH,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ){
+                        val list = GlobalUiStateHolder.funcMaps
 //                        .filter { it.name.contains(input,ignoreCase = true) }
 //                    Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
 //                        for(i in list.indices step 2) {
@@ -286,29 +298,29 @@ fun ControlCenterScreen() {
 //                            }
 //                        }
 //                    }
-                }
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = GlobalUiStateHolder.controllerCenterTab == TAB_SETTINGS,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ){
-                    Column {
-                        SharedAppearanceSettingsScreen(
-                            innerPaddings = innerPadding,
-                            isControlCenter = true,
-                            navController = navController
-                        )
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = GlobalUiStateHolder.controllerCenterTab == TAB_SETTINGS,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ){
+                        Column {
+                            SharedAppearanceSettingsScreen(
+                                innerPaddings = innerPadding,
+                                isControlCenter = true,
+                                navController = navController
+                            )
+                        }
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = GlobalUiStateHolder.controllerCenterTab == TAB_STACK,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ){
+                        RecentlyStackUI(contentColor,globalColor)
                     }
                 }
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = GlobalUiStateHolder.controllerCenterTab == TAB_STACK,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ){
-                    RecentlyStackUI(contentColor,globalColor)
-                }
             }
-//            InnerPaddingHeight(innerPadding,false)
         }
     }
 }
