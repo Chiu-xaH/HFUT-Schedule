@@ -474,18 +474,19 @@ fun NavigationBar(
                             onDragStart = { position ->
                                 val indicatorLeft = indicatorOffset.value
                                 val currentWidth = indicatorWidth.value
-                                dragAccepted = position.x in
+                                val downPosition = indicatorDownPositionInTrack
+                                    .takeUnless { it.isNaN() } ?: position.x
+                                dragAccepted = downPosition in
                                         indicatorLeft..(indicatorLeft + currentWidth)
                                 if (dragAccepted) {
-                                    val downPosition = indicatorDownPositionInTrack
-                                        .takeUnless { it.isNaN() } ?: position.x
                                     dragGrabOffsetFromCenter = downPosition -
                                             (indicatorLeft + currentWidth / 2f)
                                     indicatorDragging = true
-                                    dragProgress = progressForPosition(
-                                        indicatorLeft + currentWidth / 2f,
-                                        geometry.centers,
-                                    )
+                                    dragProgress =
+                                        progressForPosition(
+                                            indicatorLeft + currentWidth / 2f,
+                                            geometry.centers,
+                                        )
                                     lastDragIndex =
                                         dragProgress.roundToInt().coerceIn(items.indices)
                                     if (hapticsEnabled) {
@@ -500,15 +501,18 @@ fun NavigationBar(
                                     change.consume()
                                     val crossedIndex: Int
                                     val frame: IndicatorFrame
-                                    if (aimAssist) {
-                                        crossedIndex = geometry.indexAtPosition(change.position.x)
+                                    if (effectiveAimAssist) {
+                                        crossedIndex =
+                                            geometry.indexAtPosition(change.position.x)
                                         dragProgress = crossedIndex.toFloat()
                                         val itemStart = geometry.starts[crossedIndex]
                                         val itemWidth = geometry.widths[crossedIndex]
                                         val positionInItem = ((change.position.x - itemStart) /
                                                 itemWidth).coerceIn(0f, 1f)
                                         val insetContentWidth =
-                                            (itemWidth - indicatorPaddingPx * 2f).coerceAtLeast(0f)
+                                            (itemWidth - indicatorPaddingPx * 2f).coerceAtLeast(
+                                                0f
+                                            )
                                         val assistTravelPx = indicatorPaddingPx +
                                                 insetContentWidth * (1f - indicatorPressedScale) / 2f
                                         val resistedShift =
@@ -523,11 +527,16 @@ fun NavigationBar(
                                                 geometry.centers.first(),
                                                 geometry.centers.last(),
                                             )
-                                        dragProgress = progressForPosition(
-                                            absoluteCenter,
-                                            geometry.centers,
-                                        )
-                                        frame = geometryAtProgress(geometry, dragProgress)
+                                        dragProgress =
+                                            progressForPosition(
+                                                absoluteCenter,
+                                                geometry.centers,
+                                            )
+                                        frame =
+                                            geometryAtProgress(
+                                                geometry,
+                                                dragProgress
+                                            )
                                         crossedIndex = dragProgress.roundToInt()
                                             .coerceIn(items.indices)
                                     }
@@ -538,12 +547,12 @@ fun NavigationBar(
                                                 HapticFeedbackType.TextHandleMove,
                                             )
                                         }
-                                        if (preview) {
+                                        if (effectivePreview) {
                                             currentItems[crossedIndex].onClick()
                                         }
                                     }
                                     scope.launch {
-                                        if (aimAssist) {
+                                        if (effectiveAimAssist) {
                                             coroutineScope {
                                                 launch {
                                                     indicatorOffset.animateTo(
@@ -574,7 +583,8 @@ fun NavigationBar(
                             onDragEnd = {
                                 if (dragAccepted) {
                                     indicatorDragging = false
-                                    val target = dragProgress.roundToInt().coerceIn(items.indices)
+                                    val target =
+                                        dragProgress.roundToInt().coerceIn(items.indices)
                                     if (hapticsEnabled) {
                                         hapticFeedback.performHapticFeedback(
                                             HapticFeedbackType.TextHandleMove,
