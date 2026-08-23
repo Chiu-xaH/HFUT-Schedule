@@ -63,11 +63,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
@@ -85,9 +87,20 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.style.special.containerBlur
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.shader.state.ShaderState
+import com.xah.shader.state.rememberShaderState
+import com.xah.shader.state.shaderSource
+import com.xah.shader.style.blurLayer
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
@@ -261,6 +274,7 @@ class NavigationBarScope internal constructor(
 @Composable
 @ExperimentalNavigationBarApi
 fun NavigationBar(
+    hazeState : HazeState,
     modifier: Modifier = Modifier,
     hazeModifier: Modifier = Modifier,
     // 撑满
@@ -270,6 +284,7 @@ fun NavigationBar(
     // TODO 这里应该改成按比例？
     trackHeight: Dp = if (arrangement == NavigationBarArrangement.HORIZONTAL) 54.dp else 69.dp,
     // 指示器颜色
+    indicatorBlur: Dp = 0.dp,
     indicatorColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     // 选中项内容颜色
@@ -661,7 +676,22 @@ fun NavigationBar(
                                     scaleX = indicatorScale
                                     scaleY = indicatorScale
                                 }
-                                .background(indicatorColor, CircleShape),
+                                .clip(CircleShape)
+                                .let {
+                                    if(indicatorBlur == 0.dp) {
+                                        it.background(indicatorColor, CircleShape)
+                                    } else {
+                                        it.hazeEffect(
+                                            state = hazeState,
+                                            style = HazeStyle(
+                                                tint = HazeTint(color = indicatorColor),
+                                                backgroundColor = Color.Transparent,
+                                                blurRadius = indicatorBlur,
+                                                noiseFactor = 0f
+                                            )
+                                        )
+                                    }
+                                }
                         )
                     }
                 }

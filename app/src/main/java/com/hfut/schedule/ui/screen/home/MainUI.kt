@@ -84,6 +84,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -980,10 +981,13 @@ fun MainScreen(
                 }
                 @OptIn(ExperimentalNavigationBarApi::class)
                 NavigationBar(
+                    hazeState = hazeState,
                     hapticsEnabled = false,
                     aimAssist = true,
                     elevation = 0.dp,
                     itemHorizontalPadding = 0.dp,
+//                    indicatorBlur = 0.dp,
+//                    indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(.2f).compositeOver(MaterialTheme.colorScheme.surface),
                     hazeModifier = Modifier.bottomBarBackDrop(backdrop, shape = shape),
                     shape = shape,
                     modifier = Modifier

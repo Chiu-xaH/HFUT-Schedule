@@ -469,7 +469,7 @@ fun Modifier.bottomBarBackDrop(
         shape = { shape },
         effects = {
             vibrancy()
-//            blur(1f)
+//            blur(2f)
             lens(22.5f.dp.toPx(), 20f.dp.toPx())
         },
         shadow = null,
