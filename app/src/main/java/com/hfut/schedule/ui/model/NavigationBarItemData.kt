@@ -266,7 +266,8 @@ fun NavigationBar(
     // 撑满
     fillTrack: Boolean = true,
     arrangement: NavigationBarArrangement = NavigationBarArrangement.VERTICAL,
-    trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    trackColor: Color = MaterialTheme.colorScheme.surfaceContainerLow.copy(.75f),
+    // TODO 这里应该改成按比例？
     trackHeight: Dp = if (arrangement == NavigationBarArrangement.HORIZONTAL) 54.dp else 69.dp,
     // 指示器颜色
     indicatorColor: Color = MaterialTheme.colorScheme.secondaryContainer,
@@ -305,6 +306,7 @@ fun NavigationBar(
     itemScaleEasing: Easing = EaseOut,
     // Item 额外间隔
     itemHorizontalPadding: Dp = 32.dp,
+    shape : RoundedCornerShape = CircleShape,
     content: @Composable NavigationBarScope.() -> Unit,
 ) {
     val registry = remember { NavigationBarItemRegistry() }
@@ -382,13 +384,7 @@ fun NavigationBar(
             modifier = Modifier
                 .width(trackWidth.coerceAtLeast(1.dp))
                 .height(trackHeight),
-            shape = ScreenCornerHelper.corner.let {
-//                if(it == 0.dp) {
-                    CircleShape
-//                } else {
-//                    RoundedCornerShape(it)
-//                }
-            } as Shape,
+            shape = shape,
             color = trackColor,
             shadowElevation = elevation,
         ) {

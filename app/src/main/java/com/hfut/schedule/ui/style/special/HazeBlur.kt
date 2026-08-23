@@ -60,6 +60,10 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 
+
+private val progressiveBarBlur = 8.75.dp
+//    MyApplication.BLUR_RADIUS.dp * 1.2f
+
 @Composable
 fun enableEffect() : Boolean {
     val navController = LocalNavControllerSafely.current
@@ -91,19 +95,6 @@ fun Modifier.bottomBarBlur(
 ) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val enableEffect = enableEffect()
-    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
-
-    if(enableNewBottomBar) {
-        return this
-            .background(
-                Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to color.copy(alpha = 0f),
-                        1.0f to color.copy(alpha = 1f),
-                    )
-                )
-            )
-    }
     return if(
         enableEffect &&
         blur
@@ -113,9 +104,10 @@ fun Modifier.bottomBarBlur(
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = color.copy(0.4f)),
+                tint = null,
+//                tint = HazeTint(color = color.copy(0.4f)),
                 backgroundColor = color,
-                blurRadius = MyApplication.BLUR_RADIUS.dp* 1.2f,
+                blurRadius = progressiveBarBlur,
                 noiseFactor = 0f
             ),
             block = fun HazeEffectScope.() {
@@ -126,6 +118,14 @@ fun Modifier.bottomBarBlur(
                 )
             }
         )
+            .background(
+                Brush.verticalGradient(
+                    colorStops = arrayOf(
+                        0.0f to color.copy(alpha = 0f),
+                        1.0f to color.copy(alpha = 1f),
+                    )
+                )
+            )
     } else {
         return this.background(
             Brush.verticalGradient(
@@ -154,9 +154,10 @@ fun Modifier.topBarBlur(
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = color.let { if(it == Color.Transparent) it else it.copy(.4f) }),
-                backgroundColor = backgroundColor,
-                blurRadius = MyApplication.BLUR_RADIUS.dp*1.2f,
+                tint = null,
+//                tint = HazeTint(color = color.let { if(it == Color.Transparent) it else it.copy(.4f) }),
+                backgroundColor = color,
+                blurRadius = progressiveBarBlur,
                 noiseFactor = 0f
             ),
             block = fun HazeEffectScope.() {
@@ -167,6 +168,14 @@ fun Modifier.topBarBlur(
                 )
             }
         )
+            .background(
+                Brush.verticalGradient(
+                    colorStops = arrayOf(
+                        0.0f to color.copy(alpha = 1f),
+                        1.0f to color.copy(alpha = 0f),
+                    )
+                )
+            )
     } else {
         this.background(
             Brush.verticalGradient(

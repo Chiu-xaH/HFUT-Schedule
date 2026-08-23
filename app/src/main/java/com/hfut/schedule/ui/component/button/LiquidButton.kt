@@ -93,9 +93,10 @@ fun LiquidButton(
     enabled : Boolean = true,
     isCircle : Boolean = false,
     innerPadding : Dp = if(!isCircle) 20.dp else 9.5.dp,
+    surfaceColor : Color = MaterialTheme.colorScheme.surfaceContainer,
     content: @Composable RowScope.() -> Unit
 ) {
-    val surfaceColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+    val surfaceColor = surfaceColor.copy(
         if(enabled).5f else .9f
     )
     val textStyle = LocalTextStyle.current.copy(
@@ -305,7 +306,7 @@ fun Modifier.containerBackDrop(
         shape = { shape },
         effects = {
             vibrancy()
-            blur(7.5f.dp.toPx())
+            blur(5f.dp.toPx())
             lens(15f.dp.toPx(), 25f.dp.toPx())
         },
         shadow = null,
@@ -444,6 +445,7 @@ fun NoPadding(content: @Composable () -> Unit) {
 fun Modifier.bottomBarBackDrop(
     backdrop: Backdrop,
     enabled : Boolean = true,
+    shape : RoundedCornerShape = CircleShape,
     surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
 ) : Modifier {
     val progressAnimation = remember { Animatable(0f) }
@@ -464,15 +466,7 @@ fun Modifier.bottomBarBackDrop(
             Highlight.Default.copy(width = 0.25.dp)
         },
         backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
-        shape = {
-            ScreenCornerHelper.corner.let {
-//                if(it == 0.dp) {
-                    CircleShape
-//                } else {
-//                    RoundedCornerShape(it)
-//                }
-            } as Shape
-        },
+        shape = { shape },
         effects = {
             vibrancy()
 //            blur(1f)

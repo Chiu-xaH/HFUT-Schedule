@@ -45,6 +45,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -196,6 +197,7 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.TransparentSystemBars
@@ -967,16 +969,40 @@ fun MainScreen(
             val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
             val color = if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface
             if (enableNewBottomBar){
+                val paddingSafely = remember { true }
+                val shape = remember(paddingSafely) {
+                    val corner = ScreenCornerHelper.corner
+                    if(paddingSafely || corner == 0.dp) {
+                        CircleShape
+                    } else {
+                        RoundedCornerShape(corner)
+                    }
+                }
                 @OptIn(ExperimentalNavigationBarApi::class)
                 NavigationBar(
                     hapticsEnabled = false,
                     aimAssist = true,
                     elevation = 0.dp,
                     itemHorizontalPadding = 0.dp,
-                    hazeModifier = Modifier.bottomBarBackDrop(backdrop),
+                    hazeModifier = Modifier.bottomBarBackDrop(backdrop, shape = shape),
+                    shape = shape,
                     modifier = Modifier
-                        .bottomBarBlur(hazeState = hazeState)
-                        .padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP)
+                        .background(
+                            Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0.0f to color.copy(alpha = 0f),
+                                    1.0f to color.copy(alpha = 1f),
+                                )
+                            )
+                        )
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                        .let {
+                            if(paddingSafely) {
+                                it.padding(bottom = APP_HORIZONTAL_DP)
+                            } else {
+                                it
+                            }
+                        }
                         .navigationBarsPadding()
                     ,
                 ) {
