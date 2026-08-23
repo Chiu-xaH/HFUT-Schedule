@@ -81,6 +81,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -964,15 +965,17 @@ fun MainScreen(
                 )
             )
             val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+            val color = if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface
             if (enableNewBottomBar){
                 @OptIn(ExperimentalNavigationBarApi::class)
                 NavigationBar(
                     hapticsEnabled = false,
                     aimAssist = true,
+                    elevation = 0.dp,
                     itemHorizontalPadding = 0.dp,
                     hazeModifier = Modifier.bottomBarBackDrop(backdrop),
                     modifier = Modifier
-//                        .bottomBarBlur(hazeState = hazeState)
+                        .bottomBarBlur(hazeState = hazeState)
                         .padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP)
                         .navigationBarsPadding()
                     ,
@@ -1004,7 +1007,7 @@ fun MainScreen(
                 if(useCustomBackground && targetPage == CALENDAR) {
                     SpecialBottomBar(backGroundSource,items,navController,isEnabled)
                 } else {
-                    HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface)
+                    HazeBottomBarDynamic(hazeState,items,navController,isEnabled,color)
                 }
             }
         },

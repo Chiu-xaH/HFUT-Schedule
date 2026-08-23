@@ -91,7 +91,19 @@ fun Modifier.bottomBarBlur(
 ) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val enableEffect = enableEffect()
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
+    if(enableNewBottomBar) {
+        return this
+            .background(
+                Brush.verticalGradient(
+                    colorStops = arrayOf(
+                        0.0f to color.copy(alpha = 0f),
+                        1.0f to color.copy(alpha = 1f),
+                    )
+                )
+            )
+    }
     return if(
         enableEffect &&
         blur
