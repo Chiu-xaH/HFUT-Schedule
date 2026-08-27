@@ -986,9 +986,21 @@ fun MainScreen(
                     aimAssist = true,
                     elevation = 0.dp,
                     itemHorizontalPadding = 0.dp,
-//                    indicatorBlur = 0.dp,
-//                    indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(.2f).compositeOver(MaterialTheme.colorScheme.surface),
-                    hazeModifier = Modifier.bottomBarBackDrop(backdrop, shape = shape),
+                    indicatorBlur = 10.dp,
+                    indicatorColor = MaterialTheme.colorScheme.surfaceBright.copy(.8f)
+//                        .compositeOver(MaterialTheme.colorScheme.surface)
+                    ,
+                    hazeModifier = Modifier
+                        .bottomBarBackDrop(backdrop, shape = shape)
+                        .background(
+                            Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0.0f to color.copy(alpha = 0f),
+                                    1.0f to color.copy(alpha = 0.2f),
+                                )
+                            )
+                        )
+                    ,
                     shape = shape,
                     modifier = Modifier
                         .background(

@@ -14,6 +14,7 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -66,6 +67,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -288,7 +290,7 @@ fun NavigationBar(
     indicatorColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     // 选中项内容颜色
-    selectedContentColor: Color = MaterialTheme.colorScheme.secondary,
+    selectedContentColor: Color = MaterialTheme.colorScheme.primary,
     // 阴影
     elevation: Dp = APP_HORIZONTAL_DP,
     indicatorPadding: Dp = CARD_NORMAL_DP*2,
@@ -676,10 +678,11 @@ fun NavigationBar(
                                     scaleX = indicatorScale
                                     scaleY = indicatorScale
                                 }
-                                .clip(CircleShape)
+                                .border(0.25.dp, selectedContentColor.copy(.15f),shape)
+                                .clip(shape)
                                 .let {
                                     if(indicatorBlur == 0.dp) {
-                                        it.background(indicatorColor, CircleShape)
+                                        it.background(indicatorColor, shape)
                                     } else {
                                         it.hazeEffect(
                                             state = hazeState,
