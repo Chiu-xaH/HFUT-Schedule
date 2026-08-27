@@ -59,6 +59,7 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import kotlinx.coroutines.flow.first
 
 
 private val progressiveBarBlur = 8.75.dp
@@ -93,12 +94,8 @@ fun Modifier.bottomBarBlur(
     hazeState : HazeState,
     color : Color = MaterialTheme.colorScheme.surface,
 ) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val enableEffect = enableEffect()
     return if(
-        enableEffect &&
-        blur
-        && CAN_HAZE_BLUR_BAR
+        canLayerBlur()
         && !HAZE_BLUR_FOR_S
         ) {
         this.hazeEffect(
@@ -122,7 +119,7 @@ fun Modifier.bottomBarBlur(
                 Brush.verticalGradient(
                     colorStops = arrayOf(
                         0.0f to color.copy(alpha = 0f),
-                        1.0f to color.copy(alpha = 1f),
+                        1.0f to color.copy(alpha = 0.9f),
                     )
                 )
             )
@@ -134,11 +131,58 @@ fun Modifier.bottomBarBlur(
                     0.25f to color.copy(alpha = 0.65f),
                     0.50f to color.copy(alpha = 0.80f),
                     0.75f to color.copy(alpha = 0.95f),
-                    1.0f to color.copy(alpha = 1f),
+                    1.0f to color.copy(alpha = 0.95f),
                 )
             )
         )
     }
+}
+
+@Composable
+fun Modifier.newBottomBarBlur(
+    hazeState : HazeState,
+    color : Color = MaterialTheme.colorScheme.surface,
+) : Modifier {
+    return if(
+        canLayerBlur()
+        && !HAZE_BLUR_FOR_S
+    ) {
+        this.hazeEffect(
+            state = hazeState,
+            style = HazeStyle(
+                tint = null,
+//                tint = HazeTint(color = color.copy(0.4f)),
+                backgroundColor = color,
+                blurRadius = 5.dp,
+                noiseFactor = 0f
+            ),
+            block = fun HazeEffectScope.() {
+                progressive = HazeProgressive.verticalGradient(
+//                     适配安卓12
+                    startIntensity = 0f,
+                    endIntensity = 1f,
+                )
+            }
+        )
+    } else {
+        return this.background(
+            Brush.verticalGradient(
+                colorStops = arrayOf(
+                    0.0f to color.copy(alpha = 0f),
+                    0.25f to color.copy(alpha = 0.65f),
+                    0.50f to color.copy(alpha = 0.80f),
+                    0.75f to color.copy(alpha = 0.95f),
+                    1.0f to color.copy(alpha = 0.95f),
+                )
+            )
+        )
+    }
+}
+
+@Composable
+fun canLayerBlur(): Boolean {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    return enableEffect() && blur && CAN_HAZE_BLUR_BAR
 }
 
 @Composable
@@ -147,10 +191,7 @@ fun Modifier.topBarBlur(
     backgroundColor : Color = MaterialTheme.colorScheme.surface,
     color : Color = backgroundColor
 ) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val enableEffect = enableEffect()
-
-    return if(enableEffect && blur && CAN_HAZE_BLUR_BAR) {
+    return if(canLayerBlur()) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -171,7 +212,7 @@ fun Modifier.topBarBlur(
             .background(
                 Brush.verticalGradient(
                     colorStops = arrayOf(
-                        0.0f to color.copy(alpha = 1f),
+                        0.0f to color.copy(alpha = 0.9f),
                         1.0f to color.copy(alpha = 0f),
                     )
                 )
@@ -180,7 +221,7 @@ fun Modifier.topBarBlur(
         this.background(
             Brush.verticalGradient(
                 colorStops = arrayOf(
-                    0.0f to color.copy(alpha = 1f),
+                    0.0f to color.copy(alpha = 0.95f),
                     0.25f to color.copy(alpha = 0.95f),
                     0.50f to color.copy(alpha = 0.80f),
                     0.75f to color.copy(alpha = 0.65f),
@@ -190,6 +231,8 @@ fun Modifier.topBarBlur(
         )
     }
 }
+
+
 @Composable
 fun Modifier.backDropSource(
     backdrop : ShaderState
@@ -225,10 +268,7 @@ fun Modifier.normalTopBarBlur(
     backgroundColor : Color = MaterialTheme.colorScheme.surface,
     color : Color = Color.Transparent
 ) : Modifier {
-    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
-    val enableEffect = enableEffect()
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(enableEffect && blur && CAN_HAZE_BLUR_BAR) {
+    return if(canLayerBlur()) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(

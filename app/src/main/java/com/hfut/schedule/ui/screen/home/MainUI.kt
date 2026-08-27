@@ -32,9 +32,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -80,6 +82,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -195,6 +198,7 @@ import com.xah.shader.state.rememberShaderState
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.shader.smallStyle
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.newBottomBarBlur
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -979,70 +983,83 @@ fun MainScreen(
                         RoundedCornerShape(corner)
                     }
                 }
-                @OptIn(ExperimentalNavigationBarApi::class)
-                NavigationBar(
-                    hazeState = hazeState,
-                    hapticsEnabled = false,
-                    aimAssist = true,
-                    elevation = 0.dp,
-                    itemHorizontalPadding = 0.dp,
-                    indicatorBlur = 10.dp,
-                    indicatorColor = MaterialTheme.colorScheme.surfaceBright.copy(.8f)
-//                        .compositeOver(MaterialTheme.colorScheme.surface)
-                    ,
-                    hazeModifier = Modifier
-                        .bottomBarBackDrop(backdrop, shape = shape)
-                        .background(
-                            Brush.verticalGradient(
-                                colorStops = arrayOf(
-                                    0.0f to color.copy(alpha = 0f),
-                                    1.0f to color.copy(alpha = 0.2f),
-                                )
-                            )
-                        )
-                    ,
-                    shape = shape,
+                Box(
                     modifier = Modifier
-                        .background(
-                            Brush.verticalGradient(
-                                colorStops = arrayOf(
-                                    0.0f to color.copy(alpha = 0f),
-                                    1.0f to color.copy(alpha = 1f),
+                ) {
+                    Spacer(
+                        modifier = Modifier
+                            .newBottomBarBlur(hazeState,color)
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                            .height(APP_HORIZONTAL_DP*1.75f)
+                    )
+                    @OptIn(ExperimentalNavigationBarApi::class)
+                    NavigationBar(
+                        hazeState = hazeState,
+                        hapticsEnabled = false,
+                        aimAssist = true,
+                        elevation = 0.dp,
+                        itemHorizontalPadding = 0.dp,
+                        indicatorBlur = 10.dp,
+                        indicatorColor = MaterialTheme.colorScheme.surfaceBright.copy(.8f)
+//                        .compositeOver(MaterialTheme.colorScheme.surface)
+                        ,
+                        hazeModifier = Modifier
+                            .bottomBarBackDrop(backdrop, shape = shape)
+                            .background(
+                                Brush.verticalGradient(
+                                    colorStops = arrayOf(
+                                        0.0f to color.copy(alpha = 0f),
+                                        1.0f to color.copy(alpha = 0.2f),
+                                    )
                                 )
                             )
-                        )
-                        .padding(horizontal = APP_HORIZONTAL_DP)
-                        .let {
-                            if(paddingSafely) {
-                                it.padding(bottom = APP_HORIZONTAL_DP)
-                            } else {
-                                it
-                            }
-                        }
-                        .navigationBarsPadding()
-                    ,
-                ) {
-                    newItems.forEachIndexed { _, data ->
-                        val selected = navController.isCurrentRouteWithoutArgs(data.route)
-                        /*
-                         * 我试着在内部做校验， 但是内部
-                         * items.isNotEmpty() 和 items.count { it.selected }  ==  1 都不能作为验证，
-                         * 因为在初始阶段这样无意义且一定会返回失败相关的部分
-                         * 所以使用时尽量用单点源， 如果一下子多个 Item 声明自己被选中， 会发生什么我也不清楚
-                         * */
-                        NavigationBarItem(
-                            selected = selected,
-                            icon = data.icon,
-                            iconType = data.iconType,
-                            text = data.text,
-                            badge = data.badge,
-                            route = data.route,
-                            onClick = {
-                                if (!selected) {
-                                    navController.navigateForBottomBar(data.route)
+                        ,
+                        shape = shape,
+                        modifier = Modifier
+                            .background(
+                                Brush.verticalGradient(
+                                    colorStops = arrayOf(
+                                        0.0f to color.copy(alpha = 0f),
+                                        1.0f to color.copy(alpha = 0.5f),
+//                                        1.0f to MaterialTheme.colorScheme.onSurface.copy(alpha = 0.075f),
+                                    )
+                                )
+                            )
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .let {
+                                if(paddingSafely) {
+                                    it.padding(bottom = APP_HORIZONTAL_DP)
+                                } else {
+                                    it
                                 }
-                            },
-                        )
+                            }
+                            .navigationBarsPadding()
+                        ,
+                    ) {
+                        newItems.forEachIndexed { _, data ->
+                            val selected = navController.isCurrentRouteWithoutArgs(data.route)
+                            /*
+                             * 我试着在内部做校验， 但是内部
+                             * items.isNotEmpty() 和 items.count { it.selected }  ==  1 都不能作为验证，
+                             * 因为在初始阶段这样无意义且一定会返回失败相关的部分
+                             * 所以使用时尽量用单点源， 如果一下子多个 Item 声明自己被选中， 会发生什么我也不清楚
+                             * */
+                            NavigationBarItem(
+                                selected = selected,
+                                icon = data.icon,
+                                iconType = data.iconType,
+                                text = data.text,
+                                badge = data.badge,
+                                route = data.route,
+                                onClick = {
+                                    if (!selected) {
+                                        navController.navigateForBottomBar(data.route)
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             } else {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,10 +53,25 @@ fun SchoolsUI(vm : NetWorkViewModel,innerPadding : PaddingValues? = null) {
             item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
             items(result.size, key = {  result[it].name }) { index ->
                 val item = result[index]
-                val title = item.name
+                var title = item.name
                 val icon = departmentIcon(title)
+                val subTitle = if (title.contains("（")) {
+                    title.substringAfter("（").let {
+                        if(it.isEmpty() || it.isBlank()) {
+                            null
+                        } else {
+                            title = title.substringBefore("（")
+                            it.replace("）", "")
+                        }
+                    }
+                } else {
+                    null
+                }
                 CardListItem(
-                    headlineContent = { ScrollText(text = title) },
+                    headlineContent = { Text(text = title) },
+                    supportingContent = {
+                        subTitle?.let { Text(it) }
+                    },
                     leadingContent = { DepartmentIcons(title) },
                     trailingContent = {
                         UrlImage(

@@ -92,6 +92,7 @@ import androidx.compose.ui.unit.Dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.style.special.canLayerBlur
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -681,7 +682,7 @@ fun NavigationBar(
                                 .border(0.25.dp, selectedContentColor.copy(.15f),shape)
                                 .clip(shape)
                                 .let {
-                                    if(indicatorBlur == 0.dp) {
+                                    if(indicatorBlur == 0.dp || !canLayerBlur()) {
                                         it.background(indicatorColor, shape)
                                     } else {
                                         it.hazeEffect(

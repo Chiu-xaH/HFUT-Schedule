@@ -216,7 +216,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             TransplantListItem(
                 headlineContent = { Text(text = "网络支付") },
                 supportingContent = {
-                    Text("点击复制链接或扫描二维码，在微信或支付宝打开并登陆后可支付")
+                    Text("点击复制链接或扫描二维码，在微信打开并登陆后可支付")
                 },
                 leadingContent = {
                     Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")
