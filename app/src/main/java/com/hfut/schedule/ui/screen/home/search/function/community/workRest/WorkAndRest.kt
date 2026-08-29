@@ -68,7 +68,7 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
         val startDate = start.substringBefore(" ")
         val endDate = end.substringBefore(" ")
 
-        DividerTextExpandedWith("学期",openBlurAnimation = false) {
+        DividerTextExpandedWith("学期") {
             LargeCard(title = termYear + "学年 第${termPeriod}学期") {
                 Row {
                     TransplantListItem(

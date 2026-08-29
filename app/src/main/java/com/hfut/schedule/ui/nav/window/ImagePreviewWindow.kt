@@ -70,7 +70,7 @@ data class ImagePreviewWindow(
         CenterScreen {
             SharedContent(
                 key = key,
-                contentStrategy = ContentStrategy.Layer(isFloating = true),
+                contentStrategy = ContentStrategy.Shared(keepShowContainer = false),
                 shape = NoneRoundShape,
             ) {
                 ZoomableImage(bitmap) {

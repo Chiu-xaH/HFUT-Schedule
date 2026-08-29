@@ -244,7 +244,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
         modifier = Modifier.verticalScroll(state)
     ) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("进度",openBlurAnimation = false) {
+        DividerTextExpandedWith("进度") {
             completion.let {
                 LoadingLargeCard(
                     prepare = false,

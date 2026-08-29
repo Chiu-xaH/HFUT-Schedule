@@ -113,7 +113,7 @@ fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
     }
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
+//        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp)

@@ -79,8 +79,10 @@ fun VersionInfo() {
         UpdateItems("新增 学费二维码","位于 查询中心-学费，使用微信扫码后可缴费",to = To.Screen(FeeDestination))
         UpdateItems("新增 支持调节转专业列表排序方式为按热度")
         UpdateItems("新增 签名信息显示","位于 选项-维护与关于-关于")
+        UpdateItems("新增 小标题点击展开收起效果优化为容器共享样式")
         UpdateItems("新增 悬浮样式底栏","默认关闭，位于 选项-偏好与配置-其他-实验室", to = To.Screen(SettingsLabDestination), developers = listOf("Today1337", Constant.GITHUB_DEVELOPER_NAME))
         UpdateItems("重构 调节全局顶栏底栏的渐变蒙层，使其更加通透")
+        UpdateItems("重构 优化大卡片为扁平化设计")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("反射扫描destination文件夹")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
@@ -151,7 +153,7 @@ fun VersionInfo() {
 private fun VersionInfoCard() {
     Column {
         Spacer(Modifier.height(CARD_NORMAL_DP))
-        DividerTextExpandedWith("版本信息",openBlurAnimation = false) {
+        DividerTextExpandedWith("版本信息") {
             LargeCard(
                 title = "版本 " + AppVersion.getVersionName()
             ) {

@@ -543,7 +543,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
 
 
-                            DividerTextExpandedWith(text = "查询结果",openBlurAnimation = false) {
+                            DividerTextExpandedWith(text = "查询结果") {
                                 LoadingLargeCard(
                                     title = if(!show)"￥XX.XX"
                                     else
@@ -889,7 +889,7 @@ fun ElectricHefei(
     }
 
     val result by DataStoreManager.hefeiElectricFee.collectAsState(initial = "XX.XX")
-    DividerTextExpandedWith("查询结果",openBlurAnimation = false) {
+    DividerTextExpandedWith("查询结果") {
         LoadingLargeCard(
             title = if(!show)"￥XX.XX" else "￥$result",
             loading = !show ,

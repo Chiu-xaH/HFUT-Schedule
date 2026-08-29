@@ -336,7 +336,7 @@ fun WebViewTopBar(
                         }
                         CustomTextField(
                             colors =
-                                (topColor?.darken() ?: cardNormalColor(true)).let { color ->
+                                (topColor?.darken() ?: cardNormalColor(null)).let { color ->
                                     textFiledTransplant().copy(
                                         focusedContainerColor = color,
                                         unfocusedContainerColor = color

@@ -363,15 +363,15 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 InnerPaddingHeight(innerPadding,true)
                 Spacer(modifier = Modifier.height(5.dp))
 
-                DividerTextExpandedWith(text = "校园卡",false) {
+                DividerTextExpandedWith(text = "校园卡") {
                     Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
+//                        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
                         modifier = Modifier
                             .fillMaxWidth()
                             .scale(scale2.value)
                             .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
-                        colors = CardDefaults.cardColors(largeCardColor())
+                        colors = CardDefaults.cardColors(largeCardColor(MaterialTheme.colorScheme.surfaceContainer))
                     ) {
                         Column(modifier = Modifier.coverBlur(loading).scale(scale.value)
                             ) {

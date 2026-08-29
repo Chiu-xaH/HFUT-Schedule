@@ -42,7 +42,7 @@ data class TimeTablePreviewWindow(
         CenterScreen {
             SharedContent(
                 key = KEY,
-                contentStrategy = ContentStrategy.Layer(isFloating = true),
+                contentStrategy = ContentStrategy.Shared(keepShowContainer = false),
                 shape = MaterialTheme.shapes.largeIncreased,
                 modifier = Modifier
                     .padding(APP_HORIZONTAL_DP)

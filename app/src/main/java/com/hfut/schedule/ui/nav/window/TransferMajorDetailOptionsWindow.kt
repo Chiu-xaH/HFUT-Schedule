@@ -51,7 +51,7 @@ data class TransferMajorDetailOptionsWindow(
             SharedContent(
                 shape = MaterialTheme.shapes.large,
                 key = key,
-                contentStrategy = ContentStrategy.Layer(isFloating = true),
+                contentStrategy = ContentStrategy.Shared(keepShowContainer = false),
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding()

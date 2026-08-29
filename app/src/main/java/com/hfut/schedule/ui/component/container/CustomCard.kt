@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -59,13 +58,14 @@ fun CustomCard(
 
 
 @Composable
-fun cardNormalColor(enableAlpha : Boolean = false): Color {
+fun cardNormalColor(
+    overlayColor : Color? = MaterialTheme.colorScheme.surface
+): Color {
     val overlay = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
-    if(enableAlpha) {
+    if(overlayColor == null) {
         return overlay
     }
-    val base = MaterialTheme.colorScheme.surface
-    return overlay.compositeOver(base)
+    return overlay.compositeOver(overlayColor)
 }
 // 小卡片
 @Composable
@@ -164,7 +164,15 @@ fun CardListItem(
 }
 
 @Composable
-fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
+fun largeCardColor(
+    overlayColor : Color? = MaterialTheme.colorScheme.surface
+): Color {
+    val overlay = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = .075f)
+    if(overlayColor == null) {
+        return overlay
+    }
+    return overlay.compositeOver(overlayColor)
+}
 
 @Composable
 fun LargeCard(
@@ -172,14 +180,14 @@ fun LargeCard(
     modifier : Modifier = Modifier,
     rightTop:  @Composable() (() -> Unit)? = null,
     leftTop:  @Composable() (() -> Unit)? = null,
-    color : CardColors = CardDefaults.cardColors(containerColor = largeCardColor()),
+    color : Color =  largeCardColor(),
     content: @Composable () -> Unit
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
+//        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
         modifier = modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = color
+        colors = CardDefaults.cardColors(containerColor = color)
     ) {
         TransplantListItem(
             headlineContent = {
@@ -200,7 +208,10 @@ fun LargeCard(
     }
 }
 
-//加载大卡片
+/** 加载大卡片
+ *
+ * 校园卡和使用码单独，不在这里
+*/
 @Composable
 fun LoadingLargeCard(
     title: String,
@@ -208,7 +219,7 @@ fun LoadingLargeCard(
     prepare : Boolean ,
     rightTop: @Composable() (() -> Unit)? = null,
     leftTop: @Composable() (() -> Unit)? = null,
-    color : CardColors = CardDefaults.cardColors(containerColor = largeCardColor()),
+    color : Color = largeCardColor(),
     content: @Composable () -> Unit
 ) {
     val speed = ANIMATION_SPEED / 2
@@ -225,10 +236,10 @@ fun LoadingLargeCard(
     )
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
+//        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
         modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
-        colors = color
+        colors = CardDefaults.cardColors(containerColor = color)
     ) {
         //下面的内容
         Column (modifier = Modifier

@@ -61,7 +61,7 @@ object ExpressWindow: FloatingWindow() {
             SharedContent(
                 shape = MaterialTheme.shapes.largeIncreased,
                 key = key,
-                contentStrategy = ContentStrategy.Layer(isFloating = true),
+                contentStrategy = ContentStrategy.Shared(keepShowContainer = false),
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding()

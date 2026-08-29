@@ -77,6 +77,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -471,8 +472,9 @@ fun LibraryMineUI(
             .padding(innerPadding))
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             InnerPaddingHeight(innerPadding,true)
-            DividerTextExpandedWith("状态",openBlurAnimation = false) {
+            DividerTextExpandedWith("状态") {
                 LoadingLargeCard (
+                    color = largeCardColor(MaterialTheme.colorScheme.surfaceContainer),
                     loading = loading,
                     prepare = false,
                     title =

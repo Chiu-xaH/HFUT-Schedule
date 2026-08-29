@@ -13,8 +13,8 @@ fun textFiledTransplant(isColorCopy : Boolean = true) : TextFieldColors {
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
         disabledIndicatorColor = Color.Transparent,
-        focusedContainerColor = cardNormalColor(true),
-        unfocusedContainerColor = if(isColorCopy) cardNormalColor(true) else Color.Unspecified,
+        focusedContainerColor = cardNormalColor(null),
+        unfocusedContainerColor = if(isColorCopy) cardNormalColor(null) else Color.Unspecified,
     )
 }
 

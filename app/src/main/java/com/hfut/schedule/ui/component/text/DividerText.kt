@@ -31,11 +31,19 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.SharedContent
+import com.xah.container.model.ContentStrategy
+import com.xah.container.util.LocalSharedRegistry
+import com.xah.container.util.LocalSharedRegistrySafely
 
 val DIVIDER_TEXT_VERTICAL_PADDING = 9.dp
 // 小标题
@@ -78,9 +86,9 @@ fun DividerText(
             .scale(scale.value)
     )
 }
-// 按压小标题展开/收起下面内容
+
 @Composable
-fun DividerTextExpandedWith(
+private fun DividerTextExpandedWithDefault(
     text : String,
     openBlurAnimation : Boolean = true,
     defaultIsExpanded : Boolean = true,
@@ -125,4 +133,80 @@ fun DividerTextExpandedWith(
     }
 }
 
+// 按压小标题展开/收起下面内容
+@Composable
+private fun DividerTextExpandedWithShared(
+    text : String,
+    defaultIsExpanded : Boolean = true,
+    contentColor : Color = MaterialTheme.colorScheme.primary,
+    content: @Composable () -> Unit
+) {
+    val registry = LocalSharedRegistry.current
+    var expanded by rememberSaveable { mutableStateOf(defaultIsExpanded) }
+    val key = remember(text) { "divider_text_$text" }
+
+    fun set() {
+        if(expanded) {
+            registry.pop(key) {
+                expanded = !expanded
+            }
+        } else {
+            registry.push(key) {
+                expanded = !expanded
+            }
+        }
+    }
+
+
+    SharedContainer(
+        key = key,
+        shape = NoneRoundShape,
+    ) {
+        DividerText(text, contentColor, onClick = {
+            set()
+        })
+    }
+
+    AnimatedVisibility(
+        enter = scaleIn(animationSpec = registry.getPushAnimation()) + expandIn(expandFrom = Alignment.BottomCenter,animationSpec = registry.getPushAnimation()),
+        exit = scaleOut(animationSpec = registry.getPopAnimation()) + shrinkOut(shrinkTowards = Alignment.BottomCenter,animationSpec = registry.getPopAnimation()),
+        visible = expanded,
+    ) {
+        SharedContent(
+            key = key,
+            contentStrategy = ContentStrategy.Shared(keepShowContainer = true,enableContainerAlpha = true),
+            shape = NoneRoundShape,
+        ) {
+            Column {
+                content()
+            }
+        }
+    }
+}
+
+
+/** 按压小标题展开/收起下面内容 */
+@Composable
+fun DividerTextExpandedWith(
+    text : String,
+    openBlurAnimation : Boolean = true,
+    defaultIsExpanded : Boolean = true,
+    contentColor : Color = MaterialTheme.colorScheme.primary,
+    content: @Composable () -> Unit
+) {
+    val registry = LocalSharedRegistrySafely.current
+    if(registry != null && !isInDialogWindow()) {
+        DividerTextExpandedWithShared(text,defaultIsExpanded,contentColor,content)
+    } else {
+        DividerTextExpandedWithDefault(text,openBlurAnimation,defaultIsExpanded,contentColor,content)
+    }
+}
+
+@Composable
+fun isInDialogWindow(): Boolean {
+    val view = LocalView.current
+    return remember(view) {
+        view.parent is DialogWindowProvider
+    }
+}
 
