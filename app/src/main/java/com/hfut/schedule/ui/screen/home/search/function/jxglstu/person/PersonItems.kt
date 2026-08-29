@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
 import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
@@ -176,11 +177,7 @@ private fun PersonItems(
 
 
     val studyType = info.educationLevel
-    var yuanxi = info.department
-    if (yuanxi != null) {
-        if(yuanxi.contains("("))yuanxi = yuanxi.substringBefore("(")
-        if(yuanxi.contains("（"))yuanxi = yuanxi.substringBefore("（")
-    }
+    val yuanxi = info.department?.filterDepartmentName()
     val major = info.major
     val classes = info.className
     val school = info.campus
@@ -711,7 +708,7 @@ fun getPersonInfo() : PersonInfo {
         }
 
         val benorsshuo =infoMap[elements?.get(8)?.text()]
-        val department =infoMap[elements?.get(10)?.text()]?.substringBefore("（")
+        val department =infoMap[elements?.get(10)?.text()]?.filterDepartmentName()
         val zhuanye =infoMap[elements?.get(12)?.text()]
         val classes =infoMap[elements?.get(16)?.text()]
         val school =infoMap[elements?.get(18)?.text()]

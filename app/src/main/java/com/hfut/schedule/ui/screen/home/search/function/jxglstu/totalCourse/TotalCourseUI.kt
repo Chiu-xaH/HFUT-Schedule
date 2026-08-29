@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
@@ -450,8 +451,7 @@ fun DetailItems(
         }
         item {
             Row {
-                var department = lessons.openDepartment.nameZh
-                if(department.contains("（")) department = department.substringBefore("（")
+                val department = lessons.openDepartment.nameZh.filterDepartmentName()
                 TransplantListItem(
                     overlineContent = { Text("开设学院") },
                     headlineContent = { Text(department) },

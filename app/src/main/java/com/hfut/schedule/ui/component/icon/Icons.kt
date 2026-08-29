@@ -82,3 +82,5 @@ fun billsIcons(name : String) = when {
     // 默认
     else ->  R.drawable.paid
 }
+
+fun String.filterDepartmentName()  = this.substringBefore("（").substringBefore("(")

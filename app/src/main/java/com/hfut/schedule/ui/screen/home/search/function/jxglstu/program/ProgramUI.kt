@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -456,7 +457,7 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
                 val listItem = searchList[item]
                 val course = listItem.course
                 val name = course.nameZh
-                val department = listItem.openDepartment.nameZh.substringBefore("（")
+                val department = listItem.openDepartment.nameZh.filterDepartmentName()
                 val term = listItem.readableTerms.let { if(it.isNotEmpty()) it[0] else null }
                 CustomCard(
                     color = cardNormalColor(),

@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
 import com.hfut.schedule.network.api.model.response.json.shared.ProgramSearchPlanCourse
 import com.hfut.schedule.logic.model.dto.JxglstuProgramItemDto
+import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.xah.common.logic.util.LogUtil
 
 
@@ -17,9 +18,7 @@ fun planCoursesTransform(planCourses : JxglstuProgramPlanCourse) : JxglstuProgra
         val remark = remark
         val isCompulsory = compulsory
         val credit = course.credits
-        var depart = openDepartment.nameZh
-        if(depart.contains("（")) depart = depart.substringBefore("（")
-
+        val depart = openDepartment.nameZh.filterDepartmentName()
         JxglstuProgramItemDto(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory)
     }
 } catch (e : Exception) {
@@ -38,9 +37,7 @@ fun planCoursesTransform(planCourses : ProgramSearchPlanCourse) : JxglstuProgram
         val remark = remark
         val isCompulsory = compulsory
         val credit = course.credits
-        var depart = openDepartment.nameZh
-        if(depart.contains("（")) depart = depart.substringBefore("（")
-
+        val depart = openDepartment.nameZh.filterDepartmentName()
         JxglstuProgramItemDto(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory)
     }
 } catch (e : Exception) {

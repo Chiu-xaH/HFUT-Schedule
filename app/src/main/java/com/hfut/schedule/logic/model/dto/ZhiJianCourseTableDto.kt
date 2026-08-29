@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.model.dto
 
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTable
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
+import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.xah.common.logic.util.LogUtil
@@ -16,7 +17,7 @@ fun ZhiJianCourseTable.toDto() : ZhiJianCourseTableDto? =
             endPeriod = end,
             place = if(place == "暂无数据") null else place?.substringAfter(",")?.simplifyPlace(),
             teacher = teacher,
-            department = department.substringBefore("（"),
+            department = department.filterDepartmentName(),
             classes = classes,
             date = date,
             code = code,

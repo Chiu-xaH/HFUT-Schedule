@@ -109,7 +109,6 @@ fun Modifier.bottomBarBlur(
             ),
             block = fun HazeEffectScope.() {
                 progressive = HazeProgressive.verticalGradient(
-//                     适配安卓12
                     startIntensity = 0f,
                     endIntensity = 1f,
                 )
@@ -158,7 +157,6 @@ fun Modifier.newBottomBarBlur(
             ),
             block = fun HazeEffectScope.() {
                 progressive = HazeProgressive.verticalGradient(
-//                     适配安卓12
                     startIntensity = 0f,
                     endIntensity = 1f,
                 )

@@ -45,10 +45,10 @@ fun LabScreen(innerPadding : PaddingValues) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = {
-                        Text("启用底栏新样式")
+                        Text("底栏新样式")
                     },
                     supportingContent = {
-                        Text("by @Today1337")
+                        Text("未推全，仅适配了主页面，可读性需调整")
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.label),null)

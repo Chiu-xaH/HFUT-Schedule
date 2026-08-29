@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -70,6 +71,7 @@ import com.xah.common.ui.component.chart.StackedBarChart
 import com.xah.common.ui.component.chart.StackedBarData
 
 import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -223,10 +225,10 @@ fun ProgramSearchScreen(
                                 val data = programList[index]
                                 var department = data.department.nameZh
                                 val name = data.nameZh
-                                department = department.substringBefore("（")
+                                department = department.filterDepartmentName()
                                 CardListItem(
                                     headlineContent = { Text(name) },
-                                    overlineContent = { Text(data.grade + "级 " + department + " " + data.major.nameZh) },
+                                    overlineContent = { ScrollText(data.grade + "级 | " + department + " | " + data.major.nameZh) },
                                     leadingContent = { DepartmentIcons(department) },
                                     modifier = Modifier.clickable {
                                         title = data.nameZh
@@ -432,7 +434,7 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
                 val listItem = searchList[item]
                 val course = listItem.course
                 val name = course.nameZh
-                val department = listItem.openDepartment.nameZh.substringBefore("（")
+                val department = listItem.openDepartment.nameZh.filterDepartmentName()
                 val term = listItem.terms.let { if(it.isNotEmpty()) it[0] else null }?.substringAfter("_")?.toIntOrNull()
                 CardListItem(
                     headlineContent = { Text(text = name) },
