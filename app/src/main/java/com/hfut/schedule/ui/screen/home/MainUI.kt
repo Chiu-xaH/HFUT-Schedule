@@ -205,8 +205,11 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.TransparentSystemBars
+import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.mask
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.anim.effect.Direction
 import com.xah.navigation.anim.effect.SlideTransitionEffect
@@ -996,37 +999,30 @@ fun MainScreen(
                     )
                     @OptIn(ExperimentalNavigationBarApi::class)
                     NavigationBar(
+                        enabled = isEnabled,
                         hazeState = hazeState,
                         hapticsEnabled = false,
                         aimAssist = true,
                         elevation = 0.dp,
                         itemHorizontalPadding = 0.dp,
                         indicatorBlur = 10.dp,
-                        indicatorColor = MaterialTheme.colorScheme.surfaceBright.copy(.8f)
-//                        .compositeOver(MaterialTheme.colorScheme.surface)
-                        ,
+                        indicatorColor = MaterialTheme.colorScheme.surfaceBright.copy(.8f),
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                         hazeModifier = Modifier
                             .bottomBarBackDrop(backdrop, shape = shape)
-                            .background(
-                                Brush.verticalGradient(
-                                    colorStops = arrayOf(
-                                        0.0f to color.copy(alpha = 0f),
-                                        1.0f to color.copy(alpha = 0.2f),
-                                    )
-                                )
-                            )
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(.25f))
+                            .let {
+                                if(isEnabled) {
+                                    it
+                                } else {
+                                    it
+                                        .mask(color.copy(.5f))
+                                        .shimmerEffect(angle = ShimmerAngle.START_TO_END)
+                                }
+                            }
                         ,
                         shape = shape,
                         modifier = Modifier
-                            .background(
-                                Brush.verticalGradient(
-                                    colorStops = arrayOf(
-                                        0.0f to color.copy(alpha = 0f),
-                                        1.0f to color.copy(alpha = 0.5f),
-//                                        1.0f to MaterialTheme.colorScheme.onSurface.copy(alpha = 0.075f),
-                                    )
-                                )
-                            )
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .let {
                                 if(paddingSafely) {

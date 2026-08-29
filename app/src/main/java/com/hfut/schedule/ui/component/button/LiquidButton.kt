@@ -444,21 +444,9 @@ fun NoPadding(content: @Composable () -> Unit) {
 @Composable
 fun Modifier.bottomBarBackDrop(
     backdrop: Backdrop,
-    enabled : Boolean = true,
     shape : RoundedCornerShape = CircleShape,
-    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
 ) : Modifier {
-    val progressAnimation = remember { Animatable(0f) }
-    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-    val tint = Color.Unspecified
-    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
-    val interactiveHighlightShader = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            RuntimeShader(SHADER)
-        } else {
-            Unit
-        }
-    }
+//    val color = MaterialTheme.colorScheme.surfaceVariant.copy(.25f)
     val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     return this.drawBackdrop(
@@ -468,53 +456,14 @@ fun Modifier.bottomBarBackDrop(
         backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
+            val value = 22.5f
             vibrancy()
-//            blur(2f)
-            lens(22.5f.dp.toPx(), 20f.dp.toPx())
+//            blur(10f)
+            lens(value.dp.toPx(), value.dp.toPx())
         },
         shadow = null,
-        onDrawSurface = {
-            if (tint.isSpecified) {
-                drawRect(tint, blendMode = BlendMode.Hue)
-                drawRect(tint.copy(alpha = 0.75f))
-            }
-            if (surfaceColor.isSpecified) {
-                drawRect(surfaceColor)
-            }
-            if (enabled) {
-                val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
-                if (progress > 0f) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
-                        drawRect(
-                            Color.White.copy(0.1f * progress),
-                            blendMode = BlendMode.Plus
-                        )
-                        interactiveHighlightShader.apply {
-                            val offset = pressStartPosition + offsetAnimation.value
-                            setFloatUniform("size", size.width, size.height)
-                            setColorUniform(
-                                "color",
-                                Color.White.copy(0.15f * progress).toArgb()
-                            )
-                            setFloatUniform("radius", size.maxDimension)
-                            setFloatUniform(
-                                "offset",
-                                offset.x.fastCoerceIn(0f, size.width),
-                                offset.y.fastCoerceIn(0f, size.height)
-                            )
-                        }
-                        drawRect(
-                            ShaderBrush(interactiveHighlightShader),
-                            blendMode = BlendMode.Plus
-                        )
-                    } else {
-                        drawRect(
-                            Color.White.copy(0.25f * progress),
-                            blendMode = BlendMode.Plus
-                        )
-                    }
-                }
-            }
-        }
+//        onDrawSurface = {
+//            drawRect(color)
+//        }
     )
 }

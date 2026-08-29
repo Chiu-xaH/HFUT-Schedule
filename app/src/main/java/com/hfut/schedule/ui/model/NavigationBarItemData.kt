@@ -325,6 +325,7 @@ fun NavigationBar(
     // Item 额外间隔
     itemHorizontalPadding: Dp = 32.dp,
     shape : RoundedCornerShape = CircleShape,
+    enabled : Boolean = true,
     content: @Composable NavigationBarScope.() -> Unit,
 ) {
     val registry = remember { NavigationBarItemRegistry() }
@@ -341,7 +342,7 @@ fun NavigationBar(
         return
     }
     val touchExplorationEnabled = rememberTouchExplorationEnabled()
-    val effectiveDragEnabled = dragEnabled && !touchExplorationEnabled
+    val effectiveDragEnabled = enabled && dragEnabled && !touchExplorationEnabled
     val effectiveAimAssist = aimAssist && !touchExplorationEnabled
     val effectivePreview = preview && !touchExplorationEnabled
     val density = LocalDensity.current
@@ -728,7 +729,7 @@ fun NavigationBar(
                         items = items,
                         arrangement = arrangement,
                         color = selectedContentColor,
-                        interactive = true,
+                        interactive = enabled,
                         interactionSources = interactionSources,
                         hapticsEnabled = hapticsEnabled,
                         itemPressedColor = itemPressedColor,

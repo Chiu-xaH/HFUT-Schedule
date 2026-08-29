@@ -1,0 +1,123 @@
+Applications Graphics Acceleration Info:
+Uptime: 214132127 Realtime: 617984278
+
+** Graphics info for pid 8833 [com.hfut.schedulf] **
+
+Stats since: 214096673080357ns
+Total frames rendered: 4112
+Janky frames: 3 (0.07%)
+Janky frames (legacy): 1564 (38.04%)
+50th percentile: 17ms
+90th percentile: 42ms
+95th percentile: 57ms
+99th percentile: 85ms
+Number Missed Vsync: 0
+Number High input latency: 8218
+Number Slow UI thread: 1
+Number Slow bitmap uploads: 2
+Number Slow issue draw commands: 3
+Number Frame deadline missed: 3
+Number Frame deadline missed (legacy): 3
+HISTOGRAM: 5ms=0 6ms=0 7ms=10 8ms=128 9ms=82 10ms=148 11ms=396 12ms=94 13ms=108 14ms=126 15ms=48 16ms=614 17ms=432 18ms=186 19ms=192 20ms=186 21ms=156 22ms=138 23ms=106 24ms=48 25ms=58 26ms=38 27ms=28 28ms=34 29ms=44 30ms=30 31ms=36 32ms=72 34ms=52 36ms=20 38ms=38 40ms=42 42ms=40 44ms=34 46ms=30 48ms=48 53ms=36 57ms=30 61ms=58 65ms=48 69ms=30 73ms=12 77ms=8 81ms=6 85ms=2 89ms=0 93ms=0 97ms=0 101ms=0 105ms=0 109ms=0 113ms=0 117ms=0 121ms=0 125ms=0 129ms=0 133ms=0 150ms=40 200ms=0 250ms=0 300ms=0 350ms=0 400ms=0 450ms=0 500ms=0 550ms=0 600ms=0 650ms=0 700ms=0 750ms=0 800ms=0 850ms=0 900ms=0 950ms=0 1000ms=0 1050ms=0 1100ms=0 1150ms=0 1200ms=0 1250ms=0 1300ms=0 1350ms=0 1400ms=0 1450ms=0 1500ms=0 1550ms=0 1600ms=0 1650ms=0 1700ms=0 1750ms=0 1800ms=0 1850ms=0 1900ms=0 1950ms=0 2000ms=0 2050ms=0 2100ms=0 2150ms=0 2200ms=0 2250ms=0 2300ms=0 2350ms=0 2400ms=0 2450ms=0 2500ms=0 2550ms=0 2600ms=0 2650ms=0 2700ms=0 2750ms=0 2800ms=0 2850ms=0 2900ms=0 2950ms=0 3000ms=0 3050ms=0 3100ms=0 3150ms=0 3200ms=0 3250ms=0 3300ms=0 3350ms=0 3400ms=0 3450ms=0 3500ms=0 3550ms=0 3600ms=0 3650ms=0 3700ms=0 3750ms=0 3800ms=0 3850ms=0 3900ms=0 3950ms=0 4000ms=0 4050ms=0 4100ms=0 4150ms=0 4200ms=0 4250ms=0 4300ms=0 4350ms=0 4400ms=0 4450ms=0 4500ms=0 4550ms=0 4600ms=0 4650ms=0 4700ms=0 4750ms=0 4800ms=0 4850ms=0 4900ms=0 4950ms=0
+50th gpu percentile: 11ms
+90th gpu percentile: 23ms
+95th gpu percentile: 4950ms
+99th gpu percentile: 4950ms
+GPU HISTOGRAM: 1ms=0 2ms=22 3ms=144 4ms=344 5ms=208 6ms=350 7ms=170 8ms=46 9ms=356 10ms=318 11ms=234 12ms=396 13ms=358 14ms=202 15ms=214 16ms=132 17ms=46 18ms=28 19ms=24 20ms=8 21ms=34 22ms=38 23ms=38 24ms=26 25ms=66 4950ms=310
+
+Pipeline=Skia (OpenGL)
+Memory policy:
+  Max surface area: 2527200
+  Max resource usage: 242.61MB (x48)
+  Background retention: 50% (altUiHidden = true)
+  GPU Context timeout: 10
+Contexts: 1 (stopped = 0)
+CPU Caches:
+  Glyph Cache: 8.27 MB (1 entry)
+  Glyph Count: 720
+Total CPU memory usage:
+  8666969 bytes, 8.27 MB (0.00 bytes is purgeable)
+GPU Caches:
+  Other:
+    Other: 40.09 KB (1 entry)
+  Image:
+    Texture: 170.36 KB (42 entries)
+  Scratch:
+    RenderTarget: 219.28 MB (227 entries)
+    Texture: 2.00 MB (3 entries)
+    Buffer Object: 78.03 KB (3 entries)
+Total GPU memory usage:
+  232325984 bytes, 221.56 MB (197.52 MB is purgeable)
+Detail dimensions:
+Buffer Object:                          30720           {0x0}   1
+Buffer Object:                          49152           {0x0}   1
+Texture:                                2097152         {2048x1024}     1
+Buffer Object:                          32              {0x0}   1
+RenderTarget:                           65536           {512x128}       72
+RenderTarget:                           16384           {128x128}       33
+RenderTarget:                           32768           {256x128}       60
+Texture:                                128             {128x1} 1
+Texture:                                4356            {66x66} 35
+Texture:                                5476            {74x74} 1
+Texture:                                4900            {70x70} 2
+Texture:                                3364            {58x58} 1
+RenderTarget:                           10305536                {1088x2368}     6
+Texture:                                3025            {55x55} 1
+RenderTarget:                           2801664         {1216x576}      1
+RenderTarget:                           2490368         {1216x512}      1
+RenderTarget:                           5505024         {896x1536}      1
+RenderTarget:                           4046848         {832x1216}      2
+RenderTarget:                           131072          {256x128}       6
+RenderTarget:                           2162688         {704x768}       2
+RenderTarget:                           1638400         {640x640}       2
+RenderTarget:                           3145728         {768x1024}      2
+RenderTarget:                           1179648         {576x512}       2
+RenderTarget:                           1048576         {256x1024}      2
+RenderTarget:                           98304           {192x128}       6
+RenderTarget:                           1802240         {640x704}       2
+RenderTarget:                           8388608         {1024x2048}     2
+RenderTarget:                           1474560         {640x576}       2
+RenderTarget:                           65536           {128x128}       6
+RenderTarget:                           3145728         {512x1536}      2
+RenderTarget:                           1032192         {576x448}       2
+RenderTarget:                           12582912                {1024x3072}     2
+Texture:                                64              {8x8}   1
+RenderTarget:                           2097152         {512x1024}      2
+RenderTarget:                           3145728         {1536x512}      3
+RenderTarget:                           6291456         {1024x1536}     2
+RenderTarget:                           18874368                {1536x3072}     2
+RenderTarget:                           524288          {256x512}       2
+Texture:                                256             {16x16} 2
+
+GraphicBufferAllocator buffers:
+            Handle |         Size |     W (Stride) x H | Layers |   Format |      Usage | Requestor
+      0x718d3232a0 |  9945.00 KiB | 1080 (1088) x 2340 |      1 |        1 | 0x10000900 | VRI[MainActivity]#1(BLAST Consumer)1
+      0x718d326300 |  9945.00 KiB | 1080 (1088) x 2340 |      1 |        1 | 0x10000900 | VRI[MainActivity]#1(BLAST Consumer)1
+      0x718d326810 |  9945.00 KiB | 1080 (1088) x 2340 |      1 |        1 | 0x10000900 | VRI[MainActivity]#1(BLAST Consumer)1
+      0x718d326ed0 |  9945.00 KiB | 1080 (1088) x 2340 |      1 |        1 | 0x10000900 | VRI[MainActivity]#1(BLAST Consumer)1
+Total allocated by GraphicBufferAllocator (estimate): 39780.00 KB
+Imported gralloc buffers:
++ name:VRI[MainActivity]#1(BLAST Consumer)1, id:85567, size:10072.00KiB, w/h:1080x2340, usage: 0x10000900, req fmt:1, fourcc/mod:875708993/0, dataspace: 0x8810000, compressed: true
+        planes: R/G/B/A:         w/h:1080x2340, stride:4352 bytes, size:10313728
++ name:VRI[MainActivity]#1(BLAST Consumer)1, id:85566, size:10072.00KiB, w/h:1080x2340, usage: 0x10000900, req fmt:1, fourcc/mod:875708993/0, dataspace: 0x8810000, compressed: true
+        planes: R/G/B/A:         w/h:1080x2340, stride:4352 bytes, size:10313728
++ name:VRI[MainActivity]#1(BLAST Consumer)1, id:85569, size:10072.00KiB, w/h:1080x2340, usage: 0x10000900, req fmt:1, fourcc/mod:875708993/0, dataspace: 0x8810000, compressed: true
+        planes: R/G/B/A:         w/h:1080x2340, stride:4352 bytes, size:10313728
++ name:VRI[MainActivity]#1(BLAST Consumer)1, id:85565, size:10072.00KiB, w/h:1080x2340, usage: 0x10000900, req fmt:1, fourcc/mod:875708993/0, dataspace: 0x8810000, compressed: true
+        planes: R/G/B/A:         w/h:1080x2340, stride:4352 bytes, size:10313728
+Total imported by gralloc: 40288.00KiB
+
+Profile data in ms:
+
+        com.hfut.schedulf/com.hfut.schedulf.activity.MainActivity/android.view.ViewRootImpl@e4ad531 (visibility=0)
+View hierarchy:
+
+  com.hfut.schedulf/com.hfut.schedulf.activity.MainActivity/android.view.ViewRootImpl@e4ad531
+  11 views, 23.18 kB of render nodes
+
+
+  Dynamic VRI BBQ Log.  render_draw: false  hdr_dimmer: false  blur_blend: false  hwui_window_decor: false
+
+Total ViewRootImpl   : 1
+Total attached Views : 11
+Total RenderNode     : 23.18 kB (used) / 47.24 kB (capacity)
