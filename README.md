@@ -82,19 +82,16 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 #### [开发纪实：包体缩减](/docs/technical/PackageLess.md)
 如何让聚在工大从巅峰期的 49MB 缩减至目前的 26MB
 
-#### [开发纪实：容器共享](/docs/technical/ContainerShared.md) (待更新)
+#### [开发纪实：容器共享](/docs/technical/ContainerShared.md) 
 对官方库的改造再封装，以及无奈妥协，最终决定自制SharedNav
 
-#### [开发纪实：KMP 改造](/docs/technical/ToKmp.md) (待更新)
+#### [开发纪实：KMP 改造](/docs/technical/ToKmp.md) 
 待开发，等买了 MacBook
-
-#### [开发纪实：论 Android 软件架构](/docs/technical/Architecture.md) (待更新)
 
 #### [开发纪实：聚在工大的 UI&UX 设计](/docs/technical/Design.md) (待更新)
 
 #### [开发纪实：聚在工大的背景与前世今生](/docs/technical/Background.md) (待更新)
 
-#### [开发纪实：评当下的 Android 领域](/docs/technical/Now.md) (待更新)
 
 ## [联系方式](zsh0908@outlook.com)
 开发者: zsh0908@outlook.com
