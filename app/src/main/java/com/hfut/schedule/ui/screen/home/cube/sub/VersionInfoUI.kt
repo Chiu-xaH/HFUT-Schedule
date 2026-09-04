@@ -76,14 +76,7 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
-        UpdateItems("新增 对管理学院更名的适配",to = To.Screen(DepartmentsDestination))
-        UpdateItems("新增 学费二维码","位于 查询中心-学费，使用微信扫码后可缴费",to = To.Screen(FeeDestination))
-        UpdateItems("新增 签名信息显示","位于 选项-维护与关于-关于",to = To.Screen(SettingsAboutDeveloperDestination))
-        UpdateItems("新增 悬浮样式底栏","默认关闭，位于 选项-偏好与配置-其他-实验室", to = To.Screen(SettingsLabDestination), developers = listOf("Today1337", Constant.GITHUB_DEVELOPER_NAME))
-        UpdateItems("新增 小标题点击展开收起效果优化为容器共享样式")
-        UpdateItems("新增 支持调节转专业列表排序方式为按热度")
-        UpdateItems("重构 调节全局顶栏底栏的渐变蒙层，使其更加通透")
-        UpdateItems("重构 优化大卡片为扁平化设计")
+        UpdateItems("优化 应用崩溃时的处理机制","每次崩溃都会上报其崩溃日志及相关信息，帮助开发者更好地发现问题；当应用崩溃超过2次时将唤起修复页面，提供排查措施、错误信息以及反馈渠道；")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("反射扫描destination文件夹")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")

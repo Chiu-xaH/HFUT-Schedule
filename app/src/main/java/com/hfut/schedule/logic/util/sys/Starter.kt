@@ -62,7 +62,7 @@ object Starter {
             else context.startActivity(intent)
         } catch (e: Exception) {
             LogUtil.error(e)
-            if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+            if(AppVersion.isHarmonyNext) {
                 showToast("检测到为鸿蒙NEXT，启动外部应用失败")
             } else {
                 showToast("启动外部应用失败")

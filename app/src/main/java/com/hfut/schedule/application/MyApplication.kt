@@ -11,6 +11,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.xah.common.logic.model.Campus
 import com.hfut.schedule.logic.model.enumeration.AppStatus
 import com.hfut.schedule.logic.model.Location
+import com.hfut.schedule.logic.util.dev.CrashHandler
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -33,8 +34,10 @@ class MyApplication : Application() {
         super.onCreate()
         // 暴露全局Context
         context = applicationContext
-        // 初始化日志工具
+        // 日志（暂存300条WARN和ERROR日志）
         LogUtil.init(APP_NAME)
+        // Crash崩溃监控
+        CrashHandler.enableLogging()
         // 控制SharedNav库的日志 需要联调排查SharedNav错误时传入debug=BuildConfig.DEBUG，平常时不需要开启日志。要不然Debug包动画有点卡
         com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",false)
         // 注册DeepLink

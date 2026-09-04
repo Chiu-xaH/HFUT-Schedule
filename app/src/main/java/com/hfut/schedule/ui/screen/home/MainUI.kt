@@ -604,7 +604,7 @@ fun MainScreen(
                                                )
                                            }
                                        }
-                                       if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+                                       if(AppVersion.isHarmonyNext) {
                                            IconButton(
                                                onClick = {
                                                    showToast(context.getString(R.string.settings_person_info_tag_harmonry_next))

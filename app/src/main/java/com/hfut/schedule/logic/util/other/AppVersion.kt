@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
+import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
 import java.io.ByteArrayInputStream
 import java.security.MessageDigest
@@ -114,6 +115,10 @@ object AppVersion {
     val isRunningOnWsa = deviceName.startsWith("Subsystem for Android")
     val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
 
+    /**
+     * 卓易通
+     */
+    val isHarmonyNext = DeviceOs.isHarmonyOsNextAndroidCompatible()
     data class SignatureInfo(
         val issuer: String,
         val subject: String,

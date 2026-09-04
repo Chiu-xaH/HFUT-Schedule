@@ -232,7 +232,7 @@ fun BugShare() {
             }
         }
     }
-
+/*
     TransplantListItem(
         headlineContent = { Text(text = "崩溃日志抓取") },
         leadingContent = {
@@ -271,6 +271,7 @@ fun BugShare() {
         }
     )
     PaddingHorizontalDivider()
+ */
     TransplantListItem(
         headlineContent = { Text(text = "错误日志") },
         leadingContent = {
@@ -280,7 +281,7 @@ fun BugShare() {
             showBottomSheet = true
         },
         supportingContent = {
-            Text("可导出非崩溃情况下的错误日志，导出后，在Download文件夹寻找错误日志")
+            Text("可导出最近${LogUtil.DEFAULT_MAX_CACHE}条非崩溃情况下的错误日志，导出后，在Download文件夹寻找错误日志")
         },
     )
 }
