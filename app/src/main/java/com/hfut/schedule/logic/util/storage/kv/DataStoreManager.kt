@@ -29,6 +29,7 @@ import com.hfut.schedule.ui.model.choice.GradeAutoCheckMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.model.choice.SharedNavEffect
+import com.hfut.schedule.ui.model.choice.SharedNavTilt
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
@@ -46,6 +47,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
+/**
+ * 键值对存储
+ *
+ * 尽量别用SP了，要弃用了，存键值对来这里存
+ *
+ * 需要数据变更时，在key的尾部添加版本号。例如  enable_new_style_bottom_bar_v2
+ *
+ * 对于多个选项的存储，有封装好的BaseChoice，可以去看一下怎么用的，然后子类就不要放在这里了目前已有的我后续也会清理出去
+ *
+ * 对于大文本的存储，建议去LargeDataStoreManager
+ *
+ * 对于简单的List、Map等，允许在这里存储
+ *
+ * Boolean值一般前面加上enableXXX，有些早期字段没有加就没改
+ *
+ * 如果需要同步读取（不建议同步读取），需要使用flow的first即可
+ *
+ */
 object DataStoreManager : IDataStore {
 
     /* 用法
@@ -147,7 +166,7 @@ object DataStoreManager : IDataStore {
     private val QUADRATIC_CORNER_LERP = booleanPreferencesKey("quadratic_corner_lerp")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
     private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
-    private val CONTAINER_TILT = booleanPreferencesKey("container_tilt")
+    private val CONTAINER_TILT = intPreferencesKey("container_tilt_v2")
     private val CONTAINER_SHEAR = booleanPreferencesKey("container_share")
     private val NAV_SPLASH_SCREEN = booleanPreferencesKey("nav_splash_screen")
 //    private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
@@ -250,7 +269,7 @@ object DataStoreManager : IDataStore {
         }
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
-    suspend fun saveContainerTilt(value: Boolean) = saveValue(CONTAINER_TILT,value)
+    suspend fun saveContainerTilt(value: SharedNavTilt) = saveValue(CONTAINER_TILT,value.code)
     suspend fun saveContainerShare(value: Boolean) = saveValue(CONTAINER_SHEAR,value)
     suspend fun saveUseDoubleExtension(value: Boolean) = saveValue(USE_DOUBLE_EXTENSION,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
@@ -324,7 +343,7 @@ object DataStoreManager : IDataStore {
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
     val useDoubleExtension = getFlow(USE_DOUBLE_EXTENSION,false)
-    val enableContainerTilt = getFlow(CONTAINER_TILT,true)
+    val enableContainerTilt = getFlow(CONTAINER_TILT,SharedNavTilt.ROTATION.code)
     val enableContainerShare = getFlow(CONTAINER_SHEAR,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val sharedNavSpeedRadio = getFlow(SHARED_NAV_SPEED_RADIO,1f)

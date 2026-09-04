@@ -9,7 +9,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -19,15 +18,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,12 +37,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -96,9 +87,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -123,28 +111,28 @@ import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.status.FancySwitch
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
-import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.model.choice.ColorMode
 import com.hfut.schedule.ui.model.ColorStyle
+import com.hfut.schedule.ui.model.choice.ColorMode
+import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
+import com.hfut.schedule.ui.model.choice.SharedNavEffect
+import com.hfut.schedule.ui.model.choice.SharedNavTilt
+import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.nav.effect.CONTROL_CENTER_ALPHA
+import com.hfut.schedule.ui.style.shader.scaleMirror
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.util.extractColor
 import com.hfut.schedule.ui.util.hsvToLong
+import com.hfut.schedule.ui.util.isThemeDark
 import com.hfut.schedule.ui.util.loadBitmap
 import com.hfut.schedule.ui.util.longToHexColor
 import com.hfut.schedule.ui.util.longToHue
-import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
-import com.hfut.schedule.ui.model.choice.SharedNavEffect
-import com.hfut.schedule.ui.nav.effect.CONTROL_CENTER_ALPHA
+import com.hfut.schedule.ui.util.parseColor
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.manager.AnimationSpecManager
-import com.xah.navigation.controller.NavigationController
-import com.xah.navigation.util.LocalNavController
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
-import com.hfut.schedule.ui.style.shader.scaleMirror
-import com.hfut.schedule.ui.util.isThemeDark
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
@@ -152,8 +140,9 @@ import com.xah.common.ui.style.mask
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.util.shader.pixelExtension
+import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.model.anim.EffectLevel
-import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -279,7 +268,7 @@ fun SharedAppearanceSettingsScreen(
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
-        val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+        val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = SharedNavTilt.ROTATION.code)
         val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
         val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
@@ -838,15 +827,16 @@ fun SharedAppearanceSettingsScreen(
                             supportingContent = {
                                 Text("过渡时容器带有倾斜的视差效果")
                             },
-                            trailingContent = {
-                                Switch(checked = enableContainerTilt, onCheckedChange = {
-                                    scope.launch {
-                                        DataStoreManager.saveContainerTilt(!enableContainerTilt)
-                                    }
-                                })
-                            },
                             leadingContent = { Icon(painterResource(R.drawable.ic_360), contentDescription = "Localized description") },
                         )
+                        CustomSingleChoiceRow<SharedNavTilt> (
+                            selected = enableContainerTilt,
+                            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                        ) {
+                            scope.launch {
+                                DataStoreManager.saveContainerTilt(it)
+                            }
+                        }
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "二次形变") },

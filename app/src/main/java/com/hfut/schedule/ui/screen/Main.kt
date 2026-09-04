@@ -2,14 +2,9 @@ package com.hfut.schedule.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,14 +22,14 @@ import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.nav.destination.base.NavDestination
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.model.choice.SharedNavEffect
+import com.hfut.schedule.ui.model.choice.SharedNavTilt
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.sharednav.common.manager.AnimationSpecManager
 import com.sharednav.common.helper.ScreenCornerHelper
+import com.sharednav.common.manager.AnimationSpecManager
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.container.model.TiltEffect
 import com.xah.container.util.LocalSharedRegistry
@@ -45,9 +40,7 @@ import com.xah.navigation.model.anim.EffectLevel
 import com.xah.navigation.util.DefaultBackHandler
 import com.xah.navigation.util.rememberNavDependencies
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("NewApi")
@@ -107,7 +100,7 @@ fun MainHost(
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
-    val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = true)
+    val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = SharedNavTilt.ROTATION.code)
     val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val shortcutSort by DataStoreManager.shortcutSort.collectAsState(initial = null)
@@ -183,11 +176,7 @@ fun MainHost(
             }
 
             LaunchedEffect(enableContainerTilt) {
-                registry.tiltEffect = if(enableContainerTilt) {
-                    TiltEffect.ROTATION
-                } else {
-                    TiltEffect.NONE
-                }
+                registry.tiltEffect = SharedNavTilt.entries.find { it.code == enableContainerTilt }?.effect ?: TiltEffect.ROTATION
             }
 
             LaunchedEffect(enablePredictive) {
@@ -198,6 +187,7 @@ fun MainHost(
             LaunchedEffect(sharedNavSpeedRadio) {
                 AnimationSpecManager.speedRadio = sharedNavSpeedRadio
             }
+
             // 系统返回手势控制
             DefaultBackHandler()
         }
