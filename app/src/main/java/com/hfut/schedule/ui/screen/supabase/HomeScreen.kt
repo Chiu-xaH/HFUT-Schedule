@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
@@ -74,8 +75,7 @@ private val items = listOf(
 @Composable
 fun SupabaseHome(vm : NetWorkViewModel) {
     val navController = rememberNavController()
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val bottomBarItems = when(navController.currentRouteWithoutArgs()) {
         SupabaseScreen.HOME.name -> SupabaseScreen.HOME
         SupabaseScreen.SETTINGS.name -> SupabaseScreen.SETTINGS

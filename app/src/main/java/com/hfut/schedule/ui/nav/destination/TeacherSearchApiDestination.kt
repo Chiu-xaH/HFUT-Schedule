@@ -18,12 +18,12 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 
 data class TeacherSearchApiDestination(
     val teacherName : String
@@ -43,8 +43,7 @@ data class TeacherSearchApiDestination(
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-        val hazeState = rememberHazeState(blurEnabled = blur)
+        val hazeState = rememberHazeBlur()
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

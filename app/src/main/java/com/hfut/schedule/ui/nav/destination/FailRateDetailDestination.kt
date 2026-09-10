@@ -19,10 +19,10 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateDetailScreen
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 
 data class FailRateDetailDestination(
     val courseName : String,
@@ -43,8 +43,7 @@ data class FailRateDetailDestination(
     @Composable
     override fun Content() {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-        val hazeState = rememberHazeState(blurEnabled = blur)
+        val hazeState = rememberHazeBlur()
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

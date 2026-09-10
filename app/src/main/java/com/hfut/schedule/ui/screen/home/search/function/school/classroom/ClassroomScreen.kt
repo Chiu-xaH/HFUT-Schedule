@@ -116,6 +116,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.smoothToOne
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
@@ -156,8 +157,7 @@ private val items = listOf(
 fun ClassroomScreen(
     vm : NetWorkViewModel,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val targetPage = when(navController.currentRouteWithoutArgs()) {
@@ -701,8 +701,7 @@ fun ClassroomLessonsScreen(
     name: String
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val semester by produceState<Int?>(initialValue = null) {
         value = SemesterParser.getSemester()
     }

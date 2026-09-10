@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.nav.destination.ProgramConfirmationDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -129,8 +130,7 @@ fun ProgramScreen(
     ifSaved: Boolean,
 ) {
     val navController = LocalNavController.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val titles = remember { listOf("完成情况","教学计划") }
     val pageState = rememberPagerState(
         initialPage = if(prefs.getString("PROGRAM_COMPETITION","") != null) PAGE_COMPETITION else PAGE_PROGRAM

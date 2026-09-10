@@ -35,6 +35,7 @@ import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.screen.xwx.saveImageToFile
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
@@ -42,7 +43,6 @@ import com.xah.container.model.ContentStrategy
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 /** 图片预览器交互：
@@ -110,8 +110,7 @@ private fun ZoomableImage(
     )
 
     var displayDialog by remember { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val activity = LocalActivity.current
 
     if(displayDialog) {

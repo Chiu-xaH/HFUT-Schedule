@@ -17,13 +17,13 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 import com.xah.navigation.util.LocalNavDependencies
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 
 object DepartmentsDestination : NavDestination() {
     override val key = "all_department"
@@ -35,8 +35,7 @@ object DepartmentsDestination : NavDestination() {
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-        val hazeState = rememberHazeState(blurEnabled = blur)
+        val hazeState = rememberHazeBlur()
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

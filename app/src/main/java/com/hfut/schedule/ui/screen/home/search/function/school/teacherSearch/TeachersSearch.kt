@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 
@@ -83,8 +84,7 @@ fun TeacherSearch() {
 fun TeacherSearchScreen(
     vm : NetWorkViewModel,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
 
     var name by remember { mutableStateOf("") }
     var direction by remember { mutableStateOf("") }

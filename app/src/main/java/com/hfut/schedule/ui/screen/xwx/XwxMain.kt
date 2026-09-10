@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
@@ -83,8 +84,7 @@ import java.util.UUID
 fun XwxMainScreen(vm: NetWorkViewModel) {
     val activity = LocalActivity.current
     val context = LocalContext.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by vm.xwxFunctionsResp.state.collectAsState()
     val savedInfo by produceState<XiaoWuXingLoginInfoDto?>(initialValue = null) {

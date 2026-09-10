@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.NotificationsDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -147,8 +148,7 @@ fun NotificationItems() {
 @Composable
 fun NotificationsScreen(
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

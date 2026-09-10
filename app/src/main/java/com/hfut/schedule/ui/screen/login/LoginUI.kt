@@ -103,6 +103,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
@@ -273,9 +274,7 @@ fun LoginScreen(
 ) {
     val scope = rememberCoroutineScope()
     val activity = LocalActivity.current
-//    var webVpn by rememberSaveable { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val Savedusername = prefs.getString("Username", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

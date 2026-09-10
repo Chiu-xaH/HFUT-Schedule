@@ -32,11 +32,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -85,9 +83,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -114,9 +110,6 @@ import com.hfut.schedule.logic.model.enumeration.BottomBarItems.CALENDAR
 import com.hfut.schedule.logic.model.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.model.enumeration.BottomBarItems.FUNCTIONS
 import com.hfut.schedule.logic.model.enumeration.BottomBarItems.SETTINGS
-import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
-import com.hfut.schedule.ui.model.NavigationBarItemDataDynamic
-import com.hfut.schedule.ui.model.NavigationBarItemDynamicIconModern
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
@@ -125,13 +118,13 @@ import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.bottomBarBackDrop
-import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -145,8 +138,9 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.model.ExperimentalNavigationBarApi
 import com.hfut.schedule.ui.model.IconType
 import com.hfut.schedule.ui.model.NavigationBar
-import com.hfut.schedule.ui.model.NavigationBarArrangement
 import com.hfut.schedule.ui.model.NavigationBarIcon
+import com.hfut.schedule.ui.model.NavigationBarItemDataDynamic
+import com.hfut.schedule.ui.model.NavigationBarItemDynamicIconModern
 import com.hfut.schedule.ui.model.NewNavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
@@ -177,32 +171,30 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Tota
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculatedReadNotificationCount
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.shader.largeStyle
+import com.hfut.schedule.ui.style.shader.smallStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.layerGlass
+import com.hfut.schedule.ui.style.special.newBottomBarBlur
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
-import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
+import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.util.pickColorFromTop
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hjq.device.compat.DeviceOs
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
-import com.xah.shader.state.ShaderState
-import com.xah.shader.state.rememberShaderState
-import com.hfut.schedule.ui.style.shader.largeStyle
-import com.hfut.schedule.ui.style.shader.smallStyle
-import com.hfut.schedule.ui.style.special.bottomBarBlur
-import com.hfut.schedule.ui.style.special.newBottomBarBlur
-import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
-import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.ShimmerAngle
@@ -215,12 +207,10 @@ import com.xah.navigation.anim.effect.Direction
 import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import com.xah.shader.state.ShaderState
+import com.xah.shader.state.rememberShaderState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -262,8 +252,7 @@ fun MainScreen(
     val navHostTopController = LocalNavController.current
     val navController = rememberNavController()
     var isEnabled by rememberSaveable { mutableStateOf(!isLogin) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val backdrop = rememberLayerBackdrop()
 
     val update by produceState<GiteeReleaseResponse?>(initialValue = null) {
@@ -1332,8 +1321,7 @@ fun SearchEditScreen() {
         ),
         label = "rotation"
     )
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     var showDialog by remember { mutableStateOf(false) }
     if(showDialog) {
         LittleDialog(

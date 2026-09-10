@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getXwxPsk
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -79,7 +80,6 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.logic.util.LogUtil
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -137,9 +137,7 @@ suspend fun checkXwxLogin(vm: NetWorkViewModel) : Boolean = withContext(Dispatch
 fun XwxLoginScreen(
     vm: NetWorkViewModel,
 ) {
-    val activity = LocalActivity.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     var selectSchoolUi by remember { mutableStateOf(false) }
 
     Scaffold(

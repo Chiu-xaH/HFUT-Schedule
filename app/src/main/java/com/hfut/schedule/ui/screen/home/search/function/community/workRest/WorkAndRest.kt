@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
@@ -191,8 +192,7 @@ fun TimeTableScreen(
 //    navController : NavHostController,
     friendId : String?
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val url by produceState<String?>(initialValue = null) {
         value = try {
             getMy()!!.schoolCalendarUrl

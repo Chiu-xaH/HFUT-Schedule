@@ -19,12 +19,12 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.util.text
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 
 /**
  * 临时的，懒得写在学期切换时驱动刷新课程表，直接利用导航吧
@@ -38,8 +38,7 @@ object CalendarConfigDestination : NavDestination() {
     @Composable
     override fun Content() {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-        val hazeState = rememberHazeState(blurEnabled = blur)
+        val hazeState = rememberHazeBlur()
 
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,

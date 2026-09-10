@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Cour
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -84,8 +85,7 @@ fun CourseSearchScreen(
     vm : NetWorkViewModel,
 ) {
     val navController = LocalNavController.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
 
     var showSearch by rememberSaveable() { mutableStateOf(true) }
     var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: "") }

@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -97,8 +98,7 @@ import kotlinx.coroutines.launch
 fun UpdateSuccessScreen() {
     val navController = LocalNavController.current
     val context = LocalContext.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val oldVersion = prefs.getString("versionName","上版本")
     val scope = rememberCoroutineScope()
 

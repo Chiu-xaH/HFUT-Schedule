@@ -92,6 +92,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotif
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HuoZaiFeiXuan
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -173,8 +174,7 @@ fun isValidWebUrl(url: String, strict : Boolean = false): Boolean {
 @Composable
 fun WebNavigationScreen(
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     var showBottomSheet_Add by remember { mutableStateOf(false) }
 
     if(showBottomSheet_Add) {
@@ -369,8 +369,7 @@ fun WebNavigationScreen(
 @Composable
 fun NotificationBoxScreen(
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
 
     LaunchedEffect(Unit) {
         saveString("Notifications", getNotifications().size.toString())

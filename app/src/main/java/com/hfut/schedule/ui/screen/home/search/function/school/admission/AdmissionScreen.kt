@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.nav.destination.AdmissionDetailDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -74,8 +75,7 @@ import kotlinx.coroutines.launch
 fun AdmissionScreen(
     vm : NetWorkViewModel,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
@@ -175,10 +175,7 @@ fun AdmissionRegionScreen(
     bean : Map.Entry<String, List<Admission>>,
     typeStr : String,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
-
-    val listState by vm.admissionListResp.state.collectAsState()
+    val hazeState = rememberHazeBlur()
     val data = bean
     val titles = remember { data.value.map { it.toString() } }
     val pagerState = rememberPagerState { titles.size }

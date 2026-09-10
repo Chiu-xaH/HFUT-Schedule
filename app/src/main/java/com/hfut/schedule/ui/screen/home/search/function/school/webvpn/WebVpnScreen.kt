@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.getPureUrl
@@ -80,8 +81,7 @@ private val titles = listOf("转换为WebVpn链接","WebVpn链接还原")
 fun WebVpnScreen(
     vm : NetWorkViewModel,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val backdrop = rememberLayerBackdrop()

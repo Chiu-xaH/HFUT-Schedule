@@ -21,6 +21,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.nav.destination.CommunityAppointmentDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -33,8 +34,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun AppointmentScreen(
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (

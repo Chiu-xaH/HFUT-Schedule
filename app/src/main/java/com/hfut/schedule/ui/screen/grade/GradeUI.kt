@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.goToXwx
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -66,7 +67,6 @@ import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.anim.effect.ScaleTransitionEffect
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 enum class GradeDataOrigin(val title : String) {
@@ -83,8 +83,7 @@ fun GradeScreen(
     vm : NetWorkViewModel,
 ) {
     val navTopController = LocalNavController.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val gradeOriginList = remember { GradeDataOrigin.entries }
     val pageState = rememberPagerState(initialPage = if(ifSaved) 0 else 1 ) { gradeOriginList.size }
     val scope = rememberCoroutineScope()

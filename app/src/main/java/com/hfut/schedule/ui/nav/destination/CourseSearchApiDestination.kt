@@ -28,6 +28,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -39,7 +40,6 @@ import com.sharednav.common.helper.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavDependencies
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 
 data class CourseSearchApiDestination(
     val courseName : String?,
@@ -61,8 +61,7 @@ data class CourseSearchApiDestination(
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-        val hazeState = rememberHazeState(blurEnabled = blur)
+        val hazeState = rememberHazeBlur()
         val uiState by vm.courseSearchResponse.state.collectAsState()
         val navController = LocalNavController.current
 

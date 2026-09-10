@@ -21,12 +21,11 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.text
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 
 object SettingsTipsDestination : NavDestination() {
     override val key: String = "settings_tips"
@@ -38,8 +37,7 @@ object SettingsTipsDestination : NavDestination() {
     @Composable
     override fun Content() {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-        val hazeState = rememberHazeState(blurEnabled = blur)
+        val hazeState = rememberHazeBlur()
 
         Scaffold(
 //            containerColor = MaterialTheme.colorScheme.surfaceContainer,

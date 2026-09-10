@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.ExceptionDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -34,8 +35,7 @@ import dev.chrisbanes.haze.rememberHazeState
 fun ExceptionScreen(
     exception: Throwable,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val keyException = remember(exception) { getKeyStackTraceDesc(exception) }
     Scaffold (

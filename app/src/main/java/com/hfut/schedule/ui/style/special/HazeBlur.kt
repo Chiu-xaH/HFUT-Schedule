@@ -59,7 +59,14 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import kotlinx.coroutines.flow.first
+import dev.chrisbanes.haze.rememberHazeState
+
+
+@Composable
+fun rememberHazeBlur(): HazeState {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    return rememberHazeState(blurEnabled = blur)
+}
 
 
 private val progressiveBarBlur = 8.75.dp

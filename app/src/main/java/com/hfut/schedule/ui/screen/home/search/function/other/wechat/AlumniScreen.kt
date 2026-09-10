@@ -17,6 +17,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.nav.destination.AlumniDestination
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 
@@ -30,8 +31,7 @@ import dev.chrisbanes.haze.rememberHazeState
 fun AlumniScreen(
 //    navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (

@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.nav.destination.GuaGuaDestination
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -80,8 +81,7 @@ fun ShowerLogin(vm : NetWorkViewModel) {
     var show by remember { mutableStateOf(false) }
     val Savedusername = prefs.getString("PHONENUM", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     val navController = LocalNavController.current
 
     Scaffold(

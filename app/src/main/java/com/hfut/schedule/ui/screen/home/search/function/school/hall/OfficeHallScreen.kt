@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.nav.destination.OfficeHallDestination
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -91,8 +92,7 @@ private suspend fun openDetail(context: Context, bean : OfficeHallSearchRecord, 
 fun OfficeHallScreen(
     vm : NetWorkViewModel,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val hazeState = rememberHazeBlur()
     var input by remember { mutableStateOf("") }
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork : suspend () -> Unit =  {
