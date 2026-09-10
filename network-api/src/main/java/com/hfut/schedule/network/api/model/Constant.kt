@@ -89,12 +89,14 @@ object Constant {
     const val NEW_LIBRARY_URL = "https://lib.hfut.edu.cn/"
     // 座位预约 校园网
     const val LIBRARY_SEAT = "http://210.45.242.57/"
-    // 就业
+    // 就业网
     const val WORK_URL = "https://gdjy.hfut.edu.cn/"
-    // 就业 宣城
+    // 就业网 宣城
     const val WORK_XC_URL = "https://xcjy.hfut.edu.cn/"
-    // 就业检索
+    // 就业网检索
     const val WORK_SEARCH_URL = "https://dc.bysjy.com.cn/"
+    // 就业系统（学生端）
+    const val WORK_SYSTEM_URL = "http://jyxt.hfut.edu.cn/Pro_Student/"
     // 大创 校园网
     const val IETP_URL = "http://dcxt.hfut.edu.cn/"
     // 校友平台

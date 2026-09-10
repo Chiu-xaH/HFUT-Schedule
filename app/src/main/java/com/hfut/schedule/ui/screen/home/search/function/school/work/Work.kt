@@ -13,16 +13,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -42,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMap
 import com.hfut.schedule.R
 import com.xah.common.logic.model.CampusRegion
@@ -53,6 +58,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -72,12 +78,14 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.sharednav.common.helper.NoneRoundShape
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -86,11 +94,25 @@ import kotlinx.coroutines.launch
 @Composable
 fun Work() {
     val navController = LocalNavController.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     TransplantListItem(
         headlineContent = { ScrollText(text = WorkDestination.title.asString()) },
         leadingContent = {
             Icon(painterResource(WorkDestination.icon),null)
+        },
+        trailingContent = {
+            FilledTonalIconButton(
+                onClick = {
+                    scope.launch {
+                        Starter.startWebUrlInner(context, Constant.WORK_SYSTEM_URL + "Login.aspx","就业系统（学生端）")
+                    }
+                },
+                modifier = Modifier.size(30.dp)
+            ) {
+                Icon(painterResource(R.drawable.person),null, modifier = Modifier.size(20.dp))
+            }
         },
         modifier = Modifier.clickable {
             navController.push(WorkDestination)
@@ -162,6 +184,17 @@ fun WorkScreen(
                                 },
                             ) {
                                 Text(campus.description)
+                            }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                backdrop = backDrop,
+                                onClick = {
+                                    scope.launch {
+                                        Starter.startWebUrlInner(context, Constant.WORK_SYSTEM_URL + "Login.aspx","就业系统（学生端）")
+                                    }
+                                },
+                            ) {
+                                Text("就业系统")
                             }
                         }
                     }
