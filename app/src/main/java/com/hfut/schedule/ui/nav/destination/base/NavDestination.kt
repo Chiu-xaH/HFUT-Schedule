@@ -20,7 +20,8 @@ abstract class NavDestination : Destination() {
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override val PlaceHolder = @Composable {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             Box(

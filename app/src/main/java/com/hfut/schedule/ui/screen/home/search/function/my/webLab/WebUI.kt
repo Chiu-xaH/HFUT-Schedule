@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -105,6 +106,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -419,35 +421,39 @@ fun NotificationBoxScreen(
                 CardListItem(
                     headlineContent = { Text("使用技巧") },
                     supportingContent = {
-                        Text("探索聚在工大的更多用法")
+                        Text("解锁聚在工大的更多场景与用法")
                     },
                     leadingContent = {
-                        BrushIcon(SettingsTipsDestination.icon, angle = angle)
+                        Icon(painterResource(SettingsTipsDestination.icon),null)
                     },
                     modifier = Modifier.clickable {
                         navController.push(SettingsTipsDestination)
                     },
-//                    cardModifier = Modifier.shimmerEffect(angle = ShimmerAngle.START_TO_END)
-                )
-                CardListItem(
-                    headlineContent = { Text("关于本应用") },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.github),null)
-                    },
-                    modifier = Modifier.clickable {
-                        navController.push(SettingsAboutDeveloperDestination)
-                    }
+                    shape = NoneRoundShape,
+                    cardModifier = Modifier.sharedContainer(
+                        SettingsTipsDestination.key,
+                        MaterialTheme.shapes.medium,
+                        cardNormalColor()
+                    )
                 )
                 CardListItem(
                     headlineContent = { Text("本版本新特性") },
                     leadingContent = {
                         Icon(painterResource(VersionInfoDestination.icon),null)
                     },
+                    supportingContent = {
+                        Text("了解本版本及历史版本更新内容")
+                    },
                     modifier = Modifier.clickable {
                         navController.push(VersionInfoDestination)
-                    }
+                    },
+                    shape = NoneRoundShape,
+                    cardModifier = Modifier.sharedContainer(
+                        VersionInfoDestination.key,
+                        MaterialTheme.shapes.medium,
+                        cardNormalColor()
+                    )
                 )
-                // TODO 导航到使用技巧
             }
             if(isInLanding()) {
                 DividerTextExpandedWith("初来乍到") {

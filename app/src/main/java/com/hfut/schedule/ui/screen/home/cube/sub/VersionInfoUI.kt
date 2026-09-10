@@ -77,6 +77,10 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 
+//        UpdateItems("新增 适配一卡通支持自定义密码")
+        UpdateItems("新增 就业系统的入口","位于 查询中心-就业")//
+        UpdateItems("修复 开学前一周时，课程表顶部日期错位一周的Bug")
+        UpdateItems("修复 当课程汇总出现完全重名的课程时，点击课程表方格有误的Bug")//
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("反射扫描destination文件夹")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")

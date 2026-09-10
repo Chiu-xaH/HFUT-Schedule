@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.hfut.schedule.BuildConfig
 import com.xah.common.logic.model.Campus
 import com.hfut.schedule.logic.model.enumeration.AppStatus
 import com.hfut.schedule.logic.model.Location
@@ -35,8 +36,8 @@ class MyApplication : Application() {
         context = applicationContext
         // 初始化日志工具
         LogUtil.init(APP_NAME)
-        // 控制SharedNav库的日志 需要联调排查SharedNav错误时传入debug=BuildConfig.DEBUG，平常时不需要开启日志。要不然Debug包动画有点卡
-        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})",false)
+        // 控制SharedNav库的日志
+        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})", BuildConfig.DEBUG)
         // 注册DeepLink
         DeepLinkRegistry.init(deepLinks)
         GlobalScope.launch {
