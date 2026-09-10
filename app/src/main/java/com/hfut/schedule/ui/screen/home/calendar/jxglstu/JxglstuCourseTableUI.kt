@@ -550,7 +550,7 @@ fun JxglstuCourseTableUI(
                     // 如果是考试
                     when(item.type) {
                         TimeTableType.COURSE -> {
-                            navController.push(CourseDetailApiDestination(item.name, origin, item.place))
+                            navController.push(CourseDetailApiDestination(item.name, origin, item.detail.code,item.place))
                         }
                         TimeTableType.FOCUS -> {
                             item.detail.eventId?.let {

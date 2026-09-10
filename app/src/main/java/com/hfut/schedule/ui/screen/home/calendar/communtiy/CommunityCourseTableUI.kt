@@ -237,7 +237,7 @@ fun CommunityCourseTableUI(
                 when(item.type) {
                     TimeTableType.COURSE -> {
                         if(!isFriend) {
-                            navController.push(CourseDetailApiDestination(item.name, origin, item.place))
+                            navController.push(CourseDetailApiDestination(item.name, origin, item.detail.code,item.place))
                         } else {
                             bean = list
                             showBottomSheetDetail = true

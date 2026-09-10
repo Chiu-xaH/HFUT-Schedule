@@ -328,6 +328,7 @@ data class JxglstuCourseSchedule(
     val time : DateTime,
     val place : String?,
     val courseName : String,
+    val courseCode : String? = null,
     val teacher : String? = null,
 )
 

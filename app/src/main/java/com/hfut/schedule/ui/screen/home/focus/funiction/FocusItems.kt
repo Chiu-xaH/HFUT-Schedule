@@ -765,6 +765,7 @@ fun JxglstuTodayCourseItem(
     val dest = CourseDetailApiDestination(
         name,
         CourseDetailOrigin.FOCUS_TODAY.t + "$index",
+        item.courseCode,
         item.place
     )
 
@@ -832,6 +833,7 @@ fun JxglstuTomorrowCourseItem(
     val dest = CourseDetailApiDestination(
         name,
         CourseDetailOrigin.FOCUS_TOMORROW.t + "$index",
+        item.courseCode,
         item.place
     )
     CardListItem(
@@ -909,7 +911,8 @@ suspend fun getUniAppCourse(date : String) : List<JxglstuCourseSchedule> {
                             )
                         ),
                         place = item.room?.nameZh,
-                        courseName = courseName
+                        courseName = courseName,
+                        courseCode = course.code
                     ))
                 }
             }

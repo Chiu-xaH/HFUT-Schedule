@@ -135,11 +135,17 @@ fun DetailInfos(sheet : CommunityCourseDetail, isFriend : Boolean = false) {
     }
 }
 
+/**
+ * @param courseName
+ * @param classroom
+ * @param courseCode 如果传入课程代码，则优先按课程代码匹配，否则降级按课程名匹配
+ */
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CourseDetailApiScreen(
     courseName : String,
     classroom : String?,
+    courseCode : String? = null
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -155,7 +161,10 @@ fun CourseDetailApiScreen(
         val list = withContext(Dispatchers.Default) {
             getTotalCourse(json)
         }
-        value = list.find { it.course.nameZh.trim() == courseName.trim() }
+        value = list.find {
+            it.code.substringBefore("-") == courseCode?.substringBefore("-") ||
+            it.course.nameZh.trim() == courseName.trim()
+        }
     }
 
     val courseBookData : Map<Long, JxglstuTextbook> by produceState(initialValue = emptyMap()) {

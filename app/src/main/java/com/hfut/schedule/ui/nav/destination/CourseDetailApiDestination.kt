@@ -9,10 +9,12 @@ import com.xah.common.ui.util.res
 data class CourseDetailApiDestination(
     val courseName : String,
     val endKey : String,
+    // 如果有code则优先匹配code DetailInfosUI没适配，因为现在社区不会返回课表了
+    val courseCode : String? = null,
     // 重新规定Key的拼接，避免出现碰撞：origin_startTime_endTime
     val classroom : String? = null,
 ) : NavDestination() {
-    override val key = "course_detail_api_${endKey}_$courseName"
+    override val key = "course_detail_api_${endKey}_${courseName}_$courseCode"
     override val description = courseName
     override val title = TITLE
     override val icon = ICON
@@ -24,6 +26,6 @@ data class CourseDetailApiDestination(
 
     @Composable
     override fun Content() {
-        CourseDetailApiScreen(courseName, classroom)
+        CourseDetailApiScreen(courseName, classroom, courseCode)
     }
 }

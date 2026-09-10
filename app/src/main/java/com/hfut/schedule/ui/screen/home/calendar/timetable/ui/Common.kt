@@ -170,7 +170,7 @@ fun TimeTable(
                                     CourseDetailOrigin.CALENDAR_JXGLSTU.t + "${item.hashCode()}"
                                 val key = when (item.type) {
                                     TimeTableType.COURSE -> {
-                                        CourseDetailApiDestination(item.name, origin, item.place)
+                                        CourseDetailApiDestination(item.name, origin, item.detail.code,item.place)
                                     }
 
                                     TimeTableType.FOCUS -> {
@@ -397,7 +397,7 @@ fun TimeTable(
                                 CourseDetailOrigin.CALENDAR_JXGLSTU.t + "${item.hashCode()}"
                             val key = when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    CourseDetailApiDestination(item.name, origin, item.place)
+                                    CourseDetailApiDestination(item.name, origin, item.detail.code,item.place)
                                 }
 
                                 TimeTableType.FOCUS -> {

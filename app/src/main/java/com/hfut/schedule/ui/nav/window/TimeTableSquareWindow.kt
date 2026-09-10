@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -85,7 +84,7 @@ data class TimeTableSquareWindow(
     private fun getSharedDest(item : TimeTableItem) : NavDestination? {
         val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
         return when (item.type) {
-            TimeTableType.COURSE -> CourseDetailApiDestination(item.name, origin,item.place)
+            TimeTableType.COURSE -> CourseDetailApiDestination(item.name, origin,item.detail.code,item.place)
             TimeTableType.FOCUS -> AddEventDestination(item.detail.eventId,CourseDetailOrigin.CALENDAR_JXGLSTU.t)
             TimeTableType.EXAM -> ExamDestination(origin)
         }

@@ -232,7 +232,7 @@ fun UniAppCoursesScreen(
                 val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t +  "${item.hashCode()}"
                 // 如果是考试
                 when(item.type) {
-                    TimeTableType.COURSE -> navController.push(CourseDetailApiDestination(item.name, origin, item.place))
+                    TimeTableType.COURSE -> navController.push(CourseDetailApiDestination(item.name, origin, item.detail.code,item.place))
                     TimeTableType.FOCUS -> {
                         item.detail.eventId?.let {
                             navController.push(AddEventDestination(it, CourseDetailOrigin.CALENDAR_JXGLSTU.t))
