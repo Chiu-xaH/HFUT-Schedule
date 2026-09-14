@@ -330,9 +330,15 @@ fun GradeItemJxglstuUI(
                     }
                     gradeList.forEach { term ->
                         val termKey = term.term
-                        var subList = term.list.filter {
-                            it.courseName.contains(input) || it.lessonCode.contains(input)
-                        }
+                        val subList = term.list
+                            .filter {
+                                it.courseName.contains(input) || it.lessonCode.contains(input)
+                            }
+                            // 优先展示挂科与待评教
+                            .sortedByDescending {
+                                it.gpa.toFloatOrNull() == 0f || it.score.contains("评教")
+                            }
+
                         item(key = termKey) {
                             DividerText(termKey) {
                                 // 收起列表
@@ -624,9 +630,14 @@ fun GradeItemUIUniApp(
                         item { InnerPaddingHeight(innerPadding,true) }
                         gradeList.forEach { term ->
                             val termKey = term.first
-                            var subList = term.second.filter {
-                                it.courseNameZh.contains(input) || it.lessonCode.contains(input)
-                            }
+                            val subList = term.second
+                                .filter {
+                                    it.courseNameZh.contains(input) || it.lessonCode.contains(input)
+                                }
+                                // 优先展示挂科
+                                .sortedByDescending {
+                                    !it.passed
+                                }
                             item(key = term.first) {
                                 DividerText(term.first) {
                                     // 收起列表

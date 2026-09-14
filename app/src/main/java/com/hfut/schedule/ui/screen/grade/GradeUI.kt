@@ -236,10 +236,6 @@ fun GradeScreen(
                                 .fillMaxWidth()
                                 .padding(APP_HORIZONTAL_DP)
                                 .containerBackDrop(backDrop,MaterialTheme.shapes.large),
-//                                .containerShare(
-//                                    AppNavRoute.AverageGrade.receiveRoute(),
-//                                    roundShape = MaterialTheme.shapes.large,
-//                                ),
                         containerColor = Color.Transparent,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
