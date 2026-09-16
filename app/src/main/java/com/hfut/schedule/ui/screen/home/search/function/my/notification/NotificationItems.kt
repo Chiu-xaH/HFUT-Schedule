@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.search.function.my.notification
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -100,8 +104,19 @@ fun NotificationItems() {
             CustomCard(color = cardNormalColor()) {
                 Column {
                     TransplantListItem(
-                        headlineContent = { Text(text = item.title) },
-                        supportingContent = { Text(text = item.info) },
+                        headlineContent = {
+                            Text(
+                                text = item.title,
+                                textDecoration = if(read) TextDecoration.LineThrough else TextDecoration.None,
+                                maxLines = if(read) 1 else  Int.MAX_VALUE,
+                                overflow = if(read) TextOverflow.Ellipsis else TextOverflow.Clip,
+                            )
+                        },
+                        supportingContent = if(!read) {
+                            { Text(text = item.info) }
+                        } else {
+                            null
+                        },
                         leadingContent = {
                             Icon(
                                 painter = painterResource(id =
