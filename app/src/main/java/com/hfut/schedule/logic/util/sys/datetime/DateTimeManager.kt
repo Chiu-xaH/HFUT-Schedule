@@ -31,7 +31,13 @@ object DateTimeManager {
             DataStoreManager.termStartDate.first(),
             formatter_YYYY_MM_DD
         )
-       currentWeek =  ChronoUnit.WEEKS.between(firstWeekStartJxglstu, today) + 1
+        val days = ChronoUnit.DAYS.between(firstWeekStartJxglstu, today)
+        currentWeek = if (days >= 0) {
+            (days / 7) + 1
+        } else {
+            (days - 6) / 7
+        }
+        LogUtil.debug("result=$currentWeek firstWeekStartJxglstu=$firstWeekStartJxglstu currentDate=$Date_yyyy_MM_dd")
     }
 
     fun isInVacation() : Boolean = currentWeek !in 1..MyApplication.MAX_WEEK

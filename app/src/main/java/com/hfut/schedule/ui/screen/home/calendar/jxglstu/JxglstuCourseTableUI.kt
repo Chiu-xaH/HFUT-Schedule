@@ -154,9 +154,9 @@ fun JxglstuCourseTableUI(
     // 记录上一次的学期开始时间
     var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+    val weekSwap = remember(currentWeek,today) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.currentWeek !in 1..20) {
+            if(DateTimeManager.currentWeek !in 1..MyApplication.MAX_WEEK) {
                 if(termStartDate == null) {
                     return
                 }

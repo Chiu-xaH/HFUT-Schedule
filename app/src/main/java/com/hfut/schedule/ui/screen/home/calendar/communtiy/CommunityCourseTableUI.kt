@@ -78,7 +78,7 @@ fun CommunityCourseTableUI(
     // 记录上一次的学期开始时间
     var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+    val weekSwap = remember(currentWeek,today) { object : TimeTableWeekSwap {
         override fun nextWeek() {
             if (currentWeek < MyApplication.MAX_WEEK) {
                 onDateChange(today.plusDays(7))
@@ -103,7 +103,7 @@ fun CommunityCourseTableUI(
             showToast("第${currentWeek}周")
         }
         override fun backToCurrentWeek() {
-            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
+            if(DateTimeManager.currentWeek !in 1..MyApplication.MAX_WEEK) {
                 if(termStartDate == null) {
                     return
                 }

@@ -216,9 +216,9 @@ fun JxglstuCourseTableSearch(
     // 记录上一次的学期开始时间
     var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+    val weekSwap = remember(currentWeek,today) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
+            if(DateTimeManager.currentWeek !in 1..MyApplication.MAX_WEEK) {
                 if(termStartDate == null) {
                     return
                 }
@@ -561,7 +561,7 @@ fun JxglstuCourseTableSearch(
     ) {
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-        val style = CalendarStyle(showAll)
+        val style = remember(showAll) { CalendarStyle(showAll) }
         val hasBackground = backGroundHaze != null
         val noAlpha = customBackgroundAlpha == 1f
 
@@ -574,7 +574,9 @@ fun JxglstuCourseTableSearch(
             items(style.rowCount*style.columnCount) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                 if(texts.isEmpty() && hasBackground) {
-                    Box(modifier = Modifier.height(calendarSquareHeight.dp).padding(style.everyPadding))
+                    Box(modifier = Modifier
+                        .height(calendarSquareHeight.dp)
+                        .padding(style.everyPadding))
                 } else {
                     val dest = if (texts.size == 1) {
                         try {
@@ -600,8 +602,8 @@ fun JxglstuCourseTableSearch(
                                 key = dest?.key,
                                 shape = style.containerCorner,
                                 containerFilledStrategy =
-                                    if(hasBackground) {
-                                        if(noAlpha) {
+                                    if (hasBackground) {
+                                        if (noAlpha) {
                                             ContainerFilledStrategy.Pixel(
                                                 ContainerFilledStrategy.Color(style.containerColor)
                                             )
@@ -615,7 +617,7 @@ fun JxglstuCourseTableSearch(
                                     }
                             )
                             .let {
-                                if(!hasBackground) {
+                                if (!hasBackground) {
                                     it
                                 } else {
                                     it.calendarSquareGlass(
@@ -624,7 +626,7 @@ fun JxglstuCourseTableSearch(
                                     )
                                 }
                             }
-                            .clickableWithScale(ClickScale.SMALL.scale){
+                            .clickableWithScale(ClickScale.SMALL.scale) {
                                 // 只有一节课
                                 if (texts.size == 1) {
                                     dest?.let { navController.push(it) }
@@ -643,7 +645,9 @@ fun JxglstuCourseTableSearch(
                             val name = l[1]
                             val place = if(l.size>=3) l[2] else null
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = CARD_NORMAL_DP) ,
                                 verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -695,7 +699,9 @@ fun JxglstuCourseTableSearch(
                                 null
                             }
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = CARD_NORMAL_DP) ,
                                 verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -750,7 +756,8 @@ fun JxglstuCourseTableSearch(
             shaderState = backGroundHaze,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = innerPadding.calculateBottomPadding() - if(enableNewBottomBar) 0.dp else if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
+                .padding(bottom = innerPadding.calculateBottomPadding() - if (enableNewBottomBar) 0.dp else if (onDateChange != null) navigationBarHeightPadding else 0.dp)
+                .let { if (onDateChange == null) it.navigationBarsPadding() else it }
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP

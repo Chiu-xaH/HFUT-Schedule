@@ -127,9 +127,9 @@ fun ZhiJianCourseTableUI(
     // 记录上一次的学期开始时间
     var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+    val weekSwap = remember(currentWeek,today) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
+            if(DateTimeManager.currentWeek !in 1..MyApplication.MAX_WEEK) {
                 if(termStartDate == null) {
                     return
                 }
@@ -476,7 +476,7 @@ fun ZhiJianCourseTableUI(
         }
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-        val style = CalendarStyle(showAll)
+        val style = remember(showAll) { CalendarStyle(showAll) }
 
         Box {
             LazyVerticalGrid(

@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.shader.state.ShaderState
 import com.hfut.schedule.ui.style.shader.smallStyle
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import java.time.LocalDate
 
@@ -54,7 +55,7 @@ fun ScheduleTopDate(
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
     val todayDate = DateTimeManager.Date_yyyy_MM_dd
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-    val style = CalendarStyle(showAll)
+    val style = remember(showAll) { CalendarStyle(showAll) }
     val size = style.rowCount
 
     Column(modifier = Modifier.background(Color.Transparent)) {
@@ -70,13 +71,15 @@ fun ScheduleTopDate(
                 Surface(
                     shape = CircleShape,
                     modifier = Modifier
-                        .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
+                        .padding(end = if (item == size - 1) 0.dp else style.everyPadding)
                         .clip(CircleShape)
                         .layerGlass(
                             shaderState,
                             smallStyle.copy(
                                 blur = 2.dp,
-                                overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
+                                overlayColor = MaterialTheme.colorScheme.surface.copy(
+                                    customBackgroundAlpha
+                                )
                             ),
                         )
                     ,
@@ -102,15 +105,15 @@ fun ScheduleTopDate(
     today : LocalDate,
 ) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-    val todayDate = DateTimeManager.Date_yyyy_MM_dd
+    val calendarStyle = remember(showAll) { CalendarStyle(showAll) }
 
     Column(modifier = Modifier.background(Color.Transparent)) {
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*0))
-        LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-if (showAll) 1.75.dp else 2.5.dp)){
-            items(if(showAll)7 else 5) { item ->
+        LazyVerticalGrid(columns = GridCells.Fixed(calendarStyle.rowCount),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-if (showAll) 1.75.dp else 2.5.dp)){
+            items(calendarStyle.rowCount) { item ->
 
-                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
-                val isToday = date == todayDate
+                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                val isToday = date == DateTimeManager.Date_yyyy_MM_dd
 
                 var animated by remember { mutableStateOf(false) }
                 val fontSize = if (showAll) 12f else 14f
@@ -127,8 +130,7 @@ fun ScheduleTopDate(
                 )
 
                 Box(
-                    modifier = Modifier
-                        .scale(scale), // 👈 缩放围绕中心
+                    modifier = Modifier.scale(scale),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

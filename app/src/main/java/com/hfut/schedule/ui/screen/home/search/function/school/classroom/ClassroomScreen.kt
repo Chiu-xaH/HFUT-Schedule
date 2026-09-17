@@ -771,9 +771,9 @@ fun ClassroomLessonsScreen(
                 var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
 
-                val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+                val weekSwap = remember(currentWeek,today) { object : TimeTableWeekSwap {
                     override fun backToCurrentWeek() {
-                        if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
+                        if(DateTimeManager.currentWeek !in 1..MyApplication.MAX_WEEK) {
                             currentWeek = 1
                             today = LocalDate.parse(
                                 termStartDate, DateTimeManager.formatter_YYYY_MM_DD
