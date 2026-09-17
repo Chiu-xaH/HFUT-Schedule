@@ -80,6 +80,7 @@ import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -112,8 +113,10 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
+import com.xah.common.ui.style.color.progressEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
@@ -291,19 +294,32 @@ fun SelectCourseDetailScreen(
                                 Icon(painterResource(R.drawable.rotate_right), null)
                             }
                             Spacer(Modifier.width(BUTTON_PADDING))
-                            SharedContainer(
-                                key = dest.key,
-                                shape = CircleShape,
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            ) {
-                                LiquidButton(
-                                    shape = NoneRoundShape,
-                                    backdrop = backDrop,
-                                    onClick = {
-                                        navController.push(dest)
-                                    },
-                                ) {
-                                    Text(text = "退课", maxLines = 1)
+                            NoPadding {
+                                SharedContainer(
+                                    key = dest.key,
+                                    shape = CircleShape,
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                )  {
+                                    if(navController.isTransitioning) {
+                                        LiquidButton(
+                                            onClick = {
+                                                navController.push(dest)
+                                            },
+                                            shape = NoneRoundShape,
+                                            backdrop = backDrop
+                                        ) {
+                                            Text(text = "退课", maxLines = 1)
+                                        }
+                                    } else {
+                                        LiquidButton(
+                                            onClick = {
+                                                navController.push(dest)
+                                            },
+                                            backdrop = backDrop
+                                        ) {
+                                            Text(text = "退课", maxLines = 1)
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -633,10 +649,9 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
             val remark = lists.remark
             CardListItem(
                 headlineContent = { Text(text = lists.course.nameZh, fontWeight = FontWeight.Bold) },
-                overlineContent = { Text(text =   "已选 " + stdCount + " / " + limit + " | ${lists.code}")},
+                overlineContent = { Text(text =  lists.code )},
                 supportingContent = { Text(text = lists.nameZh  + if(remark != null && remark != "") "\n${remark}" else "")},
                 trailingContent = {
-
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         FilledTonalIconButton(
                             onClick = {
@@ -645,12 +660,18 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
                             },
                             colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
                         ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") }
-                        if(isFull) {
-                            Text("已满")
-                        }
+                        Text("$stdCount/$limit")
                     }
                 },
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .let {
+                        if(isFull) {
+                            it
+                        } else {
+                            it.progressEffect(stdCount.toInt() safeDiv limit.toFloat(), animate = false)
+                        }
+                    }
+                    .clickable {
                     showBottomSheet_info = true
                     name = lists.course.nameZh
                     num = item

@@ -79,6 +79,8 @@ fun VersionInfo() {
         UpdateItems("新增 适配一卡通支持自定义密码并适配翡翠湖校区的默认密码")
         UpdateItems("新增 就业系统的入口","位于 查询中心-就业")//
         UpdateItems("新增 课程表横轴时间线","默认关闭，位于 选项-外观-课程表-时间线", to = To.Screen(SettingsAppearanceDestination))
+        UpdateItems("新增 聚焦首页正在上课的课程显示其进度")
+        UpdateItems("新增 选课人数可视化显示")//
 //        UpdateItems("新增 新底栏样式支持其他场景覆盖")
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")

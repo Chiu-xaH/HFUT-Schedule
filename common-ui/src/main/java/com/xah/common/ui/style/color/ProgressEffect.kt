@@ -21,8 +21,21 @@ enum class ProgressDirection {
 
 @Composable
 fun Modifier.progressEffect(
-    progress: Float,
+    progress: Double,
     color: Color = MaterialTheme.colorScheme.primaryContainer,
+    direction: ProgressDirection = ProgressDirection.LEFT_TO_RIGHT,
+    animate: Boolean = true
+) = this.progressEffect(
+    progress.toFloat(),
+    color,
+    direction,
+    animate
+)
+
+@Composable
+fun Modifier.progressEffect(
+    progress: Float,
+    color: Color = MaterialTheme.colorScheme.primaryContainer.copy(.5f),
     direction: ProgressDirection = ProgressDirection.LEFT_TO_RIGHT,
     animate: Boolean = true
 ): Modifier {
