@@ -44,6 +44,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
@@ -370,7 +371,7 @@ fun CourseSearchScreen(
                         semester = it
                         scope.launch { refreshNetwork(false) }
                     },
-                    gap = 20,
+                    gap = SemesterParser.GAP,
                     text = parseSemester(page)  ?: "未知学期",
                     range = Pair(null,null),
                     paddingSafely = false,
@@ -447,7 +448,7 @@ fun ApiForCourseSearch(
                     semester = it
                     scope.launch { refreshNetwork() }
                 },
-                gap = 20,
+                gap = SemesterParser.GAP,
                 text = parseSemester(page) ?: "未知学期",
                 range = Pair(null,null),
                 paddingSafely = false,

@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.calendar.timetable.logic
 
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -29,6 +30,47 @@ fun Modifier.drawLineTimeTable(
                 start = Offset(x, 0f),
                 end = Offset(x, h),
                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+            )
+        }
+    }
+}
+
+@Composable
+fun Modifier.drawCurrentTimeLine(
+    hourPx: Float,
+    startTime: Float,
+    endTime: Float,
+    zipTime: List<Pair<Float, Float>>,
+    zipTimeFactor: Float,
+    color: Color = Color.Red,
+    lineWidth: Dp = 1.5.dp,
+    dotRadius: Dp = 3.dp
+): Modifier {
+    val currentTime = remember {
+        val now = java.util.Calendar.getInstance()
+        val hour = now.get(java.util.Calendar.HOUR_OF_DAY)
+        val minute = now.get(java.util.Calendar.MINUTE)
+        hour + minute / 60f
+    }
+
+    return if (currentTime < startTime || currentTime > endTime) {
+        this
+    } else {
+        this.drawBehind {
+            val y = timeToY(currentTime, hourPx, startTime, zipTime, zipTimeFactor)
+            val w = size.width
+
+            drawLine(
+                color = color,
+                strokeWidth = lineWidth.toPx(),
+                start = Offset(0f, y),
+                end = Offset(w, y)
+            )
+
+            drawCircle(
+                color = color,
+                radius = dotRadius.toPx(),
+                center = Offset(0f, y)
             )
         }
     }

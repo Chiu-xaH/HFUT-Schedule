@@ -85,6 +85,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.style.color.progressEffect
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

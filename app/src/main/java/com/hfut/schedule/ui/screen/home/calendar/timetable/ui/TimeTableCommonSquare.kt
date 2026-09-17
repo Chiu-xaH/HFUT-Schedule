@@ -33,6 +33,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_T
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawCurrentTimeLine
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
@@ -129,6 +130,7 @@ fun TimetableCommonSquare(
                         } else
                             it
                     }
+//                    .drawCurrentTimeLine(hourPx, startTime, endTime, zipTime, zipTimeFactor)
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = onDoubleTapBlankRegion,

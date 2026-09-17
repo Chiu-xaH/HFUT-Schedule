@@ -154,7 +154,7 @@ object SemesterParser {
             val semster = ((parseYear - 2018)*4 + 3)*10 + 4
             return when(period) {
                 1 -> semster
-                2 -> semster + 20
+                2 -> semster + GAP
                 else -> null
             }
         } catch (e : Exception) {
@@ -206,8 +206,8 @@ object SemesterParser {
         }
     }
 
-    fun plusSemester(semester: Int) : Int = semester+20
-    fun subSemester(semester: Int) : Int = semester-20
+    fun plusSemester(semester: Int) : Int = semester+GAP
+    fun subSemester(semester: Int) : Int = semester-GAP
 
     @JvmStatic
     fun matchesSemester(termName: String, semester: Int): Boolean {
@@ -243,4 +243,6 @@ object SemesterParser {
             else -> null
         }
     }
+
+    const val GAP = 20
 }

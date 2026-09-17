@@ -998,7 +998,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                         currentPage = semester!!,
                         onNextPage = { semester = it },
                         onPreviousPage = { semester = it },
-                        gap = 20,
+                        gap = SemesterParser.GAP,
                         text = SemesterParser.parseSemester(semester!!) ?: "未知学期",
                         paddingBottom = false,
                         resetPage = initialSemester

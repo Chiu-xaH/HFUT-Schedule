@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
@@ -95,7 +96,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
                     currentPage = page,
                     onNextPage = { semester = it },
                     onPreviousPage = { semester = it },
-                    gap = 20,
+                    gap = SemesterParser.GAP,
                     text = parseSemester(page) ?: "未知学期",
                     range = Pair(null,null),
                     resetPage = currentSemester ?: -1
