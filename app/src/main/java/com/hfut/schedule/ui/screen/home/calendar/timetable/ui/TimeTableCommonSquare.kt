@@ -92,6 +92,7 @@ fun TimetableCommonSquare(
         Pair(parseTimeToFloat(MOON_REST_START_TIME), parseTimeToFloat(MOON_REST_END_TIME)),
     ),
     zipTimeFactor : Float = 0.1f,
+    todayColumnIndex : Int? = null,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
     onLongTapBlankRegion : ((Offset) -> Unit)? = null,
     onTapBlankRegion : ((Offset) -> Unit)? = null,
@@ -130,7 +131,7 @@ fun TimetableCommonSquare(
                         } else
                             it
                     }
-//                    .drawCurrentTimeLine(hourPx, startTime, endTime, zipTime, zipTimeFactor)
+                    .drawCurrentTimeLine(hourPx, startTime, endTime, zipTime, zipTimeFactor, todayColumnIndex, columnWidthPx)
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = onDoubleTapBlankRegion,

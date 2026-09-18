@@ -1069,7 +1069,7 @@ private fun ExtensionSample() {
 fun CalendarUISettings(
     isTiny : Boolean  = false
 ) {
-//    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val enableShowCalendarTimeLine by DataStoreManager.enableShowCalendarTimeLine.collectAsState(initial = false)
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
@@ -1312,6 +1312,30 @@ fun CalendarUISettings(
             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
             valueRange = 1f..2f,
             processText = calendarSquareTextPadding.roundOffString(2)
+        )
+        if(!isTiny)
+            PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text("显示横轴时间线")
+            },
+            supportingContent = {
+                if(!isTiny)
+                    Text("显示横向的直线以标注今天的进度")
+            },
+            trailingContent = {
+                Switch(
+                    checked = enableShowCalendarTimeLine,
+                    onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveEnableSHowCalendarTimeLine(!enableShowCalendarTimeLine)
+                        }
+                    }
+                )
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.label),null)
+            },
         )
     }
 }

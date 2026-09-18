@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -43,6 +44,7 @@ import com.xah.container.model.ContainerFilledStrategy
 import com.xah.floating.util.LocalFloatingController
 
 import com.xah.common.logic.util.LogUtil
+import java.time.LocalDate
 
 const val timeTextFactor = 0.85
 const val placeTextFactor = 0.9
@@ -70,6 +72,16 @@ fun TimeTable(
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
 
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
+
+    // 当前显示周 == 今天所在周，且今天在显示列内（7列或工作日的5列）时，算出今天所在列索引（0起步）；否则null
+    val todayColumnIndex = remember(week, showAll) {
+        val todayDayOfWeek = LocalDate.now().dayOfWeek.value
+        if (week.toLong() == DateTimeManager.currentWeek && (showAll || todayDayOfWeek in 1..5)) {
+            (todayDayOfWeek - 1).coerceIn(0, if (showAll) 6 else 4)
+        } else {
+            null
+        }
+    }
 
     val list = remember(items,week) {
         if(week > items.size || week > MyApplication.MAX_WEEK) {
@@ -119,6 +131,7 @@ fun TimeTable(
                 hourHeight = calendarSquareHeight.dp*scaleFactor,
                 startTime = startTime,
                 endTime = endTime,
+                todayColumnIndex = todayColumnIndex,
                 onDoubleTapBlankRegion = onDoubleTapBlankRegion,
                 onLongTapBlankRegion = onLongTapBlankRegion,
                 onTapBlankRegion = onTapBlankRegion
@@ -360,6 +373,7 @@ fun TimeTable(
                 hourHeight = calendarSquareHeight.dp*scaleFactor,
                 startTime = startTime,
                 endTime = endTime,
+                todayColumnIndex = todayColumnIndex,
                 onDoubleTapBlankRegion = onDoubleTapBlankRegion,
                 onLongTapBlankRegion = onLongTapBlankRegion,
                 onTapBlankRegion = onTapBlankRegion
