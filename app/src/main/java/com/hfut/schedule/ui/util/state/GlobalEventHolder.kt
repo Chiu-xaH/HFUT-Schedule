@@ -1,10 +1,15 @@
 package com.hfut.schedule.ui.util.state
 
 import com.hfut.schedule.logic.model.enumeration.AppStatus
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
+import java.time.LocalDateTime
 
 /**
  * 全局事件放在这里，用Flow模拟事件总线，用于跨页面通知，GlobalEventHolder强调事件驱动
@@ -49,6 +54,16 @@ object GlobalEventHolder {
     val captchaRefreshCallback = AutoEventFlow<Unit>()
     // 刷新教务成绩列表（评教完成后）
     val gradeRefreshCallback = AutoEventFlow<Unit>()
+
+    // 分钟级时间变化
+    fun minuteTicker() = flow {
+        while (currentCoroutineContext().isActive) {
+            val now = LocalDateTime.now()
+            val delayMillis = 60_000L - (now.second * 1_000L + now.nano / 1_000_000L)
+            delay(delayMillis)
+            emit(Unit)
+        }
+    }
 
     /**
      * // 发射

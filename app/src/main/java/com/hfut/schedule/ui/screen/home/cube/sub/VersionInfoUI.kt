@@ -40,23 +40,10 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
-import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
-import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
-import com.hfut.schedule.ui.nav.destination.FeeDestination
-import com.hfut.schedule.ui.nav.destination.ProgramConfirmationDestination
-import com.hfut.schedule.ui.nav.destination.ProgramDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAboutDeveloperDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
-import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
-import com.hfut.schedule.ui.nav.destination.SettingsLabDestination
-import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
-import com.hfut.schedule.ui.screen.grade.analysis.AverageGradeScreen
-import com.hfut.schedule.ui.screen.report.TermReportScreen
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -79,17 +66,17 @@ fun VersionInfo() {
         UpdateItems("新增 适配一卡通支持自定义密码并适配翡翠湖校区的默认密码")
         UpdateItems("新增 就业系统的入口","位于 查询中心-就业")//
         UpdateItems("新增 课程表横轴时间线","默认关闭，位于 选项-外观-课程表-时间线", to = To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("新增 聚焦首页正在上课的课程显示其进度")
+        UpdateItems("新增 聚焦首页正在上课的课程显示其进度")//
         UpdateItems("新增 选课人数可视化显示")//
-//        UpdateItems("新增 新底栏样式支持其他场景覆盖")
+        UpdateItems("新增 新底栏样式支持其他场景覆盖")
+        UpdateItems("修复 开学前一周以及切换学期后，课程表顶部日期错位的Bug")//
+        UpdateItems("修复 当课程汇总出现完全重名的课程时，点击课程表方格有误的Bug")//
+        UpdateItems("优化 消息中心的消息在标记为已读后，自动折叠")//
+        UpdateItems("优化 每学期的挂科课程优先展示在头部（补考过的不再展示）","方便能在每次进入成绩页面时就看到补考是否已过")//
+//        UpdateItems("修复 显示下载红点的Bug")
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
 //        UpdateItems("重构 更换废弃的作息、校车数据源")
-        UpdateItems("修复 开学前一周以及切换学期后，课程表顶部日期错位的Bug")//
-        UpdateItems("修复 当课程汇总出现完全重名的课程时，点击课程表方格有误的Bug")//
-        UpdateItems("修复 显示下载红点的Bug")
-        UpdateItems("优化 消息中心的消息在标记为已读后，自动折叠")//
-        UpdateItems("优化 每学期的挂科课程优先展示在头部（补考过的不再展示）","方便能在每次进入成绩页面时就看到补考是否已过")//
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("反射扫描destination文件夹")
 //        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")

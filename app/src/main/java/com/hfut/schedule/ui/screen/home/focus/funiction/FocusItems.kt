@@ -265,7 +265,8 @@ fun CommunityTodayCourseItem(list : CommunityCourseDetail, timeNow : String) {
     val endTime = time.substringAfter("-")
 
 
-    val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+    val timeState = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+    val state = timeState.first
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -302,9 +303,17 @@ fun CommunityTodayCourseItem(list : CommunityCourseDetail, timeNow : String) {
                     }
                 }
             },
-            modifier = Modifier.clickable {
-                showBottomSheet = true
-            },
+            modifier = Modifier
+                .let {
+                    if(state == ONGOING) {
+                        it.progressEffect(timeState.second)
+                    } else {
+                        it
+                    }
+                }
+                .clickable {
+                    showBottomSheet = true
+                },
             trailingContent = {
                 Text(
                     when(state) {
@@ -761,7 +770,8 @@ fun JxglstuTodayCourseItem(
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-    val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+    val timeState = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+    val state = timeState.first
     val name = item.courseName
     val dest = CourseDetailApiDestination(
         name,
@@ -796,7 +806,16 @@ fun JxglstuTodayCourseItem(
                 }
 
             },
-            modifier = Modifier.clickable { navController.push(dest) },
+            modifier = Modifier
+                .let {
+                    if(state == ONGOING) {
+                        it.progressEffect(timeState.second)
+                    } else {
+                        it
+                    }
+                }
+                .clickable { navController.push(dest) }
+            ,
             shape = NoneRoundShape,
             color = cardNormalColor(),
             trailingContent = {

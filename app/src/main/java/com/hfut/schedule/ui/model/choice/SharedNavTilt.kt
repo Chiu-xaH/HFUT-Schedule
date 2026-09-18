@@ -14,6 +14,6 @@ enum class SharedNavTilt(
     val effect: TiltEffect?
 ) : BaseChoice {
     ROTATION(text("倾斜"),0, TiltEffect.ROTATION),
-    SHADER(text("扭曲"),1, TiltEffect.SHADER_2),
+//    SHADER(text("扭曲"),1, TiltEffect.SHADER_2),
     NONE(text("无"),2, TiltEffect.NONE),
 }

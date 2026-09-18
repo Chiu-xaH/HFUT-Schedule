@@ -346,7 +346,7 @@ class FocusWidget : GlanceAppWidget() {
                                             val time = item.classTime
                                             val startTime = time.substringBefore("-")
                                             val endTime = time.substringAfter("-")
-                                            val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+                                            val state = DateTimeManager.getTimeState(startTime, endTime,timeNow).first
                                             WidgetCardListItem(
                                                 textSize = textSize,
                                                 textDecoration = if (state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
@@ -418,7 +418,7 @@ class FocusWidget : GlanceAppWidget() {
                                             val time = item.time
                                             val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
                                             val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-                                            val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+                                            val state = DateTimeManager.getTimeState(startTime, endTime,timeNow).first
                                             WidgetCardListItem(
                                                 textSize = textSize,
                                                 textDecoration = if (state == ENDED) TextDecoration.LineThrough else TextDecoration.None,

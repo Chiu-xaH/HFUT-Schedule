@@ -449,7 +449,7 @@ private fun EmptyClassroomScreen(
                         )
                         val activities = item.roomOccupationInfoVms ?: emptyList()
                         val isAllDayFree = activities.isEmpty()
-                        val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
+                        val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString).first == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
 //                            shape = NoneRoundShape,
                             color = cardNormalColor(),

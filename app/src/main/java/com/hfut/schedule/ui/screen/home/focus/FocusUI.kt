@@ -290,11 +290,11 @@ fun TodayScreen(
                                 CourseType.COMMUNITY.code -> {
                                     if (showTomorrow) {
                                         if(!isHolidayTomorrow()) {
-                                            items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item]) }
+                                            items(tomorrowCourseList.size,key = { tomorrowCourseList[it].hashCode() }) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item]) }
                                         }
                                     } else {
                                         if(!isHoliday()) {
-                                            items(todayCourseList.size) { item -> CommunityTodayCourseItem(list = todayCourseList[item],timeNow) }
+                                            items(todayCourseList.size,key = { todayCourseList[it].hashCode() }) { item -> CommunityTodayCourseItem(list = todayCourseList[item],timeNow) }
                                         }
                                     }
                                 }
@@ -302,7 +302,7 @@ fun TodayScreen(
                                     if (showTomorrow) {
                                         if(!isHolidayTomorrow()) {
                                             tomorrowJxglstuList.let { list ->
-                                                items(list.size) { item ->
+                                                items(list.size,key = { list[it].hashCode() }) { item ->
                                                     JxglstuTomorrowCourseItem(item,list[item])
                                                 }
                                             }
@@ -310,7 +310,7 @@ fun TodayScreen(
                                     } else {
                                         if(!isHoliday()) {
                                             todayJxglstuList.let { list ->
-                                                items(list.size) { item ->
+                                                items(list.size,key = { list[it].hashCode() }) { item ->
                                                     JxglstuTodayCourseItem(item,list[item], enableShowOverdueFocus,timeNow)
                                                 }
                                             }
@@ -320,7 +320,7 @@ fun TodayScreen(
                             }
                             //日程
                             customScheduleList.let { list ->
-                                items(list.size){ item ->
+                                items(list.size,key = { list[it].hashCode() }){ item ->
                                     activity?.let { it1 ->
                                         CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow,showOutOfDateItems = enableShowOverdueFocus) { refreshDB = !refreshDB }
                                     }
@@ -328,7 +328,7 @@ fun TodayScreen(
                             }
 
                             scheduleList.let { list ->
-                                items(list.size) { item ->
+                                items(list.size,key = { list[it].hashCode() }) { item ->
                                     activity?.let {
                                         ScheduleItem(listItem = list[item],false,it)
                                     }
@@ -336,10 +336,10 @@ fun TodayScreen(
                             }
 
                             //考试
-                            items(exams.size) { index -> JxglstuExamUI(exams[index],false) }
+                            items(exams.size,key = { exams[it].hashCode() }) { index -> JxglstuExamUI(exams[index],false) }
                             //网课
                             netCourseList.let { list ->
-                                items(list.size) { item ->
+                                items(list.size,key = { list[it].hashCode() }) { item ->
                                     activity?.let {
                                         NetCourseItem(listItem = list[item],false,it)
                                     }
@@ -381,7 +381,7 @@ fun TodayScreen(
 
                             //日程
                             customScheduleList.let { list ->
-                                items(list.size){ item ->
+                                items(list.size,key = { list[it].hashCode() }){ item ->
                                     activity?.let { it1 ->
                                         CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, showOutOfDateItems = enableShowOutOfDateEvent) { refreshDB = !refreshDB }
                                     }
@@ -389,7 +389,7 @@ fun TodayScreen(
                             }
 
                             scheduleList.let { list ->
-                                items(list.size) { item ->
+                                items(list.size,key = { list[it].hashCode() }) { item ->
                                     activity?.let {
                                         ScheduleItem(listItem = list[item],true,it)
                                     }
@@ -398,7 +398,7 @@ fun TodayScreen(
 
                             //网课
                             netCourseList.let { list ->
-                                items(list.size) { item ->
+                                items(list.size,key = { list[it].hashCode() }) { item ->
                                     activity?.let {
                                         NetCourseItem(listItem = list[item],true,it)
                                     }
@@ -411,7 +411,7 @@ fun TodayScreen(
                                 when(courseDataSource) {
                                     CourseType.COMMUNITY.code -> {
                                         if (DateTimeManager.compareTime(lastTime) == DateTimeManager.TimeState.NOT_STARTED) {
-                                            items(tomorrowCourseList.size) { item ->
+                                            items(tomorrowCourseList.size,key = { tomorrowCourseList[it].hashCode() }) { item ->
                                                 CommunityTomorrowCourseItem(list = tomorrowCourseList[item])
                                             }
                                         }
@@ -419,7 +419,7 @@ fun TodayScreen(
                                     else -> {
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
-                                                items(list.size) { item ->
+                                                items(list.size,key = { list[it].hashCode() }) { item ->
                                                     JxglstuTomorrowCourseItem(item,list[item])
                                                 }
                                             }
