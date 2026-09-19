@@ -90,6 +90,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.CircleProgressIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -116,7 +117,6 @@ import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
-import com.xah.common.ui.style.color.progressEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
@@ -650,6 +650,12 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
             CardListItem(
                 headlineContent = { Text(text = lists.course.nameZh, fontWeight = FontWeight.Bold) },
                 overlineContent = { Text(text =  lists.code )},
+                leadingContent = {
+                    CircleProgressIcon(
+                        stdCount.toInt() safeDiv limit.toFloat(),
+                        animate = false
+                    )
+                },
                 supportingContent = { Text(text = lists.nameZh  + if(remark != null && remark != "") "\n${remark}" else "")},
                 trailingContent = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -663,15 +669,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
                         Text("$stdCount/$limit")
                     }
                 },
-                modifier = Modifier
-                    .let {
-                        if(isFull) {
-                            it
-                        } else {
-                            it.progressEffect(stdCount.toInt() safeDiv limit.toFloat(), animate = false)
-                        }
-                    }
-                    .clickable {
+                modifier = Modifier.clickable {
                     showBottomSheet_info = true
                     name = lists.course.nameZh
                     num = item

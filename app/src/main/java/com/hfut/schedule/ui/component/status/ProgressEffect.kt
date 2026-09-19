@@ -1,4 +1,4 @@
-package com.xah.common.ui.style.color
+package com.hfut.schedule.ui.component.status
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -12,6 +12,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 
 enum class ProgressDirection {
@@ -47,7 +48,7 @@ fun Modifier.progressEffect(
         if (animate) {
             animatedProgress.animateTo(
                 targetValue = safeProgress,
-                animationSpec = tween(durationMillis = 800)
+                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2)
             )
         } else {
             animatedProgress.snapTo(safeProgress)

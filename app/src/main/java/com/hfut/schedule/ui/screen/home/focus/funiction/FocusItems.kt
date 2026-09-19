@@ -65,7 +65,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.icon.CircleProgressIcon
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
@@ -85,7 +85,6 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.LogUtil
-import com.xah.common.ui.style.color.progressEffect
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -293,7 +292,7 @@ fun CommunityTodayCourseItem(list : CommunityCourseDetail, timeNow : String) {
                         )
                     }
                     ONGOING -> {
-                        LoadingIcon()
+                        CircleProgressIcon(timeState.second)
                     }
                     ENDED -> {
                         Icon(
@@ -304,13 +303,6 @@ fun CommunityTodayCourseItem(list : CommunityCourseDetail, timeNow : String) {
                 }
             },
             modifier = Modifier
-                .let {
-                    if(state == ONGOING) {
-                        it.progressEffect(timeState.second)
-                    } else {
-                        it
-                    }
-                }
                 .clickable {
                     showBottomSheet = true
                 },
@@ -795,7 +787,7 @@ fun JxglstuTodayCourseItem(
                         )
                     }
                     ONGOING -> {
-                        LoadingIcon()
+                        CircleProgressIcon(timeState.second)
                     }
                     ENDED -> {
                         Icon(
@@ -807,13 +799,6 @@ fun JxglstuTodayCourseItem(
 
             },
             modifier = Modifier
-                .let {
-                    if(state == ONGOING) {
-                        it.progressEffect(timeState.second)
-                    } else {
-                        it
-                    }
-                }
                 .clickable { navController.push(dest) }
             ,
             shape = NoneRoundShape,
