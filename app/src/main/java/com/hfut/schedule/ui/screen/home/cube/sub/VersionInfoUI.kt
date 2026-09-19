@@ -40,10 +40,13 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
+import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.hfut.schedule.ui.screen.home.cube.screen.AppearanceSettingsScreen
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -53,7 +56,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-08-29"
+private const val RELEASE_DATE = "2026-09-19"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -64,15 +67,17 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 //        UpdateItems("新增 适配一卡通支持自定义密码并适配翡翠湖校区的默认密码")
-        UpdateItems("新增 就业系统的入口","位于 查询中心-就业")//
+        UpdateItems("新增 就业系统的入口","位于 查询中心-就业",to = To.Screen(WorkDestination))//
         UpdateItems("新增 课程表横轴时间线","默认关闭，位于 选项-外观-课程表-时间线", to = To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("新增 新底栏样式支持其他场景覆盖")
+        UpdateItems("新增 新校车试运营数据","位于 查询中心-校车",to = To.Screen(BusDestination))//
         UpdateItems("修复 开学前一周以及切换学期后，课程表顶部日期错位的Bug")//
         UpdateItems("修复 当课程汇总出现完全重名的课程时，点击课程表方格有误的Bug")//
+        UpdateItems("修复 检查更新失败时仍在底栏显示红点的Bug")//
         UpdateItems("优化 聚焦首页正在上课的课程的图标显示")//
         UpdateItems("优化 选课列表的一些显示效果")//
         UpdateItems("优化 消息中心的消息在标记为已读后，自动折叠")//
-        UpdateItems("优化 每学期的挂科课程优先展示在头部（补考过的不再展示）","方便能在每次进入成绩页面时就看到补考是否已过")//
+        UpdateItems("优化 每学期的挂科课程优先展示在头部","方便能在每次进入成绩页面时就看到补考是否已过")//
+//        UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
 //        UpdateItems("修复 显示下载红点的Bug")
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")

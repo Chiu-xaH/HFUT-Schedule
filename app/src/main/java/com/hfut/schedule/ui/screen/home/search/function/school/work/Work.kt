@@ -111,7 +111,8 @@ fun Work() {
                 },
                 modifier = Modifier.size(30.dp)
             ) {
-                Icon(painterResource(R.drawable.person),null, modifier = Modifier.size(20.dp))
+                // 特殊加大size
+                Icon(painterResource(R.drawable.person),null, modifier = Modifier.size(20.dp+2.dp))
             }
         },
         modifier = Modifier.clickable {

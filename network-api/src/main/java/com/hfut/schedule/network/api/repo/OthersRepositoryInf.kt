@@ -2,6 +2,7 @@ package com.hfut.schedule.network.api.repo
 
 import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
 import com.hfut.schedule.network.api.model.request.haile.HaiLeNearPositionRequestDto
+import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.network.api.model.response.html.Department
 import com.hfut.schedule.network.api.model.response.html.OldDormitoryXuanCheng
 import com.hfut.schedule.network.api.model.response.json.haile.HaiLeDeviceDetailBean
@@ -36,4 +37,5 @@ interface OthersRepositoryInf {
         holder : UiStateHolder<List<SecondClassActivity>>
     )
     suspend fun getDepartments(holder : UiStateHolder<List<Department>>)
+    suspend fun getBus(holder : UiStateHolder<Map<String,List<Bus>>>)
 }

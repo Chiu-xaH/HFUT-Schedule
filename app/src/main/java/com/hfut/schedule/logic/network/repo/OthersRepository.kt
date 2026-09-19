@@ -29,8 +29,10 @@ import com.hfut.schedule.network.api.inf.ZhiJianService
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.request.haile.HaiLeDeviceDetailRequest
 import com.hfut.schedule.network.api.model.request.haile.HaiLeNearPositionRequestDto
+import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.network.api.model.response.html.Department
 import com.hfut.schedule.network.api.model.response.html.OldDormitoryXuanCheng
+import com.hfut.schedule.network.api.model.response.json.community.CommunityBus
 import com.hfut.schedule.network.api.model.response.json.haile.HaiLeDeviceDetailBean
 import com.hfut.schedule.network.api.model.response.json.haile.HaiLeDeviceDetailResponse
 import com.hfut.schedule.network.api.model.response.json.haile.HaiLeNearPositionBean
@@ -353,4 +355,49 @@ object OthersRepository : OthersRepositoryInf {
             }
 
     } catch (e : Exception) { throw e }
+
+    override suspend fun getBus(holder : UiStateHolder<Map<String,List<Bus>>>) = launchRequestState(
+        holder = holder,
+        request = { hfut.getBus() },
+        transformSuccess = { _, html -> parseBus(html) }
+    )
+
+    @JvmStatic
+    private fun parseBus(html: String): Map<String,List<Bus>> = try {
+        val document = Jsoup.parse(html)
+        val table = document.selectFirst("table.docx_4")
+            ?: document.select("table").firstOrNull { it.text().contains("运行区间") }
+            ?: throw Exception("解析校车信息失败，可能是上层变动，请使用右上按钮查看网页最新数据")
+
+        val rows = table.select("tr").drop(1) // 跳过表头
+        var dayGroup = ""
+        val busList = mutableListOf<Bus>()
+
+        for (tr in rows) {
+            val tds = tr.select("td").filterNot { it.hasAttr("style") && it.attr("style").contains("display: none") }
+            if (tds.isEmpty()) continue
+
+            // 第一个可见 td 带 rowspan => 星期分组列
+            var cells = tds
+            if (tds.first().hasAttr("rowspan")) {
+                dayGroup = tds.first().text().trim().replace("\u00a0", "")
+                cells = tds.drop(1)
+            }
+            if (cells.size < 6) continue // 防御：结构异常的行跳过
+
+            val fromTo = cells[0].text().trim().split("—")
+            busList += Bus(
+                place = cells[2].text().trim(),
+                count = cells[4].text().trim().toIntOrNull() ?: 0,
+                week = dayGroup.replace(" ","").trim(),
+                time = cells[1].text().trim(),
+                from = fromTo.getOrElse(0) { "" },
+                to = fromTo.getOrElse(1) { cells[0].text().trim() },
+                stops = cells[3].text().trim().split(Regex("\\s+")).filter { it.isNotBlank() }
+            )
+        }
+        busList.groupBy { it.week }
+    } catch (e: Exception) {
+        throw e
+    }
 }

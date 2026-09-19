@@ -258,7 +258,7 @@ fun MainScreen(
     val update by produceState<GiteeReleaseResponse?>(initialValue = null) {
         value = getUpdates(vm)
     }
-    val showBadge = update != null
+    val showBadge = update?.assets?.isNotEmpty() ?: false
 
     //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(

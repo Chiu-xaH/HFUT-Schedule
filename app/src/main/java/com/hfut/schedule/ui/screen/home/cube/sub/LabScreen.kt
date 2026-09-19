@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -17,18 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 
 @Composable
 fun LabScreen(innerPadding : PaddingValues) {
-    val scope = rememberCoroutineScope()
-
-    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+    val navController = LocalNavController.current
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
@@ -48,25 +50,22 @@ fun LabScreen(innerPadding : PaddingValues) {
                         Text("底栏新样式")
                     },
                     supportingContent = {
-                        Text("未推全，仅适配了主页面，可读性需调整")
+                        Text("已转正至外观设置，本入口将被移除")
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.label),null)
                     },
                     trailingContent = {
-                        Switch(
-                            checked = enableNewBottomBar,
-                            onCheckedChange = {
-                                scope.launch {
-                                    DataStoreManager.saveEnableNewBottomBar(!enableNewBottomBar)
-                                }
+                        FilledTonalIconButton(
+                            onClick = {
+                                navController.push(SettingsAppearanceDestination, effect = JumpTransitionEffectWallpaper())
                             }
-                        )
+                        ) {
+                            Icon(painterResource(R.drawable.forward),null)
+                        }
                     },
                     modifier = Modifier.clickable {
-                        scope.launch {
-                            DataStoreManager.saveEnableNewBottomBar(!enableNewBottomBar)
-                        }
+                        navController.push(SettingsAppearanceDestination, effect = JumpTransitionEffectWallpaper())
                     }
                 )
             }

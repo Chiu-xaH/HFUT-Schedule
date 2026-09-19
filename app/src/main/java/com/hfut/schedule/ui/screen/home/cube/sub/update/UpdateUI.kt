@@ -242,7 +242,9 @@ fun UpdateUI(
             leadingContent = {
                 BadgedBox(
                     badge = {
-                        Badge()
+                        if(update?.assets?.isNotEmpty() ?: false) {
+                            Badge()
+                        }
                     }
                 )  {
                     Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",)

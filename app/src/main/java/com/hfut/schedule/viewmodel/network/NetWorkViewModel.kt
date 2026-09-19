@@ -122,6 +122,7 @@ import com.hfut.schedule.network.api.model.response.html.FloorMap
 import com.hfut.schedule.network.api.model.request.community.CommunityLibraryContent
 import com.hfut.schedule.network.api.model.request.haile.HaiLeNearPositionRequestDto
 import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
+import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
@@ -544,6 +545,9 @@ class NetWorkViewModel() : ViewModel() {
 
     val busResponse = UiStateHolder<List<CommunityBus>>()
     suspend fun getBus(token : String) = CommunityRepository.getBus(token,busResponse)
+
+    val busResponseV2 = UiStateHolder<Map<String,List<Bus>>>()
+    suspend fun getBusV2() = OthersRepository.getBus(busResponseV2)
 
     val booksChipData = UiStateHolder<List<CommunityBorrowRecord>>()
     suspend fun communityBooks(token : String, type : CommunityLibraryContent, page : Int = 1) = CommunityRepository.communityBooks(token,type,page,booksChipData)

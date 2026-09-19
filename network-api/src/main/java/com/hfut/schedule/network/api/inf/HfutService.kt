@@ -8,4 +8,8 @@ interface HfutService {
     // 各级学院
     @GET("jgsz/yxsz.htm")
     fun getDepartments() : Call<ResponseBody>
+
+    // 校车
+    @GET("xcxx.htm")
+    fun getBus() : Call<ResponseBody>
 }

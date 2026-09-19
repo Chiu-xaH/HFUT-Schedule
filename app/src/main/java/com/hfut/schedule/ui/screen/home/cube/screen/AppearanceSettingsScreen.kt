@@ -272,6 +272,7 @@ fun SharedAppearanceSettingsScreen(
         val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
         val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
+        val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -925,19 +926,45 @@ fun SharedAppearanceSettingsScreen(
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
-                        Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_title))
-                    },
-                    supportingContent = {
-                        Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_description))
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) }
+                        Text("悬浮底栏样式")
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.label),null)
+                        Icon(painterResource(R.drawable.fiber_new),null)
                     },
-                    trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
+                    trailingContent = {
+                        Switch(
+                            checked = enableNewBottomBar,
+                            onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveEnableNewBottomBar(!enableNewBottomBar)
+                                }
+                            }
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveEnableNewBottomBar(!enableNewBottomBar)
+                        }
+                    }
                 )
+                if(!enableNewBottomBar) {
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = {
+                            Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_title))
+                        },
+                        supportingContent = {
+                            Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_description))
+                        },
+                        modifier = Modifier.clickable {
+                            scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) }
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.label),null)
+                        },
+                        trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
+                    )
+                }
             }
         }
 
@@ -1334,7 +1361,7 @@ fun CalendarUISettings(
                 )
             },
             leadingContent = {
-                Icon(painterResource(R.drawable.label),null)
+                Icon(painterResource(R.drawable.line_end_circle),null)
             },
         )
     }
