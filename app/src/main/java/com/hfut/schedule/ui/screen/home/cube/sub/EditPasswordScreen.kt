@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
@@ -41,6 +42,8 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.util.LogUtil
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -51,11 +54,6 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
-//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     var input by remember { mutableStateOf("") }
@@ -66,12 +64,10 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
     LaunchedEffect(showDialog,useEditedPwd) {
         originPwd = getCardPsk() ?: ""
     }
-    var firstUse by remember { mutableStateOf(true) }
 
     if (showDialog) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-//            isFullScreen = false,
             showBottomSheet = showDialog
         ) {
             Column {
@@ -107,15 +103,7 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
     val auth = remember { prefs.getString("auth","") }
     val context = LocalContext.current
 
-    LaunchedEffect(useEditedPwd) {
-        if(useEditedPwd && !firstUse) {
-            // 弹出设置密码界面
-            input = ""
-            showDialog = true
-        }
-    }
     val click = {
-        firstUse = false
         if(useEditedPwd) {
             scope.launch { DataStoreManager.saveUseDefaultCardPassword(true) }
         } else {
@@ -123,13 +111,9 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
             showDialog = true
         }
     }
+
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
-        CardListItem(
-            headlineContent = { Text("初始密码为身份证后6位(若以X结尾则为X前6位)")},
-            color = MaterialTheme.colorScheme.surface,
-            leadingContent = { Icon(painterResource(R.drawable.info),null) }
-        )
         DividerTextExpandedWith("一卡通及校园网密码") {
             CustomCard(
                 color = MaterialTheme.colorScheme.surface
@@ -165,12 +149,16 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                     },
                 )
             }
+            Spacer(Modifier.height(CARD_NORMAL_DP))
+            CardListItem(
+                leadingContent = { Icon(painterResource(R.drawable.info),null) },
+                color = MaterialTheme.colorScheme.surface,
+                supportingContent = {
+                    Text("初始密码为身份证后6位(若以X结尾则为X前6位)")
+                },
+                headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + originPwd) },
+            )
         }
-        Spacer(Modifier.height(CARD_NORMAL_DP))
-        CardListItem(
-            color = MaterialTheme.colorScheme.surface,
-            headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + originPwd) },
-        )
         InnerPaddingHeight(innerPadding,false)
     }
 }
@@ -196,11 +184,6 @@ suspend fun getJxglstuPassword() : String? = withContext(Dispatchers.IO) {
 
 @Composable
 fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
-//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    var scale by remember { mutableFloatStateOf(1f) }
-//    TransitionBackHandler(navController,enablePredictive) {
-//        scale = it
-//    }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultJxglstuPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     val originPwd = remember { getJxglstuDefaultPassword() }
@@ -212,11 +195,6 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
-        CardListItem(
-            headlineContent = { Text("初始密码为 ${originPwd}")},
-            color = MaterialTheme.colorScheme.surface,
-            leadingContent = { Icon(painterResource(R.drawable.info),null) }
-        )
         DividerTextExpandedWith("合工大教务及教务系统密码") {
             CustomCard(
                 color = MaterialTheme.colorScheme.surface
@@ -282,12 +260,14 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
 
                 }
             }
+            Spacer(Modifier.height(CARD_NORMAL_DP))
+            CardListItem(
+                color = MaterialTheme.colorScheme.surface,
+                leadingContent = { Icon(painterResource(R.drawable.info),null) },
+                supportingContent = { Text("初始密码为 $originPwd") },
+                headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + pwd) },
+            )
         }
-        Spacer(Modifier.height(CARD_NORMAL_DP))
-        CardListItem(
-            color = MaterialTheme.colorScheme.surface,
-            headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + pwd) },
-        )
         InnerPaddingHeight(innerPadding,false)
     }
 }
