@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,6 +47,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -56,6 +58,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsAboutDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsNetworkDestination
+import com.hfut.schedule.ui.nav.destination.SettingsSearchDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
@@ -71,6 +74,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 
@@ -80,6 +84,24 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsItemsUI() {
     val navTopController = LocalNavController.current
+    CardListItem(
+        cardModifier = Modifier
+            .padding(bottom = CARD_NORMAL_DP)
+            .sharedContainer(
+                key = SettingsSearchDestination.key,
+                shape = MaterialTheme.shapes.medium,
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+        shape = NoneRoundShape,
+        color = MaterialTheme.colorScheme.surface,
+        headlineContent = { Text(text = "搜索设置项") },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.search),contentDescription = null )
+        },
+        modifier = Modifier.clickable {
+            navTopController.push(SettingsSearchDestination)
+        }
+    )
     CustomCard (
         color = MaterialTheme.colorScheme.surface
     ){
@@ -161,7 +183,6 @@ fun SettingsItemsUI() {
             )
         }
     }
-    // TODO 搜索框
 }
 
 
