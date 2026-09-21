@@ -75,6 +75,7 @@ import com.hfut.schedule.network.api.model.response.json.library.LibrarySearchRo
 import com.hfut.schedule.network.api.model.response.json.library.LibraryStatusDto
 import com.hfut.schedule.network.api.model.response.json.one.OneBuilding
 import com.hfut.schedule.network.api.model.response.json.one.OneClassroomRecord
+import com.hfut.schedule.network.api.model.response.json.oneform.OneFormStudentAchievementData
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppBuilding
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassmate
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomCourse
@@ -460,10 +461,13 @@ class NetWorkViewModel() : ViewModel() {
     val huiXinMonthBillResult = UiStateHolder<List<HuiXinMonthBill>>()
     suspend fun getMonthBills(auth : String, dateStr: String) = HuiXinRepository.getMonthBills(auth,dateStr,huiXinMonthBillResult)
 
-    fun loginOne(code : String) = OneRepository.loginOne(code)
+    suspend fun loginOne(code : String) = OneRepository.loginOne(code)
 
     val checkOneLoginResp = UiStateHolder<Boolean>()
     suspend fun checkOneLogin(token : String) = OneRepository.checkOneLogin(token,checkOneLoginResp)
+
+    val oneFormGradesResp = UiStateHolder<OneFormStudentAchievementData>()
+    suspend fun getOneFormGrades(token: String) = OneRepository.getStudentAchievement(token, oneFormGradesResp)
 
     val buildingsResponse = UiStateHolder<Pair<Campus,List<OneBuilding>>>()
     suspend fun getBuildings(campus : Campus, token : String)  = OneRepository.getBuildings(campus,token,buildingsResponse)

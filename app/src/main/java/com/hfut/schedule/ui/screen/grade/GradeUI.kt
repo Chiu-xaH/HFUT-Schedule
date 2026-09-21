@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.nav.window.GradeRemarkWindow
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemJxglstuUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIUniApp
+import com.hfut.schedule.ui.screen.grade.grade.oneform.OneFormGradeUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.goToXwx
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -73,6 +74,7 @@ enum class GradeDataOrigin(val title : String) {
     UNI_APP("合工大教务"),
     JXGLSTU("教务系统"),
     COMMUNITY("智慧社区"),
+    ONE_FORM("一表通"),
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -175,7 +177,15 @@ fun GradeScreen(
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
                         input = input,
-                        label = { Text("搜索 课程名、代码") },
+                        label = {
+                            Text(
+                                if (gradeOriginList[pageState.currentPage] == GradeDataOrigin.ONE_FORM) {
+                                    "搜索 课程名"
+                                } else {
+                                    "搜索 课程名、代码"
+                                }
+                            )
+                        },
                         trailingIcon = {
                             IconButton(
                                 onClick = {}) {
@@ -202,6 +212,9 @@ fun GradeScreen(
                     val uiState by vm.uniAppGradesResp.state.collectAsState()
                     uiState is NetworkUiState.Success<*>
                 }
+                GradeDataOrigin.ONE_FORM -> {
+                    false
+                }
             }
             AnimatedVisibility(
                 visible = isNavigationIconVisible && display,
@@ -222,6 +235,9 @@ fun GradeScreen(
                                         }
                                         GradeDataOrigin.UNI_APP -> {
                                             true
+                                        }
+                                        GradeDataOrigin.ONE_FORM -> {
+                                            false
                                         }
                                     }
                                 ),
@@ -256,6 +272,7 @@ fun GradeScreen(
                     GradeDataOrigin.JXGLSTU -> GradeItemJxglstuUI(innerPadding,vm,input,hazeState,ifSaved,displayCompactly) { buttonText = it }
                     GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(innerPadding,vm,input,displayCompactly) { buttonText = it }
                     GradeDataOrigin.COMMUNITY -> GradeItemUI(vm,innerPadding)
+                    GradeDataOrigin.ONE_FORM -> OneFormGradeUI(innerPadding,vm,input,displayCompactly)
                 }
             }
         }
