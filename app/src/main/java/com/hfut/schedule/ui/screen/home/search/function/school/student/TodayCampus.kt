@@ -196,7 +196,7 @@ fun StuAppsScreen(
             val data = localList.flatMap { it.apps }.filter { it.name.contains(input) }
             LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                 item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding, true) }
-                items(data.size, key = { it }) { index ->
+                items(data.size, key = { data[it].openUrl }) { index ->
                     val item = data[index]
                     with(item) {
                         val route = WebViewDestination.getKey(openUrl)
@@ -225,7 +225,7 @@ fun StuAppsScreen(
                     }
                 }
                 dataCommunity?.let { list ->
-                    items(list.size, key = { it }) { index ->
+                    items(list.size, key = { list[it].hashCode() }) { index ->
                         val item = list[index]
                         with(item) {
                             if(url == null) {

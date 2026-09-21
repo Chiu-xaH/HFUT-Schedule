@@ -65,8 +65,10 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
+        // http://172.31.243.228/Self/setting/changePassword
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
         UpdateItems("修复 录入一卡通密码完成时，二次打开输入密码弹窗的Bug")//
+        UpdateItems("修复 今日校园页面搜索时删除文字偶发崩溃的Bug")//
         UpdateItems("新增 适配一卡通支持自定义密码并适配翡翠湖校区的默认密码")
 //        UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
