@@ -54,6 +54,8 @@ object Constant {
     const val LE_PAO_URL = "http://210.45.246.53:8080/"
     // 信息门户
     const val ONE_URL = "https://one.hfut.edu.cn/"
+    // 一表通
+    const val ONE_FORM_URL = "https://oneform.hfut.edu.cn/"
     // CAS统一认证
     const val CAS_LOGIN_URL = "https://cas.hfut.edu.cn/"
     // API

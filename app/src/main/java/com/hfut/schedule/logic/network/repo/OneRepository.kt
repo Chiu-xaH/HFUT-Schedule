@@ -11,24 +11,27 @@ import com.hfut.schedule.network.api.model.response.json.one.OneClassroomRespons
 import com.hfut.schedule.network.api.model.response.json.one.OneLoginResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
 import com.xah.common.logic.state.UiStateHolder
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.impl.OneFormServiceCreator
 import com.hfut.schedule.network.api.impl.OneServiceCreator
+import com.hfut.schedule.network.api.inf.OneFormService
 import com.hfut.schedule.network.api.inf.OneService
 import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
+import com.hfut.schedule.network.api.model.response.json.oneform.OneFormStudentAchievementData
+import com.hfut.schedule.network.api.model.response.json.oneform.OneFormStudentAchievementResponse
 import com.hfut.schedule.network.api.repo.OneRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import retrofit2.awaitResponse
 
 object OneRepository : OneRepositoryInf {
     private val one = OneServiceCreator.create(OneService::class.java)
+    private val oneForm = OneFormServiceCreator.create(OneFormService::class.java)
 
     override suspend fun getPay(holder : UiStateHolder<OneFeeData>) = launchRequestState(
         holder = holder,
@@ -109,27 +112,70 @@ object OneRepository : OneRepositoryInf {
         }
     } catch (e : Exception) { throw  e }
 
-    override fun loginOne(code : String)  {
-        val call = one.getToken(code,code.substringAfter("code="))
+    override suspend fun getStudentAchievement(
+        token: String,
+        holder: UiStateHolder<OneFormStudentAchievementData>
+    ) {
+        holder.setLoading()
+        val responseHolder = UiStateHolder<OneFormStudentAchievementResponse>()
+        launchRequestState(
+            holder = responseHolder,
+            request = { oneForm.getStudentAchievement(token) },
+            transformSuccess = { _, json -> parseStudentAchievement(json) }
+        )
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                try {
-                    val data = GsonInstance.fromJson(json, OneLoginResponse::class.java)
-                    if (data.msg.contains("success")) {
-                        SharedPrefs.saveString("bearer", "Bearer " + data.data.token)
-                        showToast("信息门户登陆成功")
-                    }
-                } catch (e : Exception) {
-                    LogUtil.error(e)
+        when (val state = responseHolder.state.value) {
+            is NetworkUiState.Success -> {
+                val response = state.data
+                if (response.code == 1) {
+                    holder.emitData(response.data ?: OneFormStudentAchievementData(null, null))
+                } else {
+                    holder.emitError(
+                        IllegalStateException(response.msg ?: "一表通成绩请求失败")
+                    )
                 }
             }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                showToast("信息门户登陆失败")
-                LogUtil.error(t)
+            is NetworkUiState.Error -> {
+                holder.emitError(
+                    state.exception ?: IllegalStateException("一表通成绩请求失败"),
+                    state.code
+                )
             }
-        })
+            else -> holder.emitError(IllegalStateException("一表通成绩请求未完成"))
+        }
+    }
+
+    private fun parseStudentAchievement(json: String): OneFormStudentAchievementResponse = try {
+        GsonInstance.fromJson(json, OneFormStudentAchievementResponse::class.java)
+            ?: throw IllegalStateException("一表通成绩响应为空")
+    } catch (e: Exception) {
+        LogUtil.error(e)
+        throw IllegalStateException("一表通成绩解析失败", e)
+    }
+
+    override suspend fun loginOne(code : String)  {
+        val response = try {
+            one.getToken(code,code.substringAfter("code=")).awaitResponse()
+        } catch (e: Exception) {
+            showToast("信息门户登陆失败")
+            LogUtil.error(e)
+            return
+        }
+
+        try {
+            val json = response.body()?.string()
+            val data = GsonInstance.fromJson(json, OneLoginResponse::class.java)
+            if (data.msg.contains("success")) {
+                val bearer = "Bearer ${data.data.token}"
+                try {
+                    DataStoreManager.saveOneBearer(bearer)
+                } catch (e: Exception) {
+                    LogUtil.error(e)
+                }
+                showToast("信息门户登陆成功")
+            }
+        } catch (e : Exception) {
+            LogUtil.error(e)
+        }
     }
 }

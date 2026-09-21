@@ -13,6 +13,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.util.LogUtil
 import com.hfut.schedule.logic.model.enumeration.Language
 import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.isExistModule
@@ -181,6 +182,7 @@ object DataStoreManager : IDataStore {
     private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
     private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
+    private val ONE_BEARER = stringPreferencesKey("one_bearer")
     private val TERM_START_DATE = stringPreferencesKey("term_start_date")
     private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
     private val LIVE_COURSE_REMINDER = booleanPreferencesKey("live_course_reminder")
@@ -280,6 +282,16 @@ object DataStoreManager : IDataStore {
         DateTimeManager.initCurrentWeekValue()
     }
     suspend fun saveUniAppJwt(value: String) = saveValue(UNI_APP_JWT,value)
+    // 旧信息门户页面迁移完成前同步更新原存储
+    @Suppress("DEPRECATION")
+    suspend fun saveOneBearer(value: String) {
+        saveValue(ONE_BEARER, value)
+        try {
+            SharedPrefs.saveString("bearer", value)
+        } catch (e: Exception) {
+            LogUtil.error(e)
+        }
+    }
     suspend fun saveEnableOcrCaptcha(value: Boolean) = saveValue(OCR_CAPTCHA,value)
     suspend fun saveEnableShowOverdueFocus(value: Boolean) = saveValue(SHOW_OVERDUE_FOCUS, value)
     suspend fun saveEnableUserTrack(value: Boolean) = saveValue(USER_TRACK, value)
@@ -364,6 +376,25 @@ object DataStoreManager : IDataStore {
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)
     val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
+    private val oneBearer = getFlow(ONE_BEARER, EMPTY_STRING)
+
+    // 首次读取时迁移尚未进入 DataStore 的信息门户登录凭据
+    @Suppress("DEPRECATION")
+    suspend fun getOneBearer(): String = try {
+        val storedBearer = oneBearer.first()
+        if (storedBearer.isNotEmpty()) {
+            storedBearer
+        } else {
+            val legacyBearer = SharedPrefs.prefs.getString("bearer", EMPTY_STRING).orEmpty()
+            if (legacyBearer.isNotEmpty()) {
+                saveOneBearer(legacyBearer)
+            }
+            legacyBearer
+        }
+    } catch (e: Exception) {
+        LogUtil.error(e)
+        EMPTY_STRING
+    }
     val apiKey = getFlow(API_KEY,  EMPTY_STRING)
     val defaultCalendar = getFlow(DEFAULT_CALENDAR, CourseType.JXGLSTU.code)
     val enableLiveCourseReminder = getFlow(LIVE_COURSE_REMINDER, false)
