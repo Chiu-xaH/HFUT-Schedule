@@ -10,6 +10,7 @@ import com.hfut.schedule.network.api.model.response.json.one.OneClassroomRecord
 import com.hfut.schedule.network.api.model.response.json.one.OneClassroomResponse
 import com.hfut.schedule.network.api.model.response.json.one.OneLoginResponse
 import com.hfut.schedule.logic.util.network.launchRequestState
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
@@ -23,10 +24,14 @@ import com.hfut.schedule.network.api.model.response.json.oneform.OneFormStudentA
 import com.hfut.schedule.network.api.repo.OneRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
-import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import retrofit2.awaitResponse
 
 object OneRepository : OneRepositoryInf {
@@ -117,32 +122,52 @@ object OneRepository : OneRepositoryInf {
         holder: UiStateHolder<OneFormStudentAchievementData>
     ) {
         holder.setLoading()
-        val responseHolder = UiStateHolder<OneFormStudentAchievementResponse>()
-        launchRequestState(
-            holder = responseHolder,
-            request = { oneForm.getStudentAchievement(token) },
-            transformSuccess = { _, json -> parseStudentAchievement(json) }
-        )
+        val authorization = normalizeOneFormAuthorization(token)
+        if (authorization.isEmpty()) {
+            holder.emitError(
+                IllegalStateException("信息门户登录状态失效"),
+                StatusCode.UNAUTHORIZED.code
+            )
+            return
+        }
 
-        when (val state = responseHolder.state.value) {
-            is NetworkUiState.Success -> {
-                val response = state.data
-                if (response.code == 1) {
-                    holder.emitData(response.data ?: OneFormStudentAchievementData(null, null))
-                } else {
-                    holder.emitError(
-                        IllegalStateException(response.msg ?: "一表通成绩请求失败")
-                    )
-                }
+        try {
+            val response = withContext(Dispatchers.IO) {
+                val httpResponse = oneForm.getStudentAchievement(authorization).awaitResponse()
+                if (!httpResponse.isSuccessful) throw HttpException(httpResponse)
+                parseStudentAchievement(httpResponse.body()?.string().orEmpty())
             }
-            is NetworkUiState.Error -> {
-                holder.emitError(
-                    state.exception ?: IllegalStateException("一表通成绩请求失败"),
-                    state.code
+
+            when (response.code) {
+                null -> holder.emitError(
+                    IllegalStateException("信息门户综合报表响应缺少状态码"),
+                    PARSE_ERROR_CODE
+                )
+                1 -> holder.emitData(response.data ?: OneFormStudentAchievementData())
+                else -> holder.emitError(
+                    IllegalStateException(response.msg ?: "信息门户综合报表请求失败"),
+                    response.code
                 )
             }
-            else -> holder.emitError(IllegalStateException("一表通成绩请求未完成"))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: HttpException) {
+            holder.emitError(e, e.code())
+        } catch (e: OneFormParseException) {
+            holder.emitError(e, PARSE_ERROR_CODE)
+        } catch (e: Exception) {
+            holder.emitError(e)
         }
+    }
+
+    private fun normalizeOneFormAuthorization(value: String): String {
+        val authorization = value.trim()
+        val rawToken = if (authorization.startsWith("Bearer ", ignoreCase = true)) {
+            authorization.substringAfter(' ').trim()
+        } else {
+            authorization
+        }
+        return if (rawToken.isEmpty()) "" else "Bearer $rawToken"
     }
 
     private fun parseStudentAchievement(json: String): OneFormStudentAchievementResponse = try {
@@ -150,8 +175,11 @@ object OneRepository : OneRepositoryInf {
             ?: throw IllegalStateException("一表通成绩响应为空")
     } catch (e: Exception) {
         LogUtil.error(e)
-        throw IllegalStateException("一表通成绩解析失败", e)
+        throw OneFormParseException(e)
     }
+
+    private class OneFormParseException(cause: Throwable) :
+        IllegalStateException("一表通成绩解析失败", cause)
 
     override suspend fun loginOne(code : String)  {
         val response = try {
@@ -178,4 +206,33 @@ object OneRepository : OneRepositoryInf {
             LogUtil.error(e)
         }
     }
+
+    override suspend fun loginOneForm(code: String) {
+        try {
+            withContext(Dispatchers.IO) {
+                val response = oneForm.getToken(
+                    redirect = code,
+                    code = code.substringAfter("code=").substringBefore("&")
+                ).awaitResponse()
+                if (!response.isSuccessful) throw HttpException(response)
+                val json = response.body()?.string()
+                    ?: throw IllegalStateException("信息门户综合报表登录响应为空")
+                val data = GsonInstance.fromJson(json, OneLoginResponse::class.java)
+                if (!data.msg.contains("success", ignoreCase = true)) {
+                    throw IllegalStateException(data.msg)
+                }
+                DataStoreManager.saveOneFormBearer("Bearer ${data.data.token}")
+            }
+            showToast("信息门户综合报表登录成功")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: HttpException) {
+            showToast("信息门户综合报表登录失败 ${e.code()}")
+            LogUtil.error(e)
+        } catch (e: Exception) {
+            showToast("信息门户综合报表登录失败")
+            LogUtil.error(e)
+        }
+    }
+
 }

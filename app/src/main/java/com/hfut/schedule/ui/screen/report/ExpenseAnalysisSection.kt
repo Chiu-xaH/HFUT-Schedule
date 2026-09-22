@@ -21,6 +21,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 
 import com.hfut.schedule.logic.util.parse.roundOffString
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.common.logic.util.LogUtil
@@ -61,8 +62,10 @@ private fun classifyMeal(resume: String, time: String): String {
 fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: String = "本学期") {
     val billState by vm.huiXinBillResult.state.collectAsState()
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
+    val studentPortraitState by vm.studentPortraitEatResp.state.collectAsState()
+    val ehallAuthorization by DataStoreManager.ehallBearer.collectAsState(initial = "")
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(ehallAuthorization) {
         val auth = prefs.getString("auth", "").orEmpty()
         if (auth.isNotEmpty()) {
             if (billState !is NetworkUiState.Success) {
@@ -73,6 +76,13 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
                 vm.cardPredictedResponse.clear()
                 vm.getCardPredicted("bearer $auth")
             }
+        }
+
+        if (ehallAuthorization.isNotBlank() &&
+            studentPortraitState !is NetworkUiState.Success
+        ) {
+            vm.studentPortraitEatResp.clear()
+            vm.getStudentPortraitEat(authorization = ehallAuthorization)
         }
     }
 
@@ -508,4 +518,6 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
             ReportDataSourceText("慧新易校")
         }
     }
+
+    StudentPortraitEatReportSection(vm)
 }

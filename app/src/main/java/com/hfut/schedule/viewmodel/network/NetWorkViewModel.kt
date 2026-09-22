@@ -26,6 +26,7 @@ import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuild
 import com.hfut.schedule.network.api.model.response.html.news.News
 import com.hfut.schedule.network.api.model.response.json.hall.OfficeHallSearchRecord
 import com.hfut.schedule.network.api.model.response.json.one.OneFeeData
+import com.hfut.schedule.network.api.model.response.json.studentportrait.StudentPortraitEatData
 import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNow
 import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarning
 import com.hfut.schedule.network.api.model.response.json.second.SecondClassActivity
@@ -100,6 +101,7 @@ import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingFu
 import com.hfut.schedule.network.api.model.response.json.xiaowuxing.XiaoWuXingSchool
 import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.OneRepository
+import com.hfut.schedule.logic.network.repo.StudentPortraitEatRepository
 import com.hfut.schedule.logic.network.repo.OthersRepository
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.network.repo.WeChatZhiJianRepository
@@ -399,6 +401,8 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getCourseBook(cookie: String,semester: Int) = JxglstuRepository.getCourseBook(cookie,semester,studentId,bizTypeIdResponse, courseBookResponse)
 
     suspend fun goToOne(cookie : String) = CasLoginRepository.goToOne(cookie)
+    suspend fun goToOneForm(cookie: String) = CasLoginRepository.goToOneForm(cookie)
+    suspend fun goToEhall(cookie: String) = CasLoginRepository.goToEhall(cookie)
     suspend fun goToHuiXin(cookie : String) = CasLoginRepository.goToHuiXin(cookie)
 
     val huiXinBillResult = UiStateHolder<HuiXinBill>()
@@ -462,6 +466,8 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getMonthBills(auth : String, dateStr: String) = HuiXinRepository.getMonthBills(auth,dateStr,huiXinMonthBillResult)
 
     suspend fun loginOne(code : String) = OneRepository.loginOne(code)
+    suspend fun loginOneForm(code: String) = OneRepository.loginOneForm(code)
+    suspend fun loginEhall(code: String) = StudentPortraitEatRepository.loginEhall(code)
 
     val checkOneLoginResp = UiStateHolder<Boolean>()
     suspend fun checkOneLogin(token : String) = OneRepository.checkOneLogin(token,checkOneLoginResp)
@@ -486,6 +492,10 @@ class NetWorkViewModel() : ViewModel() {
 
     val payFeeResponse = UiStateHolder<OneFeeData>()
     suspend fun getPay() = OneRepository.getPay(payFeeResponse)
+
+    val studentPortraitEatResp = UiStateHolder<StudentPortraitEatData>()
+    suspend fun getStudentPortraitEat(authorization: String) =
+        StudentPortraitEatRepository.getReport(authorization, studentPortraitEatResp)
 
     val dormitoryResult = UiStateHolder<List<OldDormitoryXuanCheng>>()
     suspend fun searchDormitoryXuanCheng(code : String) = OthersRepository.searchDormitoryXuanCheng(code,dormitoryResult)

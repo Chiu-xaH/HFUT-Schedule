@@ -4,5 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 object GoToInterceptorState {
     var toOneCode = MutableStateFlow<String?>(null)
+    var toOneFormCode = MutableStateFlow<String?>(null)
+    var toEhallCode = MutableStateFlow<String?>(null)
     var toCommunityTicket = MutableStateFlow<String?>(null)
 }

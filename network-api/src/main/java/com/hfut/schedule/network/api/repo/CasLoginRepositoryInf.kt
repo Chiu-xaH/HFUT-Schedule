@@ -11,6 +11,8 @@ interface CasLoginRepositoryInf {
     suspend fun goToStu(cookie : String): Int
     suspend fun goToPe(cookie : String): Int
     suspend fun goToOne(cookie : String): Int
+    suspend fun goToOneForm(cookie : String): Int
+    suspend fun goToEhall(cookie : String): Int
     suspend fun goToHuiXin(cookie : String): Int
     suspend fun getCasCookie(execution : UiStateHolder<Pair<String, String>>)
     suspend fun getEncryptKey(jSessionId : UiStateHolder<CasGetFlavorSessionDto>)

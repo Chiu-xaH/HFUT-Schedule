@@ -17,8 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.network.api.model.response.json.oneform.OneFormHonor
 import com.hfut.schedule.network.api.model.response.json.oneform.OneFormGpaRanking
 import com.hfut.schedule.network.api.model.response.json.oneform.OneFormStudentAchievementData
@@ -96,9 +95,6 @@ private fun volunteerDetails(item: OneFormVolunteerActivity): String = buildList
     item.activityTime.nonBlank()?.let(::add)
     item.organizer.nonBlank()?.let(::add)
 }.joinToString(" · ")
-
-private fun formatHours(value: Double): String =
-    if (value % 1.0 == 0.0) value.toLong().toString() else "%.2f".format(value).trimEnd('0').trimEnd('.')
 
 @Composable
 private fun RankingCard(rankings: List<OneFormGpaRanking>) {
@@ -194,7 +190,9 @@ private fun VolunteerCard(activities: List<OneFormVolunteerActivity>) {
                 TransplantListItem(
                     overlineContent = { Text("公益/志愿活动累计") },
                     headlineContent = { Text("${activities.size}次活动") },
-                    supportingContent = { Text("累计服务 ${formatHours(totalHours)} 小时") }
+                    supportingContent = {
+                        Text("累计服务 ${totalHours.roundOffString(2).trimEnd('0').trimEnd('.')} 小时")
+                    }
                 )
                 activities.forEach { item ->
                     VolunteerActivityItem(item)
@@ -208,7 +206,9 @@ private fun VolunteerCard(activities: List<OneFormVolunteerActivity>) {
         TransplantListItem(
             overlineContent = { Text("公益/志愿活动累计") },
             headlineContent = { Text("${activities.size}次活动", style = MaterialTheme.typography.titleMedium) },
-            supportingContent = { Text("累计服务 ${formatHours(totalHours)} 小时") },
+            supportingContent = {
+                Text("累计服务 ${totalHours.roundOffString(2).trimEnd('0').trimEnd('.')} 小时")
+            },
             trailingContent = {
                 TextButton(onClick = { showDetails = true }) {
                     Text("查看详情")
@@ -223,19 +223,9 @@ fun StudentGrowthReportSection(
     vm: NetWorkViewModel
 ) {
     val state by vm.oneFormGradesResp.state.collectAsState()
-    val storedBearer by DataStoreManager.oneBearer.collectAsState(initial = "")
-    val hasOneFormCredential = storedBearer.isNotBlank() ||
-        prefs.getString("bearer", "").orEmpty().isNotBlank()
 
     DividerTextExpandedWith("综合素质报表") {
-        if (!hasOneFormCredential) {
-            CustomCard(color = cardNormalColor()) {
-                TransplantListItem(
-                    headlineContent = { Text("暂无综合素质数据") },
-                    supportingContent = { Text("请登录信息门户后重新准备报告") }
-                )
-            }
-        } else when (state) {
+        when (state) {
             is NetworkUiState.Success -> {
                 val data = (state as NetworkUiState.Success).data
                 val rankings = data.gpaRankings.orEmpty()
@@ -278,13 +268,13 @@ fun StudentGrowthReportSection(
                 ReportDataSourceText("信息门户综合报表")
             }
 
-            is NetworkUiState.Loading,
-            is NetworkUiState.Prepare -> {
+            is NetworkUiState.Loading -> {
                 CustomCard(color = cardNormalColor()) {
                     LoadingUI()
                 }
             }
 
+            is NetworkUiState.Prepare,
             is NetworkUiState.Error -> {
                 CustomCard(color = cardNormalColor()) {
                     TransplantListItem(

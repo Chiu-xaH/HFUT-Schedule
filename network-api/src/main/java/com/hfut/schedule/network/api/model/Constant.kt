@@ -24,6 +24,7 @@ object Constant {
     const val NEWS_URL = "https://news.hfut.edu.cn/"
     // 办事大厅
     const val OFFICE_HALL_URL = "https://ehall.hfut.edu.cn/"
+    const val STUDENT_PORTRAIT_URL = "${OFFICE_HALL_URL}studentPortrait"
     // 校务行
     private const val XWX_HOST = "https://xwx.gzzmedu.com"
     const val XWX_URL = "$XWX_HOST:9080/"

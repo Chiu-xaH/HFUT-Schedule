@@ -50,7 +50,8 @@ data class ReportPreparationItem(
 
 data class ReportPreparationDetail(
     val title: String,
-    val status: ReportPreparationStatus
+    val status: ReportPreparationStatus,
+    val message: String? = null
 )
 
 @Composable
@@ -167,12 +168,20 @@ fun TermReportPreparationScreen(
                                 .padding(start = 56.dp, end = 20.dp, top = 6.dp, bottom = 6.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = detail.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.weight(1f)
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = detail.title,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                detail.message?.takeIf(String::isNotBlank)?.let { message ->
+                                    Text(
+                                        text = message,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
                             Spacer(Modifier.width(8.dp))
                             when (detail.status) {
                                 ReportPreparationStatus.COMPLETED -> {

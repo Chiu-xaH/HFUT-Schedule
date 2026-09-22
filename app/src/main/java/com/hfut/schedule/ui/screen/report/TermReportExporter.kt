@@ -175,8 +175,12 @@ suspend fun exportTermReportBitmap(
         }
 
         val bitmapBytes = measuredWidth.toLong() * measuredHeight.toLong() * 4L
-        require(bitmapBytes <= maxBitmapBytes) {
-            "报告过长，预计占用 ${bitmapBytes / 1024 / 1024}MB，已超过限制，请改为分段导出或 PDF"
+        val bitmapLimitBytes = minOf(
+            maxBitmapBytes,
+            Runtime.getRuntime().maxMemory() / 2
+        )
+        require(bitmapBytes <= bitmapLimitBytes) {
+            "报告过长，请改为分段导出。预计占用 ${bitmapBytes / 1024 / 1024}MB，超过当前设备 ${bitmapLimitBytes / 1024 / 1024}MB 限制"
         }
 
         composeView.layout(
