@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.network.interceptor
 
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.model.Constant
 import com.xah.common.logic.util.LogUtil
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -14,6 +15,12 @@ class GotoInterceptor : Interceptor {
         val locationStr = location.toString()
         LogUtil.debug("CAS拦截器 $locationStr")
         when {
+            locationStr.contains("code=") && locationStr.contains(Constant.OFFICE_HALL_URL) -> {
+                GoToInterceptorState.toEhallCode.value = location[0]
+            }
+            locationStr.contains("code=") && locationStr.contains(Constant.ONE_FORM_URL) -> {
+                GoToInterceptorState.toOneFormCode.value = location[0]
+            }
             locationStr.contains("code=") -> {
                 // 登录信息门户
                 GoToInterceptorState.toOneCode.value = location[0]
@@ -33,4 +40,3 @@ private fun parseHuiXinAuth(location : String) {
     SharedPrefs.saveString("auth",key)
     showToast("一卡通登录成功")
 }
-

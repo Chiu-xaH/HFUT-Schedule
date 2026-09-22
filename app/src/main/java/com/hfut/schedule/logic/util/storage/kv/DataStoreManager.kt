@@ -36,6 +36,7 @@ import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
 import com.xah.navigation.model.anim.EffectLevel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -183,6 +184,8 @@ object DataStoreManager : IDataStore {
     private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
     private val ONE_BEARER = stringPreferencesKey("one_bearer")
+    private val ONE_FORM_BEARER = stringPreferencesKey("one_form_bearer")
+    private val EHALL_BEARER = stringPreferencesKey("ehall_bearer")
     private val TERM_START_DATE = stringPreferencesKey("term_start_date")
     private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
     private val LIVE_COURSE_REMINDER = booleanPreferencesKey("live_course_reminder")
@@ -292,6 +295,8 @@ object DataStoreManager : IDataStore {
             LogUtil.error(e)
         }
     }
+    suspend fun saveOneFormBearer(value: String) = saveValue(ONE_FORM_BEARER, value)
+    suspend fun saveEhallBearer(value: String) = saveValue(EHALL_BEARER, value)
     suspend fun saveEnableOcrCaptcha(value: Boolean) = saveValue(OCR_CAPTCHA,value)
     suspend fun saveEnableShowOverdueFocus(value: Boolean) = saveValue(SHOW_OVERDUE_FOCUS, value)
     suspend fun saveEnableUserTrack(value: Boolean) = saveValue(USER_TRACK, value)
@@ -376,7 +381,9 @@ object DataStoreManager : IDataStore {
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)
     val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
-    val oneBearer = getFlow(ONE_BEARER, EMPTY_STRING)
+    private val oneBearer = getFlow(ONE_BEARER, EMPTY_STRING)
+    val oneFormBearer = getFlow(ONE_FORM_BEARER, EMPTY_STRING)
+    val ehallBearer = getFlow(EHALL_BEARER, EMPTY_STRING)
 
     // 首次读取时迁移尚未进入 DataStore 的信息门户登录凭据
     @Suppress("DEPRECATION")
@@ -391,6 +398,14 @@ object DataStoreManager : IDataStore {
             }
             legacyBearer
         }
+    } catch (e: Exception) {
+        LogUtil.error(e)
+        EMPTY_STRING
+    }
+    suspend fun getOneFormBearer(): String = try {
+        oneFormBearer.first()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         LogUtil.error(e)
         EMPTY_STRING

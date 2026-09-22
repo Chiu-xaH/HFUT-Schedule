@@ -111,14 +111,41 @@ private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
 }
 
 private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
+    GoToInterceptorState.toOneCode.value = null
     vm.goToOne(cookies)
     vm.goToOne(cookies)
     // byd为啥发两次才给302
-    GoToInterceptorState.toOneCode
-        .filterNotNull()
-        .collect { value ->
-            vm.loginOne(value)
-        }
+    GoToInterceptorState.toOneCode.value?.let { vm.loginOne(it) }
+}
+
+private suspend fun loginOneForm(cookies: String, vm: NetWorkViewModel) {
+    GoToInterceptorState.toOneFormCode.value = null
+    vm.goToOneForm(cookies)
+    if (GoToInterceptorState.toOneFormCode.value == null) {
+        vm.goToOneForm(cookies)
+    }
+    val callback = GoToInterceptorState.toOneFormCode.value
+    if (callback == null) {
+        LogUtil.error(IllegalStateException("未获取到信息门户综合报表授权码"))
+        showToast("信息门户综合报表登录失败")
+        return
+    }
+    vm.loginOneForm(callback)
+}
+
+private suspend fun loginEhall(cookies: String, vm: NetWorkViewModel) {
+    GoToInterceptorState.toEhallCode.value = null
+    vm.goToEhall(cookies)
+    if (GoToInterceptorState.toEhallCode.value == null) {
+        vm.goToEhall(cookies)
+    }
+    val callback = GoToInterceptorState.toEhallCode.value
+    if (callback == null) {
+        LogUtil.error(IllegalStateException("未获取到信息门户消费画像授权码"))
+        showToast("信息门户消费画像登录失败")
+        return
+    }
+    vm.loginEhall(callback)
 }
 
 private suspend fun loginHuiXIn(cookies: String, vm: NetWorkViewModel) {
@@ -285,14 +312,20 @@ fun JxglstuCourseTableUI(
                        val token = prefs.getString("bearer","")
                        if(token.isNullOrEmpty()) {
                            loginOne(cookies,vm)
+                           loginOneForm(cookies, vm)
+                           loginEhall(cookies, vm)
                        } else {
                            vm.checkOneLogin(token)
                            val result = (vm.checkOneLoginResp.state.value as? NetworkUiState.Success)?.data
                            if(result == true) {
                                LogUtil.debug("无需刷新信息门户")
+                               loginOneForm(cookies, vm)
+                               loginEhall(cookies, vm)
                                return@one
                            } else {
                                loginOne(cookies,vm)
+                               loginOneForm(cookies, vm)
+                               loginEhall(cookies, vm)
                            }
                        }
                    }

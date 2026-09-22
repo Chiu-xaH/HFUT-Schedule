@@ -50,6 +50,20 @@ object CasLoginRepository : CasLoginRepositoryInf {
             cookie
         )
     }
+    override suspend fun goToOneForm(cookie: String) = launchRequestNone {
+        casOauth.loginGoToOauth(
+            "BsHfutEduForm",
+            Constant.ONE_FORM_URL,
+            cookie
+        )
+    }
+    override suspend fun goToEhall(cookie: String) = launchRequestNone {
+        casOauth.loginGoToOauth(
+            "BsHfutEduEhall",
+            Constant.STUDENT_PORTRAIT_URL,
+            cookie
+        )
+    }
     override suspend fun goToHuiXin(cookie : String) = launchRequestNone {
         casOauth.loginGoToOauth(
             "Hfut2023Ydfwpt",

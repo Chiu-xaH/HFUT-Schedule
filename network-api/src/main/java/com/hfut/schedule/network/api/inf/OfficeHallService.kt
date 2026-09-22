@@ -7,6 +7,12 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface OfficeHallService {
+    @GET("api/auth/oauth/getToken?type=ehall")
+    fun getToken(
+        @Query("redirect") redirect: String,
+        @Query("code") code: String
+    ): Call<ResponseBody>
+
     @GET("api/aggr/aggrlightapp/lightappOrderByInitials")
     fun search(
         @Query("code") code : String = "PC_SH_v2_ANO",

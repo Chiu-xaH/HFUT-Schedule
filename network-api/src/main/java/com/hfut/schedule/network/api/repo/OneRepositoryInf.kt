@@ -16,4 +16,5 @@ interface OneRepositoryInf {
     suspend fun checkOneLogin(token : String,holder : UiStateHolder<Boolean>)
     suspend fun getStudentAchievement(token: String, holder: UiStateHolder<OneFormStudentAchievementData>)
     suspend fun loginOne(code : String)
+    suspend fun loginOneForm(code: String)
 }

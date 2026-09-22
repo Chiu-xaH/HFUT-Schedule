@@ -1,18 +1,13 @@
 package com.hfut.schedule.ui.screen.report
 
-import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -37,6 +32,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -44,7 +41,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,6 +51,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -64,15 +61,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.helper.getCampusRegion
-import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.component.screen.PartyPlace
-import com.xah.common.logic.model.CampusRegion
-import com.xah.common.logic.state.NetworkUiState
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -81,6 +76,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.screen.Party
+import com.hfut.schedule.ui.component.screen.PartyPlace
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -93,14 +90,15 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.status.LoadingScreen
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -112,9 +110,10 @@ private val REPORT_DATA_USAGE_TEXT = """
     1. 教务系统、合工大教务：成绩、学分和绩点；
     2. 智慧社区：成绩排名、宿舍信息和卫生评分；
     3. 信息门户综合报表：学年排名、奖惩情况、第二课堂和公益活动；
-    4. 慧新易校：校园卡消费、消费预测，以及适用校区的本月校园网数据；
-    5. 图书馆：借阅概览和已加载的借阅信息；
-    6. 校园网自服务接口：学期或全部学期的校园网使用情况。
+    4. 信息门户学生画像：消费金额、频次、第一餐和均值对比；
+    5. 慧新易校：校园卡消费、消费预测，以及适用校区的本月校园网数据；
+    6. 图书馆：借阅概览和已加载的借阅信息；
+    7. 校园网自服务接口：学期或全部学期的校园网使用情况。
 
     报告还会读取应用内已有的课表和考试记录进行统计。实际请求的数据源会根据你的校区、登录状态和报告类型确定。获取的数据仅用于生成、展示和按你主动操作导出学期报告；未登录或请求失败的数据源可能导致对应板块内容缺失。
 """.trimIndent()
@@ -124,6 +123,31 @@ private fun NetworkUiState<*>.toPreparationStatus(): ReportPreparationStatus = w
     is NetworkUiState.Error -> ReportPreparationStatus.FAILED
     is NetworkUiState.Loading,
     is NetworkUiState.Prepare -> ReportPreparationStatus.LOADING
+}
+
+private fun NetworkUiState<*>.toPreparationErrorMessage(): String? {
+    val error = this as? NetworkUiState.Error ?: return null
+    val message = error.exception?.message?.trim().orEmpty()
+    return when (error.code) {
+        StatusCode.UNAUTHORIZED.code -> "登录状态已失效（HTTP 401）"
+        StatusCode.FORBIDDEN.code -> "当前账号无权访问（HTTP 403）"
+        PARSE_ERROR_CODE -> message.ifBlank { "响应解析失败" }
+        in StatusCode.INTERNAL_SERVER_ERROR.code..599 ->
+            "服务端暂时不可用（HTTP ${error.code}）"
+        0 -> message.ifBlank { "接口返回失败" }
+        null -> when {
+            message.contains("Unable to resolve host", ignoreCase = true) ||
+                message.contains("Failed to connect to", ignoreCase = true) ||
+                message.contains("Connection reset", ignoreCase = true) -> "网络连接失败"
+            message.contains("timeout", ignoreCase = true) -> "网络连接超时"
+            else -> message.ifBlank { "请求失败" }
+        }
+        else -> if (message.isBlank()) {
+            "请求失败（错误码 ${error.code}）"
+        } else {
+            "$message（错误码 ${error.code}）"
+        }
+    }
 }
 
 private fun aggregatePreparationStatus(
@@ -457,6 +481,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     val oneFormGradesState by vm.oneFormGradesResp.state.collectAsState()
     val billState by vm.huiXinBillResult.state.collectAsState()
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
+    val studentPortraitState by vm.studentPortraitEatResp.state.collectAsState()
     val libraryState by vm.libraryStatusResp.state.collectAsState()
     val dormitoryState by vm.dormitoryFromCommunityResp.state.collectAsState()
     val dormitoryUsersState by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
@@ -487,11 +512,13 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     val storedJxglstuCookie = remember(preparationAttempt) {
         prefs.getString("redirect", "").orEmpty()
     }
-    val oneFormAuthorization = remember(preparationAttempt) {
-        prefs.getString("bearer", "").orEmpty()
-    }
+    val oneFormAuthorization by DataStoreManager.oneFormBearer.collectAsState(initial = "")
     val oneFormToken = remember(oneFormAuthorization) {
         oneFormAuthorization.trim().removePrefix("Bearer ").removePrefix("bearer ").trim()
+    }
+    val ehallAuthorization by DataStoreManager.ehallBearer.collectAsState(initial = "")
+    val ehallToken = remember(ehallAuthorization) {
+        ehallAuthorization.trim().removePrefix("Bearer ").removePrefix("bearer ").trim()
     }
     val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
     val hasJxglstuCredential = if (GlobalUiStateHolder.webVpn) {
@@ -581,20 +608,40 @@ fun TermReportScreen(vm: NetWorkViewModel) {
             ReportPreparationStatus.UNAVAILABLE
         } else {
             oneFormGradesState.toPreparationStatus()
+        },
+        message = if (oneFormToken.isEmpty()) {
+            null
+        } else {
+            oneFormGradesState.toPreparationErrorMessage()
         }
     )
 
-    val expenseRequests = if (huiXinAuth.isEmpty()) {
-        listOf(
-            ReportPreparationDetail(
-                title = "慧新易校消费数据",
-                status = ReportPreparationStatus.UNAVAILABLE
+    val expenseRequests = buildList {
+        if (huiXinAuth.isEmpty()) {
+            add(
+                ReportPreparationDetail(
+                    title = "慧新易校消费数据",
+                    status = ReportPreparationStatus.UNAVAILABLE
+                )
             )
-        )
-    } else {
-        listOf(
-            ReportPreparationDetail("慧新易校消费明细", billState.toPreparationStatus()),
-            ReportPreparationDetail("慧新易校消费预测", predictedState.toPreparationStatus())
+        } else {
+            add(ReportPreparationDetail("慧新易校消费明细", billState.toPreparationStatus()))
+            add(ReportPreparationDetail("慧新易校消费预测", predictedState.toPreparationStatus()))
+        }
+        add(
+            ReportPreparationDetail(
+                title = "信息门户消费画像",
+                status = if (ehallToken.isEmpty()) {
+                    ReportPreparationStatus.UNAVAILABLE
+                } else {
+                    studentPortraitState.toPreparationStatus()
+                },
+                message = if (ehallToken.isEmpty()) {
+                    null
+                } else {
+                    studentPortraitState.toPreparationErrorMessage()
+                }
+            )
         )
     }
     val expenseStatus = aggregatePreparationStatus(expenseRequests)
@@ -664,7 +711,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
             title = "消费分析",
             status = expenseStatus,
             details = expenseRequests,
-            suggestion = "建议登录或刷新慧新易校，确认网络连接后重试"
+            suggestion = "建议登录或刷新慧新易校、信息门户，确认网络连接后重试"
         ),
         ReportPreparationItem(
             title = "图书馆报表",
@@ -885,7 +932,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                         FilledTonalButton(
                             enabled = selectedModules.isNotEmpty() && !exporting && activity!= null,
                             onClick = {
-                                scope.launch(Dispatchers.IO) {
+                                scope.launch {
                                     exporting = true
                                     try {
                                         exportTermReport(
@@ -898,12 +945,18 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                                             allSemesters = allSemesters
                                         )
                                         showToast( "已保存到相册/HFUT-Schedule")
+                                    } catch (e: CancellationException) {
+                                        throw e
+                                    } catch (e: IllegalArgumentException) {
+                                        showToast(e.message ?: "报告无法导出")
+                                        LogUtil.error(e)
                                     } catch (e: Exception) {
                                         showToast("导出失败")
                                         LogUtil.error(e)
+                                    } finally {
+                                        exporting = false
+                                        showExportSheet = false
                                     }
-                                    exporting = false
-                                    showExportSheet = false
                                 }
                             }
                         ) {
@@ -913,7 +966,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                         Button(
                             enabled = selectedModules.isNotEmpty() && !exporting && activity != null,
                             onClick = {
-                                scope.launch(Dispatchers.IO) {
+                                scope.launch {
                                     exporting = true
                                     try {
                                         exportTermReport(
@@ -925,12 +978,18 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                                             isGraduating = isGraduating,
                                             allSemesters = allSemesters
                                         )
+                                    } catch (e: CancellationException) {
+                                        throw e
+                                    } catch (e: IllegalArgumentException) {
+                                        showToast(e.message ?: "报告无法导出")
+                                        LogUtil.error(e)
                                     } catch (e: Exception) {
                                         showToast("分享失败")
                                         LogUtil.error(e)
+                                    } finally {
+                                        exporting = false
+                                        showExportSheet = false
                                     }
-                                    exporting = false
-                                    showExportSheet = false
                                 }
                             }
                         ) {

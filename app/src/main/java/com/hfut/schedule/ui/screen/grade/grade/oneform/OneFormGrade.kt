@@ -67,7 +67,7 @@ fun OneFormGradeUI(
     val refreshNetwork: suspend () -> Unit = {
         withContext(Dispatchers.IO) {
             vm.oneFormGradesResp.clear()
-            val bearer = DataStoreManager.getOneBearer()
+            val bearer = DataStoreManager.getOneFormBearer()
             if (bearer.isBlank()) {
                 vm.oneFormGradesResp.emitError(
                     IllegalStateException("一表通登录状态失效"),
