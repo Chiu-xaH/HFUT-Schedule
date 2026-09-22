@@ -376,7 +376,7 @@ object DataStoreManager : IDataStore {
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)
     val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
-    private val oneBearer = getFlow(ONE_BEARER, EMPTY_STRING)
+    val oneBearer = getFlow(ONE_BEARER, EMPTY_STRING)
 
     // 首次读取时迁移尚未进入 DataStore 的信息门户登录凭据
     @Suppress("DEPRECATION")
