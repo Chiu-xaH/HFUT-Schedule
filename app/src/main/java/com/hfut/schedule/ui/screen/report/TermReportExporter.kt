@@ -32,6 +32,7 @@ import java.io.File
 
 enum class TermReportExportModule(val title: String) {
     ACADEMIC_REPORT("学业报表"),
+    STUDENT_GROWTH("综合素质报告"),
     ACADEMIC_ANALYSIS("学业分析"),
     EXPENSE_ANALYSIS("消费分析"),
     LIBRARY("图书馆报告"),
@@ -96,6 +97,9 @@ fun TermReportExportContent(
                     allSemesters = if (isGraduating) allSemesters else emptyList(),
                     onLatestSemester = {}
                 )
+            }
+            if (TermReportExportModule.STUDENT_GROWTH in modules) {
+                StudentGrowthReportSection(vm = vm)
             }
             if (TermReportExportModule.ACADEMIC_ANALYSIS in modules) {
                 AcademicAnalysisSection(vm, semester, periodLabel)

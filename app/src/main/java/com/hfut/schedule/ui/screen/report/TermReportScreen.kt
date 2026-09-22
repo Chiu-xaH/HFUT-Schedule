@@ -111,9 +111,10 @@ private val REPORT_DATA_USAGE_TEXT = """
 
     1. 教务系统、合工大教务：成绩、学分和绩点；
     2. 智慧社区：成绩排名、宿舍信息和卫生评分；
-    3. 慧新易校：校园卡消费、消费预测，以及适用校区的本月校园网数据；
-    4. 图书馆：借阅概览和已加载的借阅信息；
-    5. 校园网自服务接口：学期或全部学期的校园网使用情况。
+    3. 信息门户综合报表：学年排名、奖惩情况、第二课堂和公益活动；
+    4. 慧新易校：校园卡消费、消费预测，以及适用校区的本月校园网数据；
+    5. 图书馆：借阅概览和已加载的借阅信息；
+    6. 校园网自服务接口：学期或全部学期的校园网使用情况。
 
     报告还会读取应用内已有的课表和考试记录进行统计。实际请求的数据源会根据你的校区、登录状态和报告类型确定。获取的数据仅用于生成、展示和按你主动操作导出学期报告；未登录或请求失败的数据源可能导致对应板块内容缺失。
 """.trimIndent()
@@ -414,6 +415,9 @@ internal fun TermReportContent(
             allSemesters = if (isGraduating) allSemesters else emptyList(),
             onLatestSemester = onLatestSemester
         )
+        StudentGrowthReportSection(
+            vm = vm
+        )
         AcademicAnalysisSection(vm, semester, periodLabel)
         ExpenseAnalysisSection(vm, semester, periodLabel)
         LibraryReportSection(vm, periodLabel)
@@ -450,6 +454,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     val jxglstuGradeState by vm.jxglstuGradeData.state.collectAsState()
     val communityGradeState by vm.gradeFromCommunityResponse.state.collectAsState()
     val allCommunityRankingsState by vm.allSemestersRankingsFromCommunityResponse.state.collectAsState()
+    val oneFormGradesState by vm.oneFormGradesResp.state.collectAsState()
     val billState by vm.huiXinBillResult.state.collectAsState()
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
     val libraryState by vm.libraryStatusResp.state.collectAsState()
@@ -481,6 +486,12 @@ fun TermReportScreen(vm: NetWorkViewModel) {
     }
     val storedJxglstuCookie = remember(preparationAttempt) {
         prefs.getString("redirect", "").orEmpty()
+    }
+    val oneFormAuthorization = remember(preparationAttempt) {
+        prefs.getString("bearer", "").orEmpty()
+    }
+    val oneFormToken = remember(oneFormAuthorization) {
+        oneFormAuthorization.trim().removePrefix("Bearer ").removePrefix("bearer ").trim()
     }
     val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
     val hasJxglstuCredential = if (GlobalUiStateHolder.webVpn) {
@@ -564,6 +575,15 @@ fun TermReportScreen(vm: NetWorkViewModel) {
         add(communityRankingRequest)
     }
 
+    val oneFormReportRequest = ReportPreparationDetail(
+        title = "信息门户综合报表",
+        status = if (oneFormToken.isEmpty()) {
+            ReportPreparationStatus.UNAVAILABLE
+        } else {
+            oneFormGradesState.toPreparationStatus()
+        }
+    )
+
     val expenseRequests = if (huiXinAuth.isEmpty()) {
         listOf(
             ReportPreparationDetail(
@@ -635,6 +655,12 @@ fun TermReportScreen(vm: NetWorkViewModel) {
             suggestion = "建议刷新教务系统或合工大教务登录状态后重试"
         ),
         ReportPreparationItem(
+            title = "综合素质报表",
+            status = oneFormReportRequest.status,
+            details = listOf(oneFormReportRequest),
+            suggestion = "建议登录或刷新信息门户后重试"
+        ),
+        ReportPreparationItem(
             title = "消费分析",
             status = expenseStatus,
             details = expenseRequests,
@@ -695,6 +721,15 @@ fun TermReportScreen(vm: NetWorkViewModel) {
             delay(REPORT_PREPARATION_TIMEOUT_MILLIS)
             preparationTimedOut = true
             preparationReady = true
+        }
+    }
+
+    LaunchedEffect(preparationAttempt, showPreparation, oneFormAuthorization) {
+        if (!showPreparation) return@LaunchedEffect
+
+        vm.oneFormGradesResp.clear()
+        if (oneFormAuthorization.isNotEmpty() && oneFormToken.isNotEmpty()) {
+            vm.getOneFormGrades(oneFormAuthorization)
         }
     }
 
