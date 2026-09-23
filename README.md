@@ -61,6 +61,9 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 ### [Pull Request 规范](/docs/Rule.md)
 如需参与本项目，请阅读
 
+### [架构介绍](/docs/Arch.md)
+待完善，目前有数据源图
+
 ### [DeepLink](docs/DeepLink.md)
 如有需要跳转其他场景的需求，可发 issue
 
