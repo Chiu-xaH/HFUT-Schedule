@@ -19,12 +19,27 @@ fun greenColor() = if(isSystemInDarkTheme()) {
 } else {
     Color(0xFF2E7D32)
 }
+// TODO 待配色 暂时别调用
+@Composable
+fun greenContainerColor() = if(isSystemInDarkTheme()) {
+    Color(0xFFFFFFFF)
+} else {
+    Color(0xFFFFFFFF)
+}
 
 @Composable
 fun warnColor() = if(isSystemInDarkTheme()) {
     Color(0xFFE0A350)
 } else {
     Color(0xffba7f25)
+}
+
+// TODO 待配色 暂时别调用
+@Composable
+fun warnContainerColor() = if(isSystemInDarkTheme()) {
+    Color(0xFFFFFFFF)
+} else {
+    Color(0xFFFFFFFF)
 }
 
 @Composable
@@ -37,3 +52,6 @@ fun pureMaskColor() = if(!isSystemInDarkTheme()) {
 // 实际使用时用MaterialTheme.colorScheme.error
 @Composable
 fun errorColor() = MaterialTheme.colorScheme.error
+
+@Composable
+fun errorContainerColor() = MaterialTheme.colorScheme.errorContainer

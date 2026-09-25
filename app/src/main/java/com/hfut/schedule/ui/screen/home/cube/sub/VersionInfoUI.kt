@@ -70,6 +70,8 @@ fun VersionInfo() {
         UpdateItems("新增 适配一卡通支持自定义密码并适配合肥校区的默认密码",to = To.Screen(SettingsHuiXinPasswordDestination))//
         UpdateItems("修复 录入一卡通密码完成时，二次打开输入密码弹窗的Bug")//
         UpdateItems("修复 今日校园页面搜索时删除文字偶发崩溃的Bug")//
+        UpdateItems("修复 教室占用轴上的方格文字在部分机型显示过小的Bug")//
+        UpdateItems("优化 教室页面的显示",)//
 //        UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")

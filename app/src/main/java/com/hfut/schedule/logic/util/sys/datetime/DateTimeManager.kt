@@ -195,6 +195,8 @@ object DateTimeManager {
         ENDED         // 已结束
     }
 
+    fun getTimeStateReal(startTime: String, endTime: String) = getTimeState(startTime,endTime, LocalTime.now().format(formatterTime_HH_MM))
+
     // 空 则用初始化的时间作为now，若想传入最新时间，需要自己在外面更新，用updateTime方法
     fun getTimeState(startTime: String, endTime: String,nowTime : String? = null): Pair<TimeState, Float> {
         try {
