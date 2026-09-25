@@ -40,14 +40,13 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.BusDestination
+import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
-import com.hfut.schedule.ui.nav.destination.WorkDestination
+import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
-import com.hfut.schedule.ui.screen.home.cube.screen.AppearanceSettingsScreen
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -57,7 +56,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-09-20"
+private const val RELEASE_DATE = "2026-09-25"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -67,12 +66,12 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
+        UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("新增 适配一卡通支持自定义密码并适配合肥校区的默认密码",to = To.Screen(SettingsHuiXinPasswordDestination))//
         UpdateItems("修复 录入一卡通密码完成时，二次打开输入密码弹窗的Bug")//
         UpdateItems("修复 今日校园页面搜索时删除文字偶发崩溃的Bug")//
         UpdateItems("修复 教室占用轴上的方格文字在部分机型显示过小的Bug")//
-        UpdateItems("优化 教室页面的显示",)//
-//        UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
+        UpdateItems("优化 教室页面的显示",to = To.Screen(ClassroomDestination(VersionInfoDestination.key)))//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))

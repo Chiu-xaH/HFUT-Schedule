@@ -33,18 +33,21 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -161,6 +164,7 @@ fun LifeScreen(
         }
     }
 
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -182,8 +186,9 @@ fun LifeScreen(
             )
         },
         bottomBar = {
-            HazeBottomBar(
+            HazeBottomBarV2(
                 hazeState,
+                backdrop,
                 items,
                 lifeNavController,
             )
@@ -198,7 +203,9 @@ fun LifeScreen(
             exitTransition = {
                 AppAnimationManager.centerAnimation.exit
             },
-            modifier = Modifier.hazeSource(state = hazeState)
+            modifier = Modifier
+                .hazeSource(state = hazeState)
+                .backDropSource(backdrop)
         ) {
             nav2Composable(LifeBarItems.CAMPUS.name) {
                 Box(modifier = Modifier.fillMaxSize()) {

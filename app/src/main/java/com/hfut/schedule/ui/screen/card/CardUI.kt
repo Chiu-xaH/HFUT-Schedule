@@ -34,6 +34,7 @@ import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -177,7 +178,7 @@ fun CardUI(vm : NetWorkViewModel) {
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState,items,navController, color = MaterialTheme.colorScheme.surfaceContainer)
+            HazeBottomBarV2(hazeState,backdrop,items,navController, color = MaterialTheme.colorScheme.surfaceContainer)
         }
     ) {innerPadding ->
         NavHost(navController = navController,

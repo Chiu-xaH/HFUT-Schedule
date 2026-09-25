@@ -89,6 +89,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -365,7 +366,7 @@ fun ClassroomScreen(
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState, items,navController)
+            HazeBottomBarV2(hazeState, backDrop,items,navController)
         }
     ) { innerPadding ->
         NavHost(
@@ -476,6 +477,7 @@ private fun EmptyClassroomScreen(
             currentTime = currentTimeInMinutes()
         }
     }
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
     val listState = rememberLazyListState()
     val scheduleModifier =  Modifier
@@ -580,8 +582,8 @@ private fun EmptyClassroomScreen(
                     onNextPage = { page = it },
                     onPreviousPage = { page = it },
                     paddingBottom = false,
-                    paddingSafely = false,
-                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+                    paddingSafely = enableNewBottomBar,
+                    modifier = Modifier.padding(innerPadding)
                 )
             }
         }

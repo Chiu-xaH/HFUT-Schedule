@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.model.enumeration.SupabaseScreen
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
@@ -46,11 +47,13 @@ import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
 import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
@@ -88,6 +91,7 @@ fun SupabaseHome(vm : NetWorkViewModel) {
     var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
     var sortReversed by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val backdrop = rememberLayerBackdrop()
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
@@ -148,7 +152,7 @@ fun SupabaseHome(vm : NetWorkViewModel) {
                 }
             },
             bottomBar = {
-                HazeBottomBar(hazeState,items,navController)
+                HazeBottomBarV2(hazeState, backdrop,items,navController)
             }
         ) { innerPadding ->
             innerPaddingValues = innerPadding
@@ -160,7 +164,9 @@ fun SupabaseHome(vm : NetWorkViewModel) {
                 exitTransition = {
                     AppAnimationManager.centerAnimation.exit
                 },
-                modifier = Modifier.hazeSource(state = hazeState)
+                modifier = Modifier
+                    .hazeSource(state = hazeState)
+                    .backDropSource(backdrop)
             ) {
                 composable(SupabaseScreen.HOME.name) {
                     Scaffold {

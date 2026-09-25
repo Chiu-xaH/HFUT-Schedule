@@ -69,6 +69,7 @@ import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -226,8 +227,9 @@ fun LibraryScreen(
             }
         },
         bottomBar = {
-            HazeBottomBar(
+            HazeBottomBarV2(
                 hazeState,
+                backDrop,
                 items,
                 libraryNavController,
                 color = when(targetPage) {
@@ -289,6 +291,7 @@ private fun SearchScreenCommunity(
     var callNum by remember { mutableStateOf("") }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.libraryData.state.collectAsState()
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
     LaunchedEffect(page) {
         if(!startUse) {
@@ -357,7 +360,7 @@ private fun SearchScreenCommunity(
                 item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
             }
-            PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
+            PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false, paddingSafely = enableNewBottomBar)
         }
     }
 }
@@ -698,6 +701,7 @@ private fun SearchScreenLibrary(
     var startUse by remember { mutableStateOf(false) }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.librarySearchResp.state.collectAsState()
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
     LaunchedEffect(page) {
         if(!startUse) {
@@ -844,7 +848,7 @@ private fun SearchScreenLibrary(
                 item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
             }
-            PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
+            PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false, paddingSafely = enableNewBottomBar)
         }
     }
 }

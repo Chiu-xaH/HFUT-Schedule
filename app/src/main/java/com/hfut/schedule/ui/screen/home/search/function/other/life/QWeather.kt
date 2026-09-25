@@ -159,7 +159,7 @@ fun StarterScreen() {
             Text("校园卡缴费")
         },
         modifier = Modifier.clickable {
-            Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL, Starter.AppPackages.ALIPAY.appName)
+            Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL)
         },
         leadingContent = {
             StartAppIcon(Starter.AppPackages.ALIPAY)
@@ -171,7 +171,7 @@ fun StarterScreen() {
             Text("海乐生活热水机")
         },
         modifier = Modifier.clickable {
-            Starter.startAppUrl(context, Constant.ALIPAY_HOT_WATER_URL, Starter.AppPackages.ALIPAY.appName)
+            Starter.startAppUrl(context, Constant.ALIPAY_HOT_WATER_URL)
         },
         leadingContent = {
             StartAppIcon(Starter.AppPackages.ALIPAY)
@@ -199,6 +199,54 @@ fun StarterScreen() {
         },
         leadingContent = {
             StartAppIcon(Starter.AppPackages.TODAY_CAMPUS)
+        }
+    )
+    CardListItem(
+        headlineContent = { Text(Starter.AppPackages.RAIN_CLASSROOM.appName) },
+        supportingContent = {
+            Text("考勤、作业等课堂功能")
+        },
+        modifier = Modifier.clickable {
+            Starter.startAppLaunch(Starter.AppPackages.RAIN_CLASSROOM,context)
+        },
+        leadingContent = {
+            StartAppIcon(Starter.AppPackages.RAIN_CLASSROOM)
+        }
+    )
+    CardListItem(
+        headlineContent = { Text(Starter.AppPackages.CHAO_XING.appName) },
+        supportingContent = {
+            Text("考勤、作业等课堂功能")
+        },
+        modifier = Modifier.clickable {
+            Starter.startAppLaunch(Starter.AppPackages.CHAO_XING,context)
+        },
+        leadingContent = {
+            StartAppIcon(Starter.AppPackages.CHAO_XING)
+        }
+    )
+    CardListItem(
+        headlineContent = { Text(Starter.AppPackages.MOOC.appName) },
+        supportingContent = {
+            Text("网课、作业等课堂功能")
+        },
+        modifier = Modifier.clickable {
+            Starter.startAppLaunch(Starter.AppPackages.MOOC,context)
+        },
+        leadingContent = {
+            StartAppIcon(Starter.AppPackages.MOOC)
+        }
+    )
+    CardListItem(
+        headlineContent = { Text(Starter.AppPackages.WECHAT.appName) },
+        supportingContent = {
+            Text("合工大教务公众号、第二课堂小程序等")
+        },
+        modifier = Modifier.clickable {
+            Starter.startAppLaunch(Starter.AppPackages.WECHAT,context)
+        },
+        leadingContent = {
+            StartAppIcon(Starter.AppPackages.WECHAT)
         }
     )
 }

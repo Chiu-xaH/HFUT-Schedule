@@ -22,14 +22,17 @@ import com.hfut.schedule.logic.model.enumeration.ShowerBarItems
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
 import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -51,6 +54,7 @@ private val items = listOf(
 fun ShowerGuaGua(vm : NetWorkViewModel) {
     val navController = rememberNavController()
     val hazeState = rememberHazeBlur()
+    val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -69,7 +73,7 @@ fun ShowerGuaGua(vm : NetWorkViewModel) {
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState,items,navController)
+            HazeBottomBarV2(hazeState, backdrop,items,navController)
         }
     ) {innerPadding ->
         NavHost(navController = navController,
@@ -85,6 +89,7 @@ fun ShowerGuaGua(vm : NetWorkViewModel) {
                     state = hazeState
                     //backgroundColor = MaterialTheme.colorScheme.surface,
                 )
+                .backDropSource(backdrop)
         ) {
             composable(ShowerBarItems.HOME.name) {
                 Scaffold {

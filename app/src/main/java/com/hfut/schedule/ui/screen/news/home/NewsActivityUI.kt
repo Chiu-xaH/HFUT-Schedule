@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.util.WebVpnConvertor
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 
@@ -236,7 +237,7 @@ fun NewsScreen(
             }
         },
         bottomBar = {
-            HazeBottomBar(hazeState,items,navController)
+            HazeBottomBarV2(hazeState,backdrop,items,navController)
         }
     ) { innerPadding ->
         NavHost(navController = navController,
