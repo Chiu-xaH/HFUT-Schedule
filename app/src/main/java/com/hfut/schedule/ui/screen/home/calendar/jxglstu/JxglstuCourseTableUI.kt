@@ -39,7 +39,6 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
@@ -53,7 +52,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableD
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getHuiXinPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
@@ -93,7 +92,7 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
 
 suspend fun loginHuiXin(vm: NetWorkViewModel) {
     val username = getPersonInfo().getStudentIdFinally() ?: return
-    val password = getCardPsk() ?: return
+    val password = getHuiXinPsk() ?: return
     vm.huiXinLoginResp.clear()
     vm.huiXinSingleLogin(username,password)
 }

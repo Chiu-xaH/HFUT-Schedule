@@ -11,7 +11,7 @@ import com.hfut.schedule.network.api.impl.SchoolNetSelfServiceCreator
 import com.hfut.schedule.network.api.inf.SchoolNetSelfService
 import com.hfut.schedule.network.api.repo.SchoolNetSelfRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoolNetPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -66,7 +66,7 @@ object SchoolNetSelfRepository : SchoolNetSelfRepositoryInf {
     @JvmStatic
     private suspend fun doLoginAndFetch(year: Int): retrofit2.Call<okhttp3.ResponseBody> {
         val account = getPersonInfo().getStudentIdFinally() ?: throw Exception("未获取到学号")
-        val rawPassword = getCardPsk() ?: throw Exception("未获取到校园卡密码")
+        val rawPassword = getSchoolNetPsk() ?: throw Exception("未获取到校园卡密码")
 
         val loginPageHtml = service.getLoginPage()
             .awaitResponse().body()?.string().orEmpty()

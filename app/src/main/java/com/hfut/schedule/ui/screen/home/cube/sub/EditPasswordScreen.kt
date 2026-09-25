@@ -39,11 +39,11 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getHuiXinPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoolNetPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.logic.model.CampusRegion
-import com.xah.common.logic.util.LogUtil
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -54,74 +54,84 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
-    val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
-    val useEditedPwd = !useDefaultCardPassword
-    var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
-    var originPwd by remember { mutableStateOf("") }
-
-    LaunchedEffect(showDialog,useEditedPwd) {
-        originPwd = getCardPsk() ?: ""
-    }
-
-    if (showDialog) {
-        HazeBottomSheet (
-            onDismissRequest = { showDialog = false },
-            showBottomSheet = showDialog
-        ) {
-            Column {
-                Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
-                CirclePoint(text = "录入新密码" , password = input)
-                Spacer(modifier = Modifier.height(20.dp))
-                KeyBoard(
-                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-                    onKeyClick = { num ->
-                        if (input.length < 6) {
-                            input += num.toString()
-                        }
-                        if(input.length == 6) {
-                            scope.launch {
-                                DataStoreManager.saveUseDefaultCardPassword(false)
-                                DataStoreManager.saveCardPassword(input)
-                                showDialog = false
-                                showToast("定义密码成功")
-                                // 更新UI显示的密码
-                            }
-                        }
-                    },
-                    onBackspaceClick = {
-                        if (input.isNotEmpty()) {
-                            input = input.dropLast(1)
-                        }
-                    }
-                )
-            }
-        }
-    }
-
-    val auth = remember { prefs.getString("auth","") }
+    val campus = remember { getCampusRegion() }
     val context = LocalContext.current
-
-    val click = {
-        if(useEditedPwd) {
-            scope.launch { DataStoreManager.saveUseDefaultCardPassword(true) }
-        } else {
-            input = ""
-            showDialog = true
-        }
-    }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("一卡通及校园网密码") {
+        DividerTextExpandedWith(
+            when(campus) {
+                CampusRegion.HEFEI -> {
+                    "一卡通密码"
+                }
+                CampusRegion.XUANCHENG -> {
+                    "一卡通及校园网密码"
+                }
+            }
+        ) {
+            val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
+            val useEditedPwd = !useDefaultCardPassword
+            var input by remember { mutableStateOf("") }
+            var showDialog by remember { mutableStateOf(false) }
+            var originPwd by remember { mutableStateOf("") }
+
+            LaunchedEffect(showDialog,useEditedPwd) {
+                originPwd = getHuiXinPsk() ?: ""
+            }
+
+            if (showDialog) {
+                HazeBottomSheet (
+                    onDismissRequest = { showDialog = false },
+                    showBottomSheet = showDialog
+                ) {
+                    Column {
+                        Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
+                        CirclePoint(text = "录入新密码" , password = input)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        KeyBoard(
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            onKeyClick = { num ->
+                                if (input.length < 6) {
+                                    input += num.toString()
+                                }
+                                if(input.length == 6) {
+                                    scope.launch {
+                                        DataStoreManager.saveUseDefaultCardPassword(false)
+                                        DataStoreManager.saveCardPassword(input)
+                                        showDialog = false
+                                        showToast("定义密码成功")
+                                        // 更新UI显示的密码
+                                    }
+                                }
+                            },
+                            onBackspaceClick = {
+                                if (input.isNotEmpty()) {
+                                    input = input.dropLast(1)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            val auth = remember { prefs.getString("auth","") }
+
+            val click = {
+                if(useEditedPwd) {
+                    scope.launch { DataStoreManager.saveUseDefaultCardPassword(true) }
+                } else {
+                    input = ""
+                    showDialog = true
+                }
+            }
             CustomCard(
                 color = MaterialTheme.colorScheme.surface
             ) {
                 TransplantListItem(
                     headlineContent = { Text("修改密码")},
                     supportingContent = {
-                        Text("前往慧新易校修改一卡通及其校园网的密码")
+                        Text("前往慧新易校修改密码")
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
@@ -135,9 +145,9 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                     headlineContent = { Text("使用自定义密码") },
                     supportingContent = {
                         if(!useEditedPwd) {
-                            Text("若已不是初始密码,请打开开关并录入新密码,否则APP的校园网与一卡通相关功能默认以初始密码进行")
+                            Text("若已不是初始密码,请打开开关并录入新密码")
                         } else {
-                            Text("若已不是当前密码,请重新切换开关以录入新密码,否则APP的校园网与一卡通相关功能默认以显示的密码进行")
+                            Text("若已不是当前密码,请重新切换开关以录入新密码到本地")
                         }
                     },
                     trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
@@ -158,6 +168,114 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                 },
                 headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + originPwd) },
             )
+        }
+        when(campus) {
+            CampusRegion.XUANCHENG -> Unit
+            CampusRegion.HEFEI -> {
+                DividerTextExpandedWith("校园网密码") {
+                    val useDefaultSchoolNetPassword by DataStoreManager.enableUseDefaultSchoolNetPassword.collectAsState(initial = true)
+                    val useEditedPwd = !useDefaultSchoolNetPassword
+                    var input by remember { mutableStateOf("") }
+                    var showDialog by remember { mutableStateOf(false) }
+                    var originPwd by remember { mutableStateOf("") }
+
+                    LaunchedEffect(showDialog,useEditedPwd) {
+                        originPwd = getSchoolNetPsk() ?: ""
+                    }
+
+                    if (showDialog) {
+                        HazeBottomSheet (
+                            onDismissRequest = { showDialog = false },
+                            showBottomSheet = showDialog
+                        ) {
+                            Column {
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
+                                CirclePoint(text = "录入新密码" , password = input)
+                                Spacer(modifier = Modifier.height(20.dp))
+                                KeyBoard(
+                                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                                    onKeyClick = { num ->
+                                        if (input.length < 6) {
+                                            input += num.toString()
+                                        }
+                                        if(input.length == 6) {
+                                            scope.launch {
+                                                DataStoreManager.saveUseDefaultSchoolNetPassword(false)
+                                                DataStoreManager.saveSchoolNetPassword(input)
+                                                showDialog = false
+                                                showToast("定义密码成功")
+                                                // 更新UI显示的密码
+                                            }
+                                        }
+                                    },
+                                    onBackspaceClick = {
+                                        if (input.isNotEmpty()) {
+                                            input = input.dropLast(1)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    val click = {
+                        if(useEditedPwd) {
+                            scope.launch { DataStoreManager.saveUseDefaultSchoolNetPassword(true) }
+                        } else {
+                            input = ""
+                            showDialog = true
+                        }
+                    }
+                    CustomCard(
+                        color = MaterialTheme.colorScheme.surface
+                    ) {
+                        TransplantListItem(
+                            headlineContent = { Text("修改密码")},
+                            supportingContent = {
+                                Text("前往管理平台修改校园网的密码")
+                            },
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    Starter.startWebUrlInner(
+                                        context,
+                                        "http://172.31.243.228/Self/setting/changePassword",
+                                        "修改密码",
+                                        icon = R.drawable.lock_reset
+                                    )
+                                }
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text("使用自定义密码") },
+                            supportingContent = {
+                                if(!useEditedPwd) {
+                                    Text("若已不是初始密码,请打开开关并录入新密码")
+                                } else {
+                                    Text("若已不是当前密码,请重新切换开关以录入新密码到本地")
+                                }
+                            },
+                            trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
+                                click()
+                            }) },
+                            leadingContent = { Icon(painterResource(R.drawable.edit),null) },
+                            modifier = Modifier.clickable {
+                                click()
+                            },
+                        )
+                    }
+                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                    CardListItem(
+                        leadingContent = { Icon(painterResource(R.drawable.info),null) },
+                        color = MaterialTheme.colorScheme.surface,
+                        supportingContent = {
+                            Text("初始密码为身份证后6位(包含X)")
+                        },
+                        headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + originPwd) },
+                    )
+                }
+            }
         }
         InnerPaddingHeight(innerPadding,false)
     }
@@ -264,8 +382,8 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
             CardListItem(
                 color = MaterialTheme.colorScheme.surface,
                 leadingContent = { Icon(painterResource(R.drawable.info),null) },
-                supportingContent = { Text("初始密码为 $originPwd") },
-                headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + pwd) },
+                supportingContent = { if(useEditedPwd) Text("初始密码为 $originPwd") },
+                headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码 $pwd" else "初始密码 $originPwd")) },
             )
         }
         InnerPaddingHeight(innerPadding,false)

@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
 
+import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -8,6 +9,7 @@ import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -30,17 +32,39 @@ suspend fun getXwxPsk() : String? = withContext(Dispatchers.IO) {
     }
 }
 
-suspend fun getCardPsk() : String? = withContext(Dispatchers.IO) {
+suspend fun getHuiXinPsk() : String? = withContext(Dispatchers.IO) {
     return@withContext try {
         val isDefault = DataStoreManager.enableUseDefaultCardPassword.first()
         if(isDefault) {
-            val seven = getPersonInfo().chineseID?.takeLast(7)
-            if (seven == null) return@withContext null
+            val seven = getPersonInfo().chineseID?.takeLast(7) ?: return@withContext null
             // 处理X结尾
             if(seven.last() == 'X') seven.take(6) else seven.takeLast(6)
         } else {
             val pwd = DataStoreManager.customCardPassword.first()
             if (pwd.isEmpty() || pwd.length != 6) null else pwd
+        }
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        null
+    }
+}
+
+suspend fun getSchoolNetPsk() : String? = withContext(Dispatchers.IO) {
+    return@withContext try {
+        when(getCampusRegion()) {
+            CampusRegion.XUANCHENG -> {
+                // 走旧逻辑 跟随一卡通
+                getHuiXinPsk()
+            }
+            CampusRegion.HEFEI -> {
+                val isDefault = DataStoreManager.enableUseDefaultSchoolNetPassword.first()
+                if(isDefault) {
+                    getPersonInfo().chineseID?.takeLast(6) ?: return@withContext null
+                } else {
+                    val pwd = DataStoreManager.schoolNetPassword.first()
+                    if (pwd.isEmpty() || pwd.length != 6) null else pwd
+                }
+            }
         }
     } catch (e : Exception) {
         LogUtil.error(e)

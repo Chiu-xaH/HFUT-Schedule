@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -36,16 +35,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.helper.getCampusRegion
 
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -59,9 +61,14 @@ import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
 import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
+import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
+import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
+import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
+import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getHuiXinPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoolNetPsk
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -76,9 +83,9 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -192,8 +199,15 @@ private fun PersonItems(
     var show by rememberSaveable { mutableStateOf(false) }
     var show2 by rememberSaveable() { mutableStateOf(chineseid == null) }
     val cardPsk by produceState(initialValue = "") {
-        value = getCardPsk() ?: ""
+        value = getHuiXinPsk() ?: ""
     }
+    val schoolNetPsk by produceState(initialValue = "") {
+        value = getSchoolNetPsk() ?: ""
+    }
+    val jxglstuPwd by produceState(initialValue = "") {
+        value = getJxglstuPassword() ?: ""
+    }
+    val context = LocalContext.current
 
     Column() {
         DividerTextExpandedWith(text = "账号信息") {
@@ -342,7 +356,7 @@ private fun PersonItems(
                 )
                 PaddingHorizontalDivider()
                 Column(modifier = Modifier.coverBlur(!show)) {
-                    val pwd= prefs.getString("Password","")
+                    val pwd = remember { prefs.getString("Password", "") }
                     pwd?.let {
                         TransplantListItem(
                             headlineContent = { Text(text = it) },
@@ -351,49 +365,56 @@ private fun PersonItems(
                                 ClipBoardHelper.copy(it)
                             },
                             trailingContent = {
-                                FilledTonalButton(
+                                FilledTonalIconButton(
                                     onClick = {
-                                        showToast("前往 登陆界面中的选项 修改")
+                                        Starter.refreshLogin(context)
+                                        showToast("前往 登陆界面中的右上角选项中修改")
                                     }
                                 ) {
-                                    Text("修改")
+                                    Icon(painterResource(R.drawable.edit),null)
                                 }
                             },
                         )
                     }
-                    chineseid.let {
-                        val p = it?.takeLast(6) ?: "------"
-                        val d = "Hfut@#$%${p}"
+                    jxglstuPwd.let {
                         TransplantListItem(
                             headlineContent = {
-                                Text(text = d)
+                                Text(text = it)
                             },
                             trailingContent = {
-                                FilledTonalButton(
+                                FilledTonalIconButton(
                                     onClick = {
-                                        showToast("前往 选项-网络-教务系统密码 修改")
+                                        navController.push(SettingsJxglstuPasswordDestination, effect = JumpTransitionEffectWallpaper())
                                     }
                                 ) {
-                                    Text("修改")
+                                    Icon(painterResource(R.drawable.edit),null)
                                 }
                             },
-                            overlineContent = { Text(text = "教务系统初始密码")},
+                            overlineContent = { Text(text = "教务系统与合工大教务密码")},
                             modifier = Modifier.clickable {
-                                ClipBoardHelper.copy(d)
+                                ClipBoardHelper.copy(it)
                             }
                         )
                     }
+                    val campus = remember { getCampusRegion() }
                     cardPsk.let {
                         TransplantListItem(
                             headlineContent = {  Text(text = it) },
-                            overlineContent = { Text(text = "一卡通及校园网初始密码")},
+                            overlineContent = {
+                                Text(
+                                    when(campus) {
+                                        CampusRegion.XUANCHENG -> "一卡通与校园网密码"
+                                        CampusRegion.HEFEI -> "一卡通密码"
+                                    }
+                                )
+                            },
                             trailingContent = {
-                                FilledTonalButton(
+                                FilledTonalIconButton(
                                     onClick = {
-                                        showToast("前往 选项-网络-一卡通密码 修改")
+                                        navController.push(SettingsHuiXinPasswordDestination, effect = JumpTransitionEffectWallpaper())
                                     }
                                 ) {
-                                    Text("修改")
+                                    Icon(painterResource(R.drawable.edit),null)
                                 }
                             },
                             modifier = Modifier.clickable {
@@ -401,9 +422,31 @@ private fun PersonItems(
                             }
                         )
                     }
+                    when(getCampusRegion()) {
+                        CampusRegion.HEFEI -> {
+                            schoolNetPsk.let {
+                                TransplantListItem(
+                                    headlineContent = {  Text(text = it) },
+                                    overlineContent = { Text(text = "校园网密码")},
+                                    trailingContent = {
+                                        FilledTonalIconButton(
+                                            onClick = {
+                                                navController.push(SettingsHuiXinPasswordDestination, effect = JumpTransitionEffectWallpaper())
+                                            }
+                                        ) {
+                                            Icon(painterResource(R.drawable.edit),null)
+                                        }
+                                    },
+                                    modifier = Modifier.clickable {
+                                        ClipBoardHelper.copy(it)
+                                    }
+                                )
+                            }
+                        }
+                        CampusRegion.XUANCHENG -> Unit
+                    }
                 }
             }
-
         }
 
         DividerTextExpandedWith(text = "学籍信息") {

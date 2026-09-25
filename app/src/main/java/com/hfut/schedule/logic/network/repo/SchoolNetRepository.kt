@@ -11,7 +11,7 @@ import com.hfut.schedule.network.api.impl.LoginXcSchoolNetServiceCreator
 import com.hfut.schedule.network.api.impl.LoginXcSchoolNetServiceCreator2
 import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.api.repo.SchoolNetRepositoryInf
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoolNetPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ object SchoolNetRepository : SchoolNetRepositoryInf {
     override suspend fun loginSchoolNet(campus: CampusRegion, loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().getStudentIdFinally()?.let { uid ->
-                getCardPsk()?.let { pwd ->
+                getSchoolNetPsk()?.let { pwd ->
                     when (campus) {
                         CampusRegion.HEFEI -> {
                             val location = "123"
@@ -69,7 +69,7 @@ object SchoolNetRepository : SchoolNetRepositoryInf {
     override suspend fun logoutSchoolNet(campus: CampusRegion, loginSchoolNetResponse : UiStateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().getStudentIdFinally()?.let { uid ->
-                getCardPsk()?.let { pwd ->
+                getSchoolNetPsk()?.let { pwd ->
                     when (campus) {
                         CampusRegion.HEFEI -> {
                             val location = "123"

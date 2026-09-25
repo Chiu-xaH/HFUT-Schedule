@@ -143,7 +143,7 @@ fun SchoolNetHistoryUsage(vm: NetWorkViewModel) {
             isFullScreen = false,
             onReload = refreshNetwork,
             // 特殊处理 为节省空间
-            prepareContent = { BottomTip("点按年份开始搜素") }
+            prepareContent = { BottomTip("点按年份开始搜索") }
         ) {
             val data = (monthPayState as NetworkUiState.Success).data
             MonthPayContent(data)
