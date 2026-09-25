@@ -30,6 +30,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -71,6 +72,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.DashedDivider
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -311,10 +313,18 @@ fun WebNavigationScreen(
                                 IconButton(
                                     enabled = input.isNotEmpty() && input.isNotBlank(),
                                     onClick = {
-                                        qrPainter = createQrCode(input,color)
+                                        if(qrPainter == null) {
+                                            qrPainter = createQrCode(input,color)
+                                        } else {
+                                            qrPainter = null
+                                        }
                                     },
                                 ) {
-                                    Icon(painterResource(R.drawable.qr_code_2),null)
+                                    Icon(
+                                        painterResource(R.drawable.qr_code_2),
+                                        null,
+                                        tint = if(qrPainter == null) LocalContentColor.current else MaterialTheme.colorScheme.primary
+                                    )
                                 }
                                 IconButton(
                                     enabled = isValidWebUrl(input),
@@ -332,16 +342,41 @@ fun WebNavigationScreen(
                                     Icon(painterResource(R.drawable.arrow_forward),null)
                                 }
                             }
-                        }
+                        },
+                        shape = MaterialTheme.shapes.medium.copy(
+                            bottomStart = NoneRoundShape.bottomStart,
+                            bottomEnd = NoneRoundShape.bottomEnd,
+                        )
                     ) { input = it }
 
-                    qrPainter?.let {
-                        DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP).padding(top = QR_CODE_PADDING))
-                        Image(
-                            it.asImageBitmap(),
-                            contentDescription = "",
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - QR_CODE_PADDING)
+                    PaddingHorizontalDivider()
+                    CustomTextField(
+                        input = inputCookies,
+                        label = { Text("输入Cookies") },
+                        singleLine = false,
+                        shape = MaterialTheme.shapes.medium.copy(
+                            topStart = NoneRoundShape.topStart,
+                            topEnd = NoneRoundShape.topEnd,
                         )
+                    ) { inputCookies = it }
+
+                    qrPainter?.let {
+                        var first by remember { mutableStateOf(true) }
+                        LaunchedEffect(input) {
+                            if(first) {
+                                first = false
+                                return@LaunchedEffect
+                            }
+                            qrPainter = createQrCode(input,color)
+                        }
+                        DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP).padding(top = QR_CODE_PADDING))
+                        RowHorizontal {
+                            Image(
+                                it.asImageBitmap(),
+                                contentDescription = "",
+                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - QR_CODE_PADDING)
+                            )
+                        }
                     }
 
                     /*
