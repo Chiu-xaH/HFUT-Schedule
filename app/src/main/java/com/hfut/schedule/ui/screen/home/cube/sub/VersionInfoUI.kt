@@ -43,6 +43,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
+import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
@@ -66,6 +67,7 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
+        UpdateItems("新增 扫码支付的快捷方式",to = To.Screen(SettingsShortcutEditDestination))
         UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("新增 适配一卡通支持自定义密码并适配合肥校区的默认密码",to = To.Screen(SettingsHuiXinPasswordDestination))//
         UpdateItems("修复 录入一卡通密码完成时，二次打开输入密码弹窗的Bug")//

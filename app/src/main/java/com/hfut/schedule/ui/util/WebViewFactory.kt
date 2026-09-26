@@ -65,6 +65,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
@@ -667,6 +668,13 @@ fun WebView.setInitial(
         loadUrl(url,additionalHttpHeaders)
         return
     }
+    var finalUrl = url
+    var finalCookies = cookies
+    if(url.startsWith(Constant.HUI_XIN_URL + "plat/pay?synjones-auth=") && finalCookies == "FORM_SHORTCUT") {
+        finalUrl += prefs.getString("auth","")
+        // 消费后清空
+        finalCookies = null
+    }
     // 启用 Cookie
     cookieManager.setAcceptCookie(true)//true
     cookieManager.setAcceptThirdPartyCookies(this, true)//true
@@ -677,15 +685,15 @@ fun WebView.setInitial(
     cookieManager.flush()
 
     // **异步设置 Cookie，并确保生效后再加载 URL**
-    cookies?.let {
-        cookieManager.setCookie(url, it) {
+    finalCookies?.let {
+        cookieManager.setCookie(finalUrl, it) {
             cookieManager.flush()
             post {
-                loadUrl(url)
+                loadUrl(finalUrl)
             }
         }
     } ?: run {
-        loadUrl(url) // 没有 Cookie 直接加载
+        loadUrl(finalUrl) // 没有 Cookie 直接加载
     }
 }
 

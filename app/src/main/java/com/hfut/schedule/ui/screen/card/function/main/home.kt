@@ -169,9 +169,8 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
     val auth = remember { prefs.getString("auth","") }
-    val url by remember { mutableStateOf(Constant.HUI_XIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
-
-    val urlHuixin = remember { Constant.HUI_XIN_URL + "plat" + "?synjones-auth=" + auth }
+    val payUrl = remember(auth) { Constant.HUI_XIN_URL + "plat/pay" + "?synjones-auth=" + auth }
+    val urlHuiXin = remember(auth)  { Constant.HUI_XIN_URL + "plat" + "?synjones-auth=" + auth }
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
@@ -236,7 +235,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebUrlInner(context,urlHuixin,"慧新易校")
+                            Starter.startWebUrlInner(context,urlHuiXin,"慧新易校")
                         }
                     }
                 )
@@ -380,16 +379,10 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                                 trailingContent = {
                                     FilledTonalIconButton(onClick = {
                                         scope.launch {
-                                            async {
-                                                refreshing = true
-                                            }.await()
-                                            async {
-                                                delay(500)
-                                                refreshing = false
-                                            }
+                                            Starter.startWebUrlInner(context,payUrl,"付款码", icon = R.drawable.barcode)
                                         }
                                     }) {
-                                        Icon(painter = painterResource(id = R.drawable.rotate_right), contentDescription = "")
+                                        Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")
                                     }
                                 }
                             )
@@ -486,7 +479,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebUrlInner(context,url,"付款码", icon = R.drawable.barcode)
+                                    Starter.startWebUrlInner(context,payUrl,"付款码", icon = R.drawable.barcode)
                                 }
                             }
                         )
@@ -517,7 +510,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
                             modifier = Modifier.clickable {
                                 scope.launch {
-                                    Starter.startWebUrlInner(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare)
+                                    Starter.startWebUrlInner(context,urlHuiXin,"慧新易校", icon = R.drawable.corporate_fare)
                                 }
                             }
                         )

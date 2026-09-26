@@ -11,6 +11,7 @@
     <string name="qs_label_pdd">拼多多快递</string>
     <string name="qs_label_taobao">淘宝快递</string>
     <string name="qs_label_hot_water">热水</string>
+    <string name="qs_label_qr_code_pay">一卡通付款码</string>
     <string name="qs_label_login_web_hefei">校园网(肥)</string>
     <string name="qs_label_login_web_xuancheng">校园网(宣)</string>
     <string name="qs_label_recharge">一卡通充值</string>

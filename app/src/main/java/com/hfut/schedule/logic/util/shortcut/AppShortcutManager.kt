@@ -1,15 +1,22 @@
 package com.hfut.schedule.logic.util.shortcut
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.net.toUri
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
+import com.hfut.schedule.activity.util.WebViewActivity
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.nav.destination.ScanQrCodeDestination
@@ -136,6 +143,29 @@ object AppShortcutManager {
         )
     }
 
+    private fun createHuiXinQrCodePayShortcut(): ShortcutConfig {
+        val url = Constant.HUI_XIN_URL + "plat/pay?synjones-auth="
+        val label = "付款码"
+        val icon = R.drawable.barcode
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setClassName(
+                BuildConfig.APPLICATION_ID,
+                WebViewActivity::class.java.name
+            )
+            putExtra("url",url)
+            putExtra("title",label)
+            putExtra("icon",icon)
+            putExtra("cookies","FORM_SHORTCUT")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        return ShortcutConfig(
+            "huixin_qr_code_pay",
+            text(label),
+            icon,
+            intent
+        )
+    }
+
     private val shortcuts = listOf(
         createScanShortcut(),
         createCardShortcut(),
@@ -143,6 +173,7 @@ object AppShortcutManager {
         createRechargeShortcut(),
         createExpressPddShortcut(),
         createExpressTaoBaoShortcut(),
+        createHuiXinQrCodePayShortcut()
     )
 
     fun getStorageStr() = shortcuts.joinToString(",") { it.id }

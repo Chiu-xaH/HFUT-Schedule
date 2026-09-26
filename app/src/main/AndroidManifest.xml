@@ -217,6 +217,20 @@
             </intent-filter>
         </service>
         <service
+            android:name=".service.tile.starter.QrCodePayTileService"
+            android:exported="true"
+            android:icon="@drawable/barcode"
+            android:label="@string/qs_label_qr_code_pay"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
             android:name=".service.aidl.RemoteService"
             android:enabled="true"
             android:exported="true"

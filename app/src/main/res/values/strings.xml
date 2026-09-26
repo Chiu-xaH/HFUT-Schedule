@@ -10,6 +10,7 @@
     <string name="qs_label_pdd">PinDuoDuo Express</string>
     <string name="qs_label_taobao">TaoBao Express</string>
     <string name="qs_label_hot_water">HotWater</string>
+    <string name="qs_label_qr_code_pay">HuiXin Pay</string>
     <string name="qs_label_login_web_hefei">Net(HF)</string>
     <string name="qs_label_login_web_xuancheng">Net(XC)</string>
     <string name="qs_label_recharge">Recharge</string>
