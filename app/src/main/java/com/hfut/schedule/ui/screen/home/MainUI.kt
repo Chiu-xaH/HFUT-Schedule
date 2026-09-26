@@ -966,7 +966,7 @@ fun MainScreen(
             val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
             val color = if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface
             if (enableNewBottomBar){
-                val paddingSafely = remember { true }
+                val paddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = true)
                 val shape = remember(paddingSafely) {
                     val corner = ScreenCornerHelper.corner
                     if(paddingSafely || corner == 0.dp) {
@@ -978,14 +978,16 @@ fun MainScreen(
                 Box(
                     modifier = Modifier
                 ) {
-                    Spacer(
-                        modifier = Modifier
-                            .newBottomBarBlur(hazeState,color)
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .navigationBarsPadding()
-                            .height(APP_HORIZONTAL_DP*1.75f)
-                    )
+                    if(paddingSafely) {
+                        Spacer(
+                            modifier = Modifier
+                                .newBottomBarBlur(hazeState,color)
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .navigationBarsPadding()
+                                .height(APP_HORIZONTAL_DP*1.75f)
+                        )
+                    }
                     @OptIn(ExperimentalNavigationBarApi::class)
                     NavigationBar(
                         enabled = isEnabled,
@@ -999,7 +1001,7 @@ fun MainScreen(
                         contentColor = MaterialTheme.colorScheme.onSurface,
                         hazeModifier = Modifier
                             .bottomBarBackDrop(backdrop, shape = shape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(.25f))
+//                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(.25f))
                             .let {
                                 if(isEnabled) {
                                     it

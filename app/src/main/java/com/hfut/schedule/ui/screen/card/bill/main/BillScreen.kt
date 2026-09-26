@@ -30,8 +30,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -115,7 +117,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState :
                     item { CardRow(vm, hazeState) }
                 items(list.size, key = { list[it].orderId }) { item ->
                     val bills = list[item]
-                    var name = bills.resume.replace("有限公司","")
+                    val name = bills.resume.replace("有限公司","")
 
                     val paidTime =bills.jndatetimeStr
                     val finalTime = bills.effectdateStr
@@ -145,13 +147,15 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState :
                 item { InnerPaddingHeight(innerPaddings,false) }
                 item { PaddingForPageControllerButton() }
             }
+            val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
             PageController(
                 listState,
                 page,
                 onNextPage = { page = it },
                 onPreviousPage = { page = it },
-                modifier = Modifier.padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding),
-                paddingBottom = false
+                modifier = Modifier.padding(bottom = innerPaddings.calculateBottomPadding()-if(enableNewBottomBar) 0.dp else navigationBarHeightPadding),
+                paddingBottom = false,
+                paddingSafely = enableNewBottomBar
             )
         }
 

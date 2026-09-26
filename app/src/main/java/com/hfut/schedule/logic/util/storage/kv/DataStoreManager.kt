@@ -203,6 +203,7 @@ object DataStoreManager : IDataStore {
     private val CAN_USE = booleanPreferencesKey("can_use")
     private val UNI_APP_GRADE_COUNT = intPreferencesKey("uni_app_grade_count")
     private val NEW_BOTTOM_BAR = booleanPreferencesKey("new_bottom_bar")
+    private val NEW_BOTTOM_BAR_SAFELY_PADDING = booleanPreferencesKey("new_bottom_bar_safely_padding")
     private val SHOW_CALENDAR_TIME_LINE = booleanPreferencesKey("show_calendar_time_line")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -296,6 +297,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableShowFocusGrade(value: GradeAutoCheckMode) = saveValue(SHOW_FOCUS_GRADE, value.code)
     suspend fun saveUniAppGradeCount(value: Int) = saveValue(UNI_APP_GRADE_COUNT, value)
     suspend fun saveEnableNewBottomBar(value: Boolean) = saveValue(NEW_BOTTOM_BAR, value)
+    suspend fun saveEnableNewBottomBarSafelyPadding(value: Boolean) = saveValue(NEW_BOTTOM_BAR_SAFELY_PADDING, value)
     suspend fun saveEnableSHowCalendarTimeLine(value: Boolean) = saveValue(SHOW_CALENDAR_TIME_LINE, value)
 
 
@@ -388,6 +390,7 @@ object DataStoreManager : IDataStore {
     val enableUse = getFlow(CAN_USE, false)
     val uniAppGradeCount = getFlow(UNI_APP_GRADE_COUNT, -1)
     val enableNewBottomBar = getFlow(NEW_BOTTOM_BAR, false)
+    val enableNewBottomBarSafelyPadding = getFlow(NEW_BOTTOM_BAR_SAFELY_PADDING, true)
     val enableShowCalendarTimeLine = getFlow(SHOW_CALENDAR_TIME_LINE, false)
 
     fun getSyncDefaultCalendar(): Int? {

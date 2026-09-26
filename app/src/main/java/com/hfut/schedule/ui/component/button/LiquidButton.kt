@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -48,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
+import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -56,12 +56,10 @@ import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
-import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.common.logic.util.safeDiv
-import com.xah.shader.state.ShaderState
-import com.hfut.schedule.ui.style.shader.largeStyle
-import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.container.util.LocalSharedRegistrySafely
+import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.shader.state.ShaderState
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -446,7 +444,7 @@ fun Modifier.bottomBarBackDrop(
     backdrop: Backdrop,
     shape : RoundedCornerShape = CircleShape,
 ) : Modifier {
-//    val color = MaterialTheme.colorScheme.surfaceVariant.copy(.25f)
+    val color = MaterialTheme.colorScheme.surfaceVariant.copy(.25f)
     val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     return this.drawBackdrop(
@@ -462,8 +460,8 @@ fun Modifier.bottomBarBackDrop(
             lens(value.dp.toPx(), value.dp.toPx())
         },
         shadow = null,
-//        onDrawSurface = {
-//            drawRect(color)
-//        }
+        onDrawSurface = {
+            drawRect(color)
+        }
     )
 }

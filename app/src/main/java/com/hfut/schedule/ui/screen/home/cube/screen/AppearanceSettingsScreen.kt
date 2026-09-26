@@ -947,8 +947,8 @@ fun SharedAppearanceSettingsScreen(
                         }
                     }
                 )
+                PaddingHorizontalDivider()
                 if(!enableNewBottomBar) {
-                    PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
                             Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_title))
@@ -963,6 +963,23 @@ fun SharedAppearanceSettingsScreen(
                             Icon(painterResource(R.drawable.label),null)
                         },
                         trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
+                    )
+                } else {
+                    val enablePaddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = true)
+                    TransplantListItem(
+                        headlineContent = {
+                            Text("底部安全边距")
+                        },
+                        supportingContent = {
+                            Text("抬高底部边距以避让导航栏")
+                        },
+                        modifier = Modifier.clickable {
+                            scope.launch { DataStoreManager.saveEnableNewBottomBarSafelyPadding(!enablePaddingSafely) }
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.height),null)
+                        },
+                        trailingContent = {  Switch(checked = enablePaddingSafely, onCheckedChange = { scope.launch { DataStoreManager.saveEnableNewBottomBarSafelyPadding(!enablePaddingSafely) } }) },
                     )
                 }
             }

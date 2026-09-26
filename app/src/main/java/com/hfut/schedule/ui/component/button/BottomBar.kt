@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.component.button
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
@@ -37,20 +36,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.enumeration.BottomBarItems.CALENDAR
-import com.hfut.schedule.ui.model.NavigationBarItemData
-import com.hfut.schedule.ui.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.model.ExperimentalNavigationBarApi
 import com.hfut.schedule.ui.model.NavigationBarIcon
+import com.hfut.schedule.ui.model.NavigationBarItemData
+import com.hfut.schedule.ui.model.NavigationBarItemDataDynamic
+import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.layerGlass
+import com.hfut.schedule.ui.style.special.newBottomBarBlur
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.xah.shader.state.ShaderState
-import com.hfut.schedule.ui.style.shader.largeStyle
-import com.hfut.schedule.ui.style.special.newBottomBarBlur
 import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -58,6 +55,7 @@ import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.mask
 import com.xah.common.ui.style.padding.NavigationBarSpacer
+import com.xah.shader.state.ShaderState
 import dev.chrisbanes.haze.HazeState
 
 // 按索引顺序添加badge
@@ -243,7 +241,7 @@ fun HazeBottomBarV2(
 ) {
     val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
     if (enableNewBottomBar){
-        val paddingSafely = remember { true }
+        val paddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = true)
         val shape = remember(paddingSafely) {
             val corner = ScreenCornerHelper.corner
             if(paddingSafely || corner == 0.dp) {
@@ -255,14 +253,16 @@ fun HazeBottomBarV2(
         Box(
             modifier = Modifier
         ) {
-            Spacer(
-                modifier = Modifier
-                    .newBottomBarBlur(hazeState,color)
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .height(APP_HORIZONTAL_DP*1.75f)
-            )
+            if(paddingSafely) {
+                Spacer(
+                    modifier = Modifier
+                        .newBottomBarBlur(hazeState,color)
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .height(APP_HORIZONTAL_DP*1.75f)
+                )
+            }
             @OptIn(ExperimentalNavigationBarApi::class)
             (com.hfut.schedule.ui.model.NavigationBar(
                 enabled = enabled,
@@ -276,7 +276,7 @@ fun HazeBottomBarV2(
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 hazeModifier = Modifier
                     .bottomBarBackDrop(backdrop, shape = shape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(.25f))
+//                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(.25f))
                     .let {
                         if (enabled) {
                             it
