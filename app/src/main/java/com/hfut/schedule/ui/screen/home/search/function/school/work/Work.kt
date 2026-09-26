@@ -176,6 +176,18 @@ fun WorkScreen(
                             }
                             Spacer(Modifier.width(BUTTON_PADDING))
                             LiquidButton(
+                                isCircle = true,
+                                backdrop = backDrop,
+                                onClick = {
+                                    scope.launch {
+                                        Starter.startWebUrlInner(context, Constant.WORK_SYSTEM_URL + "Login.aspx","就业系统（学生端）")
+                                    }
+                                },
+                            ) {
+                                Icon(painterResource(R.drawable.person),null)
+                            }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
                                 backdrop = backDrop,
                                 onClick = {
                                     campus = when(campus) {
@@ -185,17 +197,6 @@ fun WorkScreen(
                                 },
                             ) {
                                 Text(campus.description)
-                            }
-                            Spacer(Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                backdrop = backDrop,
-                                onClick = {
-                                    scope.launch {
-                                        Starter.startWebUrlInner(context, Constant.WORK_SYSTEM_URL + "Login.aspx","就业系统（学生端）")
-                                    }
-                                },
-                            ) {
-                                Text("就业系统")
                             }
                         }
                     }

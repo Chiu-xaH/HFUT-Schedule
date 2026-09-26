@@ -84,6 +84,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsItemsUI() {
     val navTopController = LocalNavController.current
+    /*
     CardListItem(
         cardModifier = Modifier
             .padding(bottom = CARD_NORMAL_DP)
@@ -102,6 +103,7 @@ fun SettingsItemsUI() {
             navTopController.push(SettingsSearchDestination)
         }
     )
+     */
     CustomCard (
         color = MaterialTheme.colorScheme.surface
     ){

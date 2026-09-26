@@ -126,7 +126,7 @@ fun LiquidButton(
                 shape = { CircleShape },
                 effects =  {
                     vibrancy()
-                    blur(2f.dp.toPx())
+                    blur(1.5f.dp.toPx())
                     lens(12f.dp.toPx(), 24f.dp.toPx())
                 },
                 shadow = null,
@@ -275,13 +275,12 @@ fun LiquidButton(
     }
 }
 
-
 @Composable
 fun Modifier.containerBackDrop(
     backdrop: Backdrop,
     shape: Shape,
     enabled : Boolean = true,
-    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
+    surfaceColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(if(enabled).3f else .7f),
 ) : Modifier {
     val progressAnimation = remember { Animatable(0f) }
     val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
@@ -304,7 +303,7 @@ fun Modifier.containerBackDrop(
         shape = { shape },
         effects = {
             vibrancy()
-            blur(5f.dp.toPx())
+            blur(4.5f.dp.toPx())
             lens(15f.dp.toPx(), 25f.dp.toPx())
         },
         shadow = null,

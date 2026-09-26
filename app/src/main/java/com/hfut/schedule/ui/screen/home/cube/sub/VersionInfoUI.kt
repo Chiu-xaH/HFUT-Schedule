@@ -72,6 +72,7 @@ fun VersionInfo() {
         UpdateItems("修复 今日校园页面搜索时删除文字偶发崩溃的Bug")//
         UpdateItems("修复 教室占用轴上的方格文字在部分机型显示过小的Bug")//
         UpdateItems("优化 教室页面的显示",to = To.Screen(ClassroomDestination(VersionInfoDestination.key)))//
+        UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))

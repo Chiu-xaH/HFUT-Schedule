@@ -137,6 +137,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.ToadyCamp
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -354,7 +355,7 @@ fun SearchFuncs(
             label = { Text("搜索功能" ) },
             singleLine = true,
             shape = MaterialTheme.shapes.small,
-            colors = textFiledTransplant(),
+            colors = textFiledAllTransplant(),
             leadingIcon = {
                 IconButton(onClick = {
                     onShow(false)

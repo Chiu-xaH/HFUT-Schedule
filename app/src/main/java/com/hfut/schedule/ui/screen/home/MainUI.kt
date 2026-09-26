@@ -122,6 +122,7 @@ import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseRespo
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.bottomBarBackDrop
@@ -146,6 +147,7 @@ import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
 import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
+import com.hfut.schedule.ui.nav.destination.SettingsSearchDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.effect.ControlCenterTransitionEffect
@@ -204,6 +206,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.mask
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.anim.effect.Direction
+import com.xah.navigation.anim.effect.RollTransitionEffect
 import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
@@ -471,6 +474,37 @@ fun MainScreen(
 //                                        shape = CircleShape,
 //                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
 //                                    ) {
+                                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
+                                        LiquidButton(
+                                            onClick = {
+                                                navHostTopController.push(
+                                                    FunctionsSortDestination,
+                                                    effect = SlideTransitionEffect()
+                                                )
+                                            },
+                                            backdrop = backdrop,
+                                            isCircle = true,
+                                        ) {
+                                            Icon(
+                                                painterResource(id = R.drawable.edit),
+                                                contentDescription = "",
+                                            )
+                                        }
+                                        Spacer(Modifier.width(BUTTON_PADDING))
+                                        LiquidButton(
+                                            onClick = {
+                                                showSearch = !showSearch
+                                            },
+                                            backdrop = backdrop,
+                                            isCircle = true,
+                                        ) {
+                                            Icon(
+                                                painterResource(id = R.drawable.search),
+                                                contentDescription = "",
+                                            )
+                                        }
+                                    }
+                                    /*
                                         IconButton(onClick = {
                                             navHostTopController.push(FunctionsSortDestination,effect = SlideTransitionEffect())
                                         }) {
@@ -488,6 +522,7 @@ fun MainScreen(
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
+                                     */
                                 }
 
                                 FOCUS -> {
@@ -529,82 +564,105 @@ fun MainScreen(
                                     }
                                 }
                                 SETTINGS -> {
-                                   Row {
-                                       if(AppVersion.isDebug) {
-                                           IconButton(
-                                               onClick = {
-                                                   showToast(context.getString(R.string.settings_person_info_tag_debug))
+                                   Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                       LiquidButton(
+                                           onClick = {
+                                               // TODO 打开浮窗
+                                           },
+                                           isCircle = false,
+                                           backdrop = backdrop
+                                       ) {
+                                           Row {
+                                               if(AppVersion.isDebug) {
+//                                                   IconButton(
+//                                                       onClick = {
+//                                                           showToast(context.getString(R.string.settings_person_info_tag_debug))
+//                                                       }
+//                                                   ) {
+                                                       Icon(
+                                                           painterResource(R.drawable.construction),
+                                                           null,
+                                                           tint = MaterialTheme.colorScheme.primary
+                                                       )
+//                                                   }
+                                               } else if(!AppVersion.isSignatureValid) {
+//                                                   IconButton(
+//                                                       onClick = {
+//                                                           showToast(context.getString(R.string.settings_person_info_tag_sign))
+//                                                       }
+//                                                   ) {
+                                                       Icon(
+                                                           painterResource(R.drawable.signature),
+                                                           null,
+                                                           tint = MaterialTheme.colorScheme.primary
+                                                       )
+//                                                   }
                                                }
-                                           ) {
-                                               Icon(
-                                                   painterResource(R.drawable.construction),
-                                                   null,
-                                                   tint = MaterialTheme.colorScheme.primary
-                                               )
-                                           }
-                                       } else if(!AppVersion.isSignatureValid) {
-                                           IconButton(
-                                               onClick = {
-                                                   showToast(context.getString(R.string.settings_person_info_tag_sign))
+                                               if(AppVersion.isDev) {
+//                                                   IconButton(
+//                                                       onClick = {
+//                                                           showToast(context.getString(R.string.settings_person_info_tag_preview))
+//                                                       }
+//                                                   ) {
+                                                       Icon(
+                                                           painterResource(R.drawable.logo_dev),
+                                                           null,
+                                                           tint = MaterialTheme.colorScheme.primary
+                                                       )
+//                                                   }
                                                }
-                                           ) {
-                                               Icon(
-                                                   painterResource(R.drawable.signature),
-                                                   null,
-                                                   tint = MaterialTheme.colorScheme.primary
-                                               )
+                                               if(AppVersion.isRunningOnAvd) {
+//                                                   IconButton(
+//                                                       onClick = {
+//                                                           showToast(context.getString(R.string.settings_person_info_tag_avd))
+//                                                       }
+//                                                   ) {
+                                                       Icon(
+                                                           painterResource(R.drawable.adb),
+                                                           null,
+                                                           tint = MaterialTheme.colorScheme.primary
+                                                       )
+//                                                   }
+                                               } else if(AppVersion.isRunningOnWsa) {
+//                                                   IconButton(
+//                                                       onClick = {
+//                                                           showToast(context.getString(R.string.settings_person_info_tag_wsa))
+//                                                       }
+//                                                   ) {
+                                                       Icon(
+                                                           painterResource(R.drawable.desktop_windows),
+                                                           null,
+                                                           tint = MaterialTheme.colorScheme.primary
+                                                       )
+//                                                   }
+                                               }
+                                               if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+//                                                   IconButton(
+//                                                       onClick = {
+//                                                           showToast(context.getString(R.string.settings_person_info_tag_harmonry_next))
+//                                                       }
+//                                                   ) {
+                                                       Icon(
+                                                           painterResource(R.drawable.circle),
+                                                           null,
+                                                           tint = MaterialTheme.colorScheme.primary
+                                                       )
+//                                                   }
+                                               }
                                            }
                                        }
-                                       if(AppVersion.isDev) {
-                                           IconButton(
-                                               onClick = {
-                                                   showToast(context.getString(R.string.settings_person_info_tag_preview))
-                                               }
-                                           ) {
-                                               Icon(
-                                                   painterResource(R.drawable.logo_dev),
-                                                   null,
-                                                   tint = MaterialTheme.colorScheme.primary
-                                               )
-                                           }
-                                       }
-                                       if(AppVersion.isRunningOnAvd) {
-                                           IconButton(
-                                               onClick = {
-                                                   showToast(context.getString(R.string.settings_person_info_tag_avd))
-                                               }
-                                           ) {
-                                               Icon(
-                                                   painterResource(R.drawable.adb),
-                                                   null,
-                                                   tint = MaterialTheme.colorScheme.primary
-                                               )
-                                           }
-                                       } else if(AppVersion.isRunningOnWsa) {
-                                           IconButton(
-                                               onClick = {
-                                                   showToast(context.getString(R.string.settings_person_info_tag_wsa))
-                                               }
-                                           ) {
-                                               Icon(
-                                                   painterResource(R.drawable.desktop_windows),
-                                                   null,
-                                                   tint = MaterialTheme.colorScheme.primary
-                                               )
-                                           }
-                                       }
-                                       if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
-                                           IconButton(
-                                               onClick = {
-                                                   showToast(context.getString(R.string.settings_person_info_tag_harmonry_next))
-                                               }
-                                           ) {
-                                               Icon(
-                                                   painterResource(R.drawable.circle),
-                                                   null,
-                                                   tint = MaterialTheme.colorScheme.primary
-                                               )
-                                           }
+                                       Spacer(Modifier.width(BUTTON_PADDING))
+                                       LiquidButton(
+                                           onClick = {
+                                               navHostTopController.push(SettingsSearchDestination, effect = RollTransitionEffect())
+                                           },
+                                           isCircle = true,
+                                           backdrop = backdrop
+                                       ) {
+                                           Icon(
+                                               painterResource(R.drawable.search),
+                                               null
+                                           )
                                        }
                                    }
                                 }
@@ -981,11 +1039,11 @@ fun MainScreen(
                     if(paddingSafely) {
                         Spacer(
                             modifier = Modifier
-                                .newBottomBarBlur(hazeState,color)
+                                .newBottomBarBlur(hazeState, color)
                                 .align(Alignment.BottomCenter)
                                 .fillMaxWidth()
                                 .navigationBarsPadding()
-                                .height(APP_HORIZONTAL_DP*1.75f)
+                                .height(APP_HORIZONTAL_DP * 1.75f)
                         )
                     }
                     @OptIn(ExperimentalNavigationBarApi::class)
@@ -1016,7 +1074,7 @@ fun MainScreen(
                         modifier = Modifier
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .let {
-                                if(paddingSafely) {
+                                if (paddingSafely) {
                                     it.padding(bottom = APP_HORIZONTAL_DP)
                                 } else {
                                     it
