@@ -119,7 +119,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
-import com.hfut.schedule.ui.component.button.AnimatedIconButton
+import com.hfut.schedule.ui.component.button.AnimatedExpandIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -919,7 +919,7 @@ fun MainScreen(
                                     )
                                 }
                                 // 动画写在内部
-                                AnimatedIconButton(
+                                AnimatedExpandIconButton(
                                     valueState = showAll,
                                     onClick = { showAll = !showAll }
                                 )

@@ -56,7 +56,7 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
-import com.hfut.schedule.ui.component.button.AnimatedIconButton
+import com.hfut.schedule.ui.component.button.AnimatedExpandIconButton
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -252,7 +252,7 @@ fun UpdateUI(
             },
             trailingContent = {
                 if(canDownload) {
-                    AnimatedIconButton(
+                    AnimatedExpandIconButton(
                         onClick = { expandItems = !expandItems },
                         valueState = expandItems,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,

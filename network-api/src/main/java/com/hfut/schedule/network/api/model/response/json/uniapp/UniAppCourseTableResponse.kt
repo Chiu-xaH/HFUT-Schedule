@@ -1,5 +1,6 @@
 package com.hfut.schedule.network.api.model.response.json.uniapp
 
+import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuTermLessonScheduleText
 import com.hfut.schedule.network.api.model.response.json.shared.MultiLanguageBaseData
 
 data class UniAppCourseTableResponse(
@@ -19,7 +20,9 @@ data class UniAppCourse (
     override val openDepartment : MultiLanguageBaseData,
     override val courseType : MultiLanguageBaseData,
     override val teacherAssignmentList : List<String>,
-    override val schedules : List<UniAppSchedule>
+    override val schedules : List<UniAppSchedule>,
+    override val scheduleText : JxglstuTermLessonScheduleText,
+    override val remark: String?
 ) : UniAppBaseCourse()
 
 
@@ -32,6 +35,8 @@ abstract class UniAppBaseCourse {
     abstract val courseType : MultiLanguageBaseData
     abstract val teacherAssignmentList : List<String>
     abstract val schedules : List<UniAppSchedule>
+    abstract val scheduleText : JxglstuTermLessonScheduleText
+    abstract val remark : String?
 }
 
 data class UniAppSchedule(

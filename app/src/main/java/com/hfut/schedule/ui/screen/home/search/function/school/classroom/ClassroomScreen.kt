@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -86,9 +85,8 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.AnimatedIconButton
+import com.hfut.schedule.ui.component.button.AnimatedExpandLiquidIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
-import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -883,6 +881,7 @@ fun ClassroomLessonsScreen(
     roomId : Int,
     name: String
 ) {
+    val backdrop = rememberLayerBackdrop()
     var showAll by rememberSaveable { mutableStateOf(false) }
     val hazeState = rememberHazeBlur()
     val semester by produceState<Int?>(initialValue = null) {
@@ -925,9 +924,11 @@ fun ClassroomLessonsScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        AnimatedIconButton(
+                        AnimatedExpandLiquidIconButton(
                             valueState = showAll,
-                            onClick = { showAll = !showAll }
+                            onClick = { showAll = !showAll },
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            backdrop = backdrop
                         )
                     }
                 )
@@ -937,6 +938,7 @@ fun ClassroomLessonsScreen(
     ) { innerPadding ->
         Column(modifier = Modifier
             .hazeSource(hazeState)
+            .backDropSource(backdrop)
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ ->
