@@ -5,12 +5,14 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -48,6 +50,8 @@ import com.xah.shader.state.ShaderState
 import com.hfut.schedule.ui.style.shader.GlassStyle
 import com.hfut.schedule.ui.style.shader.glassLayer
 import com.hfut.schedule.ui.style.shader.largeStyle
+import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.container.util.LocalSharedRegistrySafely
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
@@ -338,17 +342,17 @@ fun HazeBottomSheet(
         containerColor = MaterialTheme.colorScheme.surface,
         shape = bottomSheetRound(sheetState, isFullScreen)
     ) {
-        Column(modifier = Modifier
-            .onGloballyPositioned { coordinates ->
-                height = coordinates.size.height
-            }
-
-//            .bottomSheetBlur(hazeState)
-        ){
+        Column {
             if(!isFullScreen) {
-                Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
             }
-            content()
+            Box(
+                Modifier.onGloballyPositioned { coordinates ->
+                    height = coordinates.size.height
+                }
+            ) {
+                content()
+            }
         }
     }
 }

@@ -243,7 +243,12 @@ fun TimeTable(
                         }
                         .let {
                             if (hasBackground) {
-                                it.calendarSquareBackDrop(shaderState!!, CalendarSquareBackDropSource.SQUARE,MaterialTheme.shapes.extraSmall)
+                                it.calendarSquareBackDrop(
+                                    shaderState!!,
+                                    CalendarSquareBackDropSource.SQUARE,
+                                    MaterialTheme.shapes.extraSmall,
+                                    color.first
+                                )
                             } else {
                                 it
                             }
@@ -447,7 +452,12 @@ fun TimeTable(
                         }
                         .let {
                             if (hasBackground) {
-                                it.calendarSquareBackDrop(shaderState!!, CalendarSquareBackDropSource.SQUARE,MaterialTheme.shapes.extraSmall)
+                                it.calendarSquareBackDrop(
+                                    shaderState!!,
+                                    CalendarSquareBackDropSource.SQUARE,
+                                    MaterialTheme.shapes.extraSmall,
+                                    color.first
+                                )
                             } else {
                                 it
                             }

@@ -96,7 +96,6 @@ fun MultiScheduleSettings(
     vm : NetWorkViewModel,
 ) {
     val context = LocalContext.current
-
     var showBottomSheet_add by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -133,10 +132,12 @@ fun MultiScheduleSettings(
     }
 
     val navController = LocalNavController.current
-
     val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
+    val friendList = remember { getFriendsList() }
+    val shape = MaterialTheme.shapes.medium
+    val courses = remember { CourseType.entries }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
@@ -146,12 +147,6 @@ fun MultiScheduleSettings(
                 }
             }
         }
-
-
-        val friendList = getFriendsList()
-
-        val shape = MaterialTheme.shapes.medium
-        val courses = remember { CourseType.entries }
         LazyRow {
             item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP*2)) }
             items(courses.size) { index ->

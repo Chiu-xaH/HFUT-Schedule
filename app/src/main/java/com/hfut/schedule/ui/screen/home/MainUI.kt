@@ -153,6 +153,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsSearchDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.effect.ControlCenterTransitionEffect
+import com.hfut.schedule.ui.nav.window.AppEnvWarningWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
@@ -180,6 +181,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.newBottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.theme.warnColor
 import com.hfut.schedule.ui.util.isThemeDark
 import com.hfut.schedule.ui.util.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
@@ -206,6 +208,7 @@ import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.mask
 import com.xah.container.component.base.SharedContainer
+import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.anim.effect.Direction
 import com.xah.navigation.anim.effect.RollTransitionEffect
 import com.xah.navigation.anim.effect.SlideTransitionEffect
@@ -331,6 +334,7 @@ fun MainScreen(
     var searchText by rememberSaveable() { mutableStateOf("") }
     var showSearch by rememberSaveable() { mutableStateOf(false) }
 
+    val floatingController = LocalFloatingController.current
 
     LaunchedEffect(Unit) {
         if(!isLogin) {
@@ -564,93 +568,22 @@ fun MainScreen(
                                 }
                                 SETTINGS -> {
                                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                       LiquidButton(
-                                           onClick = {
-                                               // TODO 打开浮窗
-                                           },
-                                           isCircle = false,
-                                           backdrop = backdrop
-                                       ) {
-                                           Row {
-                                               if(AppVersion.isDebug) {
-//                                                   IconButton(
-//                                                       onClick = {
-//                                                           showToast(context.getString(R.string.settings_person_info_tag_debug))
-//                                                       }
-//                                                   ) {
-                                                       Icon(
-                                                           painterResource(R.drawable.construction),
-                                                           null,
-                                                           tint = MaterialTheme.colorScheme.primary
-                                                       )
-//                                                   }
-                                               } else if(!AppVersion.isSignatureValid) {
-//                                                   IconButton(
-//                                                       onClick = {
-//                                                           showToast(context.getString(R.string.settings_person_info_tag_sign))
-//                                                       }
-//                                                   ) {
-                                                       Icon(
-                                                           painterResource(R.drawable.signature),
-                                                           null,
-                                                           tint = MaterialTheme.colorScheme.primary
-                                                       )
-//                                                   }
-                                               }
-                                               if(AppVersion.isDev) {
-//                                                   IconButton(
-//                                                       onClick = {
-//                                                           showToast(context.getString(R.string.settings_person_info_tag_preview))
-//                                                       }
-//                                                   ) {
-                                                       Icon(
-                                                           painterResource(R.drawable.logo_dev),
-                                                           null,
-                                                           tint = MaterialTheme.colorScheme.primary
-                                                       )
-//                                                   }
-                                               }
-                                               if(AppVersion.isRunningOnAvd) {
-//                                                   IconButton(
-//                                                       onClick = {
-//                                                           showToast(context.getString(R.string.settings_person_info_tag_avd))
-//                                                       }
-//                                                   ) {
-                                                       Icon(
-                                                           painterResource(R.drawable.adb),
-                                                           null,
-                                                           tint = MaterialTheme.colorScheme.primary
-                                                       )
-//                                                   }
-                                               } else if(AppVersion.isRunningOnWsa) {
-//                                                   IconButton(
-//                                                       onClick = {
-//                                                           showToast(context.getString(R.string.settings_person_info_tag_wsa))
-//                                                       }
-//                                                   ) {
-                                                       Icon(
-                                                           painterResource(R.drawable.desktop_windows),
-                                                           null,
-                                                           tint = MaterialTheme.colorScheme.primary
-                                                       )
-//                                                   }
-                                               }
-                                               if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
-//                                                   IconButton(
-//                                                       onClick = {
-//                                                           showToast(context.getString(R.string.settings_person_info_tag_harmonry_next))
-//                                                       }
-//                                                   ) {
-                                                       Icon(
-                                                           painterResource(R.drawable.circle),
-                                                           null,
-                                                           tint = MaterialTheme.colorScheme.primary
-                                                       )
-//                                                   }
-                                               }
+                                       if(!AppVersion.isNormalEnv) {
+                                           LiquidButton(
+                                               onClick = {
+                                                   floatingController.push(AppEnvWarningWindow)
+                                               },
+                                               isCircle = true,
+                                               backdrop = backdrop
+                                           ) {
+                                               Icon(
+                                                   painterResource(R.drawable.planner_review),
+                                                   null,
+                                                   tint = warnColor()
+                                               )
                                            }
+                                           Spacer(Modifier.width(BUTTON_PADDING))
                                        }
-                                       Spacer(Modifier.width(BUTTON_PADDING))
                                        LiquidButton(
                                            onClick = {
                                                navHostTopController.push(SettingsSearchDestination, effect = RollTransitionEffect())
@@ -1013,9 +946,9 @@ fun MainScreen(
                                 .height(APP_HORIZONTAL_DP * 1.75f)
                         )
                     }
+                    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
                     val maxValue = remember { .8f }
                     val finalColor = if(useBackground) {
-                        val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
                         val backgroundAlpha = customBackgroundAlpha.coerceIn(maxValue/2f,maxValue)
                         MaterialTheme.colorScheme.secondaryContainer.copy(backgroundAlpha)
                     } else {
@@ -1032,6 +965,7 @@ fun MainScreen(
                         enabled = isEnabled,
                         hazeState = hazeState,
                         hapticsEnabled = false,
+                        trackColor = if(useBackground) MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha) else MaterialTheme.colorScheme.surfaceContainerLow.copy(.75f),
                         aimAssist = true,
                         elevation = 0.dp,
                         itemHorizontalPadding = 0.dp,

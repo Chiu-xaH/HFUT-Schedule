@@ -49,6 +49,7 @@ import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch
 
 fun getFriendsList() : List<CommunityFriend?> {
@@ -61,7 +62,8 @@ fun getFriendsList() : List<CommunityFriend?> {
         } else {
             emptyList()
         }
-    } catch(_ : Exception) {
+    } catch(e : Exception) {
+        LogUtil.error(e)
         emptyList()
     }
 }

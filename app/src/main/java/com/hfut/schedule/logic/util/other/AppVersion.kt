@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
+import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
 import java.io.ByteArrayInputStream
 import java.security.MessageDigest
@@ -110,9 +111,13 @@ object AppVersion {
     }
 
     val isSignatureValid by lazy { getIsSignatureValid() }
-    val isRunningOnAvd = deviceName.startsWith("sdk_gphone") == true || deviceName.startsWith("Android SDK built for") == true
-    val isRunningOnWsa = deviceName.startsWith("Subsystem for Android")
-    val isDev : Boolean = !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName())
+    val isRunningOnAvd by lazy{ deviceName.startsWith("sdk_gphone") || deviceName.startsWith("Android SDK built for") }
+    val isRunningOnWsa by lazy { deviceName.startsWith("Subsystem for Android") }
+    val isDev : Boolean by lazy { !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName()) }
+
+    val isHarmony : Boolean by lazy { DeviceOs.isHarmonyOsNextAndroidCompatible() }
+
+    val isNormalEnv : Boolean by lazy { !isDebug && isSignatureValid && !isDev && !isRunningOnAvd && !isRunningOnWsa && !isHarmony }
 
     data class SignatureInfo(
         val issuer: String,

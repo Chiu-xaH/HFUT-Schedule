@@ -1161,7 +1161,12 @@ fun CalendarUISettings(
     val activity = LocalActivity.current
     val density = LocalDensity.current
 
-    Column {
+    Column(
+        modifier = Modifier.let {
+            if(isTiny) it.verticalScroll(rememberScrollState())
+            else it
+        }
+    ) {
         Box {
             val backdrop = rememberLayerBackdrop()
             wallpaper?.let {

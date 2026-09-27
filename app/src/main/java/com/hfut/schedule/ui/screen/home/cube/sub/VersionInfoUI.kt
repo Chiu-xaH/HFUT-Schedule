@@ -57,7 +57,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-09-27"
+private const val RELEASE_DATE = "2026-09-28"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -75,7 +75,8 @@ fun VersionInfo() {
         UpdateItems("修复 录入一卡通密码完成时，二次打开输入密码弹窗的Bug")//
         UpdateItems("修复 今日校园页面搜索时删除文字偶发崩溃的Bug")//
         UpdateItems("修复 教室占用轴上的方格文字在部分机型显示过小的Bug")//
-        UpdateItems("修复 在空教室页面，翻页到部分教室因空指针问题崩溃的Bug")//
+        UpdateItems("修复 在空教室页面，翻页到部分教室崩溃的Bug")//
+        UpdateItems("修复 部分机型偶发多课表半屏面板不显示的Bug")//
         UpdateItems("优化 教室页面的显示","新增时间轴标注，优化不同状态下的显示",to = To.Screen(ClassroomDestination(VersionInfoDestination.key)))//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
