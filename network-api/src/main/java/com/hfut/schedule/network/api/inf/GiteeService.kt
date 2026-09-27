@@ -13,7 +13,7 @@ interface GiteeService {
     //获取更新内容
     @GET("api/v5/repos/${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}/releases")
     fun getUpdate(
-        @Query("access_token") token : String = Constant.GITEE_TOKEN,
+        @Query("access_token") token : String? = null,
         @Query("page") page : Int = 1,
         @Query("per_page") pageSize : Int = 100
     ) : Call<ResponseBody>
