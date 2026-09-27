@@ -121,7 +121,7 @@ data class ClassroomSquareWindow(
                                         )
                                         TransplantListItem(
                                             headlineContent = {
-                                                Text(bean.activityName,color = contentColor)
+                                                Text(bean.activityName ?: "无名称",color = contentColor)
                                             },
                                             overlineContent = {
                                                 Text("类型: ${cause?.description ?: bean.activityType}",color = contentColor)
@@ -137,6 +137,9 @@ data class ClassroomSquareWindow(
                                                         }
                                                         ClassroomOccupiedCause.IN_LESSON -> {
                                                             R.drawable.calendar
+                                                        }
+                                                        ClassroomOccupiedCause.OCCUPY -> {
+                                                            R.drawable.lock
                                                         }
                                                         null -> {
                                                             R.drawable.category

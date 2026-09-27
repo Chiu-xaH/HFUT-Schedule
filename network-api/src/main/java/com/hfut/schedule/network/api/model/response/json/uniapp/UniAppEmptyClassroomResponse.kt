@@ -21,7 +21,7 @@ data class UniAppEmptyClassroomLesson(
     val startTimeString : String,
     val endTimeString : String,
     val activityType : String,
-    val activityName : String,
+    val activityName : String?,
     val teacherName : String?
 )
 
@@ -31,5 +31,6 @@ enum class ClassroomOccupiedCause(
 ) {
     BORROWED("RoomBorrow","借用"),
     IN_LESSON("Lesson","上课"),
-    EXAM("Exam","考试")
+    EXAM("Exam","考试"),
+    OCCUPY("RoomOccupy","占用")
 }
