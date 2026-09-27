@@ -51,13 +51,13 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.CalendarSquareBackDropSource
+import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
-import com.hfut.schedule.ui.style.special.layerGlass
 import com.sharednav.common.helper.NoneRoundShape
-import com.xah.shader.state.ShaderState
-import com.hfut.schedule.ui.style.shader.largeStyle
+import com.kyant.backdrop.Backdrop
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
 
@@ -71,7 +71,7 @@ fun DraggableWeekButton(
     modifier: Modifier = Modifier,
     currentWeek: Long,
     key: Any?,
-    shaderState: ShaderState?,
+    shaderState: Backdrop?,
     expanded: Boolean = true,
     containerColor : Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor : Color = MaterialTheme.colorScheme.primary,
@@ -189,13 +189,8 @@ fun DraggableWeekButton(
                             .let {
                                 if(hasBackground) {
                                     it
-                                        .clip(FloatingActionButtonDefaults. extendedFabShape)
-                                        .layerGlass(
-                                            shaderState,
-                                            style = largeStyle.copy(
-                                                overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                            ),
-                                        )
+                                        .clip(FloatingActionButtonDefaults.extendedFabShape)
+                                        .calendarSquareBackDrop(shaderState, CalendarSquareBackDropSource.CONTAINER,FloatingActionButtonDefaults. extendedFabShape)
                                 } else {
                                     it
                                 }
@@ -284,11 +279,10 @@ fun DraggableWeekButton(
                                 if(hasBackground) {
                                     it
                                         .clip(MaterialTheme.shapes.small)
-                                        .layerGlass(
+                                        .calendarSquareBackDrop(
                                             shaderState,
-                                            style = largeStyle.copy(
-                                                overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                            ),
+                                            CalendarSquareBackDropSource.CONTAINER,
+                                            MaterialTheme.shapes.small,
                                         )
                                 } else {
                                     it

@@ -63,6 +63,8 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getMondayOfWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
+import com.hfut.schedule.ui.component.button.CalendarSquareBackDropSource
+import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -87,6 +89,7 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.Backdrop
 import com.xah.shader.state.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
@@ -107,7 +110,7 @@ fun ZhiJianCourseTableUI(
     studentId : String,
     today: LocalDate,
     onDateChange: (LocalDate) ->Unit,
-    backGroundHaze : ShaderState?,
+    backGroundHaze : Backdrop?,
     hazeState: HazeState,
     onSwapShowAll : (Boolean) -> Unit
 ) {
@@ -218,7 +221,6 @@ fun ZhiJianCourseTableUI(
 
     var findNewCourse by remember { mutableStateOf(false) }
 
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val height by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeight = height * 2
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
@@ -511,9 +513,11 @@ fun ZhiJianCourseTableUI(
                                     } else {
                                         it
                                             .clip(style.containerCorner)
-                                            .calendarSquareGlass(
-                                            backGroundHaze,
-                                            style.containerColor.copy(customBackgroundAlpha)
+                                            .calendarSquareBackDrop(
+                                                backGroundHaze,
+                                                CalendarSquareBackDropSource.CONTAINER,
+                                                shape = style.containerCorner,
+                                                style.containerColor
                                             )
                                     }
                                 }

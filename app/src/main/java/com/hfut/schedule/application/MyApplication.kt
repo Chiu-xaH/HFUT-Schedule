@@ -102,6 +102,7 @@ class MyApplication : Application() {
         const val CALENDAR_SQUARE_HEIGHT = 70f
         const val CALENDAR_SQUARE_TEXT_PADDING = 1.35f
         const val CALENDAR_SQUARE_ALPHA = 0.6f
+        const val CALENDAR_SQUARE_BLUR = 0.2f
         const val SWIPE = 5f
         // HAZE模糊半径
         const val BLUR_RADIUS = 20

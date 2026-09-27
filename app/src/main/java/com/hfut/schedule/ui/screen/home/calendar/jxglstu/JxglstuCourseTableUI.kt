@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.Backdrop
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.shader.state.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -138,7 +139,7 @@ fun JxglstuCourseTableUI(
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
-    backGroundHaze : ShaderState?,
+    backGroundHaze : Backdrop?,
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit,
     onSwapShowAll : (Boolean) -> Unit,

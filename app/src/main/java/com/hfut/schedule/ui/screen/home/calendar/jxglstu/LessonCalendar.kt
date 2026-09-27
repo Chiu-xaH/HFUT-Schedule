@@ -51,6 +51,8 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.CalendarSquareBackDropSource
+import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -70,6 +72,7 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.shader.state.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -146,7 +149,7 @@ fun JxglstuCourseTableTwo(
     dataSource : TotalCourseDataSource,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
-    backGroundHaze : ShaderState?,
+    backGroundHaze : Backdrop?,
     onSwapShowAll : (Boolean) -> Unit
 ) {
     val list by produceState(initialValue = emptyList(),key1 = dataSource) {
@@ -176,7 +179,7 @@ fun JxglstuCourseTableSearch(
     list : List<JxglstuLesson>,
     onDateChange: ((LocalDate) ->Unit)? = null,
     today: LocalDate? = null,
-    backGroundHaze : ShaderState? = null,
+    backGroundHaze : Backdrop? = null,
     onSwapShowAll : (Boolean) -> Unit
 ) {
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
@@ -620,9 +623,11 @@ fun JxglstuCourseTableSearch(
                                 if (!hasBackground) {
                                     it
                                 } else {
-                                    it.calendarSquareGlass(
+                                    it.calendarSquareBackDrop(
                                         backGroundHaze,
-                                        style.containerColor.copy(customBackgroundAlpha)
+                                        CalendarSquareBackDropSource.SQUARE,
+                                        style.containerCorner,
+                                        style.containerColor
                                     )
                                 }
                             }

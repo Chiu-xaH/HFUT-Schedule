@@ -200,13 +200,11 @@ fun HazeBottomBarDynamic(
 
 @Composable
 fun SpecialBottomBar(
-    shaderState : ShaderState,
+    shaderState : Backdrop,
     list : List<NavigationBarItemDataDynamic>,
     navController : NavController,
     enabled : Boolean = true,
 ) {
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-
     Column(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding()
 
     ) {
@@ -214,11 +212,10 @@ fun SpecialBottomBar(
         Box(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.large)
-                .layerGlass(
+                .calendarSquareBackDrop(
                     shaderState,
-                    style = largeStyle.copy(
-                        overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                    ),
+                    CalendarSquareBackDropSource.BOTTOM,
+                    shape = MaterialTheme.shapes.large
                 )
         ) {
             Column {

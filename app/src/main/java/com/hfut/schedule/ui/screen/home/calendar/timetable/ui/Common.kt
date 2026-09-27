@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.button.CalendarSquareBackDropSource
+import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -37,6 +39,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
+import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.shader.state.ShaderState
 import com.xah.container.component.base.sharedContainer
@@ -58,7 +61,7 @@ fun TimeTable(
     modifier: Modifier = Modifier,
     squareModifier : Modifier = Modifier,
     scaleFactor : Float = 1f,
-    shaderState : ShaderState? = null,
+    shaderState : Backdrop? = null,
     onTapBlankRegion : ((Offset) -> Unit)? = null,
     onLongTapBlankRegion : ((Offset) -> Unit)? = null,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
@@ -240,10 +243,7 @@ fun TimeTable(
                         }
                         .let {
                             if (hasBackground) {
-                                it.calendarSquareGlass(
-                                    shaderState!!,
-                                    MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                )
+                                it.calendarSquareBackDrop(shaderState!!, CalendarSquareBackDropSource.SQUARE,MaterialTheme.shapes.extraSmall)
                             } else {
                                 it
                             }
@@ -447,10 +447,7 @@ fun TimeTable(
                         }
                         .let {
                             if (hasBackground) {
-                                it.calendarSquareGlass(
-                                    shaderState!!,
-                                    MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                )
+                                it.calendarSquareBackDrop(shaderState!!, CalendarSquareBackDropSource.SQUARE,MaterialTheme.shapes.extraSmall)
                             } else {
                                 it
                             }

@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.kyant.backdrop.Backdrop
 import com.xah.shader.state.ShaderState
 
 
@@ -67,7 +68,7 @@ fun CommunityCourseTableUI(
     onDateChange : (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
-    backGroundHaze : ShaderState?,
+    backGroundHaze : Backdrop?,
 //    navController : NavHostController,
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit

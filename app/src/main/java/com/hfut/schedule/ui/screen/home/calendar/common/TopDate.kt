@@ -16,7 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,16 +32,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.button.CalendarSquareBackDropSource
+import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.CalendarStyle
-import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.shader.state.ShaderState
-import com.hfut.schedule.ui.style.shader.smallStyle
-import com.xah.common.logic.util.LogUtil
+import com.kyant.backdrop.Backdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import java.time.LocalDate
 
@@ -50,11 +46,10 @@ import java.time.LocalDate
 fun ScheduleTopDate(
     showAll: Boolean,
     today : LocalDate,
-    shaderState: ShaderState,
+    backdrop: Backdrop
 ) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
     val todayDate = DateTimeManager.Date_yyyy_MM_dd
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val style = remember(showAll) { CalendarStyle(showAll) }
     val size = style.rowCount
 
@@ -73,16 +68,7 @@ fun ScheduleTopDate(
                     modifier = Modifier
                         .padding(end = if (item == size - 1) 0.dp else style.everyPadding)
                         .clip(CircleShape)
-                        .layerGlass(
-                            shaderState,
-                            smallStyle.copy(
-                                blur = 2.dp,
-                                overlayColor = MaterialTheme.colorScheme.surface.copy(
-                                    customBackgroundAlpha
-                                )
-                            ),
-                        )
-                    ,
+                        .calendarSquareBackDrop(backdrop,CalendarSquareBackDropSource.BUTTON),
                     color = Color.Transparent
                 ) {
                     Text(

@@ -85,6 +85,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -1119,6 +1120,7 @@ fun CalendarUISettings(
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
+    val customSquareBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val useCustomBackground = customBackground != ""
@@ -1157,6 +1159,7 @@ fun CalendarUISettings(
 
 
     val activity = LocalActivity.current
+    val density = LocalDensity.current
 
     Column {
         Box {
@@ -1168,7 +1171,13 @@ fun CalendarUISettings(
                     modifier = Modifier
                         .matchParentSize()
                         .backDropSource(backdrop)
-                        .mask(MaterialTheme.colorScheme.surface.copy(customSquareAlpha)),
+                        .mask(MaterialTheme.colorScheme.surface.copy(customSquareAlpha))
+                        .blur(
+                            with(density) {
+                                (customSquareBlur*20f).toDp()
+                            }
+                        )
+                    ,
                     contentScale = ContentScale.Crop
                 )
             }
@@ -1253,6 +1262,32 @@ fun CalendarUISettings(
                 value = customSquareAlpha,
                 onValueChange = {
                     scope.launch { DataStoreManager.saveCustomSquareAlpha(it) }
+                },
+                modifier = Modifier.let {
+                    if(isTiny) it
+                    else it.padding(bottom = APP_HORIZONTAL_DP)
+                },
+                valueRange = 0f..1f,
+            )
+            if(!isTiny) {
+                PaddingHorizontalDivider()
+            }
+            TransplantListItem(
+                headlineContent = {
+                    Text("前景模糊 ${(customSquareBlur * 100).roundOffString(0)}%")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.visibility),null)
+                },
+                supportingContent = {
+                    if(!isTiny)
+                        Text(stringResource(R.string.appearance_settings_calendar_square_alpha_description))
+                }
+            )
+            CustomSlider(
+                value = customSquareBlur,
+                onValueChange = {
+                    scope.launch { DataStoreManager.saveCustomSquareBlur(it) }
                 },
                 modifier = Modifier.let {
                     if(isTiny) it

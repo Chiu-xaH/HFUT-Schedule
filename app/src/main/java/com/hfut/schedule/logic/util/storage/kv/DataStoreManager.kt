@@ -154,6 +154,7 @@ object DataStoreManager : IDataStore {
     private val CUSTOM_BACKGROUND = stringPreferencesKey("custom_background")
     private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style_2")
     private val CUSTOM_CALENDAR_SQUARE_ALPHA = floatPreferencesKey("custom_calendar_square_alpha")
+    private val CUSTOM_CALENDAR_SQUARE_BLUR = floatPreferencesKey("custom_calendar_square_blur")
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
     private val SHORTCUT_SORT = stringPreferencesKey("shortcut_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
@@ -239,6 +240,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
     suspend fun saveCustomBackground(value: String?) = saveValue(CUSTOM_BACKGROUND, value ?: EMPTY_STRING)
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
+    suspend fun saveCustomSquareBlur(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_BLUR,value)
     suspend fun saveScreenCorner(value: Float) = saveValue(SCREEN_CORNER,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
     suspend fun saveShortcutSort(value: List<String>?) = saveValue(SHORTCUT_SORT, value?.joinToString(",") ?: DataStoreManager.SHORTCUT_DEFAULT_STR)
@@ -346,6 +348,7 @@ object DataStoreManager : IDataStore {
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,MyApplication.CALENDAR_SQUARE_ALPHA)
+    val customCalendarSquareBlur = getFlow(CUSTOM_CALENDAR_SQUARE_BLUR,MyApplication.CALENDAR_SQUARE_BLUR)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemesterParser.getSemester() }
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)

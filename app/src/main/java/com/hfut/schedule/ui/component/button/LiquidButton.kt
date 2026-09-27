@@ -24,6 +24,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.kyant.backdrop.Backdrop
@@ -457,6 +460,56 @@ fun Modifier.bottomBarBackDrop(
             vibrancy()
 //            blur(10f)
             lens(value.dp.toPx(), value.dp.toPx())
+        },
+        shadow = null,
+        onDrawSurface = {
+            drawRect(color)
+        }
+    )
+}
+
+
+enum class CalendarSquareBackDropSource {
+    BUTTON,BOTTOM,SQUARE,CONTAINER
+}
+
+@Composable
+fun Modifier.calendarSquareBackDrop(
+    backdrop: Backdrop,
+    source : CalendarSquareBackDropSource,
+    shape: Shape = CircleShape,
+    overlayColor : Color = MaterialTheme.colorScheme.surface,
+) : Modifier {
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
+    val customBackgroundBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
+    val color = overlayColor.copy(customBackgroundAlpha)
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+
+    return this.drawBackdrop(
+        highlight = {
+            Highlight.Default.copy(width = 0.25.dp)
+        },
+        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+        shape = { shape },
+        effects = {
+            vibrancy()
+            // 统一调配
+            blur(20f * customBackgroundBlur)
+            when(source) {
+                CalendarSquareBackDropSource.CONTAINER -> {
+                    lens(15.dp.toPx(), 25.dp.toPx())
+                }
+                CalendarSquareBackDropSource.BOTTOM -> {
+                    lens(22.5.dp.toPx(), 22.5.dp.toPx())
+                }
+                CalendarSquareBackDropSource.BUTTON -> {
+                    lens(12.dp.toPx(), 24.dp.toPx())
+                }
+                CalendarSquareBackDropSource.SQUARE -> {
+                    // 圆角太小了，特殊处理
+                    lens(5.dp.toPx(), 25.dp.toPx(),true)
+                }
+            }
         },
         shadow = null,
         onDrawSurface = {

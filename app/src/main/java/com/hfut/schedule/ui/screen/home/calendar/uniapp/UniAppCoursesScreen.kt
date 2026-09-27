@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.kyant.backdrop.Backdrop
 import com.xah.shader.state.ShaderState
 
 
@@ -69,7 +70,7 @@ fun UniAppCoursesScreen(
     today: LocalDate,
     hazeState: HazeState,
 //    navController: NavHostController,
-    backGroundHaze : ShaderState?,
+    backGroundHaze : Backdrop?,
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
