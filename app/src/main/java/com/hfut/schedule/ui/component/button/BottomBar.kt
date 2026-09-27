@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.style.special.newBottomBarBlur
+import com.hfut.schedule.ui.util.isThemeDark
 import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.kyant.backdrop.Backdrop
@@ -268,8 +269,14 @@ fun HazeBottomBarV2(
                 aimAssist = true,
                 elevation = 0.dp,
                 itemHorizontalPadding = 0.dp,
-                indicatorBlur = 10.dp,
-                indicatorColor = MaterialTheme.colorScheme.surfaceBright.copy(.8f),
+                indicatorBlur = 2.dp,
+                indicatorColor =
+                    (
+                            if(isThemeDark())
+                                MaterialTheme.colorScheme.secondaryContainer
+                            else
+                                MaterialTheme.colorScheme.surfaceBright
+                    ).copy(.8f),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 hazeModifier = Modifier
                     .bottomBarBackDrop(backdrop, shape = shape)

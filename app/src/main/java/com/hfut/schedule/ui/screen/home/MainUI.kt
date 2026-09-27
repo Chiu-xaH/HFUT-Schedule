@@ -180,6 +180,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.newBottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.isThemeDark
 import com.hfut.schedule.ui.util.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -1018,7 +1019,13 @@ fun MainScreen(
                         val backgroundAlpha = customBackgroundAlpha.coerceIn(maxValue/2f,maxValue)
                         MaterialTheme.colorScheme.secondaryContainer.copy(backgroundAlpha)
                     } else {
-                        MaterialTheme.colorScheme.surfaceBright.copy(maxValue)
+                        (
+                                if(isThemeDark())
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                else
+                                    MaterialTheme.colorScheme.surfaceBright
+                        ).copy(maxValue)
+//                        MaterialTheme.colorScheme.surfaceBright.copy(maxValue)
                     }
                     @OptIn(ExperimentalNavigationBarApi::class)
                     NavigationBar(
@@ -1028,7 +1035,7 @@ fun MainScreen(
                         aimAssist = true,
                         elevation = 0.dp,
                         itemHorizontalPadding = 0.dp,
-                        indicatorBlur = if(useBackground) 0.dp else 10.dp,
+                        indicatorBlur = if(useBackground) 0.dp else 2.dp,
                         indicatorColor = finalColor,
                         contentColor = MaterialTheme.colorScheme.onSurface,
                         selectedContentColor = if(useBackground) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
