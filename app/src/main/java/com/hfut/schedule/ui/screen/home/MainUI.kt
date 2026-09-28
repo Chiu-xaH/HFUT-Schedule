@@ -464,7 +464,7 @@ fun MainScreen(
                             }
                         },
                         title = {
-                            Text(
+                            ScrollText(
                                 topBarText(targetPage,context),
                                 modifier = Modifier.controlCenterDrag()
                             )
@@ -632,7 +632,7 @@ fun MainScreen(
                                         .calendarSquareBackDrop(backdrop = backdrop, CalendarSquareBackDropSource.BUTTON,),
                                     color = Color.Transparent
                                 ) {
-                                    Text(
+                                    ScrollText(
                                         topBarText(CALENDAR,context),
                                         modifier = Modifier
                                             .padding(
@@ -751,7 +751,7 @@ fun MainScreen(
                         TopAppBar(
                             colors = topBarTransplantColor(),
                             title = {
-                                Text(
+                                ScrollText(
                                     topBarText(CALENDAR,context),
                                     modifier = Modifier.controlCenterDrag()
                                 )
