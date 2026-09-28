@@ -68,16 +68,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         // todo 通知公告的V2底栏适配
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
-        UpdateItems("新增 扫码支付的快捷方式",to = To.Screen(SettingsShortcutEditDestination))//
-        UpdateItems("新增 新悬浮底栏样式支持所有场景覆盖",to = To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("新增 适配一卡通支持自定义密码并适配合肥校区的默认密码",to = To.Screen(SettingsHuiXinPasswordDestination))//
-        UpdateItems("重构 课程表使用背景时的显示效果","新增 模糊度调节，位于 选项-外观-课程表方格-前景模糊",to = To.Screen(SettingsAppearanceDestination))//
-        UpdateItems("修复 录入一卡通密码完成时，二次打开输入密码弹窗的Bug")//
-        UpdateItems("修复 今日校园页面搜索时删除文字偶发崩溃的Bug")//
-        UpdateItems("修复 教室占用轴上的方格文字在部分机型显示过小的Bug")//
-        UpdateItems("修复 在空教室页面，翻页到部分教室崩溃的Bug")//
-        UpdateItems("修复 部分机型偶发多课表半屏面板不显示的Bug")//
-        UpdateItems("优化 教室页面的显示","新增时间轴标注，优化不同状态下的显示",to = To.Screen(ClassroomDestination(VersionInfoDestination.key)))//
+        UpdateItems("修复 部分基于Android 13的定制系统中预测式返回开启后返回手势出现异常的Bug")
+        UpdateItems("修复 在低于Android 13的版本下，开启动效等级2或3时，容器共享动画在返回路径时有异常偏移的Bug")//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
