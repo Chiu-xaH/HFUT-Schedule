@@ -147,7 +147,7 @@ object DataStoreManager : IDataStore {
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
     private val COURSE_BOOK = stringPreferencesKey("course_book")
     private val WEB_VIEW_DARK = booleanPreferencesKey("web_view_dark")
-    private val PREDICTIVE = booleanPreferencesKey("predictive")
+    private val PREDICTIVE = booleanPreferencesKey(if(AppVersion.sdkInt == 33) "predictive_v2" else "predictive")
     private val INFINITE_WHEEL_PICKER = booleanPreferencesKey("infinite")
     private val WX_AUTH = stringPreferencesKey("wx_auth")
     private val CUSTOM_COLOR = longPreferencesKey("custom_color")

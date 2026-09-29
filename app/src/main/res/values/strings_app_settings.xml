@@ -4,7 +4,7 @@
 
     <string name="app_settings_predictive_back_gesture_title">Predictive back gesture</string>
     <string name="app_settings_predictive_back_gesture_description_supported">When the return gesture between some interfaces of the same Activity is not released, the interface that follows the hand shrinks.</string>
-    <string name="app_settings_predictive_back_gesture_description_unsupported">Require Android 13+</string>
+    <string name="app_settings_predictive_back_gesture_description_unsupported">Require Android 14+</string>
 
     <string name="app_settings_study_interaction_title">Study interaction</string>
     <string name="app_settings_study_interaction_description">Study the gesture interaction operations within the application.</string>

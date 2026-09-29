@@ -57,7 +57,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-09-28"
+private const val RELEASE_DATE = "2026-09-29"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -66,9 +66,8 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
-        // todo 通知公告的V2底栏适配
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
-        UpdateItems("修复 部分基于Android 13的定制系统中预测式返回开启后返回手势出现异常的Bug")
+        UpdateItems("修复 Android 13预测式返回开启后返回手势出现异常的Bug")//
         UpdateItems("修复 在低于Android 13的版本下，开启动效等级2或3时，容器共享动画在返回路径时有异常偏移的Bug")//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")

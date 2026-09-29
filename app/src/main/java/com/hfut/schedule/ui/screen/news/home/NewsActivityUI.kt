@@ -93,6 +93,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -345,6 +346,7 @@ fun TotalNewsScreen(
                 }
             }
         }
+        val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
@@ -371,11 +373,11 @@ fun TotalNewsScreen(
                 page,
                 onNextPage = { page = it },
                 onPreviousPage = { page = it },
-                paddingSafely = false,
+                paddingSafely = enableNewBottomBar,
                 modifier = Modifier
                     .let {
                         innerPadding?.let { padding ->
-                            it.padding(bottom = padding.calculateBottomPadding())
+                            it.padding(bottom = padding.calculateBottomPadding()- if(enableNewBottomBar) 0.dp else navigationBarHeightPadding)
                         } ?: it
                     }
                 ,

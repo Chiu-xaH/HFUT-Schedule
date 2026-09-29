@@ -20,8 +20,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.network.api.model.Constant
 
@@ -54,6 +56,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     LaunchedEffect(page) {
         refreshNetwork()
     }
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as NetworkUiState.Success).data
@@ -63,7 +66,6 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 item { InnerPaddingHeight(innerPadding,true) }
                 items(list.size, key = { it }) { index ->
                     val item = list[index]
-//                    MyCustomCard {
                     CardListItem(
                         headlineContent = { Text(item.title) },
                         overlineContent = { Text(item.date) },
@@ -74,7 +76,6 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                             }
                         },
                     )
-//                    }
                 }
                 item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
@@ -84,9 +85,9 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 page,
                 onNextPage = { page = it },
                 onPreviousPage = { page = it },
-                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
-//                modifier = Modifier.padding(innerPadding),
-                paddingBottom = false
+                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-if(enableNewBottomBar) 0.dp else navigationBarHeightPadding),
+                paddingBottom = false,
+                paddingSafely = enableNewBottomBar
             )
         }
     }

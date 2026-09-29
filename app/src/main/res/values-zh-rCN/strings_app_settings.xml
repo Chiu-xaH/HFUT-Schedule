@@ -4,7 +4,7 @@
 
     <string name="app_settings_predictive_back_gesture_title">预测式返回手势</string>
     <string name="app_settings_predictive_back_gesture_description_supported">部分界面通过系统返回手势不松手时有跟手的效果</string>
-    <string name="app_settings_predictive_back_gesture_description_unsupported">需 Android 13+</string>
+    <string name="app_settings_predictive_back_gesture_description_unsupported">需 Android 14+</string>
 
     <string name="app_settings_study_interaction_title">交互学习</string>
     <string name="app_settings_study_interaction_description">学习应用内的手势交互操作</string>

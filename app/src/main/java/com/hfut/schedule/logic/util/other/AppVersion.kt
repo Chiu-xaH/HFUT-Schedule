@@ -73,7 +73,7 @@ object AppVersion {
     val HAZE_BLUR_FOR_S = sdkInt == 31 || sdkInt == 32
     val CAN_DYNAMIC_COLOR = sdkInt >= 31
 
-    val CAN_PREDICTIVE = sdkInt >= 33
+    val CAN_PREDICTIVE = sdkInt >= 34
     val CAN_LIVE_UPDATE = sdkInt >= 36
     val CAN_SHADER = sdkInt >= 33
 

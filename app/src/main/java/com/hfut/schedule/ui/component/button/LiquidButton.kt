@@ -52,6 +52,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.layerGlass
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
@@ -507,7 +508,7 @@ fun Modifier.calendarSquareBackDrop(
                 }
                 CalendarSquareBackDropSource.SQUARE -> {
                     // 圆角太小了，特殊处理
-                    lens(5.dp.toPx(), 25.dp.toPx(),true)
+                    lens(5.5.dp.toPx(), 25.dp.toPx(),true)
                 }
             }
         },

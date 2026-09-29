@@ -129,6 +129,7 @@ import com.hfut.schedule.ui.util.longToHexColor
 import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.parseColor
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.manager.AnimationSpecManager
 import com.xah.common.logic.util.LogUtil
@@ -1300,6 +1301,52 @@ fun CalendarUISettings(
                 },
                 valueRange = 0f..1f,
             )
+            /*
+            if(!isTiny) {
+                PaddingHorizontalDivider()
+            }
+            TransplantListItem(
+                headlineContent = {
+                    Text("RefractionHeight ${GlobalUiStateHolder.calendarSquareRefractionHeight.roundOffString(1)}")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.visibility),null)
+                },
+            )
+            CustomSlider(
+                value = GlobalUiStateHolder.calendarSquareRefractionHeight,
+                onValueChange = {
+                    GlobalUiStateHolder.calendarSquareRefractionHeight = it
+                },
+                modifier = Modifier.let {
+                    if(isTiny) it
+                    else it.padding(bottom = APP_HORIZONTAL_DP)
+                },
+                valueRange = 0f..25f,
+            )
+            if(!isTiny) {
+                PaddingHorizontalDivider()
+            }
+            TransplantListItem(
+                headlineContent = {
+                    Text("RefractionAmount ${GlobalUiStateHolder.calendarSquareRefractionAmount.roundOffString(1)}")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.visibility),null)
+                },
+            )
+            CustomSlider(
+                value = GlobalUiStateHolder.calendarSquareRefractionAmount,
+                onValueChange = {
+                    GlobalUiStateHolder.calendarSquareRefractionAmount = it
+                },
+                modifier = Modifier.let {
+                    if(isTiny) it
+                    else it.padding(bottom = APP_HORIZONTAL_DP)
+                },
+                valueRange = 0f..25f,
+            )
+             */
         }
         if(!isTiny)
             PaddingHorizontalDivider()
