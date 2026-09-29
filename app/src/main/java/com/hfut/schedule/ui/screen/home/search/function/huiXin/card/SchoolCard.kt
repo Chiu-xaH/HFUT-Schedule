@@ -1,12 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.card
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -22,26 +18,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
-import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.xah.common.ui.component.text.ScrollText
+import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
-
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.ui.component.text.ScrollText
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 
@@ -50,13 +44,6 @@ import com.xah.navigation.util.LocalNavController
 @Composable
 fun SchoolCardItem(isFromFocus : Boolean) {
     val navController = LocalNavController.current
-    val interactionSource2 = remember { MutableInteractionSource() }
-    val isPressed2 by interactionSource2.collectIsPressedAsState()
-    val scale2 = animateFloatAsState(
-        targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
     val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
     val context = LocalContext.current
@@ -68,17 +55,30 @@ fun SchoolCardItem(isFromFocus : Boolean) {
 
     val showAdd by DataStoreManager.enableShowFocusSchoolCardAddButton.collectAsState(true)
 
+    // TODO ￥¥
+    // TODO 支持自定义右侧按钮 付款码还是支付
     TransplantListItem(
         color = cardNormalColor(),
         headlineContent = {
-            ScrollText(
-                text = "￥$text",
-                color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                    if(text!!.length <= 4){
-                        MaterialTheme.colorScheme.error
-                    } else LocalContentColor.current
-                } else LocalContentColor. current
-            )
+            val color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
+                if(text!!.length <= 4) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    LocalContentColor.current
+                }
+            } else {
+                LocalContentColor.current
+            }
+            Row {
+                Text(
+                    text = "￥",
+                    color = color
+                )
+                ScrollText(
+                    text = "$text",
+                    color = color
+                )
+            }
         },
         overlineContent = {
             ScrollText(
@@ -112,10 +112,7 @@ fun SchoolCardItem(isFromFocus : Boolean) {
         trailingContent={
             if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login) && (showAdd || text!!.length <= 4)) {
                 FilledTonalIconButton(
-                    modifier = Modifier
-                        .scale(scale2.value)
-                        .size(30.dp),
-                    interactionSource = interactionSource2,
+                    modifier = Modifier.size(30.dp),
                     onClick = {
                         Starter.startAppUrl(context, Constant.ALIPAY_CARD_URL)
                     },
@@ -129,7 +126,7 @@ fun SchoolCardItem(isFromFocus : Boolean) {
         },
         modifier = Modifier
             .let {
-                if(isFromFocus) {
+                if (isFromFocus) {
                     it.sharedContainer(
                         SchoolCardDestination.key,
                         shape = NoneRoundShape.copy(
