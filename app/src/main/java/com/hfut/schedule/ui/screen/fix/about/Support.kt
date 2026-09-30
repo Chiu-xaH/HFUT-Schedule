@@ -51,7 +51,7 @@ fun Support(innerPadding : PaddingValues) {
         SupportItemBean("层级实时模糊","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
             true,true,true,true,true,true,true,true
         ),"Android 8-11 无顶栏、底栏模糊，且模糊渲染稍缓\nAndroid 12 无底栏模糊，且顶栏模糊渐变效果较差"),
-        SupportItemBean("预测式返回","Android 13+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
+        SupportItemBean("预测式返回","Android 14+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
             false,true,true,true,true,true,true,true
         )),
         SupportItemBean("16KB页大小","Android 15+","${Constant.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#16kb%E9%A1%B5%E5%A4%A7%E5%B0%8F", listOf(

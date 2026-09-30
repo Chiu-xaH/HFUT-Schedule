@@ -146,7 +146,9 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
                     },
                     modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
+                        if(AppVersion.CAN_PREDICTIVE) {
+                            scope.launch { DataStoreManager.savePredict(!enablePredictive) }
+                        }
                     }
                 )
             }
