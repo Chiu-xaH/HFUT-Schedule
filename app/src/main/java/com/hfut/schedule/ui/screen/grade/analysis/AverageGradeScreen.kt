@@ -34,9 +34,11 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
 import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -93,7 +95,7 @@ fun AverageGradeScreen(
                 },
                 actions = {
                     Row(
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                        modifier = Modifier.padding(end = BUTTON_END_PADDING)
                     ) {
                         LiquidButton(
                             enabled = roundCount > 2,

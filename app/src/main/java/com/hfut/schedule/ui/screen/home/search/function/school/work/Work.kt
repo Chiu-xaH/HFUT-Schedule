@@ -56,6 +56,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
@@ -153,7 +154,7 @@ fun WorkScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                             val url = when(campus) {
                                 CampusRegion.HEFEI -> Constant.WORK_URL
                                 CampusRegion.XUANCHENG -> Constant.WORK_XC_URL

@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -119,7 +120,7 @@ fun GradeScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                             LiquidButton(
                                 onClick = {
                                     floatingController.push(GradeRemarkWindow)

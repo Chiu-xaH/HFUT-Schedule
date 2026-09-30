@@ -46,6 +46,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.StartAppIconButton
@@ -120,7 +121,7 @@ fun StuTodayCampusScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                             StartAppIconButton(backDrop,Starter.AppPackages.TODAY_CAMPUS)
                             Spacer(Modifier.width(BUTTON_PADDING))
                             LiquidButton(

@@ -78,6 +78,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
@@ -178,7 +179,7 @@ fun SelectCourseScreen(
                     TopBarNavigationIcon()
                 },
                 actions = {
-                    Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                    Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                         LiquidButton (
                             onClick = {
                                 scope.launch{
@@ -282,7 +283,7 @@ fun SelectCourseDetailScreen(
                             courseId,
                             title
                         )
-                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                        Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                             LiquidButton(
                                 onClick = {
                                     refreshCount++

@@ -48,6 +48,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -402,7 +403,7 @@ fun ProgramCompetitionDetailScreen(
                                 SharedContainer(
                                     key = window.key,
                                     shape = CircleShape,
-                                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                                    modifier = Modifier.padding(end = BUTTON_END_PADDING),
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                                 ) {
                                     LiquidButton (

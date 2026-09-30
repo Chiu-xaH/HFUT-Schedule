@@ -65,6 +65,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -161,7 +162,7 @@ fun TransferScreen(
                     SharedContainer(
                         key = dest.key,
                         shape = CircleShape,
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        modifier = Modifier.padding(end = BUTTON_END_PADDING),
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         LiquidButton(
@@ -357,7 +358,7 @@ fun TransferDetailScreen(
                         TopBarNavigationIcon()
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                        Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                             LiquidButton(
                                 onClick = {
                                     showBottomSheet_apply = true

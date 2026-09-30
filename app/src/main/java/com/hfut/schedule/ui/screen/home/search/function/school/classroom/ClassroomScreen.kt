@@ -86,6 +86,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedExpandLiquidIconButton
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -219,7 +220,7 @@ fun ClassroomScreen(
                     actions = {
                         if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
                             Row(
-                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                                modifier = Modifier.padding(end = BUTTON_END_PADDING),
                             ) {
                                 LiquidButton(
                                     onClick = {
@@ -914,7 +915,7 @@ fun ClassroomLessonsScreen(
                         AnimatedExpandLiquidIconButton(
                             valueState = showAll,
                             onClick = { showAll = !showAll },
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            modifier = Modifier.padding(end = BUTTON_END_PADDING),
                             backdrop = backdrop
                         )
                     }

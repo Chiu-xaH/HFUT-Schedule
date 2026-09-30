@@ -50,6 +50,7 @@ import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
@@ -61,6 +62,7 @@ import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.xah.common.logic.util.safeDiv
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.util.LocalSharedRegistrySafely
 import com.xah.navigation.util.LocalNavControllerSafely
 import com.xah.shader.state.ShaderState
@@ -86,7 +88,7 @@ half4 main(float2 coord) {
 
 val BUTTON_PADDING = 6.25.dp
 
-
+val BUTTON_END_PADDING = APP_HORIZONTAL_DP- CARD_NORMAL_DP-1.dp
 @Composable
 fun LiquidButton(
     onClick: () -> Unit,

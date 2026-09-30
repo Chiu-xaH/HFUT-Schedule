@@ -14,8 +14,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.nav.destination.UpdateHistoryDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
@@ -50,7 +52,7 @@ fun VersionInfoScreen() {
                 actions = {
                     LiquidButton (
                         onClick = { navController.push(UpdateHistoryDestination) },
-                        modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                        modifier = Modifier.padding(end = BUTTON_END_PADDING),
                         backdrop = backDrop
                     ) {
                         Text("历史更新日志")

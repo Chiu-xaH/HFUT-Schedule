@@ -49,6 +49,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -153,7 +154,7 @@ fun CourseSearchScreen(
                     },
                     actions = {
                         Row(modifier = Modifier
-                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .padding(end = BUTTON_END_PADDING)
                             .animateContentSize()) {
                             val enabled = uiState is NetworkUiState.Success
 

@@ -115,6 +115,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
@@ -323,7 +324,7 @@ fun AddEventScreen(
                             onClick = {
                                 showDialog = true
                             },
-                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                            modifier = Modifier.padding(end = BUTTON_END_PADDING),
                             isCircle = true,
                             backdrop = backDrop
                         ) {

@@ -45,11 +45,13 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.LiquidTopBarNavigateIcon
 import com.hfut.schedule.ui.component.camera.ScanQrCode
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
@@ -269,7 +271,7 @@ fun ScanScreen(
                     LiquidTopBarNavigateIcon(backdrop)
                 },
                 actions = {
-                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                    Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                         LiquidButton(
                             onClick = {
                                 pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))

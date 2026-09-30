@@ -29,10 +29,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.enumeration.CardBarItems
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.SearchBillsDestination
@@ -135,7 +137,7 @@ fun CardUI(vm : NetWorkViewModel) {
                     actions = {
                         if(bottomBarItems == CardBarItems.BILLS) {
                             Row (
-                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                                modifier = Modifier.padding(end = BUTTON_END_PADDING)
                             ){
                                 LiquidButton(
                                     onClick = {

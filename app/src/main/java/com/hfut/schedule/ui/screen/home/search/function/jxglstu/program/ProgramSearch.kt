@@ -42,6 +42,7 @@ import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramDat
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -157,7 +158,7 @@ fun ProgramSearchScreen(
                     },
                     actions = {
                         LiquidButton(
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            modifier = Modifier.padding(end = BUTTON_END_PADDING),
                             onClick = {
                                 // TODO json分享
                                 showDevelopingToast()

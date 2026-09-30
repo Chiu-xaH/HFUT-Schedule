@@ -42,6 +42,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -224,7 +225,7 @@ fun ProgramScreen(
                         SharedContainer(
                             key = dest.key,
                             shape = CircleShape,
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            modifier = Modifier.padding(end = BUTTON_END_PADDING),
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
                         ) {
                             LiquidButton (

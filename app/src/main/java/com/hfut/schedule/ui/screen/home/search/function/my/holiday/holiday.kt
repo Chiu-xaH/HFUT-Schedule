@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.xah.common.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.common.ui.component.text.ScrollText
@@ -103,7 +104,7 @@ fun HolidayScreen(
                     SharedContainer(
                         key = dest.key,
                         shape = CircleShape,
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        modifier = Modifier.padding(end = BUTTON_END_PADDING),
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         LiquidButton(

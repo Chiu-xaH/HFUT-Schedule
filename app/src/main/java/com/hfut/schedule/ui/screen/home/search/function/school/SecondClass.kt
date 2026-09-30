@@ -38,8 +38,10 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.core.StatusCode
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.StartAppIconButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -121,7 +123,7 @@ fun SecondClassScreen(
                     TopBarNavigationIcon()
                 },
                 actions = {
-                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                    Row(modifier = Modifier.padding(end = BUTTON_END_PADDING)) {
                         StartAppIconButton(backDrop,Starter.AppPackages.WECHAT)
                     }
                 }

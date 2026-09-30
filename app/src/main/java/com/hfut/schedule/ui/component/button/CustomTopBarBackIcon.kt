@@ -227,7 +227,7 @@ fun TopBarNavigationIcon(
             )
     ) {
         Box(
-            modifier = Modifier.padding(DIVIDER_TEXT_VERTICAL_PADDING)
+            modifier = Modifier.padding(DIVIDER_TEXT_VERTICAL_PADDING-1.dp)
         ) {
             Icon(
                 painterResource(
@@ -262,7 +262,7 @@ fun LiquidTopBarNavigateIcon(
         },
         backdrop = backdrop,
         isCircle = true,
-        modifier = Modifier.padding(start = APP_HORIZONTAL_DP-2.5.dp, end = 9.dp)
+        modifier = Modifier.padding(start = BUTTON_END_PADDING, end = 9.dp)
     ) {
         Icon(
             painterResource(
