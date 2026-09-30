@@ -67,9 +67,9 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.SearchBillsDestination
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
-import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.SelecctDateRange
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.loginHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
@@ -84,10 +84,13 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -130,7 +133,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     var loading by remember { mutableStateOf(false) }
     // 用协程模拟一个耗时加载
     val scope = rememberCoroutineScope()
-    var states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+    val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             async {
                 refreshing = true
@@ -145,6 +148,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
         }
     })
     val context = LocalContext.current
+    val navTopController = LocalNavController.current
 
     var showBottomSheet_Range by remember { mutableStateOf(false) }
     var showBottomSheet_Search by remember { mutableStateOf(false) }
@@ -299,15 +303,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
         ) { SelecctDateRange(vm) }
     }
 
-    if (showBottomSheet_Search) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet_Search = false
-            },
-            showBottomSheet = showBottomSheet_Search
-        ) { SearchBillsUI(vm,hazeState) }
-    }
-
     if (showBottomSheet_Settings) {
         HazeBottomSheet (
             onDismissRequest = {
@@ -455,12 +450,19 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             modifier = Modifier.clickable { Starter.startAppUrl(context,Constant.ALIPAY_CARD_URL) }
                         )
                         PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text(text = "搜索") },
-                            supportingContent = { Text(text = "仅检索流水的标题")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")},
-                            modifier = Modifier.clickable { showBottomSheet_Search = true }
-                        )
+                        SharedContainer(
+                            key = SearchBillsDestination.key,
+                            shape = NoneRoundShape,
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            TransplantListItem(
+                                color = MaterialTheme.colorScheme.surface,
+                                headlineContent = { Text(text = "搜索") },
+                                supportingContent = { Text(text = "仅检索流水的标题")},
+                                leadingContent = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")},
+                                modifier = Modifier.clickable { navTopController.push(SearchBillsDestination) }
+                            )
+                        }
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "状态") },

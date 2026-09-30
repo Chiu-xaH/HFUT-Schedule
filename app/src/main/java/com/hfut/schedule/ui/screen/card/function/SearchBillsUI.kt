@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,15 +27,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.xah.common.ui.style.align.CenterScreen
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.EmptyIcon
@@ -42,16 +49,30 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeBarItems
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.ui.style.align.RowHorizontal
+import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
+fun SearchBillsUI(vm : NetWorkViewModel) {
+    val hazeState = rememberHazeBlur()
+    val backdrop = rememberLayerBackdrop()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     var input by remember { mutableStateOf("") }
     var currentPage by remember { mutableIntStateOf(1) }
     var startUse by remember { mutableStateOf(false) }
@@ -74,30 +95,38 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
 
     val scope = rememberCoroutineScope()
 
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var infoNum by remember { mutableStateOf<HuiXinBillRecord?>(null) }
+
+    if(showBottomSheet && infoNum != null) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            showBottomSheet = showBottomSheet,
+        ){
+            BillsInfo(infoNum!!)
+        }
+    }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            HazeBottomSheetTopBar("流水搜索")
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ){
-            RowHorizontal {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
-                    value = input,
-                    onValueChange = {
-                        input = it
+            Column(
+                modifier = Modifier.topBarBlur(hazeState)
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = {
+                        Text("账单搜索")
                     },
-                    label = { Text("检索标题") },
-                    singleLine = true,
+                    navigationIcon = {
+                        TopBarNavigationIcon()
+                    },
+                )
+                CustomTextField(
+                    modifier = Modifier
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                        .containerBackDrop(backdrop, MaterialTheme.shapes.medium),
                     trailingIcon = {
                         IconButton(
                             onClick = {
@@ -109,58 +138,56 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
                             )
                         }
                     },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = textFiledTransplant(),
-                )
-            }
-
-            var showBottomSheet by remember { mutableStateOf(false) }
-            var infoNum by remember { mutableStateOf<HuiXinBillRecord?>(null) }
-
-            if(showBottomSheet && infoNum != null) {
-                HazeBottomSheet (
-                    onDismissRequest = { showBottomSheet = false },
-//                    isFullScreen = false,
-                    showBottomSheet = showBottomSheet,
-                ){
-                    BillsInfo(infoNum!!)
+                    colors = textFiledAllTransplant(),
+                    input = input,
+                    label = { Text("检索标题") },
+                ) {
+                    input = it
                 }
             }
-
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .backDropSource(backdrop)
+        ){
             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-                if(!startUse) startUse = true
+                if(!startUse) {
+                    startUse = true
+                }
 
                 val response = (uiState as NetworkUiState.Success).data
                 val list = response.records
-                list.let {
-                    if(it.isEmpty()) {
-                        CenterScreen { EmptyIcon() }
-                    } else {
-                        val listState = rememberLazyListState()
-                        Box {
-                            LazyColumn(state = listState) {
-                                items(list.size, key = { it }) { index ->
-                                    val item = list[index]
-                                    var name = item.resume
-                                    if (name.contains("有限公司")) name = name.replace("有限公司","")
-                                    CardListItem(
-                                        headlineContent = { Text(text = name) },
-                                        supportingContent = { Text(text = processTranamt(item))},
-                                        overlineContent = { Text(text = "交易 " + item.jndatetimeStr + "\n入账 " + item.effectdateStr)},
-                                        leadingContent = { BillsIcons(name) },
-                                        modifier = Modifier.clickable {
-                                            infoNum = item
-                                            showBottomSheet = true
-                                        }
-                                    )
-                                }
-                                item { PaddingForPageControllerButton() }
+                if(list.isEmpty()) {
+                    CenterScreen {
+                        EmptyIcon()
+                    }
+                } else {
+                    val listState = rememberLazyListState()
+                    Box {
+                        LazyColumn(state = listState) {
+                            item { InnerPaddingHeight(innerPadding,true) }
+                            items(list.size, key = { list[it].orderId }) { index ->
+                                val item = list[index]
+                                val name = item.resume.replace("有限公司", "")
+                                CardListItem(
+                                    headlineContent = { Text(text = name) },
+                                    supportingContent = { Text(text = processTranamt(item)) },
+                                    overlineContent = { Text(text = "交易 " + item.jndatetimeStr + "\n入账 " + item.effectdateStr) },
+                                    leadingContent = { BillsIcons(name) },
+                                    modifier = Modifier.clickable {
+                                        infoNum = item
+                                        showBottomSheet = true
+                                    }
+                                )
                             }
-                            PageController(listState,currentPage, onNextPage = { currentPage = it }, onPreviousPage = { currentPage = it })
+                            item { PaddingForPageControllerButton() }
+                            item { InnerPaddingHeight(innerPadding,false) }
                         }
+                        PageController(listState,currentPage, onNextPage = { currentPage = it }, onPreviousPage = { currentPage = it })
                     }
                 }
-
             }
         }
     }

@@ -12,63 +12,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.UpdateHistoryDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
-
-import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun VersionInfoScreen(vm : NetWorkViewModel) {
+fun VersionInfoScreen() {
+    val navController = LocalNavController.current
     val hazeState = rememberHazeBlur()
-
-    var showBottomSheetUpdate by remember { mutableStateOf(false) }
-
-    if(showBottomSheetUpdate) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheetUpdate = false },
-            showBottomSheet = showBottomSheetUpdate,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("历史更新日志")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    UpdateContents(vm)
-                }
-            }
-        }
-    }
     val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (
@@ -84,7 +49,7 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
                 },
                 actions = {
                     LiquidButton (
-                        onClick = { showBottomSheetUpdate = true },
+                        onClick = { navController.push(UpdateHistoryDestination) },
                         modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
                         backdrop = backDrop
                     ) {
@@ -106,5 +71,4 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
             InnerPaddingHeight(innerPadding,false)
         }
     }
-//    }
 }

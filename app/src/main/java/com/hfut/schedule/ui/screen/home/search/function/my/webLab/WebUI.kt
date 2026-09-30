@@ -128,41 +128,6 @@ fun WebUI() {
         }
     )
 }
-// TODO
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Schools(vm : NetWorkViewModel) {
-    var showBottomSheet_School by remember { mutableStateOf(false) }
-
-    if (showBottomSheet_School) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_School = false },
-            showBottomSheet = showBottomSheet_School
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("学院")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    SchoolsUI(vm,null)
-                }
-            }
-        }
-    }
-
-    FilledTonalButton(
-        onClick = { showBottomSheet_School = true }
-    ) {
-        Text(text = "学院集锦")
-    }
-}
 
 fun isValidWebUrl(url: String, strict : Boolean = false): Boolean {
     val checkUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {

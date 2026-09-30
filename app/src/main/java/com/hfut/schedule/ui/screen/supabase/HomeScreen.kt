@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -168,22 +169,22 @@ fun SupabaseHome(vm : NetWorkViewModel) {
                     .hazeSource(state = hazeState)
                     .backDropSource(backdrop)
             ) {
-                composable(SupabaseScreen.HOME.name) {
+                nav2Composable(SupabaseScreen.HOME.name) {
                     Scaffold {
                         SupabaseHomeScreen(vm,sortType,sortReversed,innerPadding,pagerState)
                     }
                 }
-                composable(SupabaseScreen.ME.name) {
+                nav2Composable(SupabaseScreen.ME.name) {
                     Scaffold {
                         SupabaseMeScreenRefresh(vm,innerPadding)
                     }
                 }
-                composable(SupabaseScreen.STORAGE.name) {
+                nav2Composable(SupabaseScreen.STORAGE.name) {
                     Scaffold {
                         SupabaseStorageScreen(innerPadding,hazeState)
                     }
                 }
-                composable(SupabaseScreen.SETTINGS.name) {
+                nav2Composable(SupabaseScreen.SETTINGS.name) {
                     Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         SupabaseSettingsScreen(vm,innerPadding,hazeState)
                     }

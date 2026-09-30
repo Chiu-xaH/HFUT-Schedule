@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,30 +29,29 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.enumeration.CardBarItems
-import com.hfut.schedule.ui.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
-import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.model.NavigationBarItemData
+import com.hfut.schedule.ui.nav.destination.SearchBillsDestination
 import com.hfut.schedule.ui.screen.card.bill.main.BillScreen
 import com.hfut.schedule.ui.screen.card.count.BillAnalysisScreen
-import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.main.CardHomeScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.navigation.anim.effect.RollTransitionEffect
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -117,22 +115,11 @@ fun CardUI(vm : NetWorkViewModel) {
             launch { refresh = true }
         }
     }
-
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
-    if (showBottomSheet_Search) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet_Search = false
-            },
-            showBottomSheet = showBottomSheet_Search
-        ) { SearchBillsUI(vm,hazeState) }
-    }
-
-
     var sorted by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     val context = LocalActivity.current
+    val navTopController = LocalNavController.current
     Scaffold(
 //        modifier = Modifier.fillMaxSize(),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -152,7 +139,7 @@ fun CardUI(vm : NetWorkViewModel) {
                             ){
                                 LiquidButton(
                                     onClick = {
-                                        showBottomSheet_Search = true
+                                        navTopController.push(SearchBillsDestination, effect = RollTransitionEffect())
                                     },
                                     backdrop = backdrop,
                                     isCircle = true,
@@ -191,21 +178,19 @@ fun CardUI(vm : NetWorkViewModel) {
             },
             modifier = Modifier
                 .backDropSource(backdrop)
-                .hazeSource(
-                    state = hazeState
-                )
+                .hazeSource(hazeState)
         ) {
-            composable(CardBarItems.HOME.name) {
+            nav2Composable(CardBarItems.HOME.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     CardHomeScreen(innerPadding,vm,navController,hazeState)
                 }
             }
-            composable(CardBarItems.BILLS.name) {
+            nav2Composable(CardBarItems.BILLS.name) {
                 Scaffold {
                     BillScreen(vm,innerPadding, hazeState,sorted)
                 }
             }
-            composable(CardBarItems.COUNT.name) {
+            nav2Composable(CardBarItems.COUNT.name) {
                 Scaffold {
                     BillAnalysisScreen(innerPadding,vm,pagerState,hazeState)
                 }

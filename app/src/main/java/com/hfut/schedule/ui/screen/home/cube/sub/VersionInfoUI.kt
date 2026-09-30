@@ -67,6 +67,7 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
+        UpdateItems("优化 若干页面适配新转场动画体系")//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
@@ -84,7 +85,7 @@ fun VersionInfo() {
 //            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
 //            UpdateItems("新增 适配若干二级界面为新的转场动画")
-        // TODO 一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
+        // TODO 一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
         // TODO WebView适配新库 [P2]
         // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
 //            UpdateItems("翻页器底部自动展开、中间隐藏")

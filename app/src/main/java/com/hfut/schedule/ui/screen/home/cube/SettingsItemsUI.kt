@@ -8,6 +8,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,13 +17,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +54,8 @@ import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -59,14 +69,20 @@ import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsNetworkDestination
 import com.hfut.schedule.ui.nav.destination.SettingsSearchDestination
+import com.hfut.schedule.ui.nav.destination.UpdateHistoryDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
+import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.UpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.common.ui.component.text.BottomTip
@@ -74,8 +90,10 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 
 /* 本kt文件已完成多语言文案适配 */
@@ -216,7 +234,9 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
 
     val showUpdate = update != null
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.surfaceContainer)) {
         LazyColumn {
             item { InnerPaddingHeight(innerPaddings,true) }
             item {
@@ -297,8 +317,11 @@ fun GithubDownloadUI() {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateContents(vm : NetWorkViewModel) {
+    val hazeState = rememberHazeBlur()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val uiState by vm.githubFolderResp.state.collectAsState()
     val refreshNetwork = suspend {
@@ -312,33 +335,60 @@ fun UpdateContents(vm : NetWorkViewModel) {
         refreshNetwork()
     }
     val scope = rememberCoroutineScope()
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as NetworkUiState.Success).data.sortedBy {
-            val tinyList = it.name.split(".")
-            val v1 = tinyList[0].toInt()
-            val v2 = tinyList[1].toInt()
-            v1 * 1000 + v2
-        }.reversed()
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP*2),
+
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(UpdateHistoryDestination.title.asString()) },
+                navigationIcon = {
+                    TopBarNavigationIcon()
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState)
         ) {
-            items(list.size, key = { it }) { index ->
-                val item = list[index]
-                with(item) {
-                    val versionName = name.replace(".md","")
-                    SmallCard (
-//                        color = cardNormalColor(),
-                        modifier = Modifier.padding(CARD_NORMAL_DP)
-                    ) {
-                        TransplantListItem(
-                            headlineContent = { Text("v$versionName") },
-                            modifier = Modifier.clickable {
-                                scope.launch {
-                                    Starter.startWebUrlInner(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
-                                }
+            CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                val list = remember(uiState) {
+                    (uiState as NetworkUiState.Success).data.sortedBy {
+                        val tinyList = it.name.split(".")
+                        val v1 = tinyList[0].toInt()
+                        val v2 = tinyList[1].toInt()
+                        v1 * 1000 + v2
+                    }.reversed()
+                }
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP*2),
+                ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        InnerPaddingHeight(innerPadding,true)
+                    }
+                    items(list.size, key = { it }) { index ->
+                        val item = list[index]
+                        with(item) {
+                            val versionName = name.replace(".md","")
+                            SmallCard (
+                                modifier = Modifier.padding(CARD_NORMAL_DP)
+                            ) {
+                                TransplantListItem(
+                                    headlineContent = { Text("v$versionName") },
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            Starter.startWebUrlInner(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                        }
+                                    }
+                                )
                             }
-                        )
+                        }
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        InnerPaddingHeight(innerPadding,false)
                     }
                 }
             }

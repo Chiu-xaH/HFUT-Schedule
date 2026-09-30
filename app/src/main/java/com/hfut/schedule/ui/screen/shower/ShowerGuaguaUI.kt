@@ -30,6 +30,7 @@ import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -91,18 +92,17 @@ fun ShowerGuaGua(vm : NetWorkViewModel) {
                 )
                 .backDropSource(backdrop)
         ) {
-            composable(ShowerBarItems.HOME.name) {
+            nav2Composable(ShowerBarItems.HOME.name) {
                 Scaffold {
                     GuaguaStart(innerPadding,vm, hazeState = hazeState)
                 }
             }
-            composable(ShowerBarItems.BILLS.name) {
+            nav2Composable(ShowerBarItems.BILLS.name) {
                 Scaffold {
                     GuaguaBills(innerPadding,vm)
                 }
-
             }
-            composable(ShowerBarItems.FUNCTION.name) {
+            nav2Composable(ShowerBarItems.FUNCTION.name) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
                     GuaGuaSettings(innerPadding)
                 }

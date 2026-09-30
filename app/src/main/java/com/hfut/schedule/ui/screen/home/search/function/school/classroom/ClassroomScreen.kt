@@ -449,20 +449,7 @@ private fun EmptyClassroomScreen(
         refreshNetworkItems()
     }
     val isToday = DateTimeManager.Date_yyyy_MM_dd == date
-
-//    val occupyList = remember { ClassroomOccupiedCause.entries }
     val floatingController = LocalFloatingController.current
-//    var showDialog by remember { mutableStateOf(false) }
-//    var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
-//    var title by remember { mutableStateOf("占用详情") }
-//    if(showDialog && info != null) {
-//        HazeBottomSheet (
-//            showBottomSheet = showDialog,
-//            onDismissRequest = { showDialog = false },
-//        ) {
-//
-//        }
-//    }
     var currentTime by remember { mutableFloatStateOf(currentTimeInMinutes()) }
 
     // 整分钟对齐刷新
