@@ -54,6 +54,8 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsType
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
 import com.hfut.schedule.network.api.util.WebVpnConvertor
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
@@ -129,45 +131,15 @@ fun NewsScreen(
     val scope = rememberCoroutineScope()
     val newsTitles = listOf("总","宣城校区")
     val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        val cookies by produceState<String?>(initialValue = null) {
-            value = getWebVpnCookie()
-        }
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet
-        ) {
-            Column(){
-                HazeBottomSheetTopBar("选择校区", isPaddingStatusBar = false)
-
-                CardListItem(
-                    headlineContent = {
-                        Text("宣城校区教务处")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            autoWebVpnForNews(context,Constant.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
-                        }
-                    }
-                )
-                CardListItem(
-                    headlineContent = {
-                        Text("总教务处")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            Starter.startWebUrlInner(context,Constant.ACADEMIC_URL, title = "总教务处", cookie = cookies)
-                        }
-                    }
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-        }
-    }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword) }
+
+    val academicTotalTitles = remember { AcademicNewsType.entries.map { it.title } }
+    val academicTotalPageState = rememberPagerState(pageCount = { academicTotalTitles.size })
+
+    val academicXuanChengTitles = remember { AcademicNewsXuanChengType.entries.map { it.title } }
+    val academicXuanChengPageState = rememberPagerState(pageCount = { academicXuanChengTitles.size })
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -181,19 +153,6 @@ fun NewsScreen(
                     title = { Text(NewsDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
-                    },
-                    actions = {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            if (targetPage == NewsBarItems.Academic) {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        showBottomSheet = true
-                                    }
-                                ) {
-                                    Icon(painterResource(R.drawable.net), null)
-                                }
-                            }
-                        }
                     }
                 )
                 if (targetPage != NewsBarItems.School) {
@@ -201,6 +160,22 @@ fun NewsScreen(
                         pagerState = newsPagerState,
                         titles = newsTitles
                     )
+                }
+                if (targetPage == NewsBarItems.Academic) {
+                    when(newsPagerState.currentPage) {
+                        TAB_TOTAL -> {
+                            CustomTabRow(
+                                pagerState = academicTotalPageState,
+                                titles = academicTotalTitles
+                            )
+                        }
+                        TAB_XC -> {
+                            CustomTabRow(
+                                pagerState = academicXuanChengPageState,
+                                titles = academicXuanChengTitles
+                            )
+                        }
+                    }
                 }
                 if(targetPage == NewsBarItems.News && newsPagerState.currentPage == TAB_TOTAL) {
                     Row(
@@ -257,7 +232,7 @@ fun NewsScreen(
                 NewsScreenMini(innerPadding,vm,newsPagerState,input)
             }
             nav2Composable(NewsBarItems.Academic.name) {
-                AcademicScreen(innerPadding,vm,newsPagerState)
+                AcademicScreen(innerPadding,vm,newsPagerState,academicTotalPageState,academicXuanChengPageState)
             }
             nav2Composable(NewsBarItems.School.name) {
                 SchoolsUI(vm,innerPadding)
@@ -278,11 +253,11 @@ fun NewsScreenMini(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState
     }
 }
 @Composable
-fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState) {
+fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState,academicTotalPageState : PagerState,academicXuanChengPageState : PagerState) {
     HorizontalPager(state = pagerState) { page ->
         when(page) {
-            TAB_TOTAL -> AcademicTotalScreen(innerPadding,vm)
-            TAB_XC -> AcademicXCScreen(innerPadding,vm)
+            TAB_TOTAL -> AcademicTotalScreen(innerPadding,vm,academicTotalPageState)
+            TAB_XC -> AcademicXCScreen(innerPadding,vm,academicXuanChengPageState)
         }
     }
 }

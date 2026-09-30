@@ -2,14 +2,13 @@ package com.hfut.schedule.ui.screen.news.academic
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,34 +22,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
-import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.network.api.model.Constant
-
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-   
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import kotlinx.coroutines.launch
-
-//private const val TAB_TEACHING = 0
-//private const val TAB_IETP = 1
-//    ...
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
-    val titles = AcademicNewsXuanChengType.entries.map { it.title }
-    val pagerState = rememberPagerState(pageCount = { titles.size })
+fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState) {
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.academicXCResp.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
@@ -65,59 +54,50 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     LaunchedEffect(page,pagerState.currentPage) {
         refreshNetwork()
     }
-    Column {
-        InnerPaddingHeight(innerPadding,true)
-        CustomTabRow(
-            pagerState = pagerState,
-            titles = titles
-        )
-        HorizontalPager(state = pagerState) { pagerPage ->
-            CommonNetworkScreen(uiState, onReload = {
-                page = 1
-                refreshNetwork()
-            }) {
-                val list = (uiState as NetworkUiState.Success).data
-                val listState = rememberLazyListState()
-                Box(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(state = listState) {
-                        items(list.size, key = { it }) { index ->
-                            val item = list[index]
-                            CardListItem(
-                                headlineContent = { Text(item.title) },
-                                overlineContent = { Text(item.date) },
-                                leadingContent = { Text((index+1).toString()) },
-                                modifier = Modifier.clickable {
-                                    scope.launch {
-                                        val link = if (isValidWebUrl(item.link)) {
-                                            item.link
-                                        } else {
-                                            Constant.XC_ACADEMIC_URL + item.link
-                                        }
-                                        autoWebVpnForNews(
-                                            context,
-                                            link,
-                                            item.title,
-                                            cookie = cookies
-                                        )
+    HorizontalPager(state = pagerState) { pagerPage ->
+        CommonNetworkScreen(uiState, onReload = {
+            page = 1
+            refreshNetwork()
+        }) {
+            val list = (uiState as NetworkUiState.Success).data
+            val listState = rememberLazyListState()
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(state = listState) {
+                    item { InnerPaddingHeight(innerPadding,true) }
+                    items(list.size, key = { it }) { index ->
+                        val item = list[index]
+                        CardListItem(
+                            headlineContent = { Text(item.title) },
+                            overlineContent = { Text(item.date) },
+                            leadingContent = { Text((index+1).toString()) },
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    val link = if (isValidWebUrl(item.link)) {
+                                        item.link
+                                    } else {
+                                        Constant.XC_ACADEMIC_URL + item.link
                                     }
-                                },
-                            )
-                        }
-                        item { InnerPaddingHeight(innerPadding,false) }
-                        item { PaddingForPageControllerButton() }
+                                    autoWebVpnForNews(
+                                        context,
+                                        link,
+                                        item.title,
+                                        cookie = cookies
+                                    )
+                                }
+                            },
+                        )
                     }
-                    PageController(
-                        listState,
-                        page,
-                        onNextPage = { page = it },
-                        onPreviousPage = { page = it },
-                        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
-
-                    )
+                    item { InnerPaddingHeight(innerPadding,false) }
+                    item { PaddingForPageControllerButton() }
                 }
+                PageController(
+                    listState,
+                    page,
+                    onNextPage = { page = it },
+                    onPreviousPage = { page = it },
+                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
+                )
             }
         }
     }
-
-
 }
