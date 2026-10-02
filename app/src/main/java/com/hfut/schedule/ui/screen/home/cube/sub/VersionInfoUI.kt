@@ -67,6 +67,8 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
+        UpdateItems("修复 部分带小组的培养方案发生崩溃的Bug")//
+        UpdateItems("优化 本地平均成绩的计算方法","支持折算0绩点的项目")
         UpdateItems("优化 若干页面适配新转场动画体系")//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")

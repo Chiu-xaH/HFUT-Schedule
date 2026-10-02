@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 
@@ -44,17 +45,19 @@ fun StackedBarChart(
     colors: List<Color>? = null,
     barHeight: Float = 24f,
 ) {
-    if (data.isEmpty()) {
+    val positiveData = data.filter { it.value > 0f }
+    if (positiveData.isEmpty()) {
         return
     }
 
-    val total = data.sumOf { it.value.toDouble() }.toFloat()
+
+    val total = positiveData.sumOf { it.value.toDouble() }.toFloat()
     if (total == 0f) {
         return
     }
 
-    val segmentColors = colors ?: remember(baseColor, data.size) {
-        generateStackedColors(baseColor, data.size)
+    val segmentColors = colors ?: remember(baseColor, positiveData.size) {
+        generateStackedColors(baseColor, positiveData.size)
     }
 
     ColumnVertical(modifier = modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -65,8 +68,8 @@ fun StackedBarChart(
                 .height(barHeight.dp),
             horizontalArrangement = Arrangement.Start
         ) {
-            data.forEachIndexed { index, entry ->
-                val ratio = entry.value / total
+            positiveData.forEachIndexed { index, entry ->
+                val ratio = entry.value safeDiv total
                 Box(
                     modifier = Modifier
                         .weight(ratio, fill = true)
@@ -76,8 +79,8 @@ fun StackedBarChart(
                             shape = RoundedCornerShape(
                                 topStart = if (index == 0) shape.topStart else NoneRoundShape.topStart,
                                 bottomStart = if (index == 0) shape.bottomStart else NoneRoundShape.bottomStart,
-                                topEnd = if (index == data.lastIndex) shape.topEnd else NoneRoundShape.topEnd,
-                                bottomEnd = if (index == data.lastIndex) shape.bottomEnd else NoneRoundShape.bottomEnd,
+                                topEnd = if (index == positiveData.lastIndex) shape.topEnd else NoneRoundShape.topEnd,
+                                bottomEnd = if (index == positiveData.lastIndex) shape.bottomEnd else NoneRoundShape.bottomEnd,
                             )
                         ),
                     contentAlignment = Alignment.Center
@@ -141,13 +144,15 @@ private fun generateStackedColors(
     baseColor: Color,
     count: Int
 ): List<Color> {
-    if (count <= 0) return emptyList()
+    if (count <= 0) {
+        return emptyList()
+    }
 
     val minAlpha = 0.35f
     val maxAlpha = 1f
 
     return List(count) { index ->
-        val fraction = index.toFloat() / (count - 1).coerceAtLeast(1)
+        val fraction = index.toFloat() safeDiv (count - 1).coerceAtLeast(1)
         val alpha = maxAlpha - (maxAlpha - minAlpha) * fraction
         baseColor.copy(alpha = alpha)
     }
