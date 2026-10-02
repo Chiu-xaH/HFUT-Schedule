@@ -1,7 +1,7 @@
 # 基于Tessesact5训练的图片验证码识别模型
 
 
-爬取1000张验证码图片，先用[基础模型](https://github.com/tesseract-ocr/tessdata_best/blob/main/eng.traineddata)粗标注，挑出350张，训练出模型，然后用次模型对剩余样本进行标注，此时准确率已经很高了，最后将1000+样本全部用于训练，得到最终模型
+爬取1000张验证码图片，先用[基础模型](https://github.com/tesseract-ocr/tessdata_best/blob/dev/eng.traineddata)粗标注，挑出350张，训练出模型，然后用次模型对剩余样本进行标注，此时准确率已经很高了，最后将1000+样本全部用于训练，得到最终模型
 
 combine_tessdata -u /usr/share/tesseract-ocr/5/tessdata/eng.traineddata ./data/eng/eng.
 

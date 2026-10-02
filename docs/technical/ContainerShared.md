@@ -1,2 +1,2 @@
 # 转SharedNav查看
-https://github.com/Chiu-xaH/SharedNav/blob/main/v2/docs/Doc.md
+https://github.com/Chiu-xaH/SharedNav/blob/dev/v2/docs/Doc.md

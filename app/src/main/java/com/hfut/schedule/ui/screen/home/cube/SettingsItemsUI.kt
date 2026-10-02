@@ -381,7 +381,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                                     headlineContent = { Text("v$versionName") },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebUrlInner(context,"${Constant.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                            Starter.startWebUrlInner(context,"${Constant.GITHUB_REPO_URL}/blob/dev/docs/update/${name}",versionName,null,R.drawable.github)
                                         }
                                     }
                                 )
