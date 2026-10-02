@@ -102,6 +102,7 @@ import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -854,4 +855,4 @@ private fun SearchScreenLibrary(
 }
 
 
-fun String.removeHtmlTags(): String = this.replace("<[^>]*>".toRegex() , "")
+fun String.removeHtmlTags(): String = this.remove("<[^>]*>".toRegex())

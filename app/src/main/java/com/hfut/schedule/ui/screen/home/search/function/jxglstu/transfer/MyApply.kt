@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
@@ -282,7 +283,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
                         if(examSchedule != null) {
                             TransplantListItem(
-                                headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
+                                headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").remove("。")) },
                                 supportingContent = { Text(examSchedule.time) },
                                 overlineContent = { Text("笔试安排") }
                             )

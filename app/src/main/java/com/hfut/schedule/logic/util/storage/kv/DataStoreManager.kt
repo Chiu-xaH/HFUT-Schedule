@@ -206,6 +206,7 @@ object DataStoreManager : IDataStore {
     private val NEW_BOTTOM_BAR = booleanPreferencesKey("new_bottom_bar")
     private val NEW_BOTTOM_BAR_SAFELY_PADDING = booleanPreferencesKey("new_bottom_bar_safely_padding")
     private val SHOW_CALENDAR_TIME_LINE = booleanPreferencesKey("show_calendar_time_line")
+    private val UNJOINED_GRADE_ITEMS = stringPreferencesKey("unjoined_grade_items")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -245,6 +246,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
     suspend fun saveShortcutSort(value: List<String>?) = saveValue(SHORTCUT_SORT, value?.joinToString(",") ?: DataStoreManager.SHORTCUT_DEFAULT_STR)
     suspend fun saveReadNotifications(value: List<Int>) = saveValue(READ_NOTIFICATIONS, value.joinToString(","))
+    suspend fun saveUnjoinedGrades(value: List<String>) = saveValue(UNJOINED_GRADE_ITEMS, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
     private suspend fun saveHefeiBuildingNumber(value: String) = saveValue(HEFEI_BUILDING_NUMBER, value)
@@ -345,6 +347,7 @@ object DataStoreManager : IDataStore {
     val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)
     val shortcutSort = getFlow(SHORTCUT_SORT, SHORTCUT_DEFAULT_STR)
     val readNotifications = getFlow(READ_NOTIFICATIONS, EMPTY_STRING)
+    val unjoinedGradeItems = getFlow(UNJOINED_GRADE_ITEMS, EMPTY_STRING)
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,MyApplication.CALENDAR_SQUARE_ALPHA)

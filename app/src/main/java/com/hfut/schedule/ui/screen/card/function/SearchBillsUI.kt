@@ -59,6 +59,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.logic.model.HuiXinBillRecord
+import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -73,7 +75,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     var currentPage by remember { mutableIntStateOf(1) }
     var startUse by remember { mutableStateOf(false) }
 
@@ -170,7 +172,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                             item { InnerPaddingHeight(innerPadding,true) }
                             items(list.size, key = { list[it].orderId }) { index ->
                                 val item = list[index]
-                                val name = item.resume.replace("有限公司", "")
+                                val name = item.resume.remove("有限公司")
                                 CardListItem(
                                     headlineContent = { Text(text = name) },
                                     supportingContent = { Text(text = processTranamt(item)) },

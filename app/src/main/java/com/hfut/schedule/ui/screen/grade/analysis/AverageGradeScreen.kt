@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.grade.analysis
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Switch
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,7 +45,9 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
@@ -81,6 +86,7 @@ fun AverageGradeScreen(
     val scope = rememberCoroutineScope()
     val backDrop = rememberLayerBackdrop()
     var roundCount by rememberSaveable() { mutableIntStateOf(2) }
+    val unjoinedGradeItems by DataStoreManager.unjoinedGradeItems.collectAsState("")
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -258,24 +264,28 @@ fun AverageGradeScreen(
                             }
                         }
                         item {
-                            DividerText("不参与计算的项目")
+                            DividerText("参与计算的项目")
                         }
-                        items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
-                            val item = unJoinedList[index]
+                        if(unJoinedList.isEmpty()) {
+                            item { EmptyIcon() }
+                        } else {
+                            items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
+                                val item = unJoinedList[index]
 
-                            CardListItem(
-                                headlineContent = {
-                                    Text(item.courseName)
-                                },
-                                overlineContent = {
-                                    Text(item.lessonCode)
-                                },
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.article),null)
-                                }
-                            )
+                                CardListItem(
+                                    headlineContent = {
+                                        Text(item.courseName)
+                                    },
+                                    overlineContent = {
+                                        Text(item.lessonCode)
+                                    },
+                                    leadingContent = {
+                                        Icon(painterResource(R.drawable.article),null)
+                                    }
+                                )
+                            }
+                            item { BottomTip("如有误判请反馈以完善成绩算法") }
                         }
-                        item { BottomTip("如有误判请反馈以完善成绩算法") }
                         item {
                             InnerPaddingHeight(innerPadding,false)
                         }

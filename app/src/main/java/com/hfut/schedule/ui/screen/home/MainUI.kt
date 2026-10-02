@@ -201,6 +201,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -1548,7 +1549,7 @@ private fun ZhiJianSearchBar(
                         Button(
                             onClick = {
                                 scope.launch {
-                                    if(inputName.isEmpty() || inputName.isBlank()) {
+                                    if(inputName.isEmptyOrBlank()) {
                                         showToast("空名")
                                         return@launch
                                     }

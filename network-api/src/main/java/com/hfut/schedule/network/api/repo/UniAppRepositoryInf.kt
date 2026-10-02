@@ -11,6 +11,7 @@ import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramDat
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchData
 import com.xah.common.logic.model.Campus
 import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.util.EMPTY_STRING
 
 interface UniAppRepositoryInf {
     suspend fun login() : Boolean
@@ -29,7 +30,7 @@ interface UniAppRepositoryInf {
     suspend fun searchPrograms(
         token : String,
         page : Int ,
-        keyword : String = "",
+        keyword : String = EMPTY_STRING,
         holder : UiStateHolder<List<UniAppProgramSearchData>>
     )
     suspend fun getProgramById(

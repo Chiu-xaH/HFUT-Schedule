@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.isEmptyOrBlank
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
@@ -137,7 +138,7 @@ fun WorkScreen(
     var input by remember { mutableStateOf("") }
     val refreshNetwork: suspend (Int,Int) -> Unit =  { currentPage,page ->
         vm.workSearchResult.clear()
-        vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
+        vm.searchWorks(keyword = input.let { if(it.isEmptyOrBlank()) null else it }, page = currentPage, type = page,campus)
     }
     val context = LocalContext.current
     Scaffold (
@@ -215,7 +216,7 @@ fun WorkScreen(
                     trailingIcon = { IconButton(
                         onClick = { scope.launch { refreshNetwork(1,pagerState.currentPage) } }
                     ) { Icon(painterResource(R.drawable.search),null) } },
-//                    leadingIcon = if(!(input.isEmpty() || input.isBlank())) {
+//                    leadingIcon = if(!(input.isEmpty() || input.isEmptyOrBlank())) {
 //                        {
 //                            IconButton(
 //                                onClick = {
@@ -262,7 +263,7 @@ private fun WorkSearchUI(
         var currentPage by remember { mutableIntStateOf(1) }
 //        val refreshNetwork: suspend () -> Unit =  {
 //            vm.workSearchResult.clear()
-//            vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
+//            vm.searchWorks(keyword = input.let { if(it.isEmptyOrBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
 //        }
 
         LaunchedEffect(currentPage,campus) {

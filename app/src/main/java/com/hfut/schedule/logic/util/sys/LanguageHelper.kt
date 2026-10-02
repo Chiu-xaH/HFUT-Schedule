@@ -6,6 +6,7 @@ import androidx.core.os.LocaleListCompat
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.enumeration.Language
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isEmptyOrBlank
 
 object LanguageHelper {
     private fun getCurrentAppLanguageTag(context: Context): String? {
@@ -19,7 +20,7 @@ object LanguageHelper {
     fun isEnglishLanguage(context: Context = MyApplication.context): Boolean  = getCurrentAppLanguageTag(context) == "en"
 
     private fun setAppLanguage(languageTag: String) {
-        val locales = if (languageTag.isBlank()) {
+        val locales = if (languageTag.isEmptyOrBlank()) {
             // 跟随系统
             LocaleListCompat.getEmptyLocaleList()
         } else {

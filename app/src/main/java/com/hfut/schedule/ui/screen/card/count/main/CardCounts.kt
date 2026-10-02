@@ -62,6 +62,8 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.remove
 
 private fun withoutMonthBills(originalList : List<HuiXinMonthBill>) : List<HuiXinMonthBill> {
     val list = originalList.toMutableList()
@@ -69,7 +71,7 @@ private fun withoutMonthBills(originalList : List<HuiXinMonthBill>) : List<HuiXi
     while (iterator.hasNext()) {
         val billMonth = iterator.next()
         if(DateTimeManager.Date_yyyy_MM == billMonth.date.substring(0,7)) {
-            if(DateTimeManager.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
+            if(DateTimeManager.Date_MM_dd.remove("-").toInt() < billMonth.date.substringAfter("-").remove("-").toInt()) {
                 iterator.remove() // 使用迭代器删除元素
             }
         }
@@ -86,7 +88,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     var year by remember { mutableStateOf(DateTimeManager.Date_yyyy) }
     val uiState by vm.huiXinMonthBillResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val auth = SharedPrefs.prefs.getString("auth","")
+        val auth = SharedPrefs.prefs.getString("auth",EMPTY_STRING)
         val input = "$year-" + parseTimeItem(month)
         vm.huiXinMonthBillResult.clear()
         vm.getMonthBills("bearer $auth", input)

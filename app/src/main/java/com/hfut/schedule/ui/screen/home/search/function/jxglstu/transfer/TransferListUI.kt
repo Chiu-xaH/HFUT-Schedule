@@ -106,6 +106,7 @@ import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import com.xah.shader.state.rememberShaderState
@@ -595,7 +596,7 @@ private fun TransferUI(
         val response = (uiState as NetworkUiState.Success).data
         val list = response.data
             .let {
-                if(input.isEmpty() || input.isBlank()) {
+                if(input.isEmptyOrBlank()) {
                     it
                 } else {
                     it.filter { item ->

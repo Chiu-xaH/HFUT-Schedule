@@ -1,5 +1,7 @@
 package com.xah.common.ui.util;
 
+import static com.xah.common.logic.util.StringHelperKt.EMPTY_STRING;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -98,7 +100,7 @@ public class VectorDrawableCreator {
                 );
             }
         } catch (Exception e) {
-            LogUtil.INSTANCE.error(e, "");
+            LogUtil.INSTANCE.error(e, EMPTY_STRING);
         }
         return null;
     }

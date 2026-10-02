@@ -29,6 +29,7 @@ import com.hfut.schedule.ui.model.ColorStyle
 import com.hfut.schedule.ui.util.deepen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.rememberDynamicColorScheme
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.color.TransparentSystemBars
 
 private val list = ColorStyle.entries
@@ -153,7 +154,7 @@ fun rememberAnimatedColorScheme(
             durationMillis = durationMillis,
             easing = FastOutSlowInEasing
         ),
-        label = ""
+        label = EMPTY_STRING
     ).value
     return if(enableLowPerformance) {
         ColorScheme(

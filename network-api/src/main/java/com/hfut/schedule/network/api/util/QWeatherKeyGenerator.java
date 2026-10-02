@@ -1,5 +1,7 @@
 package com.hfut.schedule.network.api.util;
 
+import static com.xah.common.logic.util.StringHelperKt.EMPTY_STRING;
+
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
@@ -25,8 +27,8 @@ public class QWeatherKeyGenerator {
             throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         byte[] privateKeyBytes = Base64.getDecoder().decode(
                 privalKey.trim()
-                        .replace("-----BEGIN PRIVATE KEY-----", "")
-                        .replace("-----END PRIVATE KEY-----", "")
+                        .replace("-----BEGIN PRIVATE KEY-----", EMPTY_STRING)
+                        .replace("-----END PRIVATE KEY-----", EMPTY_STRING)
         );
         PKCS8EncodedKeySpec encoded = new PKCS8EncodedKeySpec(privateKeyBytes);
         PrivateKey privateKey = new EdDSAPrivateKey(encoded);

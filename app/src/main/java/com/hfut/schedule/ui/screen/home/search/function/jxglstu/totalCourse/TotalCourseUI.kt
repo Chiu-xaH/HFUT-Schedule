@@ -96,6 +96,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -154,7 +155,7 @@ fun CourseTotalUI(
 
     val sortList =  list
         .filter {
-            input.isBlank() || it.course.nameZh.contains(input) || it.course.courseType.nameZh.contains(input) || it.openDepartment.nameZh.contains(input) || it.code.contains(input) ||( it.remark?.contains(input) == true)
+            input.isEmptyOrBlank() || it.course.nameZh.contains(input) || it.course.courseType.nameZh.contains(input) || it.openDepartment.nameZh.contains(input) || it.code.contains(input) ||( it.remark?.contains(input) == true)
         }
         .let { filtered ->
             if (sortType) {
@@ -529,12 +530,12 @@ fun DetailItems(
         }
         item {
             courseBookData[lessons.course.id]?.let {
-                val t1 : String? = if(it.textbook.isEmpty() || it.textbook.isBlank()) {
+                val t1 : String? = if(it.textbook.isEmptyOrBlank()) {
                     null
                 } else {
                     "基本教材: " + it.textbook.replace("<br/>"," ").replace("<br>"," ")
                 }
-                val t2 : String? = if(it.specialTextbook.isEmpty() || it.specialTextbook.isBlank()) {
+                val t2 : String? = if(it.specialTextbook.isEmptyOrBlank()) {
                     null
                 } else {
                     "辅助教材: " + it.specialTextbook.replace("<br/>"," ").replace("<br>"," ")

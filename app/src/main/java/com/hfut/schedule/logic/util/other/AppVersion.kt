@@ -7,6 +7,7 @@ import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
 import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import java.io.ByteArrayInputStream
 import java.security.MessageDigest
 import java.security.cert.CertificateFactory
@@ -96,7 +97,7 @@ object AppVersion {
                 pm.getPackageInfo(appPackageName, PackageManager.GET_SIGNATURES).signatures
             } ?: return false
 
-            val expected = SIGN_SHA_256.replace(":", "").uppercase()
+            val expected = SIGN_SHA_256.remove(":").uppercase()
             val digest = MessageDigest.getInstance("SHA-256")
 
             signatures.any { sig ->

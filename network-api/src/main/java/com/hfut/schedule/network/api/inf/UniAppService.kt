@@ -3,6 +3,7 @@ package com.hfut.schedule.network.api.inf
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.request.uniapp.UniAppEmptyClassroomRequest
 import com.hfut.schedule.network.api.model.request.uniapp.UniAppSearchProgramRequest
+import com.xah.common.logic.util.EMPTY_STRING
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -65,7 +66,7 @@ interface UniAppService {
     @GET("eams-micro-server/api/v1/room/place/building")
     fun getBuildings(
         @Header("Authorization") auth : String,
-        @Query("campusAssoc") campusAssoc : String = "",
+        @Query("campusAssoc") campusAssoc : String = EMPTY_STRING,
     ) : Call<ResponseBody>
     // 空教室
     @POST("eams-micro-server/api/v1/room/place/rooms")

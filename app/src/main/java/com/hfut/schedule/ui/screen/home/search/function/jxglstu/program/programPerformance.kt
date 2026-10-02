@@ -90,6 +90,7 @@ import com.sharednav.common.helper.NoneRoundShape
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -540,7 +541,7 @@ private fun PerformanceInfo(
                                 }
                             ) {
                                 TransplantListItem(
-                                    headlineContent = { Text(text = item.nameZh.replace("&nbsp;","") ) },
+                                    headlineContent = { Text(text = item.nameZh.remove("&nbsp;") ) },
                                     supportingContent = {
                                         if(type == JxglstuProgramCompetitionType.FAILED || type == JxglstuProgramCompetitionType.PASSED) {
                                             Text(text =

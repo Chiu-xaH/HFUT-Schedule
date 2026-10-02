@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.theme.pureMaskColor
 import com.hfut.schedule.ui.util.loadBitmap
 import com.hfut.schedule.ui.util.pickColorFromTop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.color.TransparentSystemBars
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -64,8 +65,8 @@ object TestDestination : NavDestination() {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val backdrop = rememberLayerBackdrop()
 
-        val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-        val useCustomBackground = customBackground != ""
+        val customBackground by DataStoreManager.customBackground.collectAsState(initial = EMPTY_STRING)
+        val useCustomBackground = customBackground != EMPTY_STRING
         val pureMaskColor = pureMaskColor()
         var inFullScreen by remember { mutableStateOf(false) }
         var downDrag by remember { mutableFloatStateOf(0f) }

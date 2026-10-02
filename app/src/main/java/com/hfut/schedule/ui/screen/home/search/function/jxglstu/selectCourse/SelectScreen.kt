@@ -115,6 +115,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
@@ -565,7 +566,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     val uiState by vm.selectCourseInfoData.state.collectAsState()
     val list = (uiState as NetworkUiState.Success).data
         .let {
-            if(search.isEmpty() || search.isBlank()) {
+            if(search.isEmptyOrBlank()) {
                 it
             } else {
                 it.filter { item ->

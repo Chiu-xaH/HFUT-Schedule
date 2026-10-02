@@ -28,6 +28,8 @@ import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.isEmptyOrBlank
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
@@ -57,11 +59,11 @@ fun SchoolsUI(vm : NetWorkViewModel,innerPadding : PaddingValues? = null) {
                 val icon = departmentIcon(title)
                 val subTitle = if (title.contains("（")) {
                     title.substringAfter("（").let {
-                        if(it.isEmpty() || it.isBlank()) {
+                        if(it.isEmptyOrBlank()) {
                             null
                         } else {
                             title = title.substringBefore("（")
-                            it.replace("）", "")
+                            it.remove("）")
                         }
                     }
                 } else {

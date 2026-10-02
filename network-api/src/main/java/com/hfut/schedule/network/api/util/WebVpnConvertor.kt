@@ -1,6 +1,7 @@
 package com.hfut.schedule.network.api.util
 
 import com.hfut.schedule.network.api.model.Constant
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -15,7 +16,7 @@ object WebVpnConvertor {
         val ivSpec = IvParameterSpec(keyAndIv)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
         val encrypted = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
-        return encrypted.joinToString("") { "%02x".format(it) }
+        return encrypted.joinToString(EMPTY_STRING) { "%02x".format(it) }
     }
 
     private fun getPlaintext(ciphertext: String): String {
@@ -36,11 +37,11 @@ object WebVpnConvertor {
         val hostParts = addr.split("/")
         val hostPort = hostParts[0]
         val domain = hostPort.split(":")[0]
-        val port = if (":" in hostPort) "-" + hostPort.split(":")[1] else ""
+        val port = if (":" in hostPort) "-" + hostPort.split(":")[1] else EMPTY_STRING
         val cph = getCiphertext(domain)
         val path = hostParts.drop(1).joinToString("/")
 
-        val keyHex = keyAndIv.joinToString("") { "%02x".format(it) }
+        val keyHex = keyAndIv.joinToString(EMPTY_STRING) { "%02x".format(it) }
 
         Constant.WEBVPN_URL + "$protocol$port/$keyHex$cph/$path"
     } catch (e : Exception) {

@@ -1,6 +1,7 @@
 package com.hfut.schedule.network.api.inf
 
 import com.hfut.schedule.network.api.model.Constant
+import com.xah.common.logic.util.EMPTY_STRING
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -11,7 +12,7 @@ interface OfficeHallService {
     fun search(
         @Query("code") code : String = "PC_SH_v2_ANO",
         @Query("returnType") type : Int = 4,
-        @Query("name") name : String = "",
+        @Query("name") name : String = EMPTY_STRING,
         @Query("current") page : Int,
         @Query("size") pageSize : Int = Constant.DEFAULT_PAGE_SIZE
     ) : Call<ResponseBody>

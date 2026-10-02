@@ -70,12 +70,12 @@ object LogUtil {
 
     private var minLevel: Level = if (BuildConfig.DEBUG) Level.VERBOSE else Level.WARN
 
-    fun verbose(msg : String = "") = baseLog(Level.VERBOSE,msg)
-    fun info(msg : String = "") = baseLog(Level.INFO,msg)
-    fun debug(msg : String = "") = baseLog(Level.DEBUG,msg)
-    fun warn(msg : String = "") = baseLog(Level.WARN,msg)
-    fun error(throwable: Throwable,msg : String = "") = baseLog(Level.ERROR,msg,throwable)
-    fun error(msg : String = "") = baseLog(Level.ERROR,msg)
+    fun verbose(msg : String = EMPTY_STRING) = baseLog(Level.VERBOSE,msg)
+    fun info(msg : String = EMPTY_STRING) = baseLog(Level.INFO,msg)
+    fun debug(msg : String = EMPTY_STRING) = baseLog(Level.DEBUG,msg)
+    fun warn(msg : String = EMPTY_STRING) = baseLog(Level.WARN,msg)
+    fun error(throwable: Throwable,msg : String = EMPTY_STRING) = baseLog(Level.ERROR,msg,throwable)
+    fun error(msg : String = EMPTY_STRING) = baseLog(Level.ERROR,msg)
 
     private fun findCaller(): StackTraceElement? {
         val stack = Thread.currentThread().stackTrace
@@ -101,7 +101,7 @@ object LogUtil {
         }
 
         val element = findCaller()
-        val text = if(element == null) msg else "(${element.fileName}:${element.lineNumber}) ${element.methodName}()${if(msg.isEmpty()) "" else " : $msg"}"
+        val text = if(element == null) msg else "(${element.fileName}:${element.lineNumber}) ${element.methodName}()${if(msg.isEmpty()) EMPTY_STRING else " : $msg"}"
 
         throwable?.let { addToCache(it) }
 

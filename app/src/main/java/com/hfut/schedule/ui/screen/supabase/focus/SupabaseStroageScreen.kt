@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
@@ -81,7 +82,7 @@ fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
 @Composable
 private fun CustomItem(item : CustomEventDTO, hazeState: HazeState, activity: Activity, refresh : () -> Unit) {
     val dateTime = item.dateTime
-    val nowTimeNum = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
+    val nowTimeNum = DateTimeManager.Date_yyyy_MM_dd.remove("-").toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
     CustomItemUI(
         item,

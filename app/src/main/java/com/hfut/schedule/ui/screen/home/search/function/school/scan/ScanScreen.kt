@@ -65,6 +65,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isEmptyOrBlank
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -78,7 +79,7 @@ fun ScanScreen(
     var resultText by remember { mutableStateOf("") }
     val context = LocalContext.current
     val activity = LocalActivity.current
-    val showTip = resultText.isEmpty() || resultText.isBlank()
+    val showTip = resultText.isEmptyOrBlank()
     val scope = rememberCoroutineScope()
     val pickMultipleMedia = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()

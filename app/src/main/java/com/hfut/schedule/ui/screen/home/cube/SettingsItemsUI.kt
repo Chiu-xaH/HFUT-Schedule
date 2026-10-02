@@ -90,6 +90,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
@@ -372,7 +373,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                     items(list.size, key = { it }) { index ->
                         val item = list[index]
                         with(item) {
-                            val versionName = name.replace(".md","")
+                            val versionName = name.remove(".md")
                             SmallCard (
                                 modifier = Modifier.padding(CARD_NORMAL_DP)
                             ) {

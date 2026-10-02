@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.calendar.common
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -115,7 +116,7 @@ fun String.simplifyPlace() : String {
         // 尾括号（）去掉
         .substringBefore("（")
         // 对宣城校区建筑进行过滤
-        .replace("学堂", "")
+        .remove("学堂")
         .replace("电子电气楼","电气楼")
         .replace("大学生活动中心","大活")
         .replace("综合实验楼","实验楼")

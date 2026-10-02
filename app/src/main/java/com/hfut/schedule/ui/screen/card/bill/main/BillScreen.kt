@@ -52,6 +52,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -63,7 +65,7 @@ import java.math.BigDecimal
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState : HazeState,sorted : Boolean) {
-    val auth = prefs.getString("auth","")
+    val auth = prefs.getString("auth",EMPTY_STRING)
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.huiXinBillResult.state.collectAsState()
     val refreshNetwork : suspend () -> Unit = refreshNetwork@ {
@@ -117,7 +119,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState :
                     item { CardRow(vm, hazeState) }
                 items(list.size, key = { list[it].orderId }) { item ->
                     val bills = list[item]
-                    val name = bills.resume.replace("有限公司","")
+                    val name = bills.resume.remove("有限公司")
 
                     val paidTime =bills.jndatetimeStr
                     val finalTime = bills.effectdateStr
@@ -128,7 +130,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, hazeState :
                         CardListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
-                            overlineContent = { Text(text = (if(sorted) paidTime else finalTime )  + (if(delay) " (延迟入账)" else "")) },
+                            overlineContent = { Text(text = (if(sorted) paidTime else finalTime )  + (if(delay) " (延迟入账)" else EMPTY_STRING)) },
                             leadingContent = { BillsIcons(name) },
                             color =
                                 if(DateTimeManager.Date_yyyy_MM_dd == paidDate || DateTimeManager.Date_yyyy_MM_dd == finalDate)

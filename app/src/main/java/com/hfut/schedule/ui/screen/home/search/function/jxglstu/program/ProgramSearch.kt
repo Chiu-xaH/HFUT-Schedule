@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.isNullOrEmptyOrBlank
 import com.xah.common.ui.component.chart.StackedBarChart
 import com.xah.common.ui.component.chart.StackedBarData
 
@@ -95,7 +96,7 @@ fun ProgramSearchScreen(
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork: suspend () -> Unit = m@ {
-        if(jwt == null || jwt!!.isEmpty() || jwt!!.isBlank()) {
+        if(jwt.isNullOrEmptyOrBlank()) {
             return@m
         }
         vm.searchProgramsResp.clear()
@@ -254,7 +255,7 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, id : Int, ifSaved: Boolean, 
     val uiState by vm.getProgramByIdResp.state.collectAsState()
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)
     val refreshNetwork: suspend () -> Unit = m@ {
-        if(jwt == null || jwt!!.isEmpty() || jwt!!.isBlank()) {
+        if(jwt.isNullOrEmptyOrBlank()) {
             return@m
         }
         vm.getProgramByIdResp.clear()

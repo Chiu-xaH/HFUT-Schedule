@@ -29,6 +29,7 @@ import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.align.CenterScreen
 
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -60,7 +61,7 @@ fun TeacherListUI(
             items(dataList.size) { index->
                 val item = dataList[index]
                 item.let {
-                    val department = it.department.replace("&nbsp;","").filterDepartmentName()
+                    val department = it.department.remove("&nbsp;").filterDepartmentName()
                     val icon = departmentIcon(department)
                     val jobList = listOf(it.job,it.tutor ,it.doctorTutor).filter { it.isNotEmpty() && it.isNotBlank() }
                     CardListItem(
@@ -82,7 +83,7 @@ fun TeacherListUI(
                             DepartmentIcons(department)
                         },
                         supportingContent = {
-                            Text(jobList.toString().replace("[","").replace("]",""))
+                            Text(jobList.toString().remove("[").remove("]"))
                         },
                         modifier = Modifier.clickable {
                             scope.launch {

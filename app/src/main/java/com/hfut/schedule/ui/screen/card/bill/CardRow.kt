@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.model.HuiXinBillRecord
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
@@ -131,8 +132,7 @@ fun TodayBills(vm: NetWorkViewModel) {
 @Composable
 fun TodayCount(item : HuiXinBillRecord,onClick : () -> Unit) = with(item) {
 
-    var name = resume
-    if (name.contains("有限公司")) name = name.replace("有限公司","")
+    val name = resume.remove("有限公司")
 
     val time = effectdateStr
     val getTime = time.substringBefore(" ")

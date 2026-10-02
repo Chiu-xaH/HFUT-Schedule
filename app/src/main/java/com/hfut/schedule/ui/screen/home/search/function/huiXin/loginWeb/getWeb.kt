@@ -11,6 +11,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isEmptyOrBlank
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -19,7 +20,7 @@ import org.json.JSONObject
 suspend fun getXwxPsk() : String? = withContext(Dispatchers.IO) {
     return@withContext try {
         val psk = DataStoreManager.xwxPassword.first()
-        if(psk.isEmpty() || psk.isBlank()) {
+        if(psk.isEmptyOrBlank()) {
             val defaultPsk = getPersonInfo().chineseID?.takeLast(6)
             defaultPsk?.let { DataStoreManager.saveXwxPassword(it) }
             defaultPsk

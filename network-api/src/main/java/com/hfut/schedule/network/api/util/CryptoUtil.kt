@@ -2,7 +2,9 @@ package com.hfut.schedule.network.api.util
 
 import android.util.Base64
 import com.hfut.schedule.network.api.model.Constant
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.spec.X509EncodedKeySpec
@@ -17,7 +19,7 @@ object CryptoUtil {
         val chars = "0123456789abcdefghijklmnopqrstuvwxyz"
         return (1..32)
             .map { chars[Random.nextInt(chars.length)] }
-            .joinToString("")
+            .joinToString(EMPTY_STRING)
     }
 
     @JvmStatic
@@ -127,7 +129,7 @@ object CryptoUtil {
 
     @JvmStatic
     fun generateRandomHexString(): String {
-        var result = ""
+        var result = EMPTY_STRING
         repeat(16) {
             val randomHex = (0..15).random().toString(16) // 生成随机16进制数
             result += randomHex
@@ -168,7 +170,7 @@ object CryptoUtil {
 
     @JvmStatic
     fun getSupabasePublicKey() : String =
-        encodeToBase64("{\"alg\":\"HS256\",\"typ\":\"JWT\"}").replace("=","") +
-                "." +encodeToBase64("{\"iss\":\"supabase\",\"ref\":\"uadgxvstybecnhqemxvj\",\"role\":\"anon\",\"iat\":1744637621,\"exp\":2060213621}").replace("=","") + "." +
+        encodeToBase64("{\"alg\":\"HS256\",\"typ\":\"JWT\"}").remove("=") +
+                "." +encodeToBase64("{\"iss\":\"supabase\",\"ref\":\"uadgxvstybecnhqemxvj\",\"role\":\"anon\",\"iat\":1744637621,\"exp\":2060213621}").remove("=") + "." +
                 decryptXiaoWuXing("KyeSUi9QTi1x6PYvq5W/kvSs6LWMdvq1/7cGFYlElE7ewQ7JMV1PjTZw+nfShdGb")
 }

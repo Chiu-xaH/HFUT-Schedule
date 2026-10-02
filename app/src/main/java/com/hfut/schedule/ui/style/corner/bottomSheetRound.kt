@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +31,7 @@ fun bottomSheetRound(sheetState: SheetState, autoShape : Boolean = true) : Shape
 @OptIn(ExperimentalMaterial3Api::class)
 private fun roundDp(sheetState : SheetState) : Float {
     val dpAnimation by animateFloatAsState(
-        targetValue = if (sheetState.currentValue != SheetValue.Expanded) 0f else 1f, label = ""
+        targetValue = if (sheetState.currentValue != SheetValue.Expanded) 0f else 1f, label = EMPTY_STRING
         ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
     return dpAnimation

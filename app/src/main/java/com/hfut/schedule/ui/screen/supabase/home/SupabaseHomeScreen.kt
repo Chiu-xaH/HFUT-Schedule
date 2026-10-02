@@ -76,6 +76,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCa
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.isEmptyOrBlank
+import com.xah.common.logic.util.remove
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -152,8 +154,8 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
             (
                     it.applicableClasses.toString().contains(getPersonInfo().className!!) ||
                             it.applicableClasses.contains("EMPTY") ||
-                            it.applicableClasses.toString().replace("[","").replace("]","").let { t ->
-                                t.isBlank() || t.isEmpty() || t == "EMPTY"
+                            it.applicableClasses.toString().remove("[").remove("]").let { t ->
+                                t.isEmptyOrBlank() || t == "EMPTY"
                             }
             ) && // 自己校区
                     (it.campus == getEventCampus() || it.campus == EventCampus.DEFAULT)
@@ -338,8 +340,8 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                                         EventCampus.HEFEI -> "合肥校区"
                                     }) },
                                     supportingContent = {
-                                        var t = item.applicableClasses.toString().replace("[","").replace("]","")
-                                        if(t.isBlank() || t.isEmpty() || t == "EMPTY") t = "所有人可见"
+                                        var t = item.applicableClasses.toString().remove("[").remove("]")
+                                        if(t.isEmptyOrBlank() || t == "EMPTY") t = "所有人可见"
                                         Text(t)
                                     },
                                     leadingContent = {

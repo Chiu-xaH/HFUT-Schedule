@@ -98,6 +98,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -536,8 +537,8 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
                             if(Result.contains("剩余金额")){
                                 Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
-                                Result2 = Result2.replace(":","")
-                                Result = Result.substringBefore("剩余金额").replace(":","")
+                                Result2 = Result2.remove(":")
+                                Result = Result.substringBefore("剩余金额").remove(":")
                                 show = true
 
                             } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
@@ -783,7 +784,7 @@ fun ElectricHefei(
                         val isBuilding = getBuildingStr(buildingCode,campus).startsWith(buildingStr)
                         if(isBuilding) {
                             // 判断区域
-                            val isRegion = name.endsWith(typeCode!!.description) || name.endsWith(typeCode!!.description.replace("楼",""))
+                            val isRegion = name.endsWith(typeCode!!.description) || name.endsWith(typeCode!!.description.remove("楼"))
                             isRegion
                         } else {
                             false

@@ -1,6 +1,7 @@
 package com.hfut.schedule.network.api.inf
 
 import com.hfut.schedule.network.api.model.Constant
+import com.xah.common.logic.util.EMPTY_STRING
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -47,6 +48,6 @@ interface AdmissionService {
     )
     fun getToken(
         @Field("n") count : Int = 1,
-        @Header("Cookie") cookie : String = ""
+        @Header("Cookie") cookie : String = EMPTY_STRING
     ) : Call<ResponseBody>
 }

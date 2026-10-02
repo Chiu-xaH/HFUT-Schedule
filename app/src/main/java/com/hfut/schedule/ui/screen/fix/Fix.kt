@@ -24,6 +24,7 @@ import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 
@@ -50,7 +51,7 @@ fun Fix(vm : NetWorkViewModel) {
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(painterResource(R.drawable.arrow_back), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(R.drawable.arrow_back), contentDescription = EMPTY_STRING, tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )

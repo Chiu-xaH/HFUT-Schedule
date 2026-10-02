@@ -85,6 +85,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -110,7 +111,7 @@ fun ScheduleItem(listItem : GithubIoSchedule, isFuture: Boolean, activity : Acti
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
-        val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
+        val nowTime = DateTimeManager.Date_yyyy_MM_dd.remove("-").toLong()
 
 
         if(!isFuture) {
@@ -189,7 +190,7 @@ fun NetCourseItem(listItem : GithubIoSchedule, isFuture: Boolean, activity: Acti
             val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
-            val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
+            val nowTime = DateTimeManager.Date_yyyy_MM_dd.remove("-").toLong()
 
 
             if(isFuture) {
@@ -373,7 +374,7 @@ fun CustomItem(
     refresh : () -> Unit
 ) {
     val dateTime = item.dateTime
-    val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
+    val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.remove("-") + DateTimeManager.Time_HH_MM.remove(":")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
     val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
     val isOutOfDate = nowTimeNum > endNum

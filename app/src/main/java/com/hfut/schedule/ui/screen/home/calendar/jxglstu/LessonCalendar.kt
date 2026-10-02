@@ -85,6 +85,8 @@ import com.xah.container.model.ContainerFilledStrategy
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isEmptyOrBlank
+import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -830,11 +832,16 @@ private fun parseWeekday(text: String): Int = when (text) {
 // 解析 1~3(双),5~9周 为list(1,2,3,5,6,7,8,9)
 private fun parseWeek(text: String) : List<Int> {
     // 去掉括号及其中的内容
-    val cleaned = text.replace(Regex("[(（][^)）]*[)）]"), "")
+    val cleaned = text.remove(Regex("[(（][^)）]*[)）]"))
         .let {
-            if (it.endsWith("周")) it.dropLast(1) else it
+            if (it.endsWith("周"))
+                it.dropLast(1)
+            else
+                it
         }
-    if (cleaned.isBlank()) return emptyList()
+    if (cleaned.isEmptyOrBlank()) {
+        return emptyList()
+    }
 
     val textList = cleaned.split(",")
     return textList.flatMap { part ->

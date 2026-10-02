@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
@@ -130,7 +131,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
         DividerTextExpandedWith("设置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text(if(jwt.isEmpty() || jwt.isBlank()) "注册/登录" else "刷新登陆状态") },
+                    headlineContent = { Text(if(jwt.isEmptyOrBlank()) "注册/登录" else "刷新登陆状态") },
                     leadingContent = { Icon(painterResource(R.drawable.login), null) },
                     modifier = Modifier.clickable {
                         navController.push(SupabaseLoginDestination, effect = JumpTransitionEffectWallpaper())

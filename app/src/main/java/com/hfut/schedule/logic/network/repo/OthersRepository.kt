@@ -53,6 +53,7 @@ import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.util.remove
 import org.jsoup.Jsoup
 import java.time.LocalDate
 
@@ -380,7 +381,7 @@ object OthersRepository : OthersRepositoryInf {
             // 第一个可见 td 带 rowspan => 星期分组列
             var cells = tds
             if (tds.first().hasAttr("rowspan")) {
-                dayGroup = tds.first().text().trim().replace("\u00a0", "")
+                dayGroup = tds.first().text().trim().remove("\u00a0")
                 cells = tds.drop(1)
             }
             if (cells.size < 6) continue // 防御：结构异常的行跳过
@@ -389,7 +390,7 @@ object OthersRepository : OthersRepositoryInf {
             busList += Bus(
                 place = cells[2].text().trim(),
                 count = cells[4].text().trim().toIntOrNull() ?: 0,
-                week = dayGroup.replace(" ","").trim(),
+                week = dayGroup.remove(" ").trim(),
                 time = cells[1].text().trim(),
                 from = fromTo.getOrElse(0) { "" },
                 to = fromTo.getOrElse(1) { cells[0].text().trim() },

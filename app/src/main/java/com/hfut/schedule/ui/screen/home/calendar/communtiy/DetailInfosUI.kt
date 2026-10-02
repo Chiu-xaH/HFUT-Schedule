@@ -52,6 +52,7 @@ import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -107,7 +108,7 @@ fun DetailInfos(sheet : CommunityCourseDetail, isFriend : Boolean = false) {
                         )
                         TransplantListItem(
                             headlineContent = { Text("周 ${sheet.week} 第 ${sheet.section} 节" ) },
-                            supportingContent = { Text(text = "周数 ${sheet.weekCount.toString().replace("[","").replace("]","")} ")},
+                            supportingContent = { Text(text = "周数 ${sheet.weekCount.toString().remove("[").remove("]")} ")},
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.calendar),

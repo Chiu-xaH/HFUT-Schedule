@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.align.ColumnVertical
 import kotlinx.coroutines.delay
@@ -44,7 +45,7 @@ fun LoadingUI(
     var isLarge by remember { mutableStateOf(true) }
     val scale by animateFloatAsState(
         targetValue = if (isLarge) 1f else 0.7f,
-        animationSpec = tween(durationMillis = time), label = ""
+        animationSpec = tween(durationMillis = time), label = EMPTY_STRING
     )
 
     LaunchedEffect(Unit) {

@@ -30,6 +30,7 @@ import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.model.CampusRegion.HEFEI
 import com.xah.common.logic.model.CampusRegion.XUANCHENG
 import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.util.remove
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -157,7 +158,7 @@ object GithubRepository : GithubRepositoryInf {
         val list = data.assets.filter {
             it.name.endsWith(".apk") || it.name.endsWith(".patch")
         }
-        val versionName = data.name.replace("HFUT-Schedule ","")
+        val versionName = data.name.remove("HFUT-Schedule ")
         GiteeReleaseResponse(versionName,data.body,list)
     } catch (e : Exception) { throw e }
 

@@ -103,6 +103,7 @@ import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -189,7 +190,7 @@ fun WebNavigationScreen(
                                         showToast("不合理链接")
                                         return@launch
                                     }
-                                    if(inputName.isEmpty() || inputName.isBlank()) {
+                                    if(inputName.isEmptyOrBlank()) {
                                         showToast("空名")
                                         return@launch
                                     }
@@ -301,7 +302,7 @@ fun WebNavigationScreen(
                                                 context,
                                                 url = input,
                                                 title = getPureUrl(input),
-                                                cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
+                                                cookie = inputCookies.let { if(it.isEmptyOrBlank()) null else it }
                                             )
                                         }
                                     },

@@ -62,6 +62,7 @@ import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -198,9 +199,9 @@ private fun ExamItems(item : Int,status : Boolean) {
 fun JxglstuExamUI(item : JxglstuExam, status : Boolean) {
     //时隔一年修补这里的Bug
     val newDate = DateTimeManager.Date_yyyy_MM_dd
-    val newToday = newDate.replace("-","").toLongOrNull() ?: 0
+    val newToday = newDate.remove("-").toLongOrNull() ?: 0
     val examDate = item.dateTime
-    val examDateNum = examDate.substringBefore(" ").replace("-","").toLongOrNull() ?: 0
+    val examDateNum = examDate.substringBefore(" ").remove("-").toLongOrNull() ?: 0
 
     val activity = LocalActivity.current
 

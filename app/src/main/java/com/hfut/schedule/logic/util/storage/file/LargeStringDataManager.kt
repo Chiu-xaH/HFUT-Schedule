@@ -5,6 +5,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.xah.common.logic.util.isEmptyOrBlank
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -97,7 +98,7 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME, MyApplicati
             }
             launch moveBook@ {
                 val content = DataStoreManager.courseBookJson.first()
-                if(content.isEmpty() || content.isBlank()) {
+                if(content.isEmptyOrBlank()) {
                     return@moveBook
                 }
                 launch {

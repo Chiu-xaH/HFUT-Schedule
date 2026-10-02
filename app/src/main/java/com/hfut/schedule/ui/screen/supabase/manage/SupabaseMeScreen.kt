@@ -45,6 +45,8 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.isEmptyOrBlank
+import com.xah.common.logic.util.remove
 import kotlinx.coroutines.launch
 
 
@@ -65,7 +67,7 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
     })
 
     LaunchedEffect(jwt) {
-        if ((jwt.isEmpty() || jwt.isBlank())) {
+        if (jwt.isEmptyOrBlank()) {
             showToast("未登录")
             return@LaunchedEffect
         }
@@ -143,7 +145,7 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
         items(list.size) { index ->
             val item = list[index]
             val dateTime = item.dateTime
-            val nowTimeNum = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
+            val nowTimeNum = DateTimeManager.Date_yyyy_MM_dd.remove("-").toLong()
             val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
             val isOutOfDate = nowTimeNum > endNum
             CardListItem(

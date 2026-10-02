@@ -81,6 +81,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.model.choice.ColorMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.ktx.darken
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
@@ -234,9 +235,9 @@ fun WebViewTools(
     if(webView?.canGoBack() == true) {
         IconButton(onClick = {
             webView.goBack()
-        }) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
+        }) { Icon(painterResource(R.drawable.arrow_back), contentDescription = EMPTY_STRING) }
     } else {
-        IconButton(onClick = onExit) { Icon(painterResource(R.drawable.close), contentDescription = "") }
+        IconButton(onClick = onExit) { Icon(painterResource(R.drawable.close), contentDescription = EMPTY_STRING) }
     }
 
     IconButton(onClick = { webView?.reload() }) { Icon(

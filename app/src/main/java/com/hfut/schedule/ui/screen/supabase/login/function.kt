@@ -13,6 +13,7 @@ import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
@@ -74,13 +75,13 @@ suspend fun regSupabase(password : String, vm: NetWorkViewModel, onResult : (Boo
 
 // 一键登录
 suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWorkViewModel,context : Context) : Boolean = withContext(Dispatchers.IO) {
-    if(jwt.isEmpty() || jwt.isBlank()) {
+    if(jwt.isEmptyOrBlank()) {
         // 未登陆过
         return@withContext false
     }
 
     suspend fun tryLogin() : Boolean {
-        if(refreshToken.isEmpty() || refreshToken.isBlank()) {
+        if(refreshToken.isEmptyOrBlank()) {
             showToast("未登陆过，请前往选项中选择刷新登陆状态")
             return false
         }

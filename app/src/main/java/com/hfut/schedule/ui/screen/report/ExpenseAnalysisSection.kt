@@ -30,6 +30,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.remove
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.component.chart.LineChart
 import com.xah.common.ui.component.chart.PieChart
@@ -201,7 +202,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
 
                 // 最常消费地点
                 val merchants = remember(records) {
-                    records.groupBy { it.resume.substringBefore("-").replace("有限公司", "").trim() }
+                    records.groupBy { it.resume.substringBefore("-").remove("有限公司").trim() }
                         .mapValues { (_, v) -> v.size to v.sumOf { (it.tranamt ?: 0) / 100.0 } }
                         .toList().sortedByDescending { it.second.first }.take(5)
                 }

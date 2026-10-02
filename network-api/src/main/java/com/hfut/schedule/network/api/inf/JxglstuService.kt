@@ -2,6 +2,7 @@ package com.hfut.schedule.network.api.inf
 
 import com.google.gson.JsonObject
 import com.hfut.schedule.network.api.model.Constant
+import com.xah.common.logic.util.EMPTY_STRING
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -315,11 +316,11 @@ interface JxglstuService {
         @Header("Cookie") cookie: String,
         // 固定字符串,参考上面
         @Part("stdAlterReasonAssoc") reasonId: RequestBody = "1286".toRequestBody("text/plain".toMediaTypeOrNull()),
-        @Part("applyRemark") remark: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+        @Part("applyRemark") remark: RequestBody = EMPTY_STRING.toRequestBody("text/plain".toMediaTypeOrNull()),
         @Part file: MultipartBody.Part? = null, // 可选文件
         // 必须项,从我的档案接口获取手机号,或者让用户自己输
         @Part("telephone") telephone: RequestBody,
-        @Part("email") email: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+        @Part("email") email: RequestBody = EMPTY_STRING.toRequestBody("text/plain".toMediaTypeOrNull()),
         // 固定字符串 REDIRECT_URL = /for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/{studentId}&batchId={batchId}&studentId={studentId}
         @Part("REDIRECT_URL") redirectUrl : RequestBody,
         @Part("changeMajorBatchAssoc") batchId : RequestBody,

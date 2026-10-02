@@ -19,6 +19,7 @@ import com.hfut.schedule.network.api.repo.NewsRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
+import com.xah.common.logic.util.isEmptyOrBlank
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -170,7 +171,7 @@ object NewsRepository : NewsRepositoryInf {
             val date = item.select("i.timefontstyle252631").text()
             val title = item.select("p.titlefontstyle252631").text()
             val link = item.select("a").attr("href")
-            if(title.isEmpty() || title.isBlank()) {
+            if(title.isEmptyOrBlank()) {
                 break
             }
             val links = if(isValidWebUrl(link)) {

@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.util.isEmptyOrBlank
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -292,7 +293,7 @@ suspend fun getJxglstuPassword() : String? = withContext(Dispatchers.IO) {
         getJxglstuDefaultPassword()
     } else {
         val pwd = DataStoreManager.jxglstuPassword.first()
-        if(pwd.isEmpty() || pwd.isBlank()) {
+        if(pwd.isEmptyOrBlank()) {
             null
         } else {
             pwd
