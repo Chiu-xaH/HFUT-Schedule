@@ -99,6 +99,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
 //        val enableInfiniteWheelPicker by DataStoreManager.enableInfiniteWheelPicker.collectAsState(initial = true)
         val enableShowOverdueFocus by DataStoreManager.enableShowOverdueFocus.collectAsState(initial = false)
 //        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
+        val enableIgnoreUnjoinedGradeItems by DataStoreManager.enableIgnoreUnjoinedGradeItems.collectAsState(false)
 
         val scope = rememberCoroutineScope()
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
@@ -156,6 +157,70 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
         DividerTextExpandedWith(stringResource(R.string.app_settings_calendar_half_title)) {
             CalendarSettingsUI()
         }
+        DividerTextExpandedWith("聚焦") {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_courses_on_focus_title)) },
+                    supportingContent = {
+                        Text(stringResource(R.string.app_settings_display_overdue_courses_on_focus_description))
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.search_activity),
+                        contentDescription = "Localized description"
+                    ) },
+                    trailingContent = { Switch(checked = enableShowOverdueFocus, onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveEnableShowOverdueFocus(!enableShowOverdueFocus)
+                        }
+                    }) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveEnableShowOverdueFocus(!enableShowOverdueFocus)
+                        }
+                    }
+                )
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsFocusCardDestination.key,
+                    shape = NoneRoundShape,
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        color = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.app_settings_focus_card_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.app_settings_focus_card_description)) },
+                        leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsFocusCardDestination)
+                        }
+                    )
+                }
+                PaddingHorizontalDivider()
+                SharedContainer(
+                    key = SettingsCalendarDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = NoneRoundShape.topStart,
+                        topEnd = NoneRoundShape.topEnd,
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        color = MaterialTheme.colorScheme.surface,
+                        headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_account_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.app_settings_default_calendar_account_description))
+                        },
+                        leadingContent = { Icon(
+                            painterResource(R.drawable.calendar_add_on),
+                            contentDescription = "Localized description"
+                        ) },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsCalendarDestination)
+                        }
+                    )
+                }
+            }
+        }
         DividerTextExpandedWith(stringResource(R.string.app_settings_preferences_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
@@ -177,6 +242,36 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     }
                 }
 
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("忽略平均成绩的排除计算")
+                    },
+                    supportingContent = {
+                        Text("允许被排除的成绩项目参与计算，可能会拉低原平均成绩")
+                    },
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.article),
+                            null
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = enableIgnoreUnjoinedGradeItems,
+                            onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveEnableIgnoreUnjoinedGradeItems(!enableIgnoreUnjoinedGradeItems)
+                                }
+                            }
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveEnableIgnoreUnjoinedGradeItems(!enableIgnoreUnjoinedGradeItems)
+                        }
+                    }
+                )
                 PaddingHorizontalDivider()
                 /* TODO 延缓发布，预留
                 TransplantListItem(
@@ -209,27 +304,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 }
                 PaddingHorizontalDivider()
                  */
-
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_courses_on_focus_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_display_overdue_courses_on_focus_description))
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.search_activity),
-                        contentDescription = "Localized description"
-                    ) },
-                    trailingContent = { Switch(checked = enableShowOverdueFocus, onCheckedChange = {
-                        scope.launch {
-                            DataStoreManager.saveEnableShowOverdueFocus(!enableShowOverdueFocus)
-                        }
-                    }) },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            DataStoreManager.saveEnableShowOverdueFocus(!enableShowOverdueFocus)
-                        }
-                    }
-                )
 //                PaddingHorizontalDivider()
 //                TransplantListItem(
 //                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_events_on_focus_title)) },
@@ -251,7 +325,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
 //                        }
 //                    }
 //                )
-                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(
                         stringResource(
@@ -283,43 +356,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     valueRange = 10f..500f,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                 )
-                PaddingHorizontalDivider()
-                SharedContainer(
-                    key = SettingsCalendarDestination.key,
-                    shape = NoneRoundShape,
-                    containerColor = MaterialTheme.colorScheme.surface
-                ) {
-                    TransplantListItem(
-                        color = MaterialTheme.colorScheme.surface,
-                        headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_account_title)) },
-                        supportingContent = {
-                            Text(stringResource(R.string.app_settings_default_calendar_account_description))
-                        },
-                        leadingContent = { Icon(
-                            painterResource(R.drawable.calendar_add_on),
-                            contentDescription = "Localized description"
-                        ) },
-                        modifier = Modifier.clickable {
-                            navTopController.push(SettingsCalendarDestination)
-                        }
-                    )
-                }
-                PaddingHorizontalDivider()
-                SharedContainer(
-                    key = SettingsFocusCardDestination.key,
-                    shape = NoneRoundShape,
-                    containerColor = MaterialTheme.colorScheme.surface
-                ) {
-                    TransplantListItem(
-                        color = MaterialTheme.colorScheme.surface,
-                        headlineContent = { Text(text = stringResource(R.string.app_settings_focus_card_title)) },
-                        supportingContent = { Text(text = stringResource(R.string.app_settings_focus_card_description)) },
-                        leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
-                        modifier = Modifier.clickable {
-                            navTopController.push(SettingsFocusCardDestination)
-                        }
-                    )
-                }
                 PaddingHorizontalDivider()
                 SharedContainer(
                     key = SettingsOcrDestination.key,
@@ -364,6 +400,32 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                 }
                 PaddingHorizontalDivider()
                 SharedContainer(
+                    key = SettingsLabDestination.key,
+                    shape = MaterialTheme.shapes.medium.copy(
+                        topStart = NoneRoundShape.topStart,
+                        topEnd = NoneRoundShape.topEnd
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
+                    TransplantListItem(
+                        color = MaterialTheme.colorScheme.surface,
+                        headlineContent = {
+                            Text("实验室")
+                        },
+                        supportingContent = {
+                            Text("启用一些未完善的功能")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.science),null)
+                        },
+                        modifier = Modifier.clickable {
+                            navTopController.push(SettingsLabDestination)
+                        }
+                    )
+                }
+                /*
+                PaddingHorizontalDivider()
+                SharedContainer(
                     key = SettingsDeepLinkDestination.key,
                     shape = MaterialTheme.shapes.medium.copy(
                         topStart = CornerSize(0.dp),
@@ -386,6 +448,7 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                         }
                     )
                 }
+                 */
                 /*
                 PaddingHorizontalDivider()
                 SharedContainer(
@@ -516,37 +579,6 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
                     },
                 )
             }
-        }
-        DividerTextExpandedWith("其他") {
-//            CustomCard(color = MaterialTheme.colorScheme.surface) {
-//                SharedContainer(
-//                    key = SettingsLabDestination.key,
-//                    shape = MaterialTheme.shapes.medium,
-//                    containerColor = MaterialTheme.colorScheme.surface
-//                ) {
-                    CardListItem(
-                        cardModifier = Modifier.sharedContainer(
-                            key = SettingsLabDestination.key,
-                            shape = MaterialTheme.shapes.medium,
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        shape = NoneRoundShape,
-                        color =  MaterialTheme.colorScheme.surface,
-                        headlineContent = {
-                            Text("实验室")
-                        },
-                        supportingContent = {
-                            Text("启用一些未完善的功能")
-                        },
-                        modifier = Modifier.clickable {
-                            navTopController.push(SettingsLabDestination)
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.science),null)
-                        },
-                    )
-//                }
-//            }
         }
         InnerPaddingHeight(innerPaddings,false)
     }

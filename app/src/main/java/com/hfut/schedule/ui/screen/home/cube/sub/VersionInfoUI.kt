@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.Update
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -42,6 +43,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
+import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
@@ -67,8 +69,9 @@ fun VersionInfo() {
     // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
+        UpdateItems("新增 课程表在使用背景时支持自定义深浅色模式","位于 选项-外观-课程表-深浅色",to = To.Screen(SettingsAppearanceDestination))
         UpdateItems("修复 部分带小组的培养方案发生崩溃的Bug")//
-        UpdateItems("优化 本地平均成绩的计算方法","新增支持自定义勾选排除课程")
+        UpdateItems("优化 本地平均成绩的计算方法","新增支持忽略排除课程，位于 选项-偏好与配置-忽略平均成绩的排除计算",to = To.Screen(SettingsConfigurationDestination))//
         UpdateItems("优化 若干页面适配新转场动画体系")//
         UpdateItems("优化 部分界面的显示")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")

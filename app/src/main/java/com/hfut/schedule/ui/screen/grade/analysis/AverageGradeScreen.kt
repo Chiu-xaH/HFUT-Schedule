@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.grade.analysis
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Switch
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
@@ -20,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,11 +38,9 @@ import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerText
@@ -86,7 +81,7 @@ fun AverageGradeScreen(
     val scope = rememberCoroutineScope()
     val backDrop = rememberLayerBackdrop()
     var roundCount by rememberSaveable() { mutableIntStateOf(2) }
-    val unjoinedGradeItems by DataStoreManager.unjoinedGradeItems.collectAsState("")
+    val enableIgnoreUnjoinedGradeItems by DataStoreManager.enableIgnoreUnjoinedGradeItems.collectAsState(false)
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -166,12 +161,15 @@ fun AverageGradeScreen(
                             .reversed()
                             .associate { it.first to it.second }
 
-                    val safelyList = remember(gradeList) {
+                    val safelyList = remember(gradeList,enableIgnoreUnjoinedGradeItems) {
                         gradeList
                             .map { (term, items) ->
                                 JxglstuTermGrade(
                                     term,
                                     items.filter {
+                                        if(enableIgnoreUnjoinedGradeItems) {
+                                            return@filter true
+                                        }
                                         // 通过且GPA为0.0，说明是不计入总成绩的课
                                         !(it.passed && it.gp == 0.0) && it.finalGrade != null
                                     }.map {
@@ -188,7 +186,10 @@ fun AverageGradeScreen(
                             }
                     }
 
-                    val unJoinedList = remember(gradeList) {
+                    val unJoinedList = remember(gradeList,enableIgnoreUnjoinedGradeItems) {
+                        if(enableIgnoreUnjoinedGradeItems) {
+                            return@remember emptyList()
+                        }
                         gradeList
                             .flatMap { it.value }
                             .filter {
@@ -207,7 +208,7 @@ fun AverageGradeScreen(
                     }
 
 
-                    val allTotalCredits by produceState(initialValue = 0f) {
+                    val allTotalCredits by produceState(initialValue = 0f,key1 = safelyList) {
                         value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
                     }
 
@@ -263,28 +264,30 @@ fun AverageGradeScreen(
                                 BottomTip("数据由本地计算，实际以校务行为准")
                             }
                         }
-                        item {
-                            DividerText("参与计算的项目")
-                        }
-                        if(unJoinedList.isEmpty()) {
-                            item { EmptyIcon() }
-                        } else {
-                            items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
-                                val item = unJoinedList[index]
-
-                                CardListItem(
-                                    headlineContent = {
-                                        Text(item.courseName)
-                                    },
-                                    overlineContent = {
-                                        Text(item.lessonCode)
-                                    },
-                                    leadingContent = {
-                                        Icon(painterResource(R.drawable.article),null)
-                                    }
-                                )
+                        if(!enableIgnoreUnjoinedGradeItems) {
+                            item {
+                                DividerText("参与计算的项目")
                             }
-                            item { BottomTip("如有误判请反馈以完善成绩算法") }
+                            if(unJoinedList.isEmpty()) {
+                                item { EmptyIcon() }
+                            } else {
+                                items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
+                                    val item = unJoinedList[index]
+
+                                    CardListItem(
+                                        headlineContent = {
+                                            Text(item.courseName)
+                                        },
+                                        overlineContent = {
+                                            Text(item.lessonCode)
+                                        },
+                                        leadingContent = {
+                                            Icon(painterResource(R.drawable.article),null)
+                                        }
+                                    )
+                                }
+                                item { BottomTip("如有误判请反馈以完善成绩算法") }
+                            }
                         }
                         item {
                             InnerPaddingHeight(innerPadding,false)
@@ -302,12 +305,15 @@ fun AverageGradeScreen(
                     }
                 }
                 if(gradeList != null) {
-                    val safelyList = remember(gradeList) {
+                    val safelyList = remember(gradeList,enableIgnoreUnjoinedGradeItems) {
                         gradeList!!
                             .map { (term, items) ->
                                 JxglstuTermGrade(
                                     term,
                                     items.filter {
+                                        if(enableIgnoreUnjoinedGradeItems) {
+                                            return@filter true
+                                        }
                                         // GPA为--说明是不计入总学分的课
                                         getGpa(it.gpa) != null
                                     }
@@ -315,7 +321,10 @@ fun AverageGradeScreen(
                             }
                     }
 
-                    val unJoinedList = remember(gradeList) {
+                    val unJoinedList = remember(gradeList,enableIgnoreUnjoinedGradeItems) {
+                        if(enableIgnoreUnjoinedGradeItems) {
+                            return@remember emptyList()
+                        }
                         gradeList!!
                             .flatMap { it.value }
                             .filter {
@@ -324,7 +333,7 @@ fun AverageGradeScreen(
                             }
                     }
 
-                    val allTotalCredits by produceState(initialValue = 0f) {
+                    val allTotalCredits by produceState(initialValue = 0f, key1 = safelyList) {
                         value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
                     }
 
@@ -379,25 +388,31 @@ fun AverageGradeScreen(
 //                            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
                         }
-                        item {
-                            DividerText("不参与计算的项目")
-                        }
-                        items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
-                            val item = unJoinedList[index]
+                        if(!enableIgnoreUnjoinedGradeItems) {
+                            item {
+                                DividerText("不参与计算的项目")
+                            }
+                            if(unJoinedList.isEmpty()) {
+                                item { EmptyIcon() }
+                            } else {
+                                items(unJoinedList.size,key = { unJoinedList[it].lessonCode }) { index ->
+                                    val item = unJoinedList[index]
 
-                            CardListItem(
-                                headlineContent = {
-                                    Text(item.courseName)
-                                },
-                                overlineContent = {
-                                    Text(item.lessonCode)
-                                },
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.article),null)
+                                    CardListItem(
+                                        headlineContent = {
+                                            Text(item.courseName)
+                                        },
+                                        overlineContent = {
+                                            Text(item.lessonCode)
+                                        },
+                                        leadingContent = {
+                                            Icon(painterResource(R.drawable.article),null)
+                                        }
+                                    )
                                 }
-                            )
+                                item { BottomTip("如有误判请反馈以完善成绩算法") }
+                            }
                         }
-                        item { BottomTip("如有误判请反馈以完善成绩算法") }
                         item {
                             InnerPaddingHeight(innerPadding,false)
                         }

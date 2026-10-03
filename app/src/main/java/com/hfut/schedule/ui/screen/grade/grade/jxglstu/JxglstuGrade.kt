@@ -288,21 +288,27 @@ fun GradeItemJxglstuUI(
     val expandedMap = remember {
         mutableStateMapOf<String, Boolean>()
     }
+    val enableIgnoreUnjoinedGradeItems by DataStoreManager.enableIgnoreUnjoinedGradeItems.collectAsState(false)
 
     val ui = @Composable { gradeList : List<JxglstuTermGrade> ->
-        val safelyList = remember(gradeList) {
+        val safelyList = remember(gradeList,enableIgnoreUnjoinedGradeItems) {
             gradeList
                 .associate { it.term to it.list }
                 .map { (term, items) ->
                     JxglstuTermGrade(
                         term,
-                        items.filter { getGpa(it.gpa) != null }
+                        items.filter {
+                            if(enableIgnoreUnjoinedGradeItems) {
+                                return@filter true
+                            }
+                            getGpa(it.gpa) != null
+                        }
                     )
                 }
         }
 
 
-        val allTotalCredits by produceState(initialValue = 0f) {
+        val allTotalCredits by produceState(initialValue = 0f,key1 = safelyList) {
             value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
         }
 
@@ -563,6 +569,7 @@ fun GradeItemUIUniApp(
             }
         }
     )
+    val enableIgnoreUnjoinedGradeItems by DataStoreManager.enableIgnoreUnjoinedGradeItems.collectAsState(false)
 
     Box(modifier = Modifier
         .fillMaxHeight()
@@ -577,13 +584,16 @@ fun GradeItemUIUniApp(
         )
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val gradeList = (uiState as NetworkUiState.Success).data.toList().sortedByDescending { it.first }
-            val safelyList = remember(gradeList) {
+            val safelyList = remember(gradeList,enableIgnoreUnjoinedGradeItems) {
                 gradeList
                     .associate { it.first to it.second }
                     .map { (term, items) ->
                         JxglstuTermGrade(
                             term,
                             items.filter {
+                                if(enableIgnoreUnjoinedGradeItems) {
+                                    return@filter true
+                                }
                                 !(it.passed && it.gp == 0.0) && it.finalGrade != null
                             }.map {
                                 JxglstuGrade(
@@ -600,7 +610,7 @@ fun GradeItemUIUniApp(
             }
 
 
-            val allTotalCredits by produceState(initialValue = 0f) {
+            val allTotalCredits by produceState(initialValue = 0f,key1 = safelyList) {
                 value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
             }
 

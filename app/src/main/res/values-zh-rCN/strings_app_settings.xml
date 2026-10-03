@@ -28,7 +28,7 @@
     <string name="app_settings_default_calendar_account_description">自定义添加到系统日历的账户;利用邮箱账户，可进行课表、聚焦日程的多设备同步</string>
 
     <string name="app_settings_auto_fill_captcha_title">图片验证码自动填充</string>
-    <string name="app_settings_auto_fill_captcha_description">刷新登录时,使用Tesseract库提供的OCR能力,填充验证码</string>
+    <string name="app_settings_auto_fill_captcha_description">刷新登录时,使用OCR模型自动填充验证码</string>
 
     <string name="network_settings_ai_title">大模型</string>
     <string name="network_settings_ai_description">用户提供ApiKey，将数据发送给大模型，为应用提供更多可能</string>
