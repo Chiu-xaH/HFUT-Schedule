@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.util.state
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
@@ -43,8 +44,11 @@ import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.util.TAB_STACK
+import com.hfut.schedule.ui.util.navigation.DestinationTrack
+import com.xah.navigation.model.dest.Destination
 import com.xah.shader.state.ShaderState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -58,6 +62,8 @@ object GlobalUiStateHolder {
     var excludeJxglstu by mutableStateOf(false)
 
     var shaderState by mutableStateOf<ShaderState?>(null)
+
+    var historyDestinations = mutableStateListOf<DestinationTrack>()
 
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
