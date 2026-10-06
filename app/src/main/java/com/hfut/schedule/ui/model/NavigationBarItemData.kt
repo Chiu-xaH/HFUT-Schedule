@@ -441,7 +441,7 @@ fun NavigationBar(
             )
 
             LaunchedEffect(selectedIndex, geometry) {
-                if (geometry.isReady && !indicatorDragging) {
+                if (geometry.isReady && !indicatorDragging && selectedIndex in geometry.starts.indices) {
                     val targetLeft = geometry.starts[selectedIndex]
                     val targetWidth = geometry.widths[selectedIndex]
                     dragProgress = selectedIndex.toFloat()

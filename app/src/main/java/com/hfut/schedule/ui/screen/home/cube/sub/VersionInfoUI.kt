@@ -59,7 +59,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-10-03"
+private const val RELEASE_DATE = "2026-10-06"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -70,11 +70,7 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 //        UpdateItems("新增 课程表在使用背景时支持自定义深浅色模式","位于 选项-外观-课程表-深浅色",to = To.Screen(SettingsAppearanceDestination))
-        UpdateItems("新增 本地平均成绩支持忽略排除课程","位于 选项-偏好与配置-忽略平均成绩的排除计算",to = To.Screen(SettingsConfigurationDestination))//
-        UpdateItems("修复 部分带小组的培养方案发生崩溃的Bug")//
-        UpdateItems("修复 部分Github页面404的Bug")//
-        UpdateItems("优化 若干页面适配新转场动画体系")//
-        UpdateItems("优化 部分界面的显示")//
+        UpdateItems("修复 新底栏在屏幕宽度发生改变的情况下发生崩溃的Bug")//
 //        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
 //        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
