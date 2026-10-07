@@ -348,12 +348,16 @@ fun TotalNewsScreen(
                 page,
                 onNextPage = { page = it },
                 onPreviousPage = { page = it },
-                paddingSafely = enableNewBottomBar,
+                paddingSafely = if(!paddingBottom) enableNewBottomBar else true,
                 modifier = Modifier
                     .let {
-                        innerPadding?.let { padding ->
-                            it.padding(bottom = padding.calculateBottomPadding()- if(enableNewBottomBar) 0.dp else navigationBarHeightPadding)
-                        } ?: it
+                        if(!paddingBottom) {
+                            innerPadding?.let { padding ->
+                                it.padding(bottom = padding.calculateBottomPadding()- if(enableNewBottomBar) 0.dp else navigationBarHeightPadding)
+                            } ?: it
+                        } else {
+                            it
+                        }
                     }
                 ,
                 paddingBottom = paddingBottom
