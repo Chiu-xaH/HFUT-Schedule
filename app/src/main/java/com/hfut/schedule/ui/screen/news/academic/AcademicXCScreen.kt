@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -29,7 +30,6 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
@@ -77,7 +77,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerSta
                                     } else {
                                         Constant.XC_ACADEMIC_URL + item.link
                                     }
-                                    autoWebVpnForNews(
+                                    Starter.startWebUrlInner(
                                         context,
                                         link,
                                         item.title,

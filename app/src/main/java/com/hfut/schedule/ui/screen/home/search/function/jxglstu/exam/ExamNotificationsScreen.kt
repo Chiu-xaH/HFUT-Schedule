@@ -29,14 +29,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.xah.common.logic.model.CampusRegion
-import com.xah.common.logic.model.CampusRegion.HEFEI
-import com.xah.common.logic.model.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.util.helper.getCampusRegion
-import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
-import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsXuanChengType
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -46,7 +42,6 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.AllExamDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -54,10 +49,13 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.model.CampusRegion.HEFEI
+import com.xah.common.logic.model.CampusRegion.XUANCHENG
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 
@@ -156,7 +154,7 @@ fun ExamNotificationsScreen(
                                                     } else {
                                                         Constant.XC_ACADEMIC_URL + item.link
                                                     }
-                                                    autoWebVpnForNews(
+                                                    Starter.startWebUrlInner(
                                                         context,
                                                         link,
                                                         item.title,

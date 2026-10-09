@@ -369,21 +369,6 @@ suspend fun getWebVpnCookie() : String? =
         null
     }
 
-suspend fun autoWebVpnForNews(
-    context: Context,
-    url: String,
-    title: String = getPureUrl(url),
-    cookie: String? = null,
-    icon: Int? = null
-) {
-    if(cookie == null) {
-        Starter.startWebUrlInner(context,url,title,null,icon)
-    } else {
-        Starter.startWebUrlInner(context,WebVpnConvertor.getWebVpnUrl(url),title,cookie,icon)
-    }
-}
-
-
 @Composable
 private fun EnableGlobalWebVpn(
     webVpn : Boolean

@@ -21,22 +21,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.xah.common.logic.state.NetworkUiState
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
-
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-
-import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import kotlinx.coroutines.launch
 
 //*******最新模范写法****
@@ -72,7 +69,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                autoWebVpnForNews(context ,Constant.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
+                                Starter.startWebUrlInner(context ,Constant.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
                             }
                         },
                     )
