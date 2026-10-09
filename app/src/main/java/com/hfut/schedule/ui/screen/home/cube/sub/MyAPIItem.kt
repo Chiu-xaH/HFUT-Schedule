@@ -3,8 +3,6 @@ package com.hfut.schedule.ui.screen.home.cube.sub
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -20,6 +18,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.theme.warnColor
+import com.xah.common.logic.util.isNotEmptyAndBlank
 
 @Composable
 fun APIIcons(celebration: Boolean) {
@@ -33,38 +32,43 @@ fun APIIcons(celebration: Boolean) {
 fun MyAPIItem(
     color : Color = cardNormalColor()
 ) {
-    val data = getSettingInfo()
-    val title = data.title
-    val content = data.info
+    val data = remember { getSettingInfo() }
+    val show = remember(data) { data.show }
+    val isBirthday = remember { isUserBirthday() }
 
-    val show by remember { mutableStateOf(data.show) }
+    if(!isBirthday && !show) {
+        return
+    }
 
-    if(show) {
-        DividerTextExpandedWith(text = stringResource(R.string.settings_important_notice_half_title)) {
-            CustomCard(color = color) {
+    DividerTextExpandedWith(text = stringResource(R.string.settings_important_notice_half_title)) {
+        CustomCard(color = color) {
+            if(isBirthday)  {
+                val age = remember { getUserAge() }
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = title, fontWeight = FontWeight.Bold)
+                        Text(text = "${age}周岁生日快乐")
                     },
-                    supportingContent = if(content.isNotBlank() && content.isNotEmpty()) {
-                        { Text(text = content) }
+                    supportingContent = { Text("Happy Birthday")},
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.cake), contentDescription = "Localized description", tint = warnColor())
+                    },
+                )
+            }
+            if(show) {
+                if(isBirthday) {
+                    PaddingHorizontalDivider()
+                }
+                TransplantListItem(
+                    headlineContent = {
+                        Text(text = data.title, fontWeight = FontWeight.Bold)
+                    },
+                    supportingContent = if(data.info.isNotEmptyAndBlank()) {
+                        { Text(text = data.info) }
                     } else null,
                     leadingContent = {
                         APIIcons(data.celebration)
                     },
                 )
-                if(isUserBirthday()) {
-                    PaddingHorizontalDivider()
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(text = "${getUserAge()}周岁生日快乐")
-                        },
-                        supportingContent = { Text("Happy Birthday")},
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.cake), contentDescription = "Localized description", tint = warnColor())
-                        },
-                    )
-                }
             }
         }
     }
