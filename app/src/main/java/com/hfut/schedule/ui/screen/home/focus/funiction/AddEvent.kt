@@ -43,6 +43,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -131,6 +132,7 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.defaultDividerColor
+import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.input.WheelPicker
@@ -249,7 +251,6 @@ enum class AddEventOrigin {
 fun AddEventScreen(
     vm : NetWorkViewModel,
     eventId : Int = -1,
-    origin : String
 ) {
     val navController = LocalNavController.current
     val isSupabase = false
@@ -302,7 +303,7 @@ fun AddEventScreen(
                             isCircle = true,
                             backdrop = backDrop
                         ) {
-                            Icon(painterResource(R.drawable.wand_stars),null)
+                            BrushIcon(icon = R.drawable.wand_stars)
                         }
                         if(!isSupabase) {
                             LiquidButton(
@@ -322,13 +323,23 @@ fun AddEventScreen(
                     } else {
                         LiquidButton(
                             onClick = {
+                                showDevelopingToast()
+                            },
+                            isCircle = true,
+                            backdrop = backDrop
+                        ) {
+                            Icon(painterResource(R.drawable.copy_all),null)
+                        }
+                        Spacer(Modifier.width(BUTTON_PADDING))
+                        LiquidButton(
+                            onClick = {
                                 showDialog = true
                             },
                             modifier = Modifier.padding(end = BUTTON_END_PADDING),
                             isCircle = true,
-                            backdrop = backDrop
+                            backdrop = backDrop,
                         ) {
-                            Icon(painterResource(R.drawable.delete),null)
+                            Icon(painterResource(R.drawable.delete),null, tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -888,10 +899,10 @@ fun AddEventUI(
                     )
                     BottomTextButtonGroup(
                         listOf(
-                            CardBottomButton(if(isScheduleType)"选择日期范围" else "选择截止日期") {
+                            CardBottomButton(if(isScheduleType)"选择日期" else "选择截止日期") {
                                 showSelectDateDialog = true
                             },
-                            CardBottomButton(if(isScheduleType)"选择时间范围" else "选择截止时间") {
+                            CardBottomButton(if(isScheduleType)"选择时间" else "选择截止时间") {
                                 showSelectTimeDialog = true
                             },
                         )

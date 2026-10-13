@@ -32,6 +32,6 @@ data class AddEventDestination(
         } else {
             id
         }
-        AddEventScreen(vm,eventId,origin)
+        AddEventScreen(vm,eventId)
     }
 }

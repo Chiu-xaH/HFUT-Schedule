@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
@@ -66,36 +67,25 @@ private const val RELEASE_DATE = "2026-10-10"
 fun VersionInfo() {
     VersionInfoCard()
     // 适配iOS后版本号跳为5.0
-    // 查询中心，大模型去掉，提案版去掉？
     DividerTextExpandedWith(text = "新特性") {
+//        UpdateItems("新增 允许在课程表显示日历账户的日程")
+        UpdateItems("重构 创建日程时选择日期不再按范围，而是自由选择若干日期")
+        UpdateItems("新增 支持克隆已有日程","编辑日程时右上角的复制图标，点击后会复制此日程信息到新建页面")
+        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination(null, VersionInfoDestination.key)))
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 //        UpdateItems("重构 去掉翻页器，改为尾部追加")
 //        UpdateItems("新增 课程表在使用背景时支持自定义深浅色模式","位于 选项-外观-课程表-深浅色",to = To.Screen(SettingsAppearanceDestination))
-        UpdateItems("修复 在检查WebVpn登陆状态时打开通知公告网页的场景异常使用WebVpn模式访问")//
-        UpdateItems("修复 新底栏在屏幕宽度发生改变的情况下发生崩溃的Bug")//
-        UpdateItems("修复 转专业列表右上角菜单选择通知公告后发生崩溃的Bug")//
-        UpdateItems("修复 生日时不在重要通知显示祝福的Bug")//
 //        UpdateItems("优化 部分界面的显示")// ￥滚动
-//        UpdateItems("新增 新建日程时能够深度自定义重复日程")
 //        UpdateItems("新增 个人画像")
-//        UpdateItems("新增 支持；在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
-//        UpdateItems("反射扫描destination文件夹")
-//        UpdateItems("新增 深度链接支持校园卡、校务行、呱呱物联、共建平台")
-//        UpdateItems("重构 去除冗余登录流程")
+//        UpdateItems("新增 支持在全校培养方案中分享培养方案", to = To.Screen(AllProgramsDestination(false)))
 //        UpdateItems("新增 支持将转专业列表生成长截图并保存")
 //        UpdateItems("新增 适配体测平台、图书馆、指尖工大、智慧社区、学工系统、第二课堂支持以外地访问刷新登录","在刷新登陆状态页面勾选外地访问后即可")
 //        UpdateItems("优化 以Api形式打开课程详情时的性能", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 支持楼层导向图的教室可以在课程表或聚焦快速查看目标教室的所在位置")
-//            UpdateItems("修复 在着色器效果关闭时容器共享转场时路径偏移的Bug")
-//            UpdateItems("修复 部分设备使用图片验证码自动识别功能时崩溃的Bug")
 //            UpdateItems("优化 课程表捏合手势的灵敏度")
-//            UpdateItems("新增 课程表交互说明指南","位于 课程表切换菜单内")
 //            UpdateItems("新增 合工大教务课表支持写入到日历日程")
-//            UpdateItems("新增 适配若干二级界面为新的转场动画")
-        // TODO 一卡通付款码，一卡通范围支出，一卡通慧新易校 适配新转场动画
         // TODO WebView适配新库 [P2]
-        // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
-//            UpdateItems("翻页器底部自动展开、中间隐藏")
+        // TODO 反射扫描destination文件夹
 //            UpdateItems("发生Crash两次后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
 //            UpdateItems("新增 图书馆我的书架、收藏","位于 查询中心-图书馆")
@@ -104,13 +94,11 @@ fun VersionInfo() {
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("新增 合肥校区电费的快速充值")
-
-        // TODO 远期规划
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
 //            UpdateItems("新增 校园网小组件(2*2)")
-//            UpdateItems("新增 使用技巧","位于 选项-维护与关于")
+//            UpdateItems("新增 使用技巧","位于 选项-维护与关于") 新增 课程表交互说明指南
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("新增 单独登录教务系统")
