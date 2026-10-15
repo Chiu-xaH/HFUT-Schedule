@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 @Composable
@@ -92,7 +93,7 @@ private fun dividerColor(isAtStart : Boolean,color : Color = defaultDividerColor
     val color by animateColorAsState(
         targetValue = if(isAtStart) Color.Transparent else color,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
-        label = "",
+        label = EMPTY_STRING,
     )
     return color
 }

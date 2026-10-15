@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -598,7 +599,7 @@ fun CalendarSettingsUI() {
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
         DateRangePickerModal(
-            text = "",
+            text = EMPTY_STRING,
             onSelected = {
                 scope.launch {
                     DataStoreManager.saveTermStartDate(it.second)
@@ -699,7 +700,7 @@ fun CalendarSettingsUI() {
         TransplantListItem(
             headlineContent = { Text(text = stringResource(R.string.app_settings_auto_calculate_term_title)) },
             leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
+                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = EMPTY_STRING)
             },
             supportingContent = {
                 Text(text = stringResource(R.string.app_settings_auto_calculate_term_description))

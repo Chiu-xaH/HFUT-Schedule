@@ -60,6 +60,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.remove
@@ -223,7 +224,7 @@ fun JxglstuExamUI(item : JxglstuExam, status : Boolean) {
         val isFinished = examDateNum < newToday
 //            DateTimeUtils.compareTimeDate(endTime = endTime) == DateTimeUtils.TimeState.ENDED
         CardListItem(
-            headlineContent = {  Text(text = course + (item.type?.let { "-$it" } ?: ""), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+            headlineContent = {  Text(text = course + (item.type?.let { "-$it" } ?: EMPTY_STRING), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
             leadingContent = {
@@ -305,7 +306,7 @@ fun JxglstuExamUI(item : JxglstuExam, status : Boolean) {
                                             }
                                         }
                                     }) {
-                                    Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = "")
+                                    Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = EMPTY_STRING)
                                 }
                                 Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
                             }

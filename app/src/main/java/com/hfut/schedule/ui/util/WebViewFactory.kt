@@ -241,35 +241,35 @@ fun WebViewTools(
     }
 
     IconButton(onClick = { webView?.reload() }) { Icon(
-        painterResource(id = R.drawable.rotate_right), contentDescription = "") }
+        painterResource(id = R.drawable.rotate_right), contentDescription = EMPTY_STRING) }
 
     IconButton(onClick = {
         on = { Starter.startWebUrlOuter(context,it) }
         showBottomSheet = true
     }) { Icon(
-        painterResource(id = R.drawable.net), contentDescription = "") }
+        painterResource(id = R.drawable.net), contentDescription = EMPTY_STRING) }
 
     IconButton(onClick = {
         onSearch()
-    }) { Icon(painterResource(id = R.drawable.search), contentDescription = "") }
+    }) { Icon(painterResource(id = R.drawable.search), contentDescription = EMPTY_STRING) }
 
     IconButton(onClick = {
         on = {}
         operationFavorite = true
         showBottomSheet = true
     }) { Icon(
-        painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = "") }
+        painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = EMPTY_STRING) }
     IconButton(onClick = {
         on = { ClipBoardHelper.copy(it) }
         showBottomSheet = true
     }) { Icon(
-        painterResource(id = R.drawable.copy_all), contentDescription = "") }
+        painterResource(id = R.drawable.copy_all), contentDescription = EMPTY_STRING) }
 
     IconButton(onClick = {
         on = { ShareTo.shareString(currentUrl) }
         showBottomSheet = true
     }) { Icon(
-        painterResource(id = R.drawable.ios_share), contentDescription = "") }
+        painterResource(id = R.drawable.ios_share), contentDescription = EMPTY_STRING) }
 
     onExtend()
 }
@@ -288,9 +288,9 @@ fun WebViewTopBar(
     currentTitle : String,
     currentUrl : String
 ) {
-    var input by remember { mutableStateOf("") }
-    var activeMatchOrdinal by remember { mutableStateOf(0) }
-    var numberOfMatches by remember { mutableStateOf(0) }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
+    var activeMatchOrdinal by remember { mutableIntStateOf(0) }
+    var numberOfMatches by remember { mutableIntStateOf(0) }
 
     val searchEmpty by remember(numberOfMatches) { derivedStateOf { numberOfMatches == 0 } }
 
@@ -357,7 +357,7 @@ fun WebViewTopBar(
                             label = {
                                 Text(
                                     "页面内搜索" +
-                                            if(input.isEmpty()) ""
+                                            if(input.isEmpty()) EMPTY_STRING
                                             else if(searchEmpty) " 无结果"
                                             else " ${activeMatchOrdinal}/$numberOfMatches",
                                     color = topBarTitleColor
@@ -467,7 +467,7 @@ fun WebViewContent(
             ) {
                 tools()
                 IconButton(onClick = { onVisible(false) }) { Icon(
-                    painterResource(id = R.drawable.visibility_off), contentDescription = "") }
+                    painterResource(id = R.drawable.visibility_off), contentDescription = EMPTY_STRING) }
             }
         }
         if(loading) {

@@ -60,6 +60,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.model.HuiXinBillRecord
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.align.CenterScreen
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -324,7 +325,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
                         } else if(difference > 0) {
                             "偏低￥${(dailyAvg-today).roundOffString(2)}"
                         } else {
-                            ""
+                            EMPTY_STRING
                         }
                         TransplantListItem(
                             overlineContent = {

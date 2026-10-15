@@ -41,6 +41,7 @@ import com.hfut.schedule.R
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 
 import com.xah.common.ui.style.align.RowHorizontal
@@ -168,7 +169,7 @@ private fun DraggableImage(painterResId: Int,dampingRatio : Float = Spring.Dampi
     val springOffset by animateOffsetAsState(
         targetValue = offset , // 回弹的偏移加到拖动偏移
         animationSpec = spring(dampingRatio = dampingRatio, stiffness = stiffness),
-        label = ""
+        label = EMPTY_STRING
     )
 
     Box(

@@ -68,6 +68,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
@@ -237,7 +238,7 @@ fun UpdateUI(
                 R.string.settings_update_title_failed
             )) },
             supportingContent = { Text(text = if(canDownload) "${AppVersion.getVersionName()} → ${update?.name}" else stringResource(
-                R.string.settings_update_description, update?.name ?: ""
+                R.string.settings_update_description, update?.name ?: EMPTY_STRING
             )) },
             leadingContent = {
                 BadgedBox(
@@ -305,7 +306,7 @@ fun UpdateUI(
                                         R.string.settings_update_button_download_file_size,
                                         (uiState as NetworkUiState.Success).data.roundOffString(2)
                                     )
-                                } else ""
+                                } else EMPTY_STRING
                             ),
                     )
                 }
@@ -516,7 +517,7 @@ fun PatchUpdateUI(
             TransplantListItem(
                 headlineContent = { Text(text = stringResource(
                     R.string.settings_update_merge_patch_title,
-                    patch.newVersion.let { if (it == update?.name) stringResource(R.string.settings_update_patch_title_latest) else ("" + it) })
+                    patch.newVersion.let { if (it == update?.name) stringResource(R.string.settings_update_patch_title_latest) else (EMPTY_STRING + it) })
                 ) },
                 supportingContent = {
                     Text(text = stringResource(R.string.settings_update_patch_description))
@@ -554,7 +555,7 @@ fun PatchUpdateUI(
                                         R.string.settings_update_button_download_file_size,
                                         (uiStatePatch as NetworkUiState.Success).data.roundOffString(2)
                                     )
-                                } else ""  
+                                } else EMPTY_STRING  
                             }",
                     )
                 }

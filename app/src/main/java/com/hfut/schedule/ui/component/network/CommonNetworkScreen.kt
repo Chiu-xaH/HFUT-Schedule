@@ -30,6 +30,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.status.ErrorIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
@@ -74,7 +75,7 @@ fun CommonNetworkScreen(
                     when(codeInt) {
                         PARSE_ERROR_CODE -> {
                             var showDetail by remember { mutableStateOf(false) }
-                            var text by remember { mutableStateOf("") }
+                            var text by remember { mutableStateOf(EMPTY_STRING) }
                             LaunchedEffect(showDetail) {
                                 if(showDetail) {
                                     e?.let {
@@ -144,7 +145,7 @@ fun CommonNetworkScreen(
                         }
                         else -> {
                             // 网络出错
-                            val code = codeInt?.toString() ?: ""
+                            val code = codeInt?.toString() ?: EMPTY_STRING
                             val eMsg = e?.message
                             if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
                                 StatusIcon(R.drawable.link_off, text("网络连接失败"), onTextClick = {
@@ -232,7 +233,7 @@ suspend fun <T> onListenStateHolder(
                     }
                     else -> {
                         // 网络出错
-                        val code = codeInt?.toString() ?: ""
+                        val code = codeInt?.toString() ?: EMPTY_STRING
                         val eMsg = e?.message
                         if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
                             "网络连接失败"

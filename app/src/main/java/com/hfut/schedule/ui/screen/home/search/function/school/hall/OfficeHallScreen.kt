@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -93,7 +94,7 @@ fun OfficeHallScreen(
     vm : NetWorkViewModel,
 ) {
     val hazeState = rememberHazeBlur()
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork : suspend () -> Unit =  {
         vm.officeHallSearchResponse.clear()

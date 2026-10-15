@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -144,7 +145,7 @@ private fun CourseSurveyListUI(
 
     var showBottomSheet_start by remember { mutableStateOf(false) }
     var tId by remember { mutableIntStateOf(0) }
-    var name by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(EMPTY_STRING) }
 
     if (showBottomSheet_start) {
         HazeBottomSheet(
@@ -199,7 +200,7 @@ private fun CourseSurveyListUI(
                                         leadingContent = { Icon(painterResource(if(!isSubmitted)R.drawable.person else R.drawable.check),null) },
                                         modifier = Modifier.weight(.5f).clickable {
                                             if(!isSubmitted) {
-                                                name = tName ?: ""
+                                                name = tName ?: EMPTY_STRING
                                                 tId = id
                                                 showBottomSheet_start = true
                                             } else showToast("已评教")
@@ -216,7 +217,7 @@ private fun CourseSurveyListUI(
                                             leadingContent = { Icon(painterResource(if(!isSubmitted)R.drawable.person else R.drawable.check),null) },
                                             modifier = Modifier.weight(.5f).clickable {
                                                 if(!isSubmitted) {
-                                                    name = tName ?: ""
+                                                    name = tName ?: EMPTY_STRING
                                                     tId = id
                                                     showBottomSheet_start = true
                                                 } else showToast("已评教")
@@ -248,7 +249,7 @@ private fun CourseSurveyListUI(
 private fun TeacherSurveyListUI(data : JxglstuSurveyLesson, vm : NetWorkViewModel, hazeState: HazeState, scope: CoroutineScope, refresh : suspend () -> Unit) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var id by remember { mutableIntStateOf(0) }
-    var name by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(EMPTY_STRING) }
 
     if (showBottomSheet) {
         HazeBottomSheet(
@@ -275,10 +276,10 @@ private fun TeacherSurveyListUI(data : JxglstuSurveyLesson, vm : NetWorkViewMode
                 CardListItem(
                     headlineContent = { tName?.let { Text(text = it) } },
                     leadingContent = { Icon(painterResource(R.drawable.person),null) },
-                    trailingContent = { if(!isSubmitted) Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") else Text(text = "已评") },
+                    trailingContent = { if(!isSubmitted) Icon(painterResource(R.drawable.arrow_forward), contentDescription = EMPTY_STRING) else Text(text = "已评") },
                     modifier = Modifier.clickable {
                         if(!isSubmitted) {
-                            name = tName ?: ""
+                            name = tName ?: EMPTY_STRING
                             id = list[item].id
                             showBottomSheet = true
                         } else showToast("已评教")

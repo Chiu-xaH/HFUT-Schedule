@@ -76,7 +76,7 @@ object DataStoreManager : IDataStore {
     val SEARCH_DEFAULT_STR = GlobalUiStateHolder.funcDefault.map { it.id }.joinToString(",")
     val SHORTCUT_DEFAULT_STR = AppShortcutManager.getStorageStr()
 
-    private const val EMPTY_STRING = ""
+    private const val EMPTY_STRING = com.xah.common.logic.util.EMPTY_STRING
 
     override suspend fun <T> saveValue(key: Preferences.Key<T>, value: T) {
         dataStore.edit { it[key] = value }

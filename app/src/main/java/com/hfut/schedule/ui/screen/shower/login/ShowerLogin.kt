@@ -60,6 +60,7 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.controller.NavigationController
@@ -79,8 +80,8 @@ import java.util.Locale
 fun ShowerLogin(vm : NetWorkViewModel) {
     val context = LocalActivity.current
     var show by remember { mutableStateOf(false) }
-    val Savedusername = prefs.getString("PHONENUM", "")
-    var username by remember { mutableStateOf(Savedusername ?: "") }
+    val Savedusername = prefs.getString("PHONENUM", EMPTY_STRING)
+    var username by remember { mutableStateOf(Savedusername ?: EMPTY_STRING) }
     val hazeState = rememberHazeBlur()
     val navController = LocalNavController.current
 
@@ -104,7 +105,7 @@ fun ShowerLogin(vm : NetWorkViewModel) {
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(id = R.drawable.close), contentDescription = EMPTY_STRING,tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 },
@@ -166,9 +167,9 @@ private fun GuaGuaLoginUI(vm : NetWorkViewModel,username : String,onUsername : (
     val navController = LocalNavController.current
     var hidden by rememberSaveable { mutableStateOf(true) }
 
-    val Savedpassword = prefs.getString("GuaGuaPsk","")
+    val Savedpassword = prefs.getString("GuaGuaPsk",EMPTY_STRING)
 
-    var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
+    var inputAES by remember { mutableStateOf(Savedpassword ?: EMPTY_STRING) }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val showTip by remember { mutableStateOf("请新用户先前往微信小程序-呱呱物联注册") }
@@ -192,8 +193,8 @@ private fun GuaGuaLoginUI(vm : NetWorkViewModel,username : String,onUsername : (
 
                 trailingIcon = {
                     IconButton(onClick = {
-                        onUsername("")
-                        inputAES = ""
+                        onUsername(EMPTY_STRING)
+                        inputAES = EMPTY_STRING
                     }) { Icon(painter = painterResource(R.drawable.close), contentDescription = "description") }
                 }
             )

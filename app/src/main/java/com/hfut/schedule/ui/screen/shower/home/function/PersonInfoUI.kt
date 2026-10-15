@@ -22,6 +22,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +55,7 @@ fun GuaGuaPersonInfoUI(vm: NetWorkViewModel, hazeState: HazeState) {
                 TransplantListItem(
                     headlineContent = { Text(text = personInfo.name) },
                     leadingContent = {
-                        Icon(painterResource(id = R.drawable.person), contentDescription = "")
+                        Icon(painterResource(id = R.drawable.person), contentDescription = EMPTY_STRING)
                     },
                     overlineContent = { Text(text = "姓名") },
                     modifier = Modifier.weight(.4f)
@@ -62,7 +63,7 @@ fun GuaGuaPersonInfoUI(vm: NetWorkViewModel, hazeState: HazeState) {
                 TransplantListItem(
                     headlineContent = { ScrollText(text = personInfo.telPhone) },
                     leadingContent = {
-                        Icon(painterResource(id = R.drawable.call), contentDescription = "")
+                        Icon(painterResource(id = R.drawable.call), contentDescription = EMPTY_STRING)
                     },
                     overlineContent = { Text(text = "手机号") },
                     modifier = Modifier.weight(.6f)

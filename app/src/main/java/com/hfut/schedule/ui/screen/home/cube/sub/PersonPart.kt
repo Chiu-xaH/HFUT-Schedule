@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
@@ -62,12 +63,12 @@ fun PersonPart() {
                 )
             ) {
                 TransplantListItem(
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = EMPTY_STRING)},
                     headlineContent = { Text(text = getPersonInfo().getNameFinally())  },
                     trailingContent = {
                         Row {
                             ColumnVertical {
-                                if(startDate != null && endDate != null && startDate != "" && endDate != "") {
+                                if(startDate != null && endDate != null && startDate != EMPTY_STRING && endDate != EMPTY_STRING) {
                                     val percent = DateTimeManager.getPercent(startDate,endDate)
                                     val str = if(percent in 0.0 ..< 1.0) {
                                         "已过 ${(percent*100).roundOffString(1)}%"

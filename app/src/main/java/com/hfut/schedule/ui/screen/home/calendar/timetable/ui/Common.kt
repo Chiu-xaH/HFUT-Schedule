@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloa
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.shader.state.ShaderState
 import com.xah.container.component.base.sharedContainer
 import com.xah.container.model.ContainerFilledStrategy
@@ -290,7 +291,7 @@ fun TimeTable(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = item.name + (item.teacher?.let { "@$it" } ?: ""),
+                                    text = item.name + (item.teacher?.let { "@$it" } ?: EMPTY_STRING),
                                     fontSize = textSize,
                                     textAlign = TextAlign.Center,
                                     lineHeight = lineHeight,
@@ -495,7 +496,7 @@ fun TimeTable(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = item.name + (item.teacher?.let { "@$it" } ?: ""),
+                                text = item.name + (item.teacher?.let { "@$it" } ?: EMPTY_STRING),
                                 lineHeight = lineHeight,
                                 fontSize = textSize,
                                 textAlign = TextAlign.Center,

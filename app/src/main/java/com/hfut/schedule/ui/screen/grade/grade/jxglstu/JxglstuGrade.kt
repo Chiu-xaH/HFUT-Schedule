@@ -108,6 +108,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.safeDiv
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
@@ -260,7 +261,7 @@ fun GradeItemJxglstuUI(
     val navController = LocalNavController.current
     val context = LocalContext.current
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
-    var surveyCode by remember { mutableStateOf("") }
+    var surveyCode by remember { mutableStateOf(EMPTY_STRING) }
     if (showBottomSheet_Survey) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Survey = false },
@@ -955,7 +956,7 @@ fun GradeDetailScreen(
                                 leadingContent = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.filter_vintage),
-                                        contentDescription = ""
+                                        contentDescription = EMPTY_STRING
                                     )
                                 },
                                 headlineContent = {
@@ -970,7 +971,7 @@ fun GradeDetailScreen(
                             )
                             TransplantListItem(
                                 leadingContent = {
-                                    Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
+                                    Icon(painter = painterResource(R.drawable.percent), contentDescription = EMPTY_STRING)
                                 },
                                 headlineContent = {
                                     ScrollText(
@@ -998,7 +999,7 @@ fun GradeDetailScreen(
                             leadingContent = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.tag),
-                                    contentDescription = ""
+                                    contentDescription = EMPTY_STRING
                                 )
                             },
                             headlineContent = {

@@ -203,7 +203,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             TransplantListItem(
                                 overlineContent = { Text(text = filteredList[item].date) },
                                 headlineContent = { Text(text = "￥$balance") },
-                                leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")}
+                                leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = EMPTY_STRING)}
                             )
                         }
                     }
@@ -213,7 +213,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             }
             ExtendedFloatingActionButton(
                 text = { Text(text = "$year 年 $month 月") },
-                icon = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "") },
+                icon = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = EMPTY_STRING) },
                 onClick = { showBottomSheet = true },
                 expanded = shouldShowAddButton,
                 modifier = Modifier
@@ -237,14 +237,15 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 month--
                             else showToast("请切换年份")
                         },
-                    ) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
+                    ) { Icon(painterResource(R.drawable.arrow_back), contentDescription = EMPTY_STRING) }
                     Spacer(modifier = Modifier.padding(horizontal =APP_HORIZONTAL_DP))
                     FloatingActionButton(
                         onClick = {
-                            if(month.toInt() <= 11)
+                            if(month <= 11) {
                                 month++
+                            }
                         },
-                    ) { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "")}
+                    ) { Icon(painterResource(R.drawable.arrow_forward), contentDescription = EMPTY_STRING)}
                 }
             }
         }

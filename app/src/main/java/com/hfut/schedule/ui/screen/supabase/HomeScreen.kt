@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 
 import com.xah.common.ui.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
@@ -119,7 +120,7 @@ fun SupabaseHome(vm : NetWorkViewModel) {
                                 }) {
                                     Icon(painterResource(
                                         R.drawable.keyboard_arrow_down
-                                    ), contentDescription = "", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.rotate(
+                                    ), contentDescription = EMPTY_STRING, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.rotate(
                                         if(sortReversed) {
                                             0f
                                         } else {

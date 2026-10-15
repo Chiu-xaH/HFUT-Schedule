@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.chart.PieChart
 import com.xah.common.ui.component.chart.PieChartData
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -37,7 +38,7 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
     val borrowedBooks by vm.libraryBorrowedResp.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "").orEmpty()
+        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, EMPTY_STRING).orEmpty()
         if (token.isNotEmpty() && libraryStatus !is NetworkUiState.Success) {
             vm.libraryStatusResp.clear()
             vm.getLibraryStatus(token)
@@ -45,7 +46,7 @@ fun LibraryReportSection(vm: NetWorkViewModel, periodLabel: String = "本学期"
     }
 
     DividerTextExpandedWith("图书馆报表") {
-        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, "").orEmpty()
+        val token = prefs.getString(SharedPrefs.LIBRARY_TOKEN, EMPTY_STRING).orEmpty()
         if (token.isEmpty()) {
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(

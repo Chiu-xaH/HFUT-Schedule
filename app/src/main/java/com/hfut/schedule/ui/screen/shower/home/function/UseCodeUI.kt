@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
@@ -75,12 +76,12 @@ fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
     val scale = animateFloatAsState(
         targetValue = if (!successLoad) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
+        label = EMPTY_STRING // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (!successLoad) 0.97f else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
+        label = EMPTY_STRING // 使用弹簧动画
     )
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -132,7 +133,7 @@ fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
                         .zIndex(1f)
                 ) {
 //                    val blurSizeButton by animateDpAsState(
-//                        targetValue = if (!showButton) 4.dp else 0.dp, label = ""
+//                        targetValue = if (!showButton) 4.dp else 0.dp, label = EMPTY_STRING
 //                        ,animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
 //                    )
                     Button(
@@ -187,7 +188,7 @@ fun UseCodeUI(vm: NetWorkViewModel, hazeState: HazeState) {
 fun ReSetUseCodeUI(vm: NetWorkViewModel) {
     val navController = LocalNavController.current
 
-    var password by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf(EMPTY_STRING) }
     var passwordStatus by remember { mutableStateOf("请输入新的使用码") }
     val len = remember { 5 }
 

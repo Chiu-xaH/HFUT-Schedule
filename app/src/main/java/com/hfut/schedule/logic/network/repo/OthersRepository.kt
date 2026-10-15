@@ -53,6 +53,7 @@ import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.remove
 import org.jsoup.Jsoup
 import java.time.LocalDate
@@ -371,7 +372,7 @@ object OthersRepository : OthersRepositoryInf {
             ?: throw Exception("解析校车信息失败，可能是上层变动，请使用右上按钮查看网页最新数据")
 
         val rows = table.select("tr").drop(1) // 跳过表头
-        var dayGroup = ""
+        var dayGroup = EMPTY_STRING
         val busList = mutableListOf<Bus>()
 
         for (tr in rows) {
@@ -392,7 +393,7 @@ object OthersRepository : OthersRepositoryInf {
                 count = cells[4].text().trim().toIntOrNull() ?: 0,
                 week = dayGroup.remove(" ").trim(),
                 time = cells[1].text().trim(),
-                from = fromTo.getOrElse(0) { "" },
+                from = fromTo.getOrElse(0) { EMPTY_STRING },
                 to = fromTo.getOrElse(1) { cells[0].text().trim() },
                 stops = cells[3].text().trim().split(Regex("\\s+")).filter { it.isNotBlank() }
             )

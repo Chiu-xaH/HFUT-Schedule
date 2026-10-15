@@ -77,6 +77,7 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -98,8 +99,8 @@ fun BusScreen(
 ) {
     val hazeState = rememberHazeBlur()
     val dates = remember { BusDate.entries }
-    var startInput by remember { mutableStateOf("") }
-    var endInput by remember { mutableStateOf("") }
+    var startInput by remember { mutableStateOf(EMPTY_STRING) }
+    var endInput by remember { mutableStateOf(EMPTY_STRING) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     val context = LocalContext.current
@@ -355,8 +356,8 @@ fun BusScreenV2(
     vm : NetWorkViewModel,
 ) {
     val hazeState = rememberHazeBlur()
-    var startInput by remember { mutableStateOf("") }
-    var endInput by remember { mutableStateOf("") }
+    var startInput by remember { mutableStateOf(EMPTY_STRING) }
+    var endInput by remember { mutableStateOf(EMPTY_STRING) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     val context = LocalContext.current

@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isNullOrEmptyOrBlank
 import com.xah.common.ui.component.chart.StackedBarChart
 import com.xah.common.ui.component.chart.StackedBarData
@@ -90,7 +91,7 @@ fun ProgramSearchScreen(
     ifSaved: Boolean,
 ) {
     val hazeState = rememberHazeBlur()
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)
@@ -334,7 +335,7 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
                                 Text(
                                     "要求 " +
                                             requireInfo.requiredCredits.let { num ->
-                                                if(num == 0.0) "" else "" + num + "学分"
+                                                if(num == 0.0) EMPTY_STRING else EMPTY_STRING + num + "学分"
                                             }
                                 )
                             },
@@ -349,7 +350,7 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
                 CardListItem(
-                    headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
+                    headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else EMPTY_STRING }) },
                     supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
@@ -360,7 +361,7 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
         }
     }
     if(planCourses.isNotEmpty()) {
-        var input by remember { mutableStateOf("") }
+        var input by remember { mutableStateOf(EMPTY_STRING) }
 
         var courseInfo by remember { mutableStateOf<ProgramSearchPlanCourse?>(null) }
         var showInfo by remember { mutableStateOf(false) }
@@ -422,7 +423,7 @@ private fun ProgramSearchChildrenUI(entity : UniAppProgramData?, hazeState : Haz
                             Text(
                                 "要求 " +
                                         requireInfo.requiredCredits.let { num ->
-                                            if(num == 0.0) "" else "" + num + "学分"
+                                            if(num == 0.0) EMPTY_STRING else EMPTY_STRING + num + "学分"
                                         }
                             )
                         },

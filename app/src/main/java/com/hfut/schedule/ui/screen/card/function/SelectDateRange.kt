@@ -29,6 +29,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
+import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -72,7 +73,7 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                 .fillMaxSize()
         ) {
             DateRangePicker(state = state,
-                modifier = Modifier.weight(1f), title = { Text(text = "")},
+                modifier = Modifier.weight(1f), title = { Text(text = EMPTY_STRING)},
                 colors = DatePickerDefaults.colors(containerColor = Color.Transparent),
             )
         }
@@ -87,7 +88,7 @@ private suspend fun getRangeData(vm: NetWorkViewModel, state: DateRangePickerSta
     val startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
     val endDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate)
 
-    val auth = prefs.getString("auth", "")
+    val auth = prefs.getString("auth", EMPTY_STRING)
     vm.huiXinRangeResult.clear()
     vm.searchDate("bearer $auth", startDateString, endDateString)
     // 主线程监听 StateFlow

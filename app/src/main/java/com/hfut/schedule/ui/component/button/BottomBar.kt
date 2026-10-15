@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.ScreenCornerHelper
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
@@ -74,7 +75,7 @@ private fun BottomBarContent(
             val scale = animateFloatAsState(
                 targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
                 animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                label = "" // 使用弹簧动画
+                label = EMPTY_STRING // 使用弹簧动画
             )
             val route = item.route
             val selected = navController.isCurrentRouteWithoutArgs(route)
@@ -141,7 +142,7 @@ private fun BottomBarContentDynamic(
             val scale = animateFloatAsState(
                 targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
                 animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                label = "" // 使用弹簧动画
+                label = EMPTY_STRING // 使用弹簧动画
             )
             val route = item.route
             val selected = navController.isCurrentRouteWithoutArgs(route)

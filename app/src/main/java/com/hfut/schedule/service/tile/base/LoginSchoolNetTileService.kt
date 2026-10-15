@@ -12,6 +12,7 @@ import com.hfut.schedule.logic.network.repo.SchoolNetRepository
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -39,7 +40,7 @@ open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileSe
             loginSchoolNetResponse.clear()
             SchoolNetRepository.loginSchoolNet(campus = campus,loginSchoolNetResponse = loginSchoolNetResponse)
             onListenStateHolder(loginSchoolNetResponse, onError = { codeInt, e ->
-                val code = codeInt?.toString() ?: ""
+                val code = codeInt?.toString() ?: EMPTY_STRING
                 val eMsg = e?.message
                 val t = if (eMsg?.contains(
                         "Unable to resolve host",

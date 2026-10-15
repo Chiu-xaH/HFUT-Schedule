@@ -135,6 +135,7 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
@@ -184,7 +185,7 @@ fun ClassroomScreen(
     var campus by remember { mutableStateOf(getCampus()) }
     val selectedBuildings = remember { mutableStateListOf<UniAppBuilding>() }
     val selectedFloors = remember { mutableStateListOf<Int>() }
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf(EMPTY_STRING) }
 
     val refreshNetworkSearch = suspend m@ {
         var jwt = DataStoreManager.uniAppJwt.first()
@@ -202,7 +203,7 @@ fun ClassroomScreen(
     var showFilterBox by rememberSaveable() { mutableStateOf(true) }
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
-        DateRangePickerModal(text = "",onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
+        DateRangePickerModal(text = EMPTY_STRING,onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

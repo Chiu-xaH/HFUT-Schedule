@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 
 import com.xah.navigation.util.LocalNavController
@@ -135,7 +136,7 @@ fun WorkScreen(
     val pagerState = rememberPagerState(pageCount = { types.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     val refreshNetwork: suspend (Int,Int) -> Unit =  { currentPage,page ->
         vm.workSearchResult.clear()
         vm.searchWorks(keyword = input.let { if(it.isEmptyOrBlank()) null else it }, page = currentPage, type = page,campus)
@@ -221,7 +222,7 @@ fun WorkScreen(
 //                            IconButton(
 //                                onClick = {
 //                                    scope.launch {
-//                                        input = ""
+//                                        input = EMPTY_STRING
 //                                        refreshNetwork()
 //                                    }
 //                                }
@@ -296,7 +297,7 @@ private fun WorkSearchUI(
                             CardListItem(
                                     color = cardNormalColor(),
                                     headlineContent = { Text(title) },
-                                    overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
+                                    overlineContent = { Text(time + if(page == 0) " " + enumType.description else EMPTY_STRING) },
                                 
                                     modifier = Modifier.clickable {
                                         scope.launch {

@@ -43,6 +43,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
@@ -87,7 +88,7 @@ fun TotalCourseScreen(
 
     val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var input by rememberSaveable() { mutableStateOf("") }
+    var input by rememberSaveable() { mutableStateOf(EMPTY_STRING) }
     val backdrop = rememberLayerBackdrop()
 
     Scaffold (

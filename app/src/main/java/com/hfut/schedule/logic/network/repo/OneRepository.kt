@@ -21,6 +21,7 @@ import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -45,7 +46,7 @@ object OneRepository : OneRepositoryInf {
             holder = holder,
             request = {
                 val secret = CryptoUtil.generateRandomHexString()
-                val email = getSchoolEmail() ?: ""
+                val email = getSchoolEmail() ?: EMPTY_STRING
                 val chipperText = CryptoUtil.encryptAesECB(email, secret)
                 val cookie = "secret=$secret"
                 one.getMailURL(chipperText, token, cookie)

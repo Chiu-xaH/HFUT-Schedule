@@ -16,6 +16,7 @@ import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.flow.first
 
 object AdmissionRepository : AdmissionRepositoryInf {
@@ -75,7 +76,7 @@ object AdmissionRepository : AdmissionRepositoryInf {
             request = {
                 val state = holder.state.first()
                 val cookie = if (state !is NetworkUiState.Success) {
-                    ""
+                    EMPTY_STRING
                 } else {
                     Constant.ADMISSION_COOKIE_HEADER + state.data.cookie
                 }

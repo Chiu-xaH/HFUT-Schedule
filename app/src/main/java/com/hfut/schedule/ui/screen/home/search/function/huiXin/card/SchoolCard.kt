@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.nav.destination.SchoolCardDestination
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 
@@ -55,7 +56,7 @@ fun SchoolCardItem(isFromFocus : Boolean) {
     val scale2 = animateFloatAsState(
         targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
+        label = EMPTY_STRING // 使用弹簧动画
     )
     val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
@@ -160,7 +161,7 @@ fun TodayInfo(bean : CommunityToday) {
                     headlineContent = { Text(text = it) },
                     overlineContent = { Text(text = "$startTime~$endTime") },
                     supportingContent = { Text(text = place.toString())},
-                    leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = EMPTY_STRING)},
                 )
             }
         }
@@ -170,7 +171,7 @@ fun TodayInfo(bean : CommunityToday) {
                     headlineContent = { Text(text = it) },
                     overlineContent = { Text(text = "$startTime~$endTime  $place")},
                     supportingContent = { className?.let { Text(text = it) } },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = EMPTY_STRING)},
                 )
             }
         }
@@ -180,7 +181,7 @@ fun TodayInfo(bean : CommunityToday) {
                     headlineContent = { Text(text = it) },
                     supportingContent = { Text(text = "归还时间 $returnTime") },
                     overlineContent = { Text(text = "借阅于 $outTime\n应还于 $dueTime")},
-                    leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = EMPTY_STRING)},
                 )
             }
         }
@@ -189,7 +190,7 @@ fun TodayInfo(bean : CommunityToday) {
                 CardListItem(
                     headlineContent = { Text(text = it) },
                     overlineContent = { Text(text = startTime.toString()) },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = EMPTY_STRING)},
                 )
             }
         }

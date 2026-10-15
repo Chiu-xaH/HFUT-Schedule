@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -88,8 +89,8 @@ fun TeacherSearchScreen(
 ) {
     val hazeState = rememberHazeBlur()
 
-    var name by remember { mutableStateOf("") }
-    var direction by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(EMPTY_STRING) }
+    var direction by remember { mutableStateOf(EMPTY_STRING) }
 
     val uiState by vm.teacherSearchData.state.collectAsState()
 
@@ -124,7 +125,7 @@ fun TeacherSearchScreen(
                             onClick = { scope.launch { refreshNetwork() } },
                             modifier = Modifier.padding(end = BUTTON_END_PADDING)
                         ) {
-                            Icon(painterResource(R.drawable.search), contentDescription = "")
+                            Icon(painterResource(R.drawable.search), contentDescription = EMPTY_STRING)
                         }
                     }
                 )

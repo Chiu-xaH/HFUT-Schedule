@@ -18,6 +18,7 @@ import com.hfut.schedule.network.api.inf.WeChatZhiJianService
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.repo.WeChatZhiJianRepositoryInf
 import com.hfut.schedule.network.core.GsonInstance
+import com.xah.common.logic.util.EMPTY_STRING
 
 object WeChatZhiJianRepository : WeChatZhiJianRepositoryInf {
     private val wx = WeChaeZhiJianServiceCreator.create(WeChatZhiJianService::class.java)
@@ -25,8 +26,8 @@ object WeChatZhiJianRepository : WeChatZhiJianRepositoryInf {
         holder = holder,
         request = {
             wx.login(
-                username = SharedPrefs.prefs.getString("Username", "") ?: "",
-                password = SharedPrefs.prefs.getString("Password", "") ?: ""
+                username = SharedPrefs.prefs.getString("Username", EMPTY_STRING) ?: EMPTY_STRING,
+                password = SharedPrefs.prefs.getString("Password", EMPTY_STRING) ?: EMPTY_STRING
             )
         },
         transformSuccess = { _, json -> parseWxLogin(json) }

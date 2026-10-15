@@ -95,6 +95,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
@@ -135,30 +136,30 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
-    val SavedRoomNumber = prefs.getString("RoomNumber", "")
-    var RoomNumber by remember { mutableStateOf(SavedRoomNumber ?: "") }
-    val SavedEndNumber = prefs.getString("EndNumber", "")
-    var EndNumber by remember { mutableStateOf(SavedEndNumber ?: "") }
+    val SavedRoomNumber = prefs.getString("RoomNumber", EMPTY_STRING)
+    var RoomNumber by remember { mutableStateOf(SavedRoomNumber ?: EMPTY_STRING) }
+    val SavedEndNumber = prefs.getString("EndNumber", EMPTY_STRING)
+    var EndNumber by remember { mutableStateOf(SavedEndNumber ?: EMPTY_STRING) }
 
     var region by remember { mutableStateOf("选择南北") }
 
-    var input = "300$BuildingsNumber$RoomNumber$EndNumber"
+    val input = "300$BuildingsNumber$RoomNumber$EndNumber"
 
     var showitem by remember { mutableStateOf(false) }
     var showitem2 by remember { mutableStateOf(false) }
     var showitem3 by remember { mutableStateOf(false) }
     var showitem4 by remember { mutableStateOf(false) }
 
-    var Result by remember { mutableStateOf("") }
-    var Result2 by remember { mutableStateOf("") }
+    var Result by remember { mutableStateOf(EMPTY_STRING) }
+    var Result2 by remember { mutableStateOf(EMPTY_STRING) }
 
     var showAdd by remember { mutableStateOf(false) }
-    var payNumber by remember { mutableStateOf("") }
+    var payNumber by remember { mutableStateOf(EMPTY_STRING) }
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var show by remember { mutableStateOf(false) }
 
-    var json by remember { mutableStateOf("") }
+    var json by remember { mutableStateOf(EMPTY_STRING) }
     if (showBottomSheet) {
 
         HazeBottomSheet (
@@ -243,8 +244,8 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     FilledTonalIconButton(
-                        onClick = { payNumber = payNumber.replaceFirst(".$".toRegex(), "") },
-                        modifier = Modifier.padding(horizontal = 5.dp)
+                        onClick = { payNumber = payNumber.replaceFirst(".$".toRegex(), EMPTY_STRING) },
+                        modifier = Modifier.padding(horizontal = CARD_NORMAL_DP*2)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.backspace),
@@ -255,7 +256,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     FilledTonalIconButton(
                         onClick = {
                             showDialog2 = false
-                            if (payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
+                            if (payNumber != EMPTY_STRING && payNumber != "0" && payNumber != "00" && payNumber != "000")
                                 showBottomSheet = true
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
@@ -367,7 +368,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         HazeBottomSheetTopBar("寝室电费" , isPaddingStatusBar = false) {
                 Row() {
                     if(showitem4)
-                        IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
+                        IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), EMPTY_STRING)}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                     FilledTonalIconButton(onClick = {
                         when(pagerState.currentPage) {
@@ -425,7 +426,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     }
                 }
         }
-        if (BuildingsNumber == "0") BuildingsNumber = ""
+        if (BuildingsNumber == "0") BuildingsNumber = EMPTY_STRING
         LaunchedEffect(pagerState.currentPage) {
             show = false
         }
@@ -555,13 +556,12 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                         FilledTonalButton(
                                             enabled = show,
                                             onClick = {
-                                                if(showAdd && payNumber != "")
-                                                    showBottomSheet = true
+                                                if(showAdd && payNumber != EMPTY_STRING) showBottomSheet = true
                                                 else showDialog2 = true
                                             }
                                         ) {
                                             Text(text =
-                                                if(showAdd && payNumber != "")
+                                                if(showAdd && payNumber != EMPTY_STRING)
                                                     "提交订单"
                                                 else
                                                     "快速充值"
@@ -572,7 +572,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     TransplantListItem(
                                         overlineContent = {Text( text = if(!show)"房间号 " + " 300XXXXX1" else "房间号 " + Result.substringAfter(" ")  )},
                                         headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
-                                        leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                                        leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = EMPTY_STRING)}
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP/2))

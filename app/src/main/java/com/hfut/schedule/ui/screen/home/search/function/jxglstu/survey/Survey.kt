@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 
 
 import com.xah.navigation.util.LocalNavController
@@ -165,7 +166,7 @@ private fun SurveyAllButton(
     }
     var successfulNum by remember { mutableIntStateOf(0) }
     var failedNum by remember { mutableIntStateOf(0) }
-    var currentTeacherTask by remember { mutableStateOf("") }
+    var currentTeacherTask by remember { mutableStateOf(EMPTY_STRING) }
     var currentNumTask by remember { mutableIntStateOf(0) }
     var totalNum by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(false) }
@@ -194,7 +195,7 @@ private fun SurveyAllButton(
                     loading = true
                     for(task in list) {
                         val teacherName = task.teacher.person?.nameZh
-                        currentTeacherTask = teacherName ?: ""
+                        currentTeacherTask = teacherName ?: EMPTY_STRING
                         // 跳过评教过的
                         if(task.submitted) {
                             currentNumTask++
@@ -221,7 +222,7 @@ private fun SurveyAllButton(
                     showToast("评教完成: 成功${successfulNum} 失败${failedNum}")
                     successfulNum = 0
                     failedNum = 0
-                    currentTeacherTask = ""
+                    currentTeacherTask = EMPTY_STRING
                     currentNumTask = 0
                     totalNum = 0
                     refresh()

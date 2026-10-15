@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
+import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.delay
 
 @Composable
@@ -128,7 +129,7 @@ fun AnimatedTextCarousel(
                 Box {
                     // 1) 占位文本，始终存在且不可见（占用真实字符宽度）
                     Text(
-                        text = "",
+                        text = EMPTY_STRING,
                         style = textStyle
                     )
 

@@ -14,6 +14,7 @@ import com.hfut.schedule.network.api.repo.GuaGuaRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
+import com.xah.common.logic.util.EMPTY_STRING
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,8 +25,8 @@ object GuaGuaRepository : GuaGuaRepositoryInf {
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
 
     fun getGuaGuaUserInfo(guaGuaUserInfo : MutableLiveData<String?>) {
-        val loginCode = SharedPrefs.prefs.getString("loginCode","") ?: ""
-        val phoneNumber = SharedPrefs.prefs.getString("PHONENUM","") ?: ""
+        val loginCode = SharedPrefs.prefs.getString("loginCode",EMPTY_STRING) ?: EMPTY_STRING
+        val phoneNumber = SharedPrefs.prefs.getString("PHONENUM",EMPTY_STRING) ?: EMPTY_STRING
         val call = phoneNumber.let { loginCode.let { it1 -> guaGua.getUserInfo(it, it1) } }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -62,8 +63,8 @@ object GuaGuaRepository : GuaGuaRepositoryInf {
             holder = billsResult,
             request = {
                 guaGua.getBills(
-                    phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
-                    loginCode = SharedPrefs.prefs.getString("loginCode", "") ?: ""
+                    phoneNumber = SharedPrefs.prefs.getString("PHONENUM", EMPTY_STRING) ?: EMPTY_STRING,
+                    loginCode = SharedPrefs.prefs.getString("loginCode", EMPTY_STRING) ?: EMPTY_STRING
                 )
             },
             transformSuccess = { _, json -> parseGuaGuaBills(json) },
@@ -73,8 +74,8 @@ object GuaGuaRepository : GuaGuaRepositoryInf {
         holder = useCodeResult,
         request = {
             guaGua.getUseCode(
-                phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
-                loginCode = SharedPrefs.prefs.getString("loginCode", "") ?: ""
+                phoneNumber = SharedPrefs.prefs.getString("PHONENUM", EMPTY_STRING) ?: EMPTY_STRING,
+                loginCode = SharedPrefs.prefs.getString("loginCode", EMPTY_STRING) ?: EMPTY_STRING
             )
         },
         transformSuccess = { _, json -> parseGuaGuaUseCode(json) }
@@ -84,12 +85,12 @@ object GuaGuaRepository : GuaGuaRepositoryInf {
         launchRequestState(
             holder = reSetCodeResult,
             request = {
-                val psk = SharedPrefs.prefs.getString("GuaGuaPsk", "") ?: ""
+                val psk = SharedPrefs.prefs.getString("GuaGuaPsk", EMPTY_STRING) ?: EMPTY_STRING
                 val encrypted = CryptoUtil.md5HashForGuaGua(psk).uppercase(Locale.ROOT)
                 guaGua.reSetUseCode(
-                    phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
+                    phoneNumber = SharedPrefs.prefs.getString("PHONENUM", EMPTY_STRING) ?: EMPTY_STRING,
                     encrypted,
-                    loginCode = SharedPrefs.prefs.getString("loginCode", "") ?: "",
+                    loginCode = SharedPrefs.prefs.getString("loginCode", EMPTY_STRING) ?: EMPTY_STRING,
                     newCode
                 )
             },

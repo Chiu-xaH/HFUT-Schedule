@@ -35,6 +35,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 
 
@@ -48,7 +49,7 @@ fun StorageWeb(hazeState : HazeState) {
 
     var showDialogDel by remember { mutableStateOf(false) }
 
-    var selectedDelTitle by remember { mutableStateOf("") }
+    var selectedDelTitle by remember { mutableStateOf(EMPTY_STRING) }
     var selectedDelId by remember { mutableIntStateOf(0) }
 
     val list by produceState(initialValue = emptyList<WebURLEntity>(), key1 = showDialogDel) {

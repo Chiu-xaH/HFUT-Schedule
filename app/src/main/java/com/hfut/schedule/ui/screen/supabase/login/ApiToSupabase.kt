@@ -25,6 +25,7 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.navigation.anim.effect.SlideTransitionEffect
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
@@ -34,10 +35,10 @@ import kotlinx.coroutines.launch
 fun ApiToSupabase(vm : NetWorkViewModel) {
 //    val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
 //    val scope = rememberCoroutineScope()
-//    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+//    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
 //    val check by vm.supabaseCheckResp.state.collectAsState()
 
-//    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+//    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = EMPTY_STRING)
 //    var showBadge by remember { mutableStateOf(false) }
 
 //    val uiState by vm.supabaseGetEventLatestResp.state.collectAsState()
@@ -71,7 +72,7 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
         },
         colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)
     ) {
-        Icon(painterResource(id = R.drawable.cloud), contentDescription = "")
+        Icon(painterResource(id = R.drawable.cloud), contentDescription = EMPTY_STRING)
 //        BadgedBox(
 //            badge = {
 //                if (showBadge) Badge()

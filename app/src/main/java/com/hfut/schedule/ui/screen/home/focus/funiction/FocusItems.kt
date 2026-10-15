@@ -84,6 +84,7 @@ import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.remove
 import dev.chrisbanes.haze.HazeState
@@ -570,7 +571,7 @@ fun TimeStampItem() = BottomTip(getTimeStamp())
 
 @Composable
 fun TermTip() {
-    val v by produceState(initialValue = "") {
+    val v by produceState(initialValue = EMPTY_STRING) {
         value = parseSemester(getSemester())  ?: "未知学期"
     }
     BottomTip(v)
@@ -591,14 +592,14 @@ fun TodayUI(vm: NetWorkViewModel) {
                 TransplantListItem(
                     headlineContent = { ScrollText(text = "节假日休息" ) },
                     overlineContent = { ScrollText(text = "明天") },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.sentiment_very_satisfied) , contentDescription = EMPTY_STRING)},
                 )
             }
             isSpecificWorkDayTomorrow() -> {
                 TransplantListItem(
                     headlineContent = { ScrollText(text = "调休非休息" ) },
                     overlineContent = { ScrollText(text = "明天") },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.work) , contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(R.drawable.work) , contentDescription = EMPTY_STRING)},
 //                    colors = MaterialTheme.colorScheme.errorContainer
                 )
             }
@@ -657,7 +658,7 @@ fun TodayUI(vm: NetWorkViewModel) {
                 TransplantListItem(
                     headlineContent = { ScrollText(text = result.first) },
                     overlineContent = { ScrollText(text = "明天") },
-                    leadingContent = { Icon(painter = painterResource(result.second) , contentDescription = "")},
+                    leadingContent = { Icon(painter = painterResource(result.second) , contentDescription = EMPTY_STRING)},
                 )
             }
         }
@@ -694,7 +695,7 @@ fun TodayUI(vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text = it, color = MaterialTheme.colorScheme.error) },
                                 overlineContent = { ScrollText(text = "${place?.simplifyPlace()} $startTime", color = MaterialTheme.colorScheme.error) },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "", tint = MaterialTheme.colorScheme.error)},
+                                leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = EMPTY_STRING, tint = MaterialTheme.colorScheme.error)},
                                 modifier = Modifier
                                     .background(cardNormalColor())
                                     .zIndex(4f)
@@ -706,7 +707,7 @@ fun TodayUI(vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text = it) },
                                 overlineContent = { ScrollText(text =  place?.simplifyPlace() + " " +  startTime) },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                                leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = EMPTY_STRING)},
                                 modifier = Modifier
                                     .background(cardNormalColor())
                                     .zIndex(3f)
@@ -718,7 +719,7 @@ fun TodayUI(vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text = it) },
                                 overlineContent = { ScrollText(text =  returnTime.toString()) },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = "")},
+                                leadingContent = { Icon(painter = painterResource(R.drawable.book_5), contentDescription = EMPTY_STRING)},
                                 modifier = Modifier
                                     .background(cardNormalColor())
                                     .zIndex(2f)
@@ -730,7 +731,7 @@ fun TodayUI(vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text = it) },
                                 overlineContent = { ScrollText(text =  startTime.toString()) },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.person_play), contentDescription = "")},
+                                leadingContent = { Icon(painter = painterResource(R.drawable.person_play), contentDescription = EMPTY_STRING)},
                                 modifier = Modifier
                                     .background(cardNormalColor())
                                     .zIndex(1f)

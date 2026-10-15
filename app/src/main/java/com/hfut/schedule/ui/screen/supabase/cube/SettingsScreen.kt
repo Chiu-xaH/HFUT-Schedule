@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
@@ -52,7 +53,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     val filter by DataStoreManager.enableSupabaseFilterEvent.collectAsState(initial = false)
     val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
     val context = LocalContext.current
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
     val navController = LocalNavController.current
 
     val scope = rememberCoroutineScope()

@@ -58,6 +58,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.launch
 
@@ -80,8 +81,8 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel) {
     var isReg by remember { mutableStateOf(false) }
 
     val username by remember { mutableStateOf(getPersonInfo().getStudentIdFinally() + MyApplication.EMAIL) }
-    var password by remember { mutableStateOf(prefs.getString("SupabasePsk","") ?: "") }
-    var password2 by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf(prefs.getString("SupabasePsk",EMPTY_STRING) ?: EMPTY_STRING) }
+    var password2 by remember { mutableStateOf(EMPTY_STRING) }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val showTip by remember { mutableStateOf("如需共建分享信息，需要在开发者搭建的平台登录您的账号，首次使用请注册，注册之前需确认校园邮箱可用(首次使用校园邮箱请先取信息门户激活)才可收到邮件并完成注册") }
@@ -95,7 +96,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel) {
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
+        label = EMPTY_STRING // 使用弹簧动画
     )
 
     Scaffold(

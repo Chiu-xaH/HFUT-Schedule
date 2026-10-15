@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.SharedContent
@@ -57,11 +58,11 @@ fun DividerText(
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
+        label = EMPTY_STRING // 使用弹簧动画
     )
     val color by animateColorAsState(
         targetValue = if (isPressed) contentColor.copy(alpha = 0.7f) else contentColor,
-        label = ""
+        label = EMPTY_STRING
     )
 
     Text(
@@ -106,7 +107,7 @@ private fun DividerTextExpandedWithDefault(
     }
 
     val blurSize by animateDpAsState(
-        targetValue = if (!expanded) 10.dp else 0.dp, label = ""
+        targetValue = if (!expanded) 10.dp else 0.dp, label = EMPTY_STRING
         ,animationSpec = tween(speed, easing = LinearOutSlowInEasing),
     )
 

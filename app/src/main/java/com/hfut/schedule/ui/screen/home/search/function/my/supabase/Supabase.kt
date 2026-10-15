@@ -15,13 +15,14 @@ import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.navigation.util.LocalNavController
 
 @Composable
 fun Supabase() {
-//    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
-//    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+//    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
+//    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = EMPTY_STRING)
 //    val scope = rememberCoroutineScope()
 //    var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -33,7 +34,7 @@ fun Supabase() {
 //            if(loading) {
 //                LoadingIcon()
 //            } else {
-                Icon(painterResource(id = R.drawable.cloud), contentDescription = "")
+                Icon(painterResource(id = R.drawable.cloud), contentDescription = EMPTY_STRING)
 //            }
         },
         trailingContent = {

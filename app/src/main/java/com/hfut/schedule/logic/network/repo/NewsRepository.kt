@@ -19,6 +19,7 @@ import com.hfut.schedule.network.api.repo.NewsRepositoryInf
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -50,7 +51,7 @@ object NewsRepository : NewsRepositoryInf {
         launchRequestState(
             holder = newsXuanChengResult,
             request = {
-                xuanCheng.getNotications(page = page.let { if (it <= 1) "" else it.toString() })
+                xuanCheng.getNotications(page = page.let { if (it <= 1) EMPTY_STRING else it.toString() })
 
             },
             transformSuccess = { _, html -> parseNewsXuanCheng(html) }
@@ -141,8 +142,8 @@ object NewsRepository : NewsRepositoryInf {
 
         for (element in newsElements) {
             val link = element.attr("href")  // 相对链接，可拼接 baseUrl
-            val title = element.selectFirst("div.l3-news--title")?.text() ?: ""
-            val date = element.selectFirst("div.l3-news--month")?.text() ?: ""
+            val title = element.selectFirst("div.l3-news--title")?.text() ?: EMPTY_STRING
+            val date = element.selectFirst("div.l3-news--month")?.text() ?: EMPTY_STRING
 
             newsList.add(News(title = title, date = date, link = link))
         }

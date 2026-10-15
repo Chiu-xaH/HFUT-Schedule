@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.util.LocalNavController
@@ -76,7 +77,7 @@ fun ScanScreen(
     val hapticFeedback = LocalHapticFeedback.current
     val navController = LocalNavController.current
     val color = MaterialTheme.colorScheme.surface
-    var resultText by remember { mutableStateOf("") }
+    var resultText by remember { mutableStateOf(EMPTY_STRING) }
     val context = LocalContext.current
     val activity = LocalActivity.current
     val showTip = resultText.isEmptyOrBlank()
@@ -137,25 +138,24 @@ fun ScanScreen(
                                     scope.launch {
                                         vm.wxLoginCasResponse.clear()
                                         vm.wxLoginCas(auth!!, resultText)
-                                        val loginResult =
-                                            (vm.wxLoginCasResponse.state.value as? NetworkUiState.Success)?.data
+                                        val loginResult = (vm.wxLoginCasResponse.state.value as? NetworkUiState.Success)?.data
                                         if (loginResult == null) {
                                             showToast("登陆失败")
-                                            resultText = ""
-                                        } else if (loginResult.second == true) {
+                                            resultText = EMPTY_STRING
+                                        } else if (loginResult.second) {
                                             // 解析uuid
                                             val uuid =
                                                 resultText.toUri().getQueryParameter("uuid")
                                             if (uuid == null) {
                                                 showToast("解析UUID失败")
-                                                resultText = ""
+                                                resultText = EMPTY_STRING
                                             } else {
                                                 vm.wxConfirmLogin(auth!!, uuid)
                                                 val confirmResult =
                                                     (vm.wxConfirmLoginResponse.state.value as? NetworkUiState.Success)?.data
                                                 if (confirmResult == null) {
                                                     showToast("登陆中途失败")
-                                                    resultText = ""
+                                                    resultText = EMPTY_STRING
                                                 } else {
                                                     showToast(confirmResult)
                                                     if(navController.canPop()) {
@@ -167,7 +167,7 @@ fun ScanScreen(
                                             }
                                         } else {
                                             showToast(loginResult.first)
-                                            resultText = ""
+                                            resultText = EMPTY_STRING
                                         }
                                     }
                                 }
@@ -207,7 +207,7 @@ fun ScanScreen(
                                 trailingContent = if (isCas) {
                                     {
                                         FilledTonalIconButton(
-                                            onClick = { resultText = "" },
+                                            onClick = { resultText = EMPTY_STRING },
                                             colors = IconButtonDefaults. filledTonalIconButtonColors(
                                                 containerColor = MaterialTheme.colorScheme.errorContainer
                                             )
@@ -231,7 +231,7 @@ fun ScanScreen(
                                             }
                                         },
                                         CardBottomButton("隐藏") {
-                                            resultText = ""
+                                            resultText = EMPTY_STRING
                                         },
                                     )
                                 )
@@ -243,7 +243,7 @@ fun ScanScreen(
                                             Starter.startWlanSettings(context)
                                         },
                                         CardBottomButton("隐藏") {
-                                            resultText = ""
+                                            resultText = EMPTY_STRING
                                         },
                                     )
                                 )
@@ -254,7 +254,7 @@ fun ScanScreen(
                                             ClipBoardHelper.copy(resultText)
                                         },
                                         CardBottomButton("隐藏") {
-                                            resultText = ""
+                                            resultText = EMPTY_STRING
                                         },
                                     )
                                 )

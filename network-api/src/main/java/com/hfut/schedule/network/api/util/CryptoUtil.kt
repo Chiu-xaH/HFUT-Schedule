@@ -74,7 +74,7 @@ object CryptoUtil {
         // 将输入字符串转换为字节数组并进行MD5加密
         val digest = md.digest(input.toByteArray())
         // 将加密后的字节数组转换为16进制字符串
-        val hexString = digest.joinToString("") { "%02x".format(it) }
+        val hexString = digest.joinToString(EMPTY_STRING) { "%02x".format(it) }
         return hexString
     }
 

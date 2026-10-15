@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.xah.common.logic.util.EMPTY_STRING
 
 // 容器共享切换
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -23,7 +24,7 @@ fun <S> ShareContainer2D(modifier: Modifier = Modifier,label: S, contents : Map<
             transitionSpec = {
                 fadeIn(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2))
             },
-            label = ""
+            label = EMPTY_STRING
         ) { targetLabel ->
             Box(
                 modifier = Modifier.sharedBounds(

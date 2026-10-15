@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -151,7 +152,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
                     val qrPainter = rememberCreateQrCode(Constant.PAY_FEE_URL)
-                    qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
+                    qrPainter?.let { Image(it.asImageBitmap(), contentDescription = EMPTY_STRING) }
                 }
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -210,7 +211,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                 supportingContent = {
                     Text("提前在中国农业银行卡预存费用,开学后自动扣取")
                 },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
+                leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = EMPTY_STRING)},
                 modifier = Modifier.clickable{}
             )
             PaddingHorizontalDivider()
@@ -220,7 +221,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                     Text("点击复制链接或扫描二维码，在微信打开并登陆后可支付")
                 },
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")
+                    Icon(painter = painterResource(id = R.drawable.net), contentDescription = EMPTY_STRING)
                 },
                 modifier= Modifier.clickable {
                     ClipBoardHelper.copy(Constant.PAY_FEE_URL)
@@ -231,7 +232,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                 DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP))
                 Image(
                     it.asImageBitmap(),
-                    contentDescription = "",
+                    contentDescription = EMPTY_STRING,
                     modifier = Modifier.padding(APP_HORIZONTAL_DP - QR_CODE_PADDING)
                 )
             }

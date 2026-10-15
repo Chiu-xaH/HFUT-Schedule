@@ -18,6 +18,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 
@@ -70,7 +71,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: NetWorkViewModel) {
                                 } else {
                                     R.drawable.paid
                                 }
-                            ), contentDescription = "")
+                            ), contentDescription = EMPTY_STRING)
                     },
                 )
             }

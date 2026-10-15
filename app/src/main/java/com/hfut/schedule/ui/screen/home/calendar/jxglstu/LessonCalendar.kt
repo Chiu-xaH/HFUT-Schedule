@@ -74,6 +74,7 @@ import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.shader.state.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
@@ -299,7 +300,7 @@ fun JxglstuCourseTableSearch(
                     val text =
                         "${item.periodRange.first}-${item.periodRange.second}节" +"\n" +
                                 (if(onDateChange == null) "(${lessonItem.code.substringAfter("--")}班)" else "")+ lessonItem.course.nameZh +
-                                (item.place?.let { "\n" + it } ?: "")
+                                (item.place?.let { "\n" + it } ?: EMPTY_STRING)
                     val bean = CardBean(i,text)
                     val weekday = item.weekday
                     val weekRange = item.weekRange

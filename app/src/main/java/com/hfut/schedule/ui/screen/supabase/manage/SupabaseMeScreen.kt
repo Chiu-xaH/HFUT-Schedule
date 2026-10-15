@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.common.logic.util.remove
 import kotlinx.coroutines.launch
@@ -53,7 +54,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) {
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
     val uiState by vm.supabaseGetMyEventsResp.state.collectAsState()
     val refreshNetwork : suspend () -> Unit = {
         vm.supabaseGetMyEventsResp.clear()
@@ -95,8 +96,8 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
 
 @Composable
 private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,onRefresh :  () -> Unit) {
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
-    var input by remember { mutableStateOf("") }
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     var id by remember { mutableIntStateOf(-1) }
     var showDialogDel by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()

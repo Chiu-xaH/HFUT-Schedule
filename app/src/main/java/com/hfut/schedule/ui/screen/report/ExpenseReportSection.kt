@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 
 @Composable
 fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
@@ -26,7 +27,7 @@ fun ExpenseReportSection(vm: NetWorkViewModel, semester: Int) {
 
     val refreshNetwork: suspend () -> Unit = rN@ {
         if (uiState is NetworkUiState.Success) return@rN
-        val auth = prefs.getString("auth", "")
+        val auth = prefs.getString("auth", EMPTY_STRING)
         if (auth.isNullOrEmpty()) return@rN
         vm.cardPredictedResponse.clear()
         vm.getCardPredicted("bearer $auth")

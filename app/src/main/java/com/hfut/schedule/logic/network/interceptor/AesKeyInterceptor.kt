@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.network.interceptor
 
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.xah.common.logic.util.EMPTY_STRING
 import okhttp3.Interceptor
 import okhttp3.Response
 //获取AESKey保存到SharedPreferences
@@ -9,8 +10,8 @@ class AesKeyInterceptor : Interceptor {
         val response = chain.proceed(chain.request())
         val cookies = response.headers("Set-Cookie")
         //Log.d("cookieAES",cookies.toString())
-        var cookieValue = ""
-        var cookiekey = ""
+        var cookieValue = EMPTY_STRING
+        var cookiekey = EMPTY_STRING
         // 遍历cookies列表，找到LOGIN_FLAVORING
         for (cookie in cookies) {
             if (cookie.contains("LOGIN_FLAVORING")) {

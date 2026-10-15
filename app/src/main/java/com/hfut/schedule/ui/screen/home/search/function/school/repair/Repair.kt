@@ -26,6 +26,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.nav.window.RepairWindow
 
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.floating.util.LocalFloatingController
 import dev.chrisbanes.haze.HazeState
@@ -36,7 +37,7 @@ fun Repair() {
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_repair)) },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = EMPTY_STRING) },
         modifier = Modifier.clickable {
             floatController.push(RepairWindow)
         }

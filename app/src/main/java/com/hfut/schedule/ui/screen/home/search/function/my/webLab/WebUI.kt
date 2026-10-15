@@ -103,6 +103,7 @@ import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
@@ -151,8 +152,8 @@ fun WebNavigationScreen(
 
     if(showBottomSheet_Add) {
         val scope = rememberCoroutineScope()
-        var inputName by remember { mutableStateOf("") }
-        var inputUrl by remember { mutableStateOf("") }
+        var inputName by remember { mutableStateOf(EMPTY_STRING) }
+        var inputUrl by remember { mutableStateOf(EMPTY_STRING) }
         Dialog(onDismissRequest = { showBottomSheet_Add = false}) {
             Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)) {
                 Column(modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
@@ -215,7 +216,7 @@ fun WebNavigationScreen(
     }
     val context = LocalContext.current
     var input by rememberSaveable { mutableStateOf("https://") }
-    var inputCookies by remember { mutableStateOf("") }
+    var inputCookies by remember { mutableStateOf(EMPTY_STRING) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val backdrop = rememberLayerBackdrop()
@@ -341,7 +342,7 @@ fun WebNavigationScreen(
                         RowHorizontal {
                             Image(
                                 it.asImageBitmap(),
-                                contentDescription = "",
+                                contentDescription = EMPTY_STRING,
                                 modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - QR_CODE_PADDING)
                             )
                         }

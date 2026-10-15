@@ -132,6 +132,7 @@ import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.manager.AnimationSpecManager
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
@@ -628,7 +629,7 @@ fun SharedAppearanceSettingsScreen(
                     supportingContent = {
                         Text(text = stringResource(
                             R.string.appearance_settings_motion_blur_description_supported,
-                            if (!AppVersion.CAN_MOTION_BLUR) stringResource(R.string.appearance_settings_motion_blur_description_unsupported) else ""
+                            if (!AppVersion.CAN_MOTION_BLUR) stringResource(R.string.appearance_settings_motion_blur_description_unsupported) else EMPTY_STRING
                         ))
                     },
                     leadingContent = { MotionBlurIcon(motionBlur) },
@@ -665,7 +666,7 @@ fun SharedAppearanceSettingsScreen(
                                 if(!AppVersion.CAN_SHADER)
                                     stringResource(R.string.appearance_settings_shader_description_unsupported)
                                 else
-                                    ""
+                                    EMPTY_STRING
                         ) )
                     },
                     leadingContent = {
@@ -1119,12 +1120,12 @@ fun CalendarUISettings(
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
-    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+    val customBackground by DataStoreManager.customBackground.collectAsState(initial = EMPTY_STRING)
     val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val customSquareBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val useCustomBackground = customBackground != ""
+    val useCustomBackground = customBackground != EMPTY_STRING
     val pickMultipleMedia = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->

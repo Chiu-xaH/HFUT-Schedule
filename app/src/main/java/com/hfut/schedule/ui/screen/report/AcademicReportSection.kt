@@ -34,6 +34,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.component.chart.LineChart
@@ -55,7 +56,7 @@ fun AcademicReportSection(
     val communityGradeState by vm.gradeFromCommunityResponse.state.collectAsState()
     val allCommunityRankingsState by vm.allSemestersRankingsFromCommunityResponse.state.collectAsState()
     var initialSemesterSet by remember { mutableStateOf(false) }
-    val communityToken = prefs.getString("TOKEN", "").orEmpty()
+    val communityToken = prefs.getString("TOKEN", EMPTY_STRING).orEmpty()
 
     val uniAppGrades = (uniAppState as? NetworkUiState.Success)?.data
     val jxglstuGrades = (jxglstuState as? NetworkUiState.Success)?.data

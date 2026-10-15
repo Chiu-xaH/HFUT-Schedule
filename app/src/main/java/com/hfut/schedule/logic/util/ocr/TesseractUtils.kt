@@ -6,6 +6,7 @@ import android.util.Log
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.showToast
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import java.io.File
 
@@ -15,7 +16,7 @@ object TesseractUtils {
     fun recognizeCaptcha(bitmap: Bitmap): String {
         if(!isExistModule()) {
             showToast("未检测到模型，确认是否下载?")
-            return ""
+            return EMPTY_STRING
         }
         try {
             val tesseractOCR = TesseractOCR()
@@ -24,7 +25,7 @@ object TesseractUtils {
             return result
         } catch (e: Exception) {
             LogUtil.error(e)
-            return ""
+            return EMPTY_STRING
         }
     }
 

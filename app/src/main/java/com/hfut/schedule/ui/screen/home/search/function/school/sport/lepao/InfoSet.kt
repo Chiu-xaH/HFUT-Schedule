@@ -36,6 +36,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,14 +46,14 @@ fun InfoSet() {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val savedToken = SharedPrefs.prefs.getString("Yuntoken","")
-    var inputToken by remember { mutableStateOf(savedToken ?: "") }
+    val savedToken = SharedPrefs.prefs.getString("Yuntoken",EMPTY_STRING)
+    var inputToken by remember { mutableStateOf(savedToken ?: EMPTY_STRING) }
 
 
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
+        label = EMPTY_STRING // 使用弹簧动画
     )
 
     Scaffold(
@@ -68,7 +69,7 @@ fun InfoSet() {
                                 SharedPrefs.saveString("Yuntoken",inputToken)
                                 Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                             }
-                        ) { Icon(painterResource(R.drawable.check), contentDescription = "") }
+                        ) { Icon(painterResource(R.drawable.check), contentDescription = EMPTY_STRING) }
                     }
                 },
             ) { innerPadding ->
@@ -77,7 +78,7 @@ fun InfoSet() {
 //                    MyCustomCard{
                         CardListItem(
                             headlineContent = { Text(text = "请通过抓包获取常用设备的token,多设备登录会带来风险,所以要手动填写")},
-                            leadingContent = { Icon(painterResource(id = R.drawable.info), contentDescription = "")}
+                            leadingContent = { Icon(painterResource(id = R.drawable.info), contentDescription = EMPTY_STRING)}
                         )
 //                    }
 

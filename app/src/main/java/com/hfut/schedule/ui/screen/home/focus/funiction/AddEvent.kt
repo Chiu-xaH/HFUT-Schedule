@@ -153,6 +153,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingUI
@@ -219,7 +220,7 @@ fun AddEventFloatButton(
             transitionSpec = {
                 fadeIn(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2))
             },
-            label = ""
+            label = EMPTY_STRING
         ) { targetShowAddUI ->
             // 这里是 AnimatedContentScope 的作用域
             if (targetShowAddUI) {
@@ -254,8 +255,8 @@ fun AddEventScreen(
 ) {
     val navController = LocalNavController.current
     val isSupabase = false
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
-    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
+    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = EMPTY_STRING)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var showDialog by remember { mutableStateOf(false) }
@@ -419,8 +420,8 @@ private fun SharedTransitionScope.SurfaceUI(
     boundsTransform: BoundsTransform,
     vm: NetWorkViewModel
 ) {
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
-    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
+    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = EMPTY_STRING)
 
 //    var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -562,17 +563,17 @@ fun AddEventUI(
         }
     }
     var isScheduleType by remember { mutableStateOf(true) }
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var remark by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(EMPTY_STRING) }
+    var description by remember { mutableStateOf(EMPTY_STRING) }
+    var remark by remember { mutableStateOf(EMPTY_STRING) }
 
-    var time by remember { mutableStateOf(Pair("","")) }
-    var date by remember { mutableStateOf(Pair("","")) }
+    var time by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
+    var date by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
     LaunchedEffect(editedData) {
         editedData?.let {
             isScheduleType = it.type == CustomEventType.SCHEDULE
             title = it.title
-            description = it.description ?: ""
+            description = it.description ?: EMPTY_STRING
             remark = it.remark
 
             val preDateTime = it.dateTime
@@ -620,7 +621,7 @@ fun AddEventUI(
         enabled = title.isNotBlank() && title.isNotEmpty() && time.first.isNotEmpty() && time.second.isNotEmpty() && date.first.isNotEmpty() && date.second.isNotEmpty() && remark.isNotBlank() && remark.isNotEmpty()
     }
 
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
     var isClone by remember { mutableStateOf(true) }
     val classList = remember { mutableStateListOf<String>() }
     var updateLoading by remember { mutableStateOf(false) }
@@ -892,8 +893,8 @@ fun AddEventUI(
             CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = { Text(
-                            (if(isScheduleType)"开始 ${date.first + (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: "") + " " + time.first}\n" else "")
-                                    + "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: "") +" " + time.second}"
+                            (if(isScheduleType)"开始 ${date.first + (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) + " " + time.first}\n" else EMPTY_STRING)
+                                    + "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + time.second}"
                         ) },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
@@ -915,7 +916,7 @@ fun AddEventUI(
 
                 if(isSupabase) {
                     var isEditMode by remember { mutableStateOf(false) }
-                    var input by remember { mutableStateOf("") }
+                    var input by remember { mutableStateOf(EMPTY_STRING) }
                     var id by remember { mutableIntStateOf(-1) }
                     var showDelDialog by remember { mutableStateOf(false) }
                     var showAddDialog by remember { mutableStateOf(false) }
@@ -982,8 +983,9 @@ fun AddEventUI(
 
                     LaunchedEffect(Unit) { getPersonInfo().className?.let { classList.add(it) } }
                     LaunchedEffect(showAddDialog) {
-                        if(!showAddDialog)
-                            input = ""
+                        if(!showAddDialog) {
+                            input = EMPTY_STRING
+                        }
                     }
 
                     Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*2f))
@@ -1202,7 +1204,7 @@ private fun BuildingsSelector(
                 selectedColor = MaterialTheme.colorScheme.surface,
                 selectedShape = FilterChipDefaults.shape,
                 onSelect = { _,content ->
-                    selectedBuildings = ""
+                    selectedBuildings = EMPTY_STRING
                     campus = content
                 }
             ) { content ->

@@ -6,6 +6,7 @@ import android.os.Build
 import com.hfut.schedule.BuildConfig
 import com.hfut.schedule.application.MyApplication
 import com.hjq.device.compat.DeviceOs
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.remove
 import java.io.ByteArrayInputStream
@@ -53,7 +54,7 @@ object AppVersion {
     }
 
     fun getVersionName() : String {
-        var versionName = ""
+        var versionName = EMPTY_STRING
         try {
             versionName = packageName.versionName.toString()
         } catch ( e : PackageManager.NameNotFoundException) {

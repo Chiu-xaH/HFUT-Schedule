@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -107,7 +108,7 @@ fun FixUI(
                 headlineContent = { Text(text = VersionInfoDestination.title.asString()) },
                 supportingContent = { Text(text = stringResource(R.string.about_settings_version_info_description))},
                 modifier = Modifier.clickable { showBottomSheet_version = true },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
+                leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = EMPTY_STRING)}
             )
             PaddingHorizontalDivider()
             BugShare()
@@ -240,7 +241,7 @@ fun BugShare() {
                 LoadingIcon()
             } else{
                 Icon(
-                    painter = painterResource(id = R.drawable.slow_motion_video), contentDescription = ""
+                    painter = painterResource(id = R.drawable.slow_motion_video), contentDescription = EMPTY_STRING
                 )
             }
         },

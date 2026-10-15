@@ -48,6 +48,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -72,7 +73,7 @@ fun Washing(
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_laundry)) },
         leadingContent = {
-            Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
+            Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = EMPTY_STRING)
         },
         trailingContent = {
             SharedContainer(

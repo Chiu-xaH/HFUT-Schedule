@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.container.component.base.SharedContainer
@@ -142,14 +143,14 @@ private fun VersionInfoCard() {
                     TransplantListItem(
                         // fixme:这里用gradle自动签日期会影响F-Droid构建后校验Smail代码，暂时还是手动标注吧 [issue#50]
                         overlineContent = { ScrollText(text = RELEASE_DATE) },
-                        leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = EMPTY_STRING) },
                         headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                         modifier = Modifier.weight(.5f)
                     )
                     AppVersion.getSplitType().let {
                         TransplantListItem(
                             overlineContent = { Text(text = if(it == AppVersion.SplitType.COMMON) "全量包" else "架构分包") },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.package_2), contentDescription = "") },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.package_2), contentDescription = EMPTY_STRING) },
                             headlineContent = { Text(text = it.description) },
                             modifier = Modifier.weight(.5f)
                         )
@@ -225,7 +226,7 @@ private fun UpdateItems(
             TransplantListItem(
                 headlineContent = { Text(text = title) },
                 supportingContent = { info?.let { Text(text = it) } },
-                leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") },
+                leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = EMPTY_STRING) },
             )
             PaddingHorizontalDivider()
             Row(

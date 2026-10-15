@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.CalendarConfigDestination
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
@@ -143,7 +144,7 @@ fun MultiScheduleSettings(
         HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
             Row {
                 FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
-                    Icon(painterResource(id = R.drawable.add), contentDescription = "")
+                    Icon(painterResource(id = R.drawable.add), contentDescription = EMPTY_STRING)
                 }
             }
         }
@@ -232,7 +233,7 @@ fun MultiScheduleSettings(
                     colors = normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        Icon(painterResource(id = R.drawable.add), contentDescription = "",modifier = Modifier.align(Alignment.Center))
+                        Icon(painterResource(id = R.drawable.add), contentDescription = EMPTY_STRING,modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }
@@ -245,7 +246,7 @@ fun MultiScheduleSettings(
                     headlineContent = { Text(text = "课程表配置") },
                     supportingContent = {  Text("切换学期、切换默认课程表等配置") },
                     leadingContent = {
-                        Icon(painterResource(id = R.drawable.approval), contentDescription = "")
+                        Icon(painterResource(id = R.drawable.approval), contentDescription = EMPTY_STRING)
                     },
                     modifier = Modifier.clickable {
                         onDismissed()
@@ -257,7 +258,7 @@ fun MultiScheduleSettings(
                     headlineContent = { Text(text = "外观调整") },
                     supportingContent = {  Text("调整课程表方格外观、背景等") },
                     leadingContent = {
-                        Icon(painterResource(id = R.drawable.format_paint), contentDescription = "")
+                        Icon(painterResource(id = R.drawable.format_paint), contentDescription = EMPTY_STRING)
                     },
                     modifier = Modifier.clickable {
                         onDismissed()
@@ -270,7 +271,7 @@ fun MultiScheduleSettings(
                         headlineContent = { Text(text = "导出教务课表") },
                         supportingContent = {  Text("以文件导出教务课表") },
                         leadingContent = {
-                            Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
+                            Icon(painterResource(id = R.drawable.ios_share), contentDescription = EMPTY_STRING)
                         },
                         modifier = Modifier.clickable {
                             scope.launch {
@@ -286,7 +287,7 @@ fun MultiScheduleSettings(
                     headlineContent = { Text(text = if(d) "刷新教务课表" else "刷新课程表") },
                     supportingContent = { Text(if(d) "教务登录会失效,无法自动刷新" else "回到聚焦,等待转圈完成即完成刷新") },
                     leadingContent = {
-                        Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
+                        Icon(painterResource(id = R.drawable.rotate_right), contentDescription = EMPTY_STRING)
                     },
                     modifier = Modifier.clickable {
                         if(d)
@@ -302,7 +303,7 @@ fun MultiScheduleSettings(
                         supportingContent = { Text("将教务课表以日程写入到日历中") },
                         headlineContent = { Text(text = "上课提醒") },
                         leadingContent = {
-                            Icon(painterResource(id = R.drawable.calendar_add_on), contentDescription = "")
+                            Icon(painterResource(id = R.drawable.calendar_add_on), contentDescription = EMPTY_STRING)
                         },
                         modifier = Modifier.clickable {
                             showBottomSheet_loading = true
@@ -314,7 +315,7 @@ fun MultiScheduleSettings(
 //                    TransplantListItem(
 //                        headlineContent = { Text(text = "恢复默认状态") },
 //                        leadingContent = {
-//                            Icon(painterResource(id = R.drawable.delete), contentDescription = "")
+//                            Icon(painterResource(id = R.drawable.delete), contentDescription = EMPTY_STRING)
 //                        },
 //                        modifier = Modifier.clickable {
 //                            showDialog_Del = true

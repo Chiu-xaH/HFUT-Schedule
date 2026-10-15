@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -60,7 +61,7 @@ fun Mail(
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_school_email)) },
 //        overlineContent = { ScrollText(text = MyApplication.EMAIL) },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = EMPTY_STRING) },
         modifier = Modifier.clickable {
             showBottomSheet = true
         }

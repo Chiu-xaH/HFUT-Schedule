@@ -76,6 +76,7 @@ import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.SharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -90,9 +91,9 @@ fun CourseSearchScreen(
     val hazeState = rememberHazeBlur()
 
     var showSearch by rememberSaveable() { mutableStateOf(true) }
-    var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: "") }
-    var courseName by rememberSaveable { mutableStateOf("") }
-    var courseId by rememberSaveable { mutableStateOf("") }
+    var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: EMPTY_STRING) }
+    var courseName by rememberSaveable { mutableStateOf(EMPTY_STRING) }
+    var courseId by rememberSaveable { mutableStateOf(EMPTY_STRING) }
 
     val uiState by vm.courseSearchResponse.state.collectAsState()
     var semester by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -289,7 +290,7 @@ fun CourseSearchScreen(
                                     } else {
                                         IconButton(
                                             onClick = {
-                                                className = ""
+                                                className = EMPTY_STRING
                                             },
                                         ) {
                                             Icon(painterResource(R.drawable.close), null)

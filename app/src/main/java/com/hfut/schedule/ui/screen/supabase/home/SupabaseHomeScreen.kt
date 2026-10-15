@@ -76,6 +76,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCa
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.common.logic.util.remove
 import kotlinx.coroutines.async
@@ -139,7 +140,7 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel, sortType: SortType, sortReversed : 
 
 @Composable
 private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : Boolean,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit) {
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
     val scope = rememberCoroutineScope()
 //    var sortType by remember { mutableStateOf(SortType.ID) }
     val filter by DataStoreManager.enableSupabaseFilterEvent.collectAsState(initial = false)
@@ -160,7 +161,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
             ) && // 自己校区
                     (it.campus == getEventCampus() || it.campus == EventCampus.DEFAULT)
         } else list
-        var input by remember { mutableStateOf("") }
+        var input by remember { mutableStateOf(EMPTY_STRING) }
 
         val sortList =  when(sortType) {
             SortType.TIME_LINE -> filterList.sortedBy { when(it.type) {
@@ -188,7 +189,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
             items(sortList.size, key = { sortList[it].id }) { index ->
                 val item = sortList[index]
 
-                val count by produceState(initialValue = "") {
+                val count by produceState(initialValue = EMPTY_STRING) {
                     vm.eventForkCountCache[item.id]?.let { value = it }
                 }
                 LaunchedEffect(item.id) {

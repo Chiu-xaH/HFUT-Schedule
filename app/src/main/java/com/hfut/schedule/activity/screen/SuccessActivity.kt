@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
+import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -34,7 +35,7 @@ class SuccessActivity : BaseActivity() {
         lifecycleScope.apply {
             if(!GlobalUiStateHolder.webVpn) {
                 launch(Dispatchers.IO) {
-                    val cookie = prefs.getString("redirect", "")
+                    val cookie = prefs.getString("redirect", EMPTY_STRING)
                     networkVm.jxglstuLogin(cookie!!)
                 }
             }

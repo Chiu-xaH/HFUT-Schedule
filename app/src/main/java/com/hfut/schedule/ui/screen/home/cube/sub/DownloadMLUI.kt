@@ -42,6 +42,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
@@ -107,7 +108,7 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { ScrollText("English") },
-                    supportingContent = { Text("约11MB" + if(isExistModule) " 长按删除" else "") },
+                    supportingContent = { Text("约11MB" + if(isExistModule) " 长按删除" else EMPTY_STRING) },
                     trailingContent = {
                         if(!isExistModule) {
                             Row {

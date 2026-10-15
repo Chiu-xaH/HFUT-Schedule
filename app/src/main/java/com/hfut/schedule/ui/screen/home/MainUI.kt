@@ -200,6 +200,7 @@ import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.sharednav.common.helper.ScreenCornerHelper
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.common.ui.component.text.BottomTip
@@ -335,7 +336,7 @@ fun MainScreen(
 
     var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val pagerState = rememberPagerState(pageCount = { titles.size })
-    var searchText by rememberSaveable() { mutableStateOf("") }
+    var searchText by rememberSaveable() { mutableStateOf(EMPTY_STRING) }
     var showSearch by rememberSaveable() { mutableStateOf(false) }
 
     val floatingController = LocalFloatingController.current
@@ -365,10 +366,10 @@ fun MainScreen(
 
     val backGroundSource = rememberLayerBackdrop()
 
-    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-    val useCustomBackground = customBackground != ""
+    val customBackground by DataStoreManager.customBackground.collectAsState(initial = EMPTY_STRING)
+    val useCustomBackground = customBackground != EMPTY_STRING
     val context = LocalContext.current
-    var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().getStudentIdFinally() ?: "") }
+    var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().getStudentIdFinally() ?: EMPTY_STRING) }
     // 捏合手势
     val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 
@@ -489,7 +490,7 @@ fun MainScreen(
                                         ) {
                                             Icon(
                                                 painterResource(id = R.drawable.edit),
-                                                contentDescription = "",
+                                                contentDescription = EMPTY_STRING,
                                             )
                                         }
                                         Spacer(Modifier.width(BUTTON_PADDING))
@@ -502,7 +503,7 @@ fun MainScreen(
                                         ) {
                                             Icon(
                                                 painterResource(id = R.drawable.search),
-                                                contentDescription = "",
+                                                contentDescription = EMPTY_STRING,
                                             )
                                         }
                                     }
@@ -527,7 +528,7 @@ fun MainScreen(
                                             }) {
                                                 Icon(
                                                     painterResource(NotificationBoxDestination.icon),
-                                                    contentDescription = ""
+                                                    contentDescription = EMPTY_STRING
                                                 )
                                             }
                                         }
@@ -542,7 +543,7 @@ fun MainScreen(
                                             ) {
                                                 Icon(
                                                     painter = painterResource(id = R.drawable.login),
-                                                    contentDescription = "",
+                                                    contentDescription = EMPTY_STRING,
                                                 )
                                             }
                                         } else {
@@ -600,7 +601,7 @@ fun MainScreen(
                         FUNCTIONS -> {
                             if (showSearch) {
                                 SearchFuncs(searchText,backdrop, onShow = {
-                                    searchText = ""
+                                    searchText = EMPTY_STRING
                                     showSearch = it
                                 }) {
                                     searchText = it
@@ -677,7 +678,7 @@ fun MainScreen(
                                             Icon(
                                                 tint = iconColor,
                                                 painter = painterResource(id = WorkAndRestDestination.ICON),
-                                                contentDescription = "",
+                                                contentDescription = EMPTY_STRING,
                                                 modifier = Modifier
                                                     .padding(CARD_NORMAL_DP * 3)
                                             )
@@ -706,7 +707,7 @@ fun MainScreen(
                                             Icon(
                                                 tint = iconColor,
                                                 painter = painterResource(id = R.drawable.category),
-                                                contentDescription = "",
+                                                contentDescription = EMPTY_STRING,
                                                 modifier = Modifier
                                                     .padding(CARD_NORMAL_DP * 3)
                                             )
@@ -729,7 +730,7 @@ fun MainScreen(
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.tab_inactive),
-                                            contentDescription = "",
+                                            contentDescription = EMPTY_STRING,
                                             tint = iconColor,
                                             modifier = Modifier.padding(CARD_NORMAL_DP*3)
                                         )
@@ -753,7 +754,7 @@ fun MainScreen(
                                         val painter = rememberAnimatedVectorPainter(animatedImageVector, showAll)
                                         Icon(
                                             painter = painter,
-                                            contentDescription = "",
+                                            contentDescription = EMPTY_STRING,
                                             modifier = Modifier.padding(CARD_NORMAL_DP*3),
                                             tint = iconColor,
                                         )
@@ -795,7 +796,7 @@ fun MainScreen(
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = WorkAndRestDestination.ICON),
-                                                contentDescription = "",
+                                                contentDescription = EMPTY_STRING,
                                             )
                                         }
                                     } else {
@@ -812,7 +813,7 @@ fun MainScreen(
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = TermCoursesDestination.ICON),
-                                                contentDescription = "",
+                                                contentDescription = EMPTY_STRING,
                                             )
                                         }
                                     }
@@ -826,7 +827,7 @@ fun MainScreen(
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.tab_inactive),
-                                            contentDescription = "",
+                                            contentDescription = EMPTY_STRING,
                                         )
                                     }
                                     Spacer(Modifier.width(BUTTON_PADDING))
@@ -1513,8 +1514,8 @@ private fun ZhiJianSearchBar(
         Dialog(
             onDismissRequest = { showAddDialog = false }
         ) {
-            var inputName by remember { mutableStateOf("") }
-            var inputRemark by remember { mutableStateOf("") }
+            var inputName by remember { mutableStateOf(EMPTY_STRING) }
+            var inputRemark by remember { mutableStateOf(EMPTY_STRING) }
             Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)) {
                 Column(modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
                     CustomTextField(

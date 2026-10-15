@@ -72,6 +72,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.BottomTip
@@ -353,7 +354,7 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
                                 Text(
                                     "要求 " +
                                             requireInfo.requiredCredits.let { num ->
-                                                if(num == 0.0) "" else "" + num + "学分"
+                                                if(num == 0.0) EMPTY_STRING else EMPTY_STRING + num + "学分"
                                             }
                                 )
                             },
@@ -368,7 +369,7 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
                 CardListItem(
-                    headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
+                    headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else EMPTY_STRING }) },
                     supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
@@ -382,7 +383,7 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
 
         val state = rememberLazyListState()
 
-        var input by remember { mutableStateOf("") }
+        var input by remember { mutableStateOf(EMPTY_STRING) }
 
         var courseInfo by remember { mutableStateOf<JxglstuProgramPlanCourse?>(null) }
         var showInfo by remember { mutableStateOf(false) }
@@ -443,7 +444,7 @@ fun ProgramChildrenUI(entity : JxglstuProgramResponse?, hazeState : HazeState, v
                             Text(
                                 "要求 " +
                                         requireInfo.requiredCredits.let { num ->
-                                            if(num == 0.0) "" else "" + num + "学分"
+                                            if(num == 0.0) EMPTY_STRING else EMPTY_STRING + num + "学分"
                                         }
                             )
                         },

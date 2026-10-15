@@ -81,7 +81,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
     val uiState by vm.huiXinSearchBillsResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val auth = prefs.getString("auth","")
+        val auth = prefs.getString("auth",EMPTY_STRING)
         vm.huiXinSearchBillsResult.clear()
         vm.searchBills("bearer $auth",input,currentPage)
     }

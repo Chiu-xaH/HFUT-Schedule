@@ -86,6 +86,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
@@ -200,14 +201,14 @@ private fun PersonItems(
 
     var show by rememberSaveable { mutableStateOf(false) }
     var show2 by rememberSaveable() { mutableStateOf(chineseid == null) }
-    val cardPsk by produceState(initialValue = "") {
-        value = getHuiXinPsk() ?: ""
+    val cardPsk by produceState(initialValue = EMPTY_STRING) {
+        value = getHuiXinPsk() ?: EMPTY_STRING
     }
-    val schoolNetPsk by produceState(initialValue = "") {
-        value = getSchoolNetPsk() ?: ""
+    val schoolNetPsk by produceState(initialValue = EMPTY_STRING) {
+        value = getSchoolNetPsk() ?: EMPTY_STRING
     }
-    val jxglstuPwd by produceState(initialValue = "") {
-        value = getJxglstuPassword() ?: ""
+    val jxglstuPwd by produceState(initialValue = EMPTY_STRING) {
+        value = getJxglstuPassword() ?: EMPTY_STRING
     }
     val context = LocalContext.current
 
@@ -244,7 +245,7 @@ private fun PersonItems(
                         .zIndex(1f)
                         .align(Alignment.CenterEnd)
                         .padding(horizontal = APP_HORIZONTAL_DP)) {
-                        Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
+                        Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = EMPTY_STRING)
                     }
                     Column(modifier = Modifier.coverBlur(!show2)) {
                         TransplantListItem(
@@ -290,7 +291,7 @@ private fun PersonItems(
                     headlineContent = { Text(text = yuanxi ?: "--------")  },
                     overlineContent = { Text(text = "学院")},
                     leadingContent = {
-                        DepartmentIcons(name = yuanxi ?: "")
+                        DepartmentIcons(name = yuanxi ?: EMPTY_STRING)
                     },
                     modifier = Modifier.clickable {
                         yuanxi?.let { ClipBoardHelper.copy(it) }
@@ -303,7 +304,7 @@ private fun PersonItems(
                         Text(text = major ?: "--------")
                     },
                     overlineContent = { Text(text = "专业")},
-                    supportingContent = { majorDirection?.let { if(it != "") Text(text = "方向 $it") else null } },
+                    supportingContent = { majorDirection?.let { if(it != EMPTY_STRING) Text(text = "方向 $it") else null } },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.square_foot),
@@ -352,13 +353,13 @@ private fun PersonItems(
                     },
                     trailingContent = {
                         FilledTonalIconButton(onClick = { show = !show }) {
-                            Icon(painter = painterResource(id = if(show)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
+                            Icon(painter = painterResource(id = if(show)R.drawable.visibility else R.drawable.visibility_off), contentDescription = EMPTY_STRING)
                         }
                     }
                 )
                 PaddingHorizontalDivider()
                 Column(modifier = Modifier.coverBlur(!show)) {
-                    val pwd = remember { prefs.getString("Password", "") }
+                    val pwd = remember { prefs.getString("Password", EMPTY_STRING) }
                     pwd?.let {
                         TransplantListItem(
                             headlineContent = { Text(text = it) },
@@ -498,7 +499,7 @@ private fun PersonItems(
                         )
                     },
                     trailingContent = {
-                        if(startDate != null && endDate != null && startDate != "" && endDate != "") {
+                        if(startDate != null && endDate != null && startDate != EMPTY_STRING && endDate != EMPTY_STRING) {
                             val percent = DateTimeManager.getPercent(startDate,endDate)
                             val str = if(percent in 0.0 ..< 1.0) {
                                 "已过 ${(percent*100).roundOffString(1)}%"
@@ -767,14 +768,14 @@ fun getPersonInfo() : PersonInfo {
         val majorDirection = infoMap[elements?.get(14)?.text()] //专业方向
         val studyTime = infoMap[elements?.get(36)?.text()]//学制 4.0
 
-        val profileJson = prefs.getString("profile","") ?: ""
+        val profileJson = prefs.getString("profile",EMPTY_STRING) ?: EMPTY_STRING
         val doc2 = Jsoup.parse(profileJson)
         val items = doc2.select(".list-group-item")
 
         val dataMap = mutableMapOf<String, String>()
         items.forEach { item ->
             val key = item.select("div.col-md-3 strong").text().trim() // 直接选 strong 避免干扰
-            val value = item.select("div.col-md-6 span").first()?.ownText()?.trim() ?: "" // 只取第一个 span 并用 ownText()
+            val value = item.select("div.col-md-6 span").first()?.ownText()?.trim() ?: EMPTY_STRING // 只取第一个 span 并用 ownText()
 
             if (key.isNotEmpty() && value.isNotEmpty()) {
                 dataMap[key] = value

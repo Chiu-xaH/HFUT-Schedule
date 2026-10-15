@@ -36,6 +36,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -74,6 +75,7 @@ import com.hfut.schedule.ui.nav.destination.GuaGuaLoginDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
@@ -136,22 +138,22 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
     )
     val auth = prefs.getString("auth","")
 
-    val savedPhoneNumber = prefs.getString("PhoneNumber","")
-    var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
-    var balance by remember { mutableStateOf(0) }
+    val savedPhoneNumber = prefs.getString("PhoneNumber",EMPTY_STRING)
+    var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: EMPTY_STRING) }
+    var balance by remember { mutableIntStateOf(0) }
     var givenBalance by remember { mutableStateOf(0) }
-    var studentID by remember { mutableStateOf("") }
+    var studentID by remember { mutableStateOf(EMPTY_STRING) }
 
 
     var showitem4 by remember { mutableStateOf(false) }
 
     var showButton by remember { mutableStateOf(false) }
     val showAdd by remember { mutableStateOf(false) }
-    var payNumber by remember { mutableStateOf("") }
+    var payNumber by remember { mutableStateOf(EMPTY_STRING) }
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var show by remember { mutableStateOf(false) }
-    var json by remember { mutableStateOf("") }
+    var json by remember { mutableStateOf(EMPTY_STRING) }
 
     var showDialog2 by remember { mutableStateOf(false) }
 
@@ -217,7 +219,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     FilledTonalIconButton(
-                        onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
+                        onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), EMPTY_STRING)},
                         modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
                         Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
@@ -226,7 +228,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                     FilledTonalIconButton(
                         onClick = {
                             showDialog2 = false
-                            if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
+                            if(payNumber != EMPTY_STRING && payNumber != "0" && payNumber != "00" && payNumber != "000")
                                 showBottomSheet = true
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
@@ -258,7 +260,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             if(pagerState.currentPage == XUANCHENG_TAB) {
                 Row {
                     if(showitem4)
-                        IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), "")}) {
+                        IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), EMPTY_STRING)}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                     FilledTonalIconButton(onClick = {
                         show = false
@@ -431,7 +433,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                         rightTop = {
                                             if(show) {
                                                 if(showButton)
-                                                    FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                                                    FilledTonalButton(onClick = { if(showAdd && payNumber != EMPTY_STRING) showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != EMPTY_STRING) "提交订单" else "快速充值") }
                                             } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") }
                                         }
                                     ) {
@@ -440,7 +442,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                                 Text("手机号")
                                             },
                                             headlineContent = { Text(text = (if(!show)"1XXXXXXXXXX" else phoneNumber)) },
-                                            leadingContent = { Icon(painter = painterResource(id = R.drawable.call), contentDescription = "") }
+                                            leadingContent = { Icon(painter = painterResource(id = R.drawable.call), contentDescription = EMPTY_STRING) }
                                         )
                                     }
                                 }

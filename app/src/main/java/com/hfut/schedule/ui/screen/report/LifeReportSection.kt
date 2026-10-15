@@ -35,6 +35,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.ui.component.status.LoadingUI
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.chart.LineChart
 import com.xah.common.ui.component.chart.PieChart
 import com.xah.common.ui.component.chart.PieChartData
@@ -48,8 +49,8 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
     val weeklyScoresState by vm.allDormitoryScoresResp.state.collectAsState()
     val huiXinSchoolNetState by vm.huiXinSchoolNetInfoResp.state.collectAsState()
     val schoolNetUsageState by vm.schoolNetSemesterUsageResp.state.collectAsState()
-    val communityToken = prefs.getString("TOKEN", "").orEmpty()
-    val huiXinAuth = prefs.getString("auth", "").orEmpty()
+    val communityToken = prefs.getString("TOKEN", EMPTY_STRING).orEmpty()
+    val huiXinAuth = prefs.getString("auth", EMPTY_STRING).orEmpty()
 
     val termInfo = remember(semester) { SemesterParser.parseSemester(semester) }
     val isXuanCheng = remember { getCampusRegion() == CampusRegion.XUANCHENG }
@@ -205,7 +206,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                                     PieChart(
                                         data = gradeDistribution,
                                         modifier = Modifier.size(120.dp),
-                                        title = ""
+                                        title = EMPTY_STRING
                                     )
                                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                         gradeDistribution.forEach { item ->
@@ -227,7 +228,7 @@ fun LifeReportSection(vm: NetWorkViewModel, semester: Int, allSemesters: List<In
                     CustomCard(color = cardNormalColor()) {
                         TransplantListItem(
                             overlineContent = {
-                                Text("${termInfo ?: ""} · 第${latest.week}周")
+                                Text("${termInfo ?: EMPTY_STRING} · 第${latest.week}周")
                             },
                             headlineContent = { Text("最新卫生评分", style = MaterialTheme.typography.titleMedium) }
                         )

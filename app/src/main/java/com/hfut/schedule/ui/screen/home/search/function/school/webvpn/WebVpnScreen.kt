@@ -67,6 +67,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -136,7 +137,7 @@ fun WebVpnScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     when(page) {
                         PAGE_TO_WEBVPN -> {
-                            var input by remember { mutableStateOf("") }
+                            var input by remember { mutableStateOf(EMPTY_STRING) }
                             var result by remember { mutableStateOf<String?>(null) }
 
                             LazyColumn {
@@ -195,7 +196,7 @@ fun WebVpnScreen(
                                             label = { Text("输入以http://或https://开头的合法链接")},
                                             input = input,
                                             trailingIcon = {
-                                                IconButton(onClick = { input = "" }) {
+                                                IconButton(onClick = { input = EMPTY_STRING }) {
                                                     Icon(painterResource(R.drawable.close),null)
                                                 }
                                             },
@@ -257,7 +258,7 @@ fun WebVpnScreen(
                             }
                         }
                         PAGE_TO_PUBLIC -> {
-                            var input by remember { mutableStateOf("") }
+                            var input by remember { mutableStateOf(EMPTY_STRING) }
                             var result by remember { mutableStateOf<String?>(null) }
 
                             LazyColumn {
@@ -294,7 +295,7 @@ fun WebVpnScreen(
                                             label = { Text("输入以${Constant.WEBVPN_URL}开头的合法链接")},
                                             input = input,
                                             trailingIcon = {
-                                                IconButton(onClick = { input = "" }) {
+                                                IconButton(onClick = { input = EMPTY_STRING }) {
                                                     Icon(painterResource(R.drawable.close),null)
                                                 }
                                             },

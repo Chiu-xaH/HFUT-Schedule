@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 
 
 @Composable
@@ -56,33 +57,33 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
 //        scale = it
 //    }
     var showEditDialog by remember { mutableStateOf(false) }
-    val cookie by produceState(initialValue = "", key1 = showEditDialog) {
+    val cookie by produceState(initialValue = EMPTY_STRING, key1 = showEditDialog) {
         getStorageJxglstuCookie(isWebVpn = false)?.let {
             value = it
         }
     }
-    val wxAuth by DataStoreManager.wxAuth.collectAsState(initial = "")
-    val cookieWebVpn by produceState(initialValue = "",key1 = showEditDialog) {
+    val wxAuth by DataStoreManager.wxAuth.collectAsState(initial = EMPTY_STRING)
+    val cookieWebVpn by produceState(initialValue = EMPTY_STRING,key1 = showEditDialog) {
         getStorageJxglstuCookie(isWebVpn = true)?.let {
             value = it
         }
     }
     val cookieCommunity by produceState<String?>(initialValue = null,key1 = showEditDialog) {
-        value = prefs.getString("TOKEN","")
+        value = prefs.getString("TOKEN",EMPTY_STRING)
     }
     val cookieOne by produceState<String?>(initialValue = null,key1 = showEditDialog) {
-        value = prefs.getString("bearer","")
+        value = prefs.getString("bearer",EMPTY_STRING)
     }
     val cookieHuiXin by produceState<String?>(initialValue = null,key1 = showEditDialog) {
-        value = prefs.getString("auth","")
+        value = prefs.getString("auth",EMPTY_STRING)
     }
     val cookieCAS by produceState<String?>(initialValue = null,key1 = showEditDialog) {
         value = GlobalUiStateHolder.casCookies
     }
     val studentId by vm.studentId.state.collectAsState()
     val bizTypeId by vm.bizTypeIdResponse.state.collectAsState()
-    var input by remember { mutableStateOf("") }
-    var label by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
+    var label by remember { mutableStateOf(EMPTY_STRING) }
 
     if(showEditDialog) {
         androidx.compose.ui.window.Dialog (

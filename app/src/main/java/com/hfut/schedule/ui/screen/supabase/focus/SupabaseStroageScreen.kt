@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -51,7 +52,7 @@ fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     val activity = LocalActivity.current
     var refreshDB by remember { mutableStateOf(false) }
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
 
     // 初始化
     LaunchedEffect(refreshDB) {

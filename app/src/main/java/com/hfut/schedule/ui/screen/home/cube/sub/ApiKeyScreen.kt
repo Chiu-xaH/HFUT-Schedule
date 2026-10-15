@@ -31,6 +31,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.common.logic.util.EMPTY_STRING
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -48,8 +49,8 @@ fun ApiKeyScreen(
 //        scale = it
 //    }
 
-    val pwd by DataStoreManager.apiKey.collectAsState(initial = "")
-    var inputApiKey by remember { mutableStateOf("") }
+    val pwd by DataStoreManager.apiKey.collectAsState(initial = EMPTY_STRING)
+    var inputApiKey by remember { mutableStateOf(EMPTY_STRING) }
     LaunchedEffect(pwd) {
         inputApiKey = pwd
     }

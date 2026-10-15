@@ -90,6 +90,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.remove
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.sharedContainer
@@ -139,7 +140,7 @@ fun SettingsItemsUI() {
                 headlineContent = { Text(text = stringResource(R.string.appearance_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.appearance_settings_description))},
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.format_paint), contentDescription ="" )
+                    Icon(painter = painterResource(id = R.drawable.format_paint), contentDescription =EMPTY_STRING )
                 },
                 modifier = Modifier.clickable { navTopController.push(SettingsAppearanceDestination)  }
             )
@@ -155,7 +156,7 @@ fun SettingsItemsUI() {
                 headlineContent = { Text(text = stringResource(R.string.app_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.app_settings_description))},
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.joystick), contentDescription ="",  )
+                    Icon(painter = painterResource(id = R.drawable.joystick), contentDescription = EMPTY_STRING )
                 },
                 modifier = Modifier.clickable {
                     navTopController.push(SettingsConfigurationDestination)
@@ -173,7 +174,7 @@ fun SettingsItemsUI() {
                 headlineContent = { Text(text = stringResource(R.string.network_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.network_settings_description))},
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
+                    Icon(painter = painterResource(id = R.drawable.net), contentDescription =EMPTY_STRING )
                 },
                 modifier = Modifier.clickable {
                     navTopController.push(SettingsNetworkDestination)
@@ -194,7 +195,7 @@ fun SettingsItemsUI() {
                 headlineContent = { Text(text = stringResource(R.string.about_settings_title)) },
                 supportingContent = { Text(text = stringResource(R.string.about_settings_description))},
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.partner_exchange), contentDescription ="",modifier = Modifier
+                    Icon(painter = painterResource(id = R.drawable.partner_exchange), contentDescription = EMPTY_STRING,modifier = Modifier
                         .size(22.dp)
                         .padding(start = 1.dp) )
                 },

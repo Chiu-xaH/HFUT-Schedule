@@ -30,6 +30,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.remove
 import com.xah.common.ui.component.chart.BarChart
 import com.xah.common.ui.component.chart.LineChart
@@ -64,7 +65,7 @@ fun ExpenseAnalysisSection(vm: NetWorkViewModel, semester: Int, periodLabel: Str
     val predictedState by vm.cardPredictedResponse.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        val auth = prefs.getString("auth", "").orEmpty()
+        val auth = prefs.getString("auth", EMPTY_STRING).orEmpty()
         if (auth.isNotEmpty()) {
             if (billState !is NetworkUiState.Success) {
                 vm.huiXinBillResult.clear()

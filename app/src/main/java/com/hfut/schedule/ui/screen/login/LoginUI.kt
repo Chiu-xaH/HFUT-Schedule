@@ -109,6 +109,7 @@ import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -147,7 +148,7 @@ private fun loginClick(
     onResult : (String) -> Unit,
     scope: CoroutineScope
 ) {
-    val cookie = prefs.getString(if(!GlobalUiStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
+    val cookie = prefs.getString(if(!GlobalUiStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", EMPTY_STRING)
     val outputAES = cookie?.let { it1 -> CryptoUtil.encryptAES(inputAES, it1) }
     val loginFlavoring = "LOGIN_FLAVORING=$cookie"
 
@@ -218,7 +219,7 @@ private fun loginClick(
 private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
     // refresh当webVpn关闭才起效，开启时不需要refresh，直接重载图片
     val jSessionId by vm.jSessionId.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
+    val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = EMPTY_STRING)
 
     val w by vm.webVpnTicket.state.collectAsState()
 
@@ -275,8 +276,8 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     val activity = LocalActivity.current
     val hazeState = rememberHazeBlur()
-    val Savedusername = prefs.getString("Username", "")
-    var username by remember { mutableStateOf(Savedusername ?: "") }
+    val Savedusername = prefs.getString("Username", EMPTY_STRING)
+    var username by remember { mutableStateOf(Savedusername ?: EMPTY_STRING) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val jxglstuStatus by produceState<Int?>(initialValue = null) {
         value = networkVm.checkJxglstuCanUse()
@@ -303,7 +304,7 @@ fun LoginScreen(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = {
-                        ScrollText(text = "CAS登录" + if(GlobalUiStateHolder.webVpn) " (WebVpn)" else "")
+                        ScrollText(text = "CAS登录" + if(GlobalUiStateHolder.webVpn) " (WebVpn)" else EMPTY_STRING)
                     },
                     actions = {
                         Row {
@@ -351,7 +352,7 @@ fun LoginScreen(
                             IconButton(onClick = {
                                 Starter.startFix(context)
                             }) {
-                                Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                                Icon(painterResource(id = R.drawable.build), contentDescription = EMPTY_STRING,tint = MaterialTheme.colorScheme.primary)
                             }
                         }
                     },
@@ -359,7 +360,7 @@ fun LoginScreen(
                         IconButton(onClick = {
                             activity?.finish()
                         }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(id = R.drawable.close), contentDescription = EMPTY_STRING,tint = MaterialTheme.colorScheme.primary)
                         }
                     },
                     modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer )
@@ -664,8 +665,8 @@ private fun TwoTextField(
 ) {
     val context = LocalContext.current
     var hidden by rememberSaveable { mutableStateOf(true) }
-    var inputAES by rememberSaveable { mutableStateOf(prefs.getString("Password","") ?: "") }
-    var inputCode by rememberSaveable { mutableStateOf( "") }
+    var inputAES by rememberSaveable { mutableStateOf(prefs.getString("Password",EMPTY_STRING) ?: EMPTY_STRING) }
+    var inputCode by rememberSaveable { mutableStateOf( EMPTY_STRING) }
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -725,8 +726,8 @@ private fun TwoTextField(
 
                 trailingIcon = {
                     IconButton(onClick = {
-                        onUsername("")
-                        inputAES = ""
+                        onUsername(EMPTY_STRING)
+                        inputAES = EMPTY_STRING
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.close),

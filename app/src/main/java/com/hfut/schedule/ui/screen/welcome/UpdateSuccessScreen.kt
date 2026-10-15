@@ -86,6 +86,7 @@ import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
@@ -359,7 +360,7 @@ fun AnimatedWelcomeScreen() {
             targetState = welcomeTexts[currentIndex],
             transitionSpec = {
                 fadeIn(animationSpec = tween(AppAnimationManager.ANIMATION_SPEED)) togetherWith(fadeOut(animationSpec = tween(AppAnimationManager.ANIMATION_SPEED)))
-            }, label = ""
+            }, label = EMPTY_STRING
         ) { targetText ->
             Text(
                 text = targetText,

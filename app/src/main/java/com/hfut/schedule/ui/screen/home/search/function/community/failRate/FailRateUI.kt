@@ -36,6 +36,7 @@ import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,7 @@ fun FailRateUI(
     Box(modifier = Modifier.fillMaxSize()) {
         if(list.isEmpty()) {
             CenterScreen {
-                EmptyIcon("未搜到课程" + (filterCode?.let { "($it)" } ?: ""))
+                EmptyIcon("未搜到课程" + (filterCode?.let { "($it)" } ?: EMPTY_STRING))
             }
         } else {
             LazyColumn(state = listState) {

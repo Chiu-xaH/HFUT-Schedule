@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
+import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -126,8 +127,8 @@ fun DateRangePickerModal(
                 state = dateRangePickerState,
                 title = {  },
                 headline = { Text(
-                    "开始 ${startDateString ?: ""}" + (weekInfoStart?.let { " (第${it.first}周)" } ?: "")
-                            + "\n" +  "结束 ${endDateString ?: ""}" + (weekInfoEnd?.let { " (第${it.first}周)" } ?: "")
+                    "开始 ${startDateString ?: EMPTY_STRING}" + (weekInfoStart?.let { " (第${it.first}周)" } ?: EMPTY_STRING)
+                            + "\n" +  "结束 ${endDateString ?: EMPTY_STRING}" + (weekInfoEnd?.let { " (第${it.first}周)" } ?: EMPTY_STRING)
                     , modifier = Modifier.padding(
                     APP_HORIZONTAL_DP
                 )) },
@@ -150,7 +151,7 @@ fun DateRangePickerModal(
             DatePicker(
                 state = datePickerState,
                 title = {   },
-                headline = { Text("$text ${endDateString ?: ""}"  + (weekInfoEnd?.let { " (第${it.first}周)" } ?: ""), modifier = Modifier.padding(
+                headline = { Text("$text ${endDateString ?: EMPTY_STRING}"  + (weekInfoEnd?.let { " (第${it.first}周)" } ?: EMPTY_STRING), modifier = Modifier.padding(
                     APP_HORIZONTAL_DP
                 )) },
                 showModeToggle = true,

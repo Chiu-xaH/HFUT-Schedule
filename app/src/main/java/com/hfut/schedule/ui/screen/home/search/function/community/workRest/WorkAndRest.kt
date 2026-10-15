@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-
+import com.xah.common.logic.util.EMPTY_STRING
 
 
 import com.xah.navigation.util.LocalNavController
@@ -155,7 +155,7 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
             DividerTextExpandedWith("线下课程(智慧社区数据源)") {
                 basicInfoList.forEachIndexed { index, item ->
                     val type = item.type
-                    val str = type?.let { " | $it" } ?: ""
+                    val str = type?.let { " | $it" } ?: EMPTY_STRING
                     val id = item.courseId
                     CardListItem(
                         headlineContent = { Text(item.courseName) },

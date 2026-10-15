@@ -106,6 +106,7 @@ import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
@@ -188,7 +189,7 @@ fun TransferScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            var input by remember { mutableStateOf("") }
+            var input by remember { mutableStateOf(EMPTY_STRING) }
             LaunchedEffect(Unit) {
                 refreshNetwork(true)
             }
@@ -236,7 +237,7 @@ fun TransferScreen(
                                     trailingContent = {
                                         ColumnVertical {
                                             FilledTonalIconButton(onClick = { expand = !expand }) {
-                                                Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                                                Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = EMPTY_STRING)
                                             }
                                             Text("代号 $batchId")
                                         }
@@ -343,7 +344,7 @@ fun TransferDetailScreen(
             }
         }
     }
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf(EMPTY_STRING) }
     var sortByHot by rememberSaveable { mutableStateOf(false) }
     val floatingController = LocalFloatingController.current
 
@@ -472,7 +473,7 @@ private fun TransferUI(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheet_select by remember { mutableStateOf(false) }
-    var telephone by remember { mutableStateOf("") }
+    var telephone by remember { mutableStateOf(EMPTY_STRING) }
 
     var id by remember { mutableIntStateOf(0) }
     val uiState by vm.transferData.state.collectAsState()
@@ -674,7 +675,7 @@ private fun TransferUI(
                                         else
                                             IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
                                 ) {
-                                    Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "")
+                                    Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = EMPTY_STRING)
                                 }
                                 Text("$count/$limit (${
                                     if(successRate == 1.0) "满" 

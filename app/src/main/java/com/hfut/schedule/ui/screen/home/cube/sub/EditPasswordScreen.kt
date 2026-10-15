@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.common.logic.model.CampusRegion
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -73,12 +74,12 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
         ) {
             val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
             val useEditedPwd = !useDefaultCardPassword
-            var input by remember { mutableStateOf("") }
+            var input by remember { mutableStateOf(EMPTY_STRING) }
             var showDialog by remember { mutableStateOf(false) }
-            var originPwd by remember { mutableStateOf("") }
+            var originPwd by remember { mutableStateOf(EMPTY_STRING) }
 
             LaunchedEffect(showDialog,useEditedPwd) {
-                originPwd = getHuiXinPsk() ?: ""
+                originPwd = getHuiXinPsk() ?: EMPTY_STRING
             }
 
             if (showDialog) {
@@ -122,7 +123,7 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                 if(useEditedPwd) {
                     scope.launch { DataStoreManager.saveUseDefaultCardPassword(true) }
                 } else {
-                    input = ""
+                    input = EMPTY_STRING
                     showDialog = true
                 }
             }
@@ -176,12 +177,12 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                 DividerTextExpandedWith("校园网密码") {
                     val useDefaultSchoolNetPassword by DataStoreManager.enableUseDefaultSchoolNetPassword.collectAsState(initial = true)
                     val useEditedPwd = !useDefaultSchoolNetPassword
-                    var input by remember { mutableStateOf("") }
+                    var input by remember { mutableStateOf(EMPTY_STRING) }
                     var showDialog by remember { mutableStateOf(false) }
-                    var originPwd by remember { mutableStateOf("") }
+                    var originPwd by remember { mutableStateOf(EMPTY_STRING) }
 
                     LaunchedEffect(showDialog,useEditedPwd) {
-                        originPwd = getSchoolNetPsk() ?: ""
+                        originPwd = getSchoolNetPsk() ?: EMPTY_STRING
                     }
 
                     if (showDialog) {
@@ -223,7 +224,7 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
                         if(useEditedPwd) {
                             scope.launch { DataStoreManager.saveUseDefaultSchoolNetPassword(true) }
                         } else {
-                            input = ""
+                            input = EMPTY_STRING
                             showDialog = true
                         }
                     }
@@ -309,7 +310,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val pwd by DataStoreManager.jxglstuPassword.collectAsState(initial = originPwd ?: "")
+    val pwd by DataStoreManager.jxglstuPassword.collectAsState(initial = originPwd ?: EMPTY_STRING)
 
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -325,7 +326,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            Starter.startWebUrlInner(context, "","修改密码", icon = R.drawable.lock_reset)
+                            Starter.startWebUrlInner(context, EMPTY_STRING,"修改密码", icon = R.drawable.lock_reset)
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
@@ -353,7 +354,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
                     },
                 )
                 if(useEditedPwd) {
-                    var input by remember { mutableStateOf("") }
+                    var input by remember { mutableStateOf(EMPTY_STRING) }
                     LaunchedEffect(pwd) {
                         input = pwd
                     }

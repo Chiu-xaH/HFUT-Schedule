@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.xah.common.logic.state.UiStateHolder
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -113,7 +114,7 @@ object JxglstuRepository : JxglstuRepositoryInf {
     }
     @JvmStatic
     private fun parsePostTransfer(result : String) : String = try {
-        var msg = ""
+        var msg = EMPTY_STRING
         if(result.contains("result")) {
             val data =  GsonInstance.fromJson(result, JxglstuTransferMajorPostResponse::class.java)
             if(data.result) {

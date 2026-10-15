@@ -96,6 +96,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
@@ -116,7 +117,7 @@ fun CourseTotalUI(
     ifSaved : Boolean,
     state: LazyListState = rememberLazyListState(),
     innerPadding : PaddingValues? = null,
-    input : String = "",
+    input : String = EMPTY_STRING,
 ) {
     val courseBookData : Map<Long, JxglstuTextbook> by produceState(initialValue = emptyMap()) {
         val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
@@ -188,8 +189,8 @@ fun CourseTotalUI(
                     headlineContent = {  Text(data.course.nameZh) },
                     overlineContent = { ScrollText(text =
                         "学分 ${data.course.credits}" +
-                                (if(data.scheduleWeeksInfo != null) " | $weeksInfo" else "") +
-                                (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else "")
+                                (if(data.scheduleWeeksInfo != null) " | $weeksInfo" else EMPTY_STRING) +
+                                (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else EMPTY_STRING)
                     ) },
                     trailingContent = {
                         val type = data.courseType.nameZh
@@ -337,7 +338,7 @@ fun DetailItems(
                         Row  {
                             TransplantListItem(
                                 color = MaterialTheme.colorScheme.surface,
-                                overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
+                                overlineContent = { Text("教师 " + if(teacherNum == 1) EMPTY_STRING else (i+1).toString()) },
                                 headlineContent = {
                                     Text( teacherList.person.nameZh )
                                 },
@@ -403,7 +404,7 @@ fun DetailItems(
                                     .clickable { navController.push(dest) }
                             ) {
                                 TransplantListItem(
-                                    overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
+                                    overlineContent = { Text("教师 " + if(teacherNum == 1) EMPTY_STRING else (i+1).toString()) },
                                     headlineContent = {
                                         Text( teacherList.person.nameZh )
                                     },
@@ -419,7 +420,7 @@ fun DetailItems(
                                 TransplantListItem(
                                     headlineContent = {
                                         val t = teacherList.teacher?.title?.nameZh ?: "未知"
-                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
+                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: EMPTY_STRING))
                                     },
                                     overlineContent = {
                                         Text(text =
@@ -547,7 +548,7 @@ fun DetailItems(
                 } else if(t2 != null && t1 != null) {
                     t1 + "\n" + t2
                 } else {
-                    ""
+                    EMPTY_STRING
                 }
                 if(!(t1 == null && t2 == null)) {
                     TransplantListItem(
@@ -719,7 +720,7 @@ fun ClassmatesScreen(
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     val hazeState = rememberHazeBlur()
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

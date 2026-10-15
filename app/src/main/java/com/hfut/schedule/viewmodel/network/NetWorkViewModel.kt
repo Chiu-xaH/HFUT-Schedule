@@ -129,6 +129,7 @@ import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelected
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
+import com.xah.common.logic.util.EMPTY_STRING
 
 class NetWorkViewModel() : ViewModel() {
     val studentId = UiStateHolder<Int>()
@@ -376,7 +377,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getProgramPerformance(cookie: String) = JxglstuRepository.getProgramPerformance(cookie,studentId, programPerformanceData)
 
     val teacherSearchData = UiStateHolder<TeacherResponse>()
-    suspend fun searchTeacher(name: String = "", direction: String = "") = OthersRepository.searchTeacher(name = name,direction = direction,teacherSearchData)
+    suspend fun searchTeacher(name: String = EMPTY_STRING, direction: String = EMPTY_STRING) = OthersRepository.searchTeacher(name = name,direction = direction,teacherSearchData)
 
     val courseSearchResponse = UiStateHolder<List<JxglstuLesson>>()
     suspend fun searchCourse(cookie: String, className : String?, courseName : String?, semester : Int, courseId : String?) = JxglstuRepository.searchCourse(cookie,className,courseName,semester,courseId,studentId,courseSearchResponse)

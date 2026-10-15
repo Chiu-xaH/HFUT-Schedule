@@ -90,6 +90,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.calendarSquareGlass
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.Backdrop
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.shader.state.ShaderState
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.ClickScale
@@ -685,7 +686,7 @@ fun ZhiJianCourseTableUI(
                             scaleIn(
                                 animationSpec = tween(500)
                             ) togetherWith (scaleOut(animationSpec = tween(500)))
-                        }, label = ""
+                        }, label = EMPTY_STRING
                     ) { n ->
                         Text(text = "第 $n 周")
                     }

@@ -34,6 +34,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
@@ -45,7 +46,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
 //    saveBoolean("SWITCHPIN", false,pin)
 
     var psk = SharedPrefs.prefs.getString("pins",null)
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     var showDialog by remember { mutableStateOf(psk == null) }
 
     Column(
@@ -58,7 +59,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
             headlineContent = { Text(text = "需要密码") },
             supportingContent = { Text(text = "在调用支付时选择是否需要验证") },
             leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
+                Icon(painter = painterResource(id = R.drawable.lock), contentDescription = EMPTY_STRING)
             },
             trailingContent = {
                 Switch(checked = pin, onCheckedChange = {_->
@@ -71,7 +72,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                 headlineContent = { Text(text = "生物识别") },
                 supportingContent = { Text(text = "调用指纹传感器以免密码") },
                 leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.password), contentDescription = "")
+                    Icon(painter = painterResource(id = R.drawable.password), contentDescription = EMPTY_STRING)
                 },
                 modifier = Modifier.clickable {
                     showToast("正在开发")
@@ -104,7 +105,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                                     showToast("已移除密码")
                                     showDialog = false
                                 } else {
-                                    input = ""
+                                    input = EMPTY_STRING
                                 }
 
                             } else {
@@ -162,7 +163,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
                 .height(65.dp)
                 ,shape = NoneRoundShape
             ) {
-                Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
+                Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = EMPTY_STRING, modifier = Modifier.size(30.dp))
             }
         }
     }
@@ -183,7 +184,7 @@ fun CirclePoint(modifier: Modifier = Modifier, text : String, password : String,
         Spacer(modifier = Modifier.height(10.dp))
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             for(i in 0 until num) {
-                Icon(painter = painterResource(id = if(i < password.length) R.drawable.circle_filled else R.drawable.circle), contentDescription = "",modifier = Modifier.padding(7.dp).size(17.dp),tint = MaterialTheme.colorScheme.primary)
+                Icon(painter = painterResource(id = if(i < password.length) R.drawable.circle_filled else R.drawable.circle), contentDescription = EMPTY_STRING,modifier = Modifier.padding(7.dp).size(17.dp),tint = MaterialTheme.colorScheme.primary)
             }
         }
     }

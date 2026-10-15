@@ -5,6 +5,7 @@ import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorMyApply
 import com.hfut.schedule.network.api.model.response.json.jxglstu.transfer.JxglstuTransferMajorData
 import com.hfut.schedule.network.api.model.response.json.shared.MultiLanguageBaseData
+import com.xah.common.logic.util.EMPTY_STRING
 
 
 fun getEventCampus() : EventCampus = when(getCampusRegion()) {
@@ -29,7 +30,7 @@ fun getMyTransfer(list : List<JxglstuTransferMajorMyApply>?, index : Int) : Jxgl
 
 fun getApplyStatus(list : List<JxglstuTransferMajorMyApply>?, index : Int) : Boolean? {
     return try {
-       val data = list?.get(index)?.applyStatus ?: ""
+       val data = list?.get(index)?.applyStatus ?: EMPTY_STRING
         data == "ACCEPTED"
     } catch (_:Exception) {
         null

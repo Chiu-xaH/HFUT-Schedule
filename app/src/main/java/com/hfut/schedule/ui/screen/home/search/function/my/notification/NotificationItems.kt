@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.NotificationsDestination
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
@@ -68,7 +69,7 @@ fun NotificationItems() {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val list = remember { getNotifications() }
-    val readNotifications by DataStoreManager.readNotifications.collectAsState(initial = "")
+    val readNotifications by DataStoreManager.readNotifications.collectAsState(initial = EMPTY_STRING)
     val readIds = remember(readNotifications) { handleReadNotifications(readNotifications) }
     // 清理保存的id：readIds中存在list中没有的id，就删除
     LaunchedEffect(readIds, list) {
@@ -118,7 +119,7 @@ fun NotificationItems() {
                                     if(read) R.drawable.check
                                     else R.drawable.notifications_unread
                                 ),
-                                contentDescription = ""
+                                contentDescription = EMPTY_STRING
                             )
                         },
                         modifier = Modifier.clickable {

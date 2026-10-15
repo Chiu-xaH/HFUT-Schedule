@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.xah.common.logic.util.EMPTY_STRING
 
 @Composable
 fun DepartmentIcons(name : String, modifier: Modifier = Modifier) = Icon(
@@ -65,7 +66,7 @@ fun BillsIcons(
     modifier: Modifier = Modifier
 ) = Icon(
     painterResource(billsIcons(name)),
-    contentDescription = "",
+    contentDescription = EMPTY_STRING,
     modifier
 )
 

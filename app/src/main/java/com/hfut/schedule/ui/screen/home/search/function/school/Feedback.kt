@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.nav.window.FeedbackWindow
 import com.hfut.schedule.ui.nav.window.RepairWindow
 
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.floating.util.LocalFloatingController
 import dev.chrisbanes.haze.HazeState
@@ -37,7 +38,7 @@ fun Feedback() {
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_feedback)) },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.voice_selection), contentDescription = "") },
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.voice_selection), contentDescription = EMPTY_STRING) },
         modifier = Modifier.clickable {
             floatController.push(FeedbackWindow)
         }

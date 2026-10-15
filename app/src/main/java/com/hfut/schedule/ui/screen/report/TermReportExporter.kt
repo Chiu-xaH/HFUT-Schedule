@@ -26,6 +26,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.theme.AppTheme
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -214,7 +215,7 @@ suspend fun exportTermReport(
 
     try {
         val isSingle = modules.size == 1
-        val nameSuffix = if (isSingle) "_${modules.first().title}" else ""
+        val nameSuffix = if (isSingle) "_${modules.first().title}" else EMPTY_STRING
         val fileName = "学期报告${nameSuffix}_${System.currentTimeMillis()}"
 
         when (action) {

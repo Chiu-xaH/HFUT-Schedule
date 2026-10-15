@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.util.parse
 
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 
 data class WifiInfo(
@@ -20,7 +21,7 @@ fun parseWifiQrCode(content: String): WifiInfo? {
         // 去掉前缀 WIFI: 和末尾 ;;
         val body = content.removePrefix("WIFI:").removeSuffix(";;")
 
-        var ssid = ""
+        var ssid = EMPTY_STRING
         var password: String? = null
         var type = "nopass"
         var hidden = false

@@ -29,6 +29,7 @@ import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
 import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.navigation.controller.NavigationController
@@ -64,7 +65,7 @@ fun Grade(
                 }) {
                     Icon(
                         painterResource(id = R.drawable.article),
-                        contentDescription = "",
+                        contentDescription = EMPTY_STRING,
                     )
                 }
             }

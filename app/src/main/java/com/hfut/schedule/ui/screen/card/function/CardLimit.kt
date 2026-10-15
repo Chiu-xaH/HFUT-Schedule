@@ -30,6 +30,7 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.slider.CustomSlider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -94,7 +95,7 @@ fun CardLimit(vm : NetWorkViewModel) {
             CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
                     headlineContent = { Text(text = "自主转账限额 ￥${limit}")},
-                    leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "") }
+                    leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription =EMPTY_STRING) }
                 )
                 PaddingHorizontalDivider()
 
@@ -123,7 +124,7 @@ fun CardLimit(vm : NetWorkViewModel) {
             CustomCard (color = cardNormalColor()){
                 TransplantListItem(
                     headlineContent = { Text(text = "自主转账金额 ￥${amt}")},
-                    leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "") }
+                    leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = EMPTY_STRING) }
                 )
                 PaddingHorizontalDivider()
 

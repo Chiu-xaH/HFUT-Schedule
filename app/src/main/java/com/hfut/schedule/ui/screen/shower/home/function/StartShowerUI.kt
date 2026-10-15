@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
@@ -108,10 +109,10 @@ fun StartShowerUI(vm: NetWorkViewModel, hazeState: HazeState) {
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
 
-    var input by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf(EMPTY_STRING) }
     var id by remember { mutableIntStateOf(-1) }
     var editMode by remember { mutableStateOf(false) }
-    var inputName by remember { mutableStateOf("") }
+    var inputName by remember { mutableStateOf(EMPTY_STRING) }
     var show by remember { mutableStateOf(false) }
     val sheetState_scan = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showDialog by remember { mutableStateOf(false) }
@@ -126,7 +127,7 @@ fun StartShowerUI(vm: NetWorkViewModel, hazeState: HazeState) {
     }
     var isFull by remember { mutableStateOf(false) }
     val height by animateDpAsState(
-        targetValue = if(isFull) 1000.dp else 500.dp, label = "",
+        targetValue = if(isFull) 1000.dp else 500.dp, label = EMPTY_STRING,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
     )
 
@@ -292,7 +293,7 @@ fun StartShowerUI(vm: NetWorkViewModel, hazeState: HazeState) {
         .fillMaxWidth()
         .padding(horizontal = APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
         FilledTonalButton(onClick = {
-            if(input == "") showToast("请扫码或填写二维码贴纸下的MAC地址")
+            if(input == EMPTY_STRING) showToast("请扫码或填写二维码贴纸下的MAC地址")
             else if(input.length != 12) {
                 showToast("MAC地址为12位")
             }
@@ -307,7 +308,7 @@ fun StartShowerUI(vm: NetWorkViewModel, hazeState: HazeState) {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Button(onClick = {
-            if(input == "") showToast("请扫码或填写二维码贴纸下的MAC地址")
+            if(input == EMPTY_STRING) showToast("请扫码或填写二维码贴纸下的MAC地址")
             else if(input.length != 12) {
                 showToast("MAC地址为12位")
             } else {
@@ -337,7 +338,7 @@ fun StartShowerUI(vm: NetWorkViewModel, hazeState: HazeState) {
                             }
                         }, label = { Text(text = item.name) }, trailingIcon = {
                             if(editMode)
-                                Icon(painterResource(id = R.drawable.close), contentDescription = "")
+                                Icon(painterResource(id = R.drawable.close), contentDescription = EMPTY_STRING)
                         })
                     Spacer(modifier = Modifier.width(10.dp))
                 }
