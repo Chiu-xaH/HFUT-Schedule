@@ -41,18 +41,17 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 
+
+/**
+ * 起止日期选择
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateRangePickerModal(
-    isSchedule : Boolean = false,
-    text : String = "截止",
-    allowSelectPrevious : Boolean = false,
+fun DateRangePickerDialog(
     onSelected: (Pair<String, String>) -> Unit,
     onDismiss: () -> Unit
 ) {
-
     val dateRangePickerState = rememberDateRangePickerState()
 
     var startDate by remember { mutableStateOf<Long?>(null) }
@@ -61,19 +60,6 @@ fun DateRangePickerModal(
     var endDateString by remember { mutableStateOf<String?>(null) }
 
 
-    if(!isSchedule) {
-        LaunchedEffect(Unit) {
-            val todayStartMillis = DateTimeManager.getToday()
-                .atStartOfDay(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-            startDate = todayStartMillis
-            startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
-        }
-    }
-
-//    val weekInfoStart = startDateString?.let { dateToWeek(it) }
-//    val weekInfoEnd = endDateString?.let { dateToWeek(it) }
     val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = startDateString) {
         value = startDateString?.let { dateToWeek(it) }
     }
@@ -84,15 +70,7 @@ fun DateRangePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                enabled =
-                    startDateString  != null &&
-                    endDateString != null &&
-                    (
-                            if(allowSelectPrevious)
-                                true
-                            else
-                                endDate?.let { e -> startDate?.let { s -> s <= e } } == true
-                    ),
+                enabled = startDateString  != null && endDateString != null,
                 onClick = {
                     if(startDateString  != null && endDateString != null) {
                         onSelected(Pair(startDateString!!,endDateString!!))
@@ -109,59 +87,108 @@ fun DateRangePickerModal(
             }
         }
     ) {
-        if(isSchedule) {
-            LaunchedEffect(dateRangePickerState.selectedEndDateMillis,dateRangePickerState.selectedStartDateMillis) {
-                async {
-                    launch { startDate = dateRangePickerState.selectedStartDateMillis }
-                    launch { endDate = dateRangePickerState.selectedEndDateMillis }
-                }.await()
-                launch {
-                    launch { startDateString = if(startDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate) else null }
-                    launch { endDateString = if(endDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
-                }
+        LaunchedEffect(dateRangePickerState.selectedEndDateMillis,dateRangePickerState.selectedStartDateMillis) {
+            async {
+                launch { startDate = dateRangePickerState.selectedStartDateMillis }
+                launch { endDate = dateRangePickerState.selectedEndDateMillis }
+            }.await()
+            launch {
+                launch { startDateString = if(startDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate) else null }
+                launch { endDateString = if(endDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
             }
-
-
-
-            DateRangePicker(
-                state = dateRangePickerState,
-                title = {  },
-                headline = { Text(
-                    "开始 ${startDateString ?: EMPTY_STRING}" + (weekInfoStart?.let { " (第${it.first}周)" } ?: EMPTY_STRING)
-                            + "\n" +  "结束 ${endDateString ?: EMPTY_STRING}" + (weekInfoEnd?.let { " (第${it.first}周)" } ?: EMPTY_STRING)
-                    , modifier = Modifier.padding(
-                    APP_HORIZONTAL_DP
-                )) },
-                showModeToggle = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(500.dp)
-                    .padding(APP_HORIZONTAL_DP /3)
-            )
-        } else {
-            val datePickerState = rememberDatePickerState()
-            LaunchedEffect(datePickerState.selectedDateMillis) {
-                async {
-                    launch { endDate = datePickerState.selectedDateMillis }
-                }.await()
-                launch {
-                    launch { endDateString = if(endDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
-                }
-            }
-            DatePicker(
-                state = datePickerState,
-                title = {   },
-                headline = { Text("$text ${endDateString ?: EMPTY_STRING}"  + (weekInfoEnd?.let { " (第${it.first}周)" } ?: EMPTY_STRING), modifier = Modifier.padding(
-                    APP_HORIZONTAL_DP
-                )) },
-                showModeToggle = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(500.dp)
-                    .padding(APP_HORIZONTAL_DP /3)
-            )
         }
+
+
+
+        DateRangePicker(
+            state = dateRangePickerState,
+            title = {  },
+            headline = { Text(
+                "开始 ${startDateString ?: EMPTY_STRING}" + (weekInfoStart?.let { " (第${it.first}周)" } ?: EMPTY_STRING)
+                        + "\n" +  "结束 ${endDateString ?: EMPTY_STRING}" + (weekInfoEnd?.let { " (第${it.first}周)" } ?: EMPTY_STRING)
+                , modifier = Modifier.padding(
+                    APP_HORIZONTAL_DP
+                )) },
+            showModeToggle = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .padding(APP_HORIZONTAL_DP /3)
+        )
     }
+}
+
+/**
+ * 单日期选择
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialog(
+    text : String = EMPTY_STRING,
+    onSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var endDate by remember { mutableStateOf<Long?>(null) }
+    var endDateString by remember { mutableStateOf<String?>(null) }
+
+    val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = endDateString) {
+        value = endDateString?.let { dateToWeek(it) }
+    }
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                enabled = endDateString != null,
+                onClick = {
+                    if(endDateString != null) {
+                        onSelected(endDateString!!)
+                    }
+                    onDismiss()
+                }
+            ) {
+                Text("完成")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
+                Text("取消")
+            }
+        }
+    ) {
+        val datePickerState = rememberDatePickerState()
+        LaunchedEffect(datePickerState.selectedDateMillis) {
+            async {
+                launch { endDate = datePickerState.selectedDateMillis }
+            }.await()
+            launch {
+                launch { endDateString = if(endDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
+            }
+        }
+        DatePicker(
+            state = datePickerState,
+            title = {   },
+            headline = { Text("$text ${endDateString ?: EMPTY_STRING}"  + (weekInfoEnd?.let { " (第${it.first}周)" } ?: EMPTY_STRING), modifier = Modifier.padding(
+                APP_HORIZONTAL_DP
+            )) },
+            showModeToggle = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .padding(APP_HORIZONTAL_DP /3)
+        )
+    }
+}
+
+/**
+ * 多选日期
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatesPickerDialog(
+    onSelected: (List<String>) -> Unit,
+    onDismiss: () -> Unit
+) {
+    // TODO
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

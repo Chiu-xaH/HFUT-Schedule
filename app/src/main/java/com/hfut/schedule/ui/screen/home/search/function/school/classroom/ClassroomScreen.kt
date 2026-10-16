@@ -97,7 +97,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
+import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.icon.CircleProgressIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -203,7 +203,7 @@ fun ClassroomScreen(
     var showFilterBox by rememberSaveable() { mutableStateOf(true) }
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
-        DateRangePickerModal(text = EMPTY_STRING,onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
+        DatePickerDialog(onSelected = { date = it }) { showSelectDateDialog = false }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

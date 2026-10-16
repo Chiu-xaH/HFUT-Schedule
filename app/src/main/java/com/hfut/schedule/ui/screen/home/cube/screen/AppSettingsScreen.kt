@@ -51,17 +51,15 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfi
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
+import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
 import com.hfut.schedule.ui.nav.destination.SettingsCalendarDestination
-import com.hfut.schedule.ui.nav.destination.SettingsDeepLinkDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsFocusWidgetDestination
 import com.hfut.schedule.ui.nav.destination.SettingsLabDestination
@@ -77,7 +75,6 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
-import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -598,14 +595,12 @@ fun CalendarSettingsUI() {
     val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = defaultStartDate)
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
-        DateRangePickerModal(
-            text = EMPTY_STRING,
+        DatePickerDialog(
             onSelected = {
                 scope.launch {
-                    DataStoreManager.saveTermStartDate(it.second)
+                    DataStoreManager.saveTermStartDate(it)
                 }
             },
-            allowSelectPrevious = true
         ) { showSelectDateDialog = false }
 
 

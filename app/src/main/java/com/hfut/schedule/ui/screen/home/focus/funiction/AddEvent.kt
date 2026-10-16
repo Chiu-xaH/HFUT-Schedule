@@ -112,6 +112,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
@@ -126,7 +127,8 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
+import com.hfut.schedule.ui.component.dialog.DatePickerDialog
+import com.hfut.schedule.ui.component.dialog.DateRangePickerDialog
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -138,6 +140,7 @@ import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
+import com.hfut.schedule.ui.nav.destination.SupabaseDestination.title
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -166,7 +169,6 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
-import com.xah.navigation.anim.effect.FadeTransitionEffect
 import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -174,6 +176,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 import kotlin.coroutines.cancellation.CancellationException
 
 private enum class ShareRoutes {
@@ -541,6 +544,13 @@ private fun SharedTransitionScope.SurfaceUI(
                         }
                     }
                     true -> {
+                        CenterScreen {
+                            StatusIcon(
+                                R.drawable.build,
+                                text("上传日程功能正改造升级，敬请期待")
+                            )
+                        }
+                        return@Column
                         AddEventUI(vm,isSupabase,showChange = showChange)
                     }
                     false -> {
@@ -647,7 +657,7 @@ fun AddEventUI(
     }
 
     if(showSelectDateDialog)
-        DateRangePickerModal(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
+        EventDatePickerDialog(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
     if(showSelectTimeDialog)
         TimeRangePickerDialog(isScheduleType,onSelected = { time = it }, defaultValue = time) { showSelectTimeDialog = false }
 
@@ -1286,5 +1296,43 @@ private fun BuildingsSelector(
             BottomTip("获取建筑列表失败")
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP*3))
         }
+    }
+}
+
+
+/**
+ * @param isRangeOrSingle 为true选择日期范围，返回Pair<String, String>起止日期；为false选择单日期，返回Pair<String, String>的second为其值
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EventDatePickerDialog(
+    isRangeOrSingle : Boolean = false,
+    onSelected: (Pair<String, String>) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if(isRangeOrSingle) {
+        DateRangePickerDialog(onSelected,onDismiss)
+    } else {
+        var startDate by remember { mutableStateOf<Long?>(null) }
+        var startDateString by remember { mutableStateOf<String?>(null) }
+
+        LaunchedEffect(Unit) {
+            val todayStartMillis = DateTimeManager.getToday()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+            startDate = todayStartMillis
+            startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
+        }
+
+        DatePickerDialog(
+            "截止",
+            onSelected = {
+                startDateString?.let { s ->
+                    onSelected(Pair(s, it))
+                }
+            },
+            onDismiss
+        )
     }
 }
