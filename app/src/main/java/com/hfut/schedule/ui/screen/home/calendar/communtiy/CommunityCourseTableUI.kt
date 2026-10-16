@@ -223,8 +223,7 @@ fun CommunityCourseTableUI(
                 if(!isFriend) {
                     navController.push(
                         AddEventDestination(
-                            null,
-                            AddEventOrigin.FOCUS_EDITED.name
+                            origin = AddEventOrigin.FOCUS_EDITED.name
                         )
                     )
                 }

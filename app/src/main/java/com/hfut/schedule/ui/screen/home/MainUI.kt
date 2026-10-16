@@ -413,8 +413,7 @@ fun MainScreen(
         },
         floatingActionButton = {
             val dest = AddEventDestination(
-                null,
-                AddEventOrigin.FOCUS_ADD.name
+                origin = AddEventOrigin.FOCUS_ADD.name
             )
             AnimatedVisibility(
                 enter = scaleIn(),

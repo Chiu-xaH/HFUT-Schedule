@@ -71,8 +71,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
         UpdateItems("重构 创建日程时选择日期不再按范围，而是自由选择若干日期")
-        UpdateItems("新增 支持克隆已有日程","编辑日程时右上角的复制图标，点击后会复制此日程信息到新建页面")
-        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination(null, VersionInfoDestination.key)))
+        UpdateItems("新增 支持克隆已有日程","编辑日程时右上角的复制图标，点击后会复制此日程信息到新建页面")//
+        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination()))
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 //        UpdateItems("重构 去掉翻页器，改为尾部追加")
 //        UpdateItems("新增 课程表在使用背景时支持自定义深浅色模式","位于 选项-外观-课程表-深浅色",to = To.Screen(SettingsAppearanceDestination))

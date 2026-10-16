@@ -152,7 +152,7 @@ val deepLinks = listOf(
     DeepLink(ProgramDestination.KEY) { ProgramDestination(true) },
     DeepLink(TermCoursesDestination.KEY) { TermCoursesDestination(true,"deeplink") },
     DeepLink(WorkAndRestDestination.KEY) { WorkAndRestDestination(null) },
-    DeepLink(AddEventDestination.KEY) { AddEventDestination(null,"deeplink") },
+    DeepLink(AddEventDestination.KEY) { AddEventDestination() },
     /* TODO:等合工大教务版评教上线后
     DeepLink(SurveyDestination.KEY) { SurveyDestination(true) },
      */

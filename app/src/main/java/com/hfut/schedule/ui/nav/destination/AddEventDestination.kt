@@ -10,10 +10,12 @@ import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
 
 data class AddEventDestination(
-    val id : Int?,
-    val origin : String
+    val id : Int? = null,
+    val origin : String? = null,
+    val enableCopy : Boolean = false,
+    val isSupabase : Boolean = false
 ) : NavDestination() {
-    override val key: String = "${KEY}_${origin}_$id"
+    override val key: String = "${KEY}_${origin}_${id}_${isSupabase}_${enableCopy}"
     override val title: UiText = TITLE
     override val description = "日程 $id"
     override val icon = ICON
@@ -32,6 +34,6 @@ data class AddEventDestination(
         } else {
             id
         }
-        AddEventScreen(vm,eventId)
+        AddEventScreen(vm,eventId,enableCopy,isSupabase)
     }
 }

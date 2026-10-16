@@ -43,7 +43,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -137,6 +136,7 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.status.StatusIcon
+import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
@@ -166,6 +166,8 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
+import com.xah.navigation.anim.effect.FadeTransitionEffect
+import com.xah.navigation.model.action.LaunchMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -252,9 +254,10 @@ enum class AddEventOrigin {
 fun AddEventScreen(
     vm : NetWorkViewModel,
     eventId : Int = -1,
+    enableCopy : Boolean = false,
+    isSupabase : Boolean = false
 ) {
     val navController = LocalNavController.current
-    val isSupabase = false
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = EMPTY_STRING)
 
@@ -291,7 +294,13 @@ fun AddEventScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text(if(eventId <= 0) "添加" else "修改") },
+                title = {
+                    Text(
+                        if(eventId <= 0) "添加日程"
+                        else if(enableCopy) "复制日程"
+                        else "修改日程"
+                    )
+                },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -322,25 +331,32 @@ fun AddEventScreen(
                             }
                         }
                     } else {
-                        LiquidButton(
-                            onClick = {
-                                showDevelopingToast()
-                            },
-                            isCircle = true,
-                            backdrop = backDrop
-                        ) {
-                            Icon(painterResource(R.drawable.copy_all),null)
-                        }
-                        Spacer(Modifier.width(BUTTON_PADDING))
-                        LiquidButton(
-                            onClick = {
-                                showDialog = true
-                            },
-                            modifier = Modifier.padding(end = BUTTON_END_PADDING),
-                            isCircle = true,
-                            backdrop = backDrop,
-                        ) {
-                            Icon(painterResource(R.drawable.delete),null, tint = MaterialTheme.colorScheme.error)
+                        if(enableCopy) {
+
+                        } else {
+                            LiquidButton(
+                                onClick = {
+                                    navController.push(
+                                        AddEventDestination(eventId, enableCopy = true),
+                                        launchMode = LaunchMode.Replace(),
+                                    )
+                                },
+                                isCircle = true,
+                                backdrop = backDrop
+                            ) {
+                                Icon(painterResource(R.drawable.copy_all),null)
+                            }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                onClick = {
+                                    showDialog = true
+                                },
+                                modifier = Modifier.padding(end = BUTTON_END_PADDING),
+                                isCircle = true,
+                                backdrop = backDrop,
+                            ) {
+                                Icon(painterResource(R.drawable.delete),null, tint = MaterialTheme.colorScheme.error)
+                            }
                         }
                     }
                 }
@@ -358,7 +374,7 @@ fun AddEventScreen(
                     }
                 }
                 true -> {
-                    AddEventUI(vm,isSupabase,eventId) {
+                    AddEventUI(vm,isSupabase,eventId,enableCopy) {
                         navController.pop()
                     }
                 }
@@ -551,6 +567,7 @@ fun AddEventUI(
     vm: NetWorkViewModel,
     isSupabase : Boolean,
     eventId: Int = -1,
+    enableCopy : Boolean = false,
     showChange: (Boolean) -> Unit
 ) {
     var enabled by remember { mutableStateOf(false) }
@@ -787,7 +804,10 @@ fun AddEventUI(
 
             ) {
                 if(!updateLoading)
-                    Text(if(editedData == null)"添加" else "更新")
+                    Text(
+                        if(enableCopy || editedData == null) "添加"
+                        else "更新"
+                    )
                 else
                     LoadingIcon()
             }
