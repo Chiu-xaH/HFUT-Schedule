@@ -596,7 +596,7 @@ fun CalendarSettingsUI() {
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
         DatePickerDialog(
-            onSelected = {
+            onConfirm = {
                 scope.launch {
                     DataStoreManager.saveTermStartDate(it)
                 }

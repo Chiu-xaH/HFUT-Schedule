@@ -203,7 +203,7 @@ fun ClassroomScreen(
     var showFilterBox by rememberSaveable() { mutableStateOf(true) }
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
-        DatePickerDialog(onSelected = { date = it }) { showSelectDateDialog = false }
+        DatePickerDialog(onConfirm = { date = it }) { showSelectDateDialog = false }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

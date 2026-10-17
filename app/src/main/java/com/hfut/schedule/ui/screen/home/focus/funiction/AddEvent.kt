@@ -129,6 +129,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.dialog.DateRangePickerDialog
+import com.hfut.schedule.ui.component.dialog.DatesPickerDialog
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -140,7 +141,6 @@ import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
-import com.hfut.schedule.ui.nav.destination.SupabaseDestination.title
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -657,7 +657,7 @@ fun AddEventUI(
     }
 
     if(showSelectDateDialog)
-        EventDatePickerDialog(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
+        TemporaryEventDatePickerDialog(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
     if(showSelectTimeDialog)
         TimeRangePickerDialog(isScheduleType,onSelected = { time = it }, defaultValue = time) { showSelectTimeDialog = false }
 
@@ -1300,12 +1300,20 @@ private fun BuildingsSelector(
 }
 
 
-/**
- * @param isRangeOrSingle 为true选择日期范围，返回Pair<String, String>起止日期；为false选择单日期，返回Pair<String, String>的second为其值
- */
+private sealed class EventDatePickerSelectedResult {
+    data class Range(
+        val range : Pair<String, String>
+    ) : EventDatePickerSelectedResult()
+
+    data class Dates(
+        val dates : List<String>
+    )
+}
+
+@Deprecated("即将抛弃范围选取的交互，此函数将会被删除")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EventDatePickerDialog(
+private fun TemporaryEventDatePickerDialog(
     isRangeOrSingle : Boolean = false,
     onSelected: (Pair<String, String>) -> Unit,
     onDismiss: () -> Unit
@@ -1327,9 +1335,54 @@ private fun EventDatePickerDialog(
 
         DatePickerDialog(
             "截止",
-            onSelected = {
+            onConfirm = {
                 startDateString?.let { s ->
                     onSelected(Pair(s, it))
+                }
+            },
+            onDismiss
+        )
+    }
+}
+
+/**
+ * @param isRangeOrSingle 为true选择日期范围，返回Pair<String, String>起止日期；为false选择单日期，返回Pair<String, String>的second为其值
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EventDatePickerDialog(
+    isRangeOrSingle : Boolean = false,
+    onSelected: (EventDatePickerSelectedResult) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if(isRangeOrSingle) {
+        DatesPickerDialog(
+            initialDates = emptyList(),
+            onDismiss = onDismiss,
+            onConfirm = {
+                EventDatePickerSelectedResult.Dates(it)
+            }
+        )
+        // 废弃方案
+//        DateRangePickerDialog(onSelected,onDismiss)
+    } else {
+        var startDate by remember { mutableStateOf<Long?>(null) }
+        var startDateString by remember { mutableStateOf<String?>(null) }
+
+        LaunchedEffect(Unit) {
+            val todayStartMillis = DateTimeManager.getToday()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+            startDate = todayStartMillis
+            startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
+        }
+
+        DatePickerDialog(
+            "截止",
+            onConfirm = {
+                startDateString?.let { s ->
+                    onSelected(EventDatePickerSelectedResult.Range(Pair(s, it)))
                 }
             },
             onDismiss

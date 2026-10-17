@@ -125,7 +125,7 @@ fun DateRangePickerDialog(
 @Composable
 fun DatePickerDialog(
     text : String = EMPTY_STRING,
-    onSelected: (String) -> Unit,
+    onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var endDate by remember { mutableStateOf<Long?>(null) }
@@ -141,7 +141,7 @@ fun DatePickerDialog(
                 enabled = endDateString != null,
                 onClick = {
                     if(endDateString != null) {
-                        onSelected(endDateString!!)
+                        onConfirm(endDateString!!)
                     }
                     onDismiss()
                 }
@@ -177,18 +177,6 @@ fun DatePickerDialog(
                 .padding(APP_HORIZONTAL_DP /3)
         )
     }
-}
-
-/**
- * 多选日期
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatesPickerDialog(
-    onSelected: (List<String>) -> Unit,
-    onDismiss: () -> Unit
-) {
-    // TODO
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
