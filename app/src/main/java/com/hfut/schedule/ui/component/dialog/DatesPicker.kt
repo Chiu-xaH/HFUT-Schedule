@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -47,20 +49,16 @@ import androidx.compose.ui.semantics.ScrollAxisRange
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.verticalScrollAxisRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.common.ui.style.align.RowHorizontal
 import java.time.LocalDate
 import java.time.YearMonth
-
-// 尺寸常量：按原生material3组件复刻
-private val CellSize = 40.dp
-private val CellTouchSize = CellSize + 8.dp
-private val ContainerMaxHeight = 568.dp
 
 /**
  * 多选日期
@@ -146,13 +144,33 @@ fun DatesPicker(
         }
     }
 
-    Column(modifier = modifier) {
-        // 星期行
-        RowHorizontal {
+    BoxWithConstraints(
+        modifier = modifier,
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        val DayCellTouchSize = remember { 48.dp }
+        val DayCellContentRatio = remember { 40f / DayCellTouchSize.value }
+        val MinDayCellTouchSize = remember { 32.dp }
+        val MaxCalendarWidth = remember { 336.dp }
+        val DayTextNarrowThreshold = remember { 36.dp }
+
+        val availableWidth = if (maxWidth == Dp.Infinity) MaxCalendarWidth else maxWidth
+        val touchSize = (availableWidth / 7f).coerceIn(MinDayCellTouchSize, DayCellTouchSize)
+        val cellSize = touchSize * DayCellContentRatio
+        val contentWidth = minOf(availableWidth, MaxCalendarWidth)
+        val dayTextStyle = if (touchSize < DayTextNarrowThreshold) {
+            MaterialTheme.typography.bodyMedium
+        } else {
+            MaterialTheme.typography.bodyLarge
+        }
+        val ContainerMaxHeight = remember { 568.dp }
+
+        Column(
+            modifier = Modifier.width(contentWidth)
+        ) {
+            // 星期行
             Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .selectableGroup(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -165,7 +183,7 @@ fun DatesPicker(
                 weekdayLabels.forEach { label ->
                     Box(
                         modifier = Modifier
-                            .size(CellTouchSize)
+                            .size(touchSize)
                             .clearAndSetSemantics { },
                         contentAlignment = Alignment.Center,
                     ) {
@@ -178,12 +196,15 @@ fun DatesPicker(
                     }
                 }
             }
+            MonthsList(
+                state = state,
+                lazyListState = monthsListState,
+                touchSize = touchSize,
+                cellSize = cellSize,
+                dayTextStyle = dayTextStyle,
+                modifier = Modifier.heightIn(max = ContainerMaxHeight),
+            )
         }
-        MonthsList(
-            state = state,
-            lazyListState = monthsListState,
-            modifier = Modifier.heightIn(max = ContainerMaxHeight),
-        )
     }
 }
 
@@ -192,6 +213,9 @@ fun DatesPicker(
 private fun MonthsList(
     state: DatesPickerState,
     lazyListState: LazyListState,
+    touchSize: Dp,
+    cellSize: Dp,
+    dayTextStyle: TextStyle,
     modifier: Modifier = Modifier,
 ) {
     val today = remember { DateTimeManager.getToday() }
@@ -216,25 +240,35 @@ private fun MonthsList(
                         style = MaterialTheme.typography.titleSmall,
                         color = colors.subheadContentColor,
                     )
-                    Column(modifier = Modifier.fillMaxWidth().selectableGroup()) {
-                        for (row in 0 until 6) {
-                            RowHorizontal {
-                                Row(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    val offset = (month.atDay(1).dayOfWeek.value + 7 - 1) % 7
-                                    for (col in 0 until 7) {
-                                        val dayOfMonth = row * 7 + col - offset + 1
-                                        if (dayOfMonth in 1..month.lengthOfMonth()) {
-                                            val date = month.atDay(dayOfMonth)
-                                            key(date) {
-                                                SelectedDayCell(date, state, today)
-                                            }
-                                        } else {
-                                            Spacer(Modifier.size(CellTouchSize))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectableGroup()
+                    ) {
+                        val RowsPerMonth = remember { 6 }
+                        for (row in 0 until RowsPerMonth) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                val offset = (month.atDay(1).dayOfWeek.value + 7 - 1) % 7
+                                for (col in 0 until 7) {
+                                    val dayOfMonth = row * 7 + col - offset + 1
+                                    if (dayOfMonth in 1..month.lengthOfMonth()) {
+                                        val date = month.atDay(dayOfMonth)
+                                        key(date) {
+                                            SelectedDayCell(
+                                                date = date,
+                                                state = state,
+                                                today = today,
+                                                touchSize = touchSize,
+                                                cellSize = cellSize,
+                                                dayTextStyle = dayTextStyle,
+                                            )
                                         }
+                                    } else {
+                                        Spacer(Modifier.size(touchSize))
                                     }
                                 }
                             }
@@ -257,6 +291,9 @@ private fun SelectedDayCell(
     date: LocalDate,
     state: DatesPickerState,
     today: LocalDate,
+    touchSize: Dp,
+    cellSize: Dp,
+    dayTextStyle: TextStyle,
 ) {
     val selected = state.selectedDates.contains(date)
     val isToday = date == today
@@ -278,7 +315,7 @@ private fun SelectedDayCell(
 
     Box(
         modifier = Modifier
-            .size(CellTouchSize)
+            .size(touchSize)
             .clip(CircleShape)
             .selectable(
                 selected = selected,
@@ -292,7 +329,7 @@ private fun SelectedDayCell(
     ) {
         Box(
             modifier = Modifier
-                .size(CellSize)
+                .size(cellSize)
                 .clip(CircleShape)
                 .background(containerColor)
                 .then(
@@ -310,7 +347,7 @@ private fun SelectedDayCell(
         ) {
             Text(
                 text = date.dayOfMonth.toString(),
-                style = MaterialTheme.typography.bodyLarge,
+                style = dayTextStyle,
                 color = contentColor,
                 textAlign = TextAlign.Center,
             )

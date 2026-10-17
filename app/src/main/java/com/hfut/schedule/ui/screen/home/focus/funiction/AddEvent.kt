@@ -298,10 +298,17 @@ fun AddEventScreen(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = {
+                    val platformText = remember(isSupabase) {
+                        if(isSupabase) {
+                            "云端"
+                        } else {
+                            EMPTY_STRING
+                        }
+                    }
                     Text(
-                        if(eventId <= 0) "添加日程"
-                        else if(enableCopy) "复制日程"
-                        else "修改日程"
+                        if(eventId <= 0) "添加${platformText}日程"
+                        else if(enableCopy) "复制${platformText}日程"
+                        else "修改${platformText}日程"
                     )
                 },
                 navigationIcon = {
@@ -333,33 +340,29 @@ fun AddEventScreen(
                                 Icon(painterResource(R.drawable.cloud),null)
                             }
                         }
-                    } else {
-                        if(enableCopy) {
-
-                        } else {
-                            LiquidButton(
-                                onClick = {
-                                    navController.push(
-                                        AddEventDestination(eventId, enableCopy = true),
-                                        launchMode = LaunchMode.Replace(),
-                                    )
-                                },
-                                isCircle = true,
-                                backdrop = backDrop
-                            ) {
-                                Icon(painterResource(R.drawable.copy_all),null)
-                            }
-                            Spacer(Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                onClick = {
-                                    showDialog = true
-                                },
-                                modifier = Modifier.padding(end = BUTTON_END_PADDING),
-                                isCircle = true,
-                                backdrop = backDrop,
-                            ) {
-                                Icon(painterResource(R.drawable.delete),null, tint = MaterialTheme.colorScheme.error)
-                            }
+                    } else if(!enableCopy) {
+                        LiquidButton(
+                            onClick = {
+                                navController.push(
+                                    AddEventDestination(eventId, enableCopy = true),
+                                    launchMode = LaunchMode.Replace(),
+                                )
+                            },
+                            isCircle = true,
+                            backdrop = backDrop
+                        ) {
+                            Icon(painterResource(R.drawable.copy_all),null)
+                        }
+                        Spacer(Modifier.width(BUTTON_PADDING))
+                        LiquidButton(
+                            onClick = {
+                                showDialog = true
+                            },
+                            modifier = Modifier.padding(end = BUTTON_END_PADDING),
+                            isCircle = true,
+                            backdrop = backDrop,
+                        ) {
+                            Icon(painterResource(R.drawable.delete),null, tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -1155,10 +1158,7 @@ fun AddEventUI(
                     )
                     Spacer(Modifier.height(5.dp))
                     BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
-                } else {
-                    BottomTip("结果将保存在本地，若需共享请进入云端共建")
                 }
-//            }
             Spacer(Modifier
                 .height(bottomHeight + APP_HORIZONTAL_DP)
                 .navigationBarsPadding())
