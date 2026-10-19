@@ -66,7 +66,6 @@ import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.Locale
 import java.util.Locale.getDefault
 
 object JxglstuRepository : JxglstuRepositoryInf {
@@ -995,4 +994,21 @@ object JxglstuRepository : JxglstuRepositoryInf {
         result
     } catch (e:Exception) { throw e }
 
+    override suspend fun getAccount(cookie: String, holder : UiStateHolder<String>) = launchRequestState(
+        holder = holder,
+        transformSuccess = { _, html -> parseAccount(html) },
+        request = { jxglstu.getAccount(cookie) }
+    )
+
+    private suspend fun parseAccount(html : String) : String = try {
+        val doc = Jsoup.parse(html)
+        val pwd = doc.selectFirst("form#save-form input#plainPassword")?.attr("value")
+
+        if(pwd == null) {
+            throw Exception("无法解析教务系统默认密码，尝试使用默认密码")
+        } else {
+            DataStoreManager.saveJxglstuPassword(pwd)
+            pwd
+        }
+    } catch (e:Exception) { throw e }
 }

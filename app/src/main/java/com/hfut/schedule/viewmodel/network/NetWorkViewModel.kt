@@ -364,6 +364,9 @@ class NetWorkViewModel() : ViewModel() {
 
     suspend fun getInfo(cookie : String) = JxglstuRepository.getInfo(cookie,studentId)
 
+    val jxglstuPasswordResp = UiStateHolder<String>()
+    suspend fun getAccount(cookie : String) = JxglstuRepository.getAccount(cookie,jxglstuPasswordResp)
+
     val lessonTimesResponse = UiStateHolder<List<JxglstuCourseTime>>()
     suspend fun getLessonTimes(cookie: String,timeCampusId : Int) = JxglstuRepository.getLessonTimes(cookie,timeCampusId,lessonTimesResponse)
 

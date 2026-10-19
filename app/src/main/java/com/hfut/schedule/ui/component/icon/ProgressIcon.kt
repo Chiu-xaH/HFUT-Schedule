@@ -27,7 +27,7 @@ import com.xah.common.ui.style.align.CenterScreen
 @Composable
 fun CircleProgressIcon(
     progress : Double,
-    animate : Boolean,
+    animate : Boolean = true,
     tintColor : Color = MaterialTheme.colorScheme.onSurfaceVariant,
     trackColor: Color = ProgressIndicatorDefaults.circularDeterminateTrackColor,
 ) = CircleProgressIcon(

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,12 +38,15 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getHuiXinPsk
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoolNetPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.isEmptyOrBlank
@@ -283,109 +287,88 @@ fun EditHuixXinPasswordScreen(innerPadding : PaddingValues) {
     }
 }
 
+// 不完全准确，如果有用户后6位一模一样就会增加%数量，只作为最终替补
 fun getJxglstuDefaultPassword() : String? {
     val p = getPersonInfo().chineseID?.takeLast(6) ?: return null
     return "Hfut@#$%${p}"
 }
 
 suspend fun getJxglstuPassword() : String? = withContext(Dispatchers.IO) {
-    val useDefaultCardPassword = DataStoreManager.enableUseDefaultJxglstuPassword.first()
-    if(useDefaultCardPassword) {
+    val pwd = DataStoreManager.jxglstuPassword.first()
+    if(pwd.isEmptyOrBlank()) {
         getJxglstuDefaultPassword()
     } else {
-        val pwd = DataStoreManager.jxglstuPassword.first()
-        if(pwd.isEmptyOrBlank()) {
-            null
-        } else {
-            pwd
-        }
+        pwd
     }
 }
 
 @Composable
-fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
-    val useDefaultCardPassword by DataStoreManager.enableUseDefaultJxglstuPassword.collectAsState(initial = true)
-    val useEditedPwd = !useDefaultCardPassword
-    val originPwd = remember { getJxglstuDefaultPassword() }
+fun EditJxglstuPasswordScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-
-    val pwd by DataStoreManager.jxglstuPassword.collectAsState(initial = originPwd ?: EMPTY_STRING)
-
+    var loading by remember { mutableStateOf(false) }
+    val pwd by DataStoreManager.jxglstuPassword.collectAsState(initial = EMPTY_STRING)
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("合工大教务及教务系统密码") {
-            CustomCard(
-                color = MaterialTheme.colorScheme.surface
-            ) {
-                TransplantListItem(
-                    headlineContent = { Text("修改密码")},
-                    supportingContent = {
-                        Text("前往教务系统，点击右上角个人信息修改密码")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            Starter.startWebUrlInner(context, EMPTY_STRING,"修改密码", icon = R.drawable.lock_reset)
-                        }
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text("使用自定义密码") },
-                    supportingContent = {
-                        if(!useEditedPwd) {
-                            Text("若已不是初始密码,请打开开关并录入新密码,否则APP的校园网与一卡通相关功能默认以初始密码进行")
-                        } else {
-                            Text("若已不是当前密码,请重新切换开关以录入新密码,否则APP的同班同学、教室、全校培养方案功能将无法使用")
-                        }
-                    },
-                    trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
-                        scope.launch {
-                            DataStoreManager.saveUseDefaultJxglstuPassword(useEditedPwd)
-                        }
-                    }) },
-                    leadingContent = { Icon(painterResource(R.drawable.edit),null) },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            DataStoreManager.saveUseDefaultJxglstuPassword(useEditedPwd)
-                        }
-                    },
-                )
-                if(useEditedPwd) {
-                    var input by remember { mutableStateOf(EMPTY_STRING) }
-                    LaunchedEffect(pwd) {
-                        input = pwd
+        CustomCard(
+            color = MaterialTheme.colorScheme.surface
+        ) {
+            TransplantListItem(
+                headlineContent = { Text("修改密码")},
+                supportingContent = {
+                    Text("如未登录教务系统，需要先刷新教务系统登录后才可用本选项")
+                },
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        val cookie = getJxglstuCookie()
+                        Starter.startWebUrlInner(context, Constant.JXGLSTU_URL + "my/account", cookie = cookie,title = "修改密码", icon = R.drawable.lock_reset)
                     }
-                    CustomTextField(
-                        input = input,
-                        label = { Text("输入新密码") },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    scope.launch {
-                                        DataStoreManager.saveJxglstuPassword(input)
-                                        showToast("保存完成")
-                                    }
-                                }
-                            ) {
-                                Icon(painterResource(R.drawable.save),null)
-                            }
-                        }
-                    ) {
-                        input = it
+                },
+                leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                color = MaterialTheme.colorScheme.surface,
+                leadingContent = {
+                    if(loading) {
+                        LoadingIcon()
+                    } else {
+                        Icon(painterResource(R.drawable.rotate_right),null)
                     }
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
-
+                },
+                headlineContent = {
+                    Text("刷新获取最新密码")
+                },
+                supportingContent = {
+                    Text("每次刷新教务系统登录后即可自动更新密码，或者也可以点击手动刷新")
+                },
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        loading = true
+                        val cookie = getJxglstuCookie() ?: run {
+                            loading = false
+                            return@launch
+                        }
+                        vm.getAccount(cookie)
+                        loading = false
+                    }
                 }
-            }
-            Spacer(Modifier.height(CARD_NORMAL_DP))
-            CardListItem(
+            )
+        }
+        Spacer(Modifier.height(CARD_NORMAL_DP))
+        CustomCard(
+            color = MaterialTheme.colorScheme.surface
+        ) {
+            TransplantListItem(
                 color = MaterialTheme.colorScheme.surface,
                 leadingContent = { Icon(painterResource(R.drawable.info),null) },
-                supportingContent = { if(useEditedPwd) Text("初始密码为 $originPwd") },
-                headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码 $pwd" else "初始密码 $originPwd")) },
+                headlineContent = {
+                    Text("当前密码")
+                },
+                supportingContent = {
+                    Text(pwd)
+                }
             )
         }
         InnerPaddingHeight(innerPadding,false)

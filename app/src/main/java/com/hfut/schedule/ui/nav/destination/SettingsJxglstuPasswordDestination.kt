@@ -23,9 +23,11 @@ import com.hfut.schedule.ui.screen.home.cube.sub.EditJxglstuPasswordScreen
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.text
+import com.xah.navigation.util.LocalNavDependencies
 import dev.chrisbanes.haze.hazeSource
 
 object SettingsJxglstuPasswordDestination : NavDestination() {
@@ -37,6 +39,7 @@ object SettingsJxglstuPasswordDestination : NavDestination() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+        val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val hazeState = rememberHazeBlur()
 
@@ -60,7 +63,7 @@ object SettingsJxglstuPasswordDestination : NavDestination() {
                     .fillMaxSize()
                     .hazeSource(hazeState)
             ) {
-                EditJxglstuPasswordScreen(innerPadding)
+                EditJxglstuPasswordScreen(vm,innerPadding)
             }
         }
     }

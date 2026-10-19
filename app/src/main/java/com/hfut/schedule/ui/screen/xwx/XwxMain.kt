@@ -248,7 +248,7 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
                     TransplantListItem(
                         headlineContent = { Text("官网") },
                         supportingContent = {
-                            Text("申请高清无水印证明请前往官网或微信小程序")
+                            Text("申请高清无水印证明请前往微信小程序-校务行")
                         },
                         modifier = Modifier.clickable {
                             scope.launch {

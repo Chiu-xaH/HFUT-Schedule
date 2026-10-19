@@ -940,33 +940,33 @@ fun MainScreen(
             if (enableNewBottomBar){
                 val useBackground = useCustomBackground && targetPage == CALENDAR
                 val paddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = true)
-                val shape = remember(paddingSafely) {
-                    val corner = ScreenCornerHelper.corner
-                    if(paddingSafely || corner == 0.dp) {
+                val shape = remember(
+//                    paddingSafely
+                ) {
+//                    val corner = ScreenCornerHelper.corner
+//                    if(paddingSafely || corner == 0.dp) {
                         CircleShape
-                    } else {
-                        RoundedCornerShape(corner)
-                    }
+//                    } else {
+//                        RoundedCornerShape(corner)
+//                    }
                 }
                 Box(
                     modifier = Modifier
                 ) {
-                    if(paddingSafely) {
-                        Spacer(
-                            modifier = Modifier
-                                .let {
-                                    if (useBackground) {
-                                        it
-                                    } else {
-                                        it.newBottomBarBlur(hazeState, color)
-                                    }
+                    Spacer(
+                        modifier = Modifier
+                            .let {
+                                if (useBackground) {
+                                    it
+                                } else {
+                                    it.newBottomBarBlur(hazeState, color)
                                 }
-                                .align(Alignment.BottomCenter)
-                                .fillMaxWidth()
-                                .navigationBarsPadding()
-                                .height(APP_HORIZONTAL_DP * 1.75f)
-                        )
-                    }
+                            }
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                            .height(APP_HORIZONTAL_DP * if(paddingSafely) 1.75f else 1f)
+                    )
                     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
                     val maxValue = remember { .8f }
                     val finalColor = if(useBackground) {
@@ -1019,7 +1019,7 @@ fun MainScreen(
                                 if (paddingSafely) {
                                     it.padding(bottom = APP_HORIZONTAL_DP)
                                 } else {
-                                    it
+                                    it.padding(bottom = CARD_NORMAL_DP)
                                 }
                             }
                             .navigationBarsPadding()

@@ -160,4 +160,5 @@ interface JxglstuRepositoryInf {
     suspend fun getExam(cookie: String, studentId : UiStateHolder<Int>, examHolder : UiStateHolder<List<JxglstuExam>>)
     suspend fun parseJxglstuExam(html : String) : List<JxglstuExam>
     suspend fun getSelectCourseConfirmation(cookie: String, studentId : UiStateHolder<Int>, holder : UiStateHolder< Map<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>>>)
+    suspend fun getAccount(cookie: String, holder : UiStateHolder<String>)
 }

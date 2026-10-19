@@ -241,27 +241,27 @@ fun HazeBottomBarV2(
     val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
     if (enableNewBottomBar){
         val paddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = true)
-        val shape = remember(paddingSafely) {
-            val corner = ScreenCornerHelper.corner
-            if(paddingSafely || corner == 0.dp) {
+        val shape = remember(
+//            paddingSafely
+        ) {
+//            val corner = ScreenCornerHelper.corner
+//            if(paddingSafely || corner == 0.dp) {
                 CircleShape
-            } else {
-                RoundedCornerShape(corner)
-            }
+//            } else {
+//                RoundedCornerShape(corner)
+//            }
         }
         Box(
             modifier = Modifier
         ) {
-            if(paddingSafely) {
-                Spacer(
-                    modifier = Modifier
-                        .newBottomBarBlur(hazeState,color)
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .height(APP_HORIZONTAL_DP*1.75f)
-                )
-            }
+            Spacer(
+                modifier = Modifier
+                    .newBottomBarBlur(hazeState,color)
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .height(APP_HORIZONTAL_DP * if(paddingSafely) 1.75f else 1f)
+            )
             @OptIn(ExperimentalNavigationBarApi::class)
             (com.hfut.schedule.ui.model.NavigationBar(
                 enabled = enabled,
@@ -298,7 +298,7 @@ fun HazeBottomBarV2(
                         if (paddingSafely) {
                             it.padding(bottom = APP_HORIZONTAL_DP)
                         } else {
-                            it
+                            it.padding(bottom = CARD_NORMAL_DP)
                         }
                     }
                     .navigationBarsPadding(),

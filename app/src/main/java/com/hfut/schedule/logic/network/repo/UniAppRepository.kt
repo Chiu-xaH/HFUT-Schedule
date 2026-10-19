@@ -66,19 +66,19 @@ object UniAppRepository : UniAppRepositoryInf {
                 studentId = sId,
                 password = CryptoUtil.rsaEncrypt(pwd)
             ).awaitResponse()
-            val json = request.body()?.string()
+            val json = request.errorBody()?.string() ?: request.body()?.string()
             if(json == null) {
                 showToast(FAILED_TEXT)
                 return false
             }
             if(!request.isSuccessful) {
                 val msg = parseLogin(json,false)
-                showToast("$FAILED_TEXT$msg")
+                showToast("$FAILED_TEXT($msg)")
                 return false
             }
             val token = parseLogin(json,true)
             if(token == null) {
-                showToast("${FAILED_TEXT}2")
+                showToast("${FAILED_TEXT}(无法解析token)")
                 return false
             }
             DataStoreManager.saveUniAppJwt(token)

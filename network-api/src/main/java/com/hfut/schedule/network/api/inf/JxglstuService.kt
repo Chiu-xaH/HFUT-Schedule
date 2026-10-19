@@ -393,4 +393,10 @@ interface JxglstuService {
         @Field("studentId") studentId : Int,
         @Field("semesterId") semesterId : Int,
     ) : Call<ResponseBody>
+
+    @Headers(Constant.PC_UA)
+    @GET("my/account")
+    fun getAccount(
+        @Header("Cookie") cookie : String
+    ) : Call<ResponseBody>
 }

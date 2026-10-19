@@ -136,6 +136,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, ifSaved : Boolean) = withC
             launch {
                 launch { vm.getBizTypeId(finalCookie,studentId) }
                 launch { vm.getExamJXGLSTU(finalCookie) }
+                launch { vm.getAccount(finalCookie) }
             }
             // 登陆成功反馈，可以切屏了
             GlobalUiStateHolder.focusRefreshProgressFlow.tryEmit(null)

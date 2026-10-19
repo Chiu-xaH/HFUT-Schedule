@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
+import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
@@ -70,7 +71,9 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
-        UpdateItems("重构 创建日程时选择日期不再按范围，而是自由选择若干日期")
+        UpdateItems("新增 支持自动获取教务系统密码")//
+        UpdateItems("新增 修改教务系统密码的入口","位于 查询中心-个人信息-密码信息",to = To.Screen(SettingsJxglstuPasswordDestination))//
+        UpdateItems("重构 创建日程时选择日期不再按范围，而是自由选择若干日期")//
         UpdateItems("新增 支持克隆已有日程","编辑日程时右上角的复制图标，点击后会复制此日程信息到新建页面")//
         UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination()))
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定

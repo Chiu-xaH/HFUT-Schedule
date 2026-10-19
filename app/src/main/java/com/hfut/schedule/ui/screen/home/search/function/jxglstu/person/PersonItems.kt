@@ -50,22 +50,23 @@ import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.CircleProgressIcon
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ClassmatesDestination
 import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
+import com.hfut.schedule.ui.nav.destination.ProgramDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
 import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
-import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -114,6 +115,9 @@ fun PersonScreen(
                 }
                 launch {
                     vm.getPhoto(cookie)
+                }
+                launch {
+                    vm.getAccount(cookie)
                 }
             }.await()
             loading = false
@@ -174,6 +178,7 @@ private fun PersonItems(
 //    vm : NetWorkViewModel,
 //    navController : NavHostController,
 ) {
+    val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
     val photo by produceState<String?>(initialValue = null) {
         value = LargeStringDataManager.read( LargeStringDataManager.PHOTO)
@@ -358,11 +363,11 @@ private fun PersonItems(
                     }
                 )
                 PaddingHorizontalDivider()
-                Column(modifier = Modifier.coverBlur(!show)) {
+                Column {
                     val pwd = remember { prefs.getString("Password", EMPTY_STRING) }
                     pwd?.let {
                         TransplantListItem(
-                            headlineContent = { Text(text = it) },
+                            headlineContent = { Text(text = it,modifier = Modifier.coverBlur(!show)) },
                             overlineContent = { Text(text = "CAS统一认证密码")},
                             modifier = Modifier.clickable {
                                 ClipBoardHelper.copy(it)
@@ -370,8 +375,9 @@ private fun PersonItems(
                             trailingContent = {
                                 FilledTonalIconButton(
                                     onClick = {
-                                        Starter.refreshLogin(context)
-                                        showToast("前往 登陆界面中的右上角选项中修改")
+                                        scope.launch {
+                                            Starter.startWebUrlInner(context,Constant.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
+                                        }
                                     }
                                 ) {
                                     Icon(painterResource(R.drawable.edit),null)
@@ -382,7 +388,7 @@ private fun PersonItems(
                     jxglstuPwd.let {
                         TransplantListItem(
                             headlineContent = {
-                                Text(text = it)
+                                Text(text = it,modifier = Modifier.coverBlur(!show))
                             },
                             trailingContent = {
                                 FilledTonalIconButton(
@@ -402,7 +408,7 @@ private fun PersonItems(
                     val campus = remember { getCampusRegion() }
                     cardPsk.let {
                         TransplantListItem(
-                            headlineContent = {  Text(text = it) },
+                            headlineContent = {  Text(text = it,modifier = Modifier.coverBlur(!show)) },
                             overlineContent = {
                                 Text(
                                     when(campus) {
@@ -429,7 +435,7 @@ private fun PersonItems(
                         CampusRegion.HEFEI -> {
                             schoolNetPsk.let {
                                 TransplantListItem(
-                                    headlineContent = {  Text(text = it) },
+                                    headlineContent = {  Text(text = it,modifier = Modifier.coverBlur(!show)) },
                                     overlineContent = { Text(text = "校园网密码")},
                                     trailingContent = {
                                         FilledTonalIconButton(
@@ -489,18 +495,29 @@ private fun PersonItems(
                     )
                 }
 
+                val percent = remember(startDate,endDate) {
+                    if (startDate != null && endDate != null && startDate != EMPTY_STRING && endDate != EMPTY_STRING) {
+                        DateTimeManager.getPercent(startDate, endDate)
+                    } else {
+                        null
+                    }
+                }
+
                 TransplantListItem(
                     headlineContent = { Text(text = "${startDate ?: "YYYY-MM-DD"}\n${endDate ?: "YYYY-MM-DD"}") },
                     overlineContent = { Text(text = "学制 ${studyTime ?: "-"} 年")},
                     leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.schedule),
-                            contentDescription = "Localized description",
-                        )
+                        if(percent != null && percent in 0.0 ..< 1.0) {
+                            CircleProgressIcon(percent)
+                        } else {
+                            Icon(
+                                painterResource(R.drawable.schedule),
+                                contentDescription = "Localized description",
+                            )
+                        }
                     },
                     trailingContent = {
-                        if(startDate != null && endDate != null && startDate != EMPTY_STRING && endDate != EMPTY_STRING) {
-                            val percent = DateTimeManager.getPercent(startDate,endDate)
+                        if(percent != null) {
                             val str = if(percent in 0.0 ..< 1.0) {
                                 "已过 ${(percent*100).roundOffString(1)}%"
                             } else if(percent < 0f) {
@@ -524,9 +541,7 @@ private fun PersonItems(
                             contentDescription = "Localized description",
                         )
                     },
-                    modifier = Modifier.clickable {
-                        showToast("前往 查询中心-培养方案")
-                    }
+                    modifier = Modifier.clickable {}
                 )
                 TransplantListItem(
                     headlineContent = {  Text(text = home ?: "---省")  },
