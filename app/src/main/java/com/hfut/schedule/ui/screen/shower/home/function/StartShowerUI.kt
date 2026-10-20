@@ -48,7 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs

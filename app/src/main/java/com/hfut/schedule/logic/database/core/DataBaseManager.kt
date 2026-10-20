@@ -1,15 +1,12 @@
-package com.hfut.schedule.logic.database
+package com.hfut.schedule.logic.database.core
 
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.database.dao.CustomEventDao
-import com.hfut.schedule.logic.database.dao.ExamRecordDao
-import com.hfut.schedule.logic.database.dao.FriendDao
-import com.hfut.schedule.logic.database.dao.ShowerLabelDao
-import com.hfut.schedule.logic.database.dao.SpecialWorkDayDao
-import com.hfut.schedule.logic.database.dao.WebURLDao
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 private val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
@@ -93,12 +90,21 @@ private val MIGRATION_5_6 = object : Migration(5, 6) {
 private val MIGRATION_6_7 = object : Migration(6, 7) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE event ADD COLUMN group_id TEXT")
-        db.execSQL("CREATE INDEX IF NOT EXISTS index_event_group_id ON event(group_id)")
     }
 }
 
 object DataBaseManager {
-    private val db: AppDataBase by lazy {
+
+    private val enableSafeMode by lazy {
+        runBlocking {
+            !DataStoreManager.enableDataStore.first()
+        }
+    }
+
+    private val dataBaseSafely by lazy {
+        AppDataBaseSafely()
+    }
+    private val dataBase by lazy {
         Room.databaseBuilder(
             MyApplication.context,
             AppDataBase::class.java,
@@ -113,10 +119,46 @@ object DataBaseManager {
         ).build()
     }
 
-    val customEventDao: CustomEventDao by lazy { db.customEventDao() }
-    val showerLabelDao: ShowerLabelDao by lazy { db.showerLabelDao() }
-    val specialWorkDayDao: SpecialWorkDayDao by lazy { db.specialWorkDayDao() }
-    val webUrlDao: WebURLDao by lazy { db.webUrlDao() }
-    val friendDao: FriendDao by lazy { db.friendDao() }
-    val examRecordDao: ExamRecordDao by lazy { db.examRecordDao() }
+    val customEventDao by lazy {
+        if(!enableSafeMode) {
+            dataBase.customEventDao()
+        } else {
+            dataBaseSafely.customEventDao()
+        }
+    }
+    val showerLabelDao by lazy {
+        if(!enableSafeMode) {
+            dataBase.showerLabelDao()
+        } else {
+            dataBaseSafely.showerLabelDao()
+        }
+    }
+    val specialWorkDayDao by lazy {
+        if(!enableSafeMode) {
+            dataBase.specialWorkDayDao()
+        } else {
+            dataBaseSafely.specialWorkDayDao()
+        }
+    }
+    val webUrlDao by lazy {
+        if(!enableSafeMode) {
+            dataBase.webUrlDao()
+        } else {
+            dataBaseSafely.webUrlDao()
+        }
+    }
+    val friendDao by lazy {
+        if(!enableSafeMode) {
+            dataBase.friendDao()
+        } else {
+            dataBaseSafely.friendDao()
+        }
+    }
+    val examRecordDao by lazy {
+        if(!enableSafeMode) {
+            dataBase.examRecordDao()
+        } else {
+            dataBaseSafely.examRecordDao()
+        }
+    }
 }

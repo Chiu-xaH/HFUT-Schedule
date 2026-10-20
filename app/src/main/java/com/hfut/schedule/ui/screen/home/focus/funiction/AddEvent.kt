@@ -96,7 +96,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
@@ -179,7 +179,6 @@ import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.uuid.Uuid
 
 private enum class ShareRoutes {
     BUTTON,SURFACE

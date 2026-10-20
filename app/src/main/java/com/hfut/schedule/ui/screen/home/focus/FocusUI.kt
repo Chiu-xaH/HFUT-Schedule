@@ -34,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseDetail

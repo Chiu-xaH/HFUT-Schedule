@@ -2,8 +2,6 @@ package com.hfut.schedule.ui.screen.home.search.function.my.webLab
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,16 +15,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLEntity
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CustomCard

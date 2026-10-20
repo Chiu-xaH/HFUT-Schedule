@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuCourseTableResponse

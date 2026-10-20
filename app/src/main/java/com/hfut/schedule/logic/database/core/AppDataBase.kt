@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.database
+package com.hfut.schedule.logic.database.core
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -32,11 +32,11 @@ private const val VERSION = 7
     version = VERSION
 )
 @TypeConverters(DateTypeConverter::class)
-abstract class AppDataBase : RoomDatabase() {
-    abstract fun customEventDao() : CustomEventDao
-    abstract fun showerLabelDao() : ShowerLabelDao
-    abstract fun specialWorkDayDao() : SpecialWorkDayDao
-    abstract fun webUrlDao() : WebURLDao
-    abstract fun friendDao() : FriendDao
-    abstract fun examRecordDao() : ExamRecordDao
+abstract class AppDataBase : RoomDatabase(), AppDataBaseInf {
+    abstract override fun customEventDao() : CustomEventDao
+    abstract override fun showerLabelDao() : ShowerLabelDao
+    abstract override fun specialWorkDayDao() : SpecialWorkDayDao
+    abstract override fun webUrlDao() : WebURLDao
+    abstract override fun friendDao() : FriendDao
+    abstract override fun examRecordDao() : ExamRecordDao
 }

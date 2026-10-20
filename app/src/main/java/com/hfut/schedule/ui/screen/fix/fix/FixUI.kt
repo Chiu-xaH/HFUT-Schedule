@@ -21,6 +21,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.dev.CrashHandler
 import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTrace
 import com.hfut.schedule.logic.util.dev.saveErrorLog
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
@@ -125,6 +127,9 @@ fun FixUI(
         }
     }
 
+    val enableDataStore by DataStoreManager.enableDataStore.collectAsState(initial = true)
+
+
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .padding(innerPadding)
@@ -175,6 +180,29 @@ fun FixUI(
                 leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable{
                     showBottomSheetBackup = true
+                }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = { Text(text = "数据库兼容模式") },
+                supportingContent = {
+                    Text("打开后，将禁用数据库，防止版本升级造成崩溃影响整个应用")
+                },
+                trailingContent = {
+                    Switch(
+                        !enableDataStore,
+                        onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveEnableDataStore(!enableDataStore)
+                            }
+                        }
+                    )
+                },
+                leadingContent = { Icon(painterResource(R.drawable.database), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        DataStoreManager.saveEnableDataStore(!enableDataStore)
+                    }
                 }
             )
         }
@@ -282,7 +310,7 @@ fun BugShare() {
     TransplantListItem(
         headlineContent = { Text(text = "崩溃日志抓取") },
         leadingContent = {
-            if(CrashHandler.isLoggingEnabled) {
+            if(CrashHandler.enableSaveLogToFile) {
                 LoadingIcon()
             } else{
                 Icon(
@@ -292,24 +320,16 @@ fun BugShare() {
         },
         modifier = Modifier.clickable {
             activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
-            if(!CrashHandler.isLoggingEnabled) {
-                CrashHandler.enableLogging()
-            } else {
-                CrashHandler.disableLogging()
-            }
+            CrashHandler.enableSaveLogToFile = !CrashHandler.enableSaveLogToFile
         },
         trailingContent = {
-            Switch(checked = CrashHandler.isLoggingEnabled, onCheckedChange = {
+            Switch(checked = CrashHandler.enableSaveLogToFile, onCheckedChange = {
                 activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
-                if(!CrashHandler.isLoggingEnabled) {
-                    CrashHandler.enableLogging()
-                } else {
-                    CrashHandler.disableLogging()
-                }
+                CrashHandler.enableSaveLogToFile = !CrashHandler.enableSaveLogToFile
             })
         },
         supportingContent = {
-            if(CrashHandler.isLoggingEnabled) {
+            if(CrashHandler.enableSaveLogToFile) {
                 Text("正在记录日志，请复现崩溃闪退的操作，崩溃后，在Download文件夹寻找崩溃日志")
             } else {
                 Text("点击开始抓取，崩溃后，日志将保存于Download文件夹")

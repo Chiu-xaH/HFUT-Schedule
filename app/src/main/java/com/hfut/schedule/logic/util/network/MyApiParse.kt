@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.util.network
 
 
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.network.api.model.response.json.github.GithubIoSchedules

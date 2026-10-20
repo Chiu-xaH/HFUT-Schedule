@@ -61,7 +61,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager

@@ -46,7 +46,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -107,7 +106,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.FriendEntity
 import com.hfut.schedule.logic.model.enumeration.BottomBarItems
 import com.hfut.schedule.logic.model.enumeration.BottomBarItems.CALENDAR
@@ -199,7 +198,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
-import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.isEmptyOrBlank
@@ -560,7 +558,9 @@ fun MainScreen(
                                 }
                                 SETTINGS -> {
                                    Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP-CARD_NORMAL_DP)) {
-                                       if(!AppVersion.isNormalEnv) {
+                                       val enableDataStore by DataStoreManager.enableDataStore.collectAsState(initial = true)
+
+                                       if(!AppVersion.isNormalEnv || !enableDataStore) {
                                            LiquidButton(
                                                onClick = {
                                                    floatingController.push(AppEnvWarningWindow)

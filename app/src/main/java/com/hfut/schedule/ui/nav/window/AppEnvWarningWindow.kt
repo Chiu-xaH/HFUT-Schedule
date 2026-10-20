@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.nav.window
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -17,9 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,11 +32,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.hfut.schedule.ui.theme.errorColor
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.ui.theme.warnColor
 import com.hfut.schedule.ui.util.layout.measureDpSize
@@ -45,6 +51,7 @@ import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
 import com.xah.floating.util.LocalFloatingController
+import kotlinx.coroutines.launch
 
 
 object AppEnvWarningWindow: FloatingWindow() {
@@ -58,6 +65,8 @@ object AppEnvWarningWindow: FloatingWindow() {
     override fun BoxScope.Content() {
         val controller = LocalFloatingController.current
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        val enableDataStore by DataStoreManager.enableDataStore.collectAsState(initial = true)
 
         Box(modifier = Modifier.fillMaxSize()) {
             SharedContent(
@@ -80,17 +89,23 @@ object AppEnvWarningWindow: FloatingWindow() {
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
                             Spacer(Modifier.height(innerPadding+APP_HORIZONTAL_DP-CARD_NORMAL_DP))
-                            if(AppVersion.isNormalEnv) {
+                            if(!enableDataStore) {
                                 CardListItem(
                                     headlineContent = {
-                                        Text("运行环境正常")
+                                        Text("数据库被禁用，点击可解除禁用。如您之前未手动禁用，可能是出现了异常，请联系开发者反馈")
                                     },
                                     leadingContent = {
                                         Icon(
-                                            painterResource(R.drawable.check_circle),
+                                            painterResource(R.drawable.database),
                                             null,
-                                            tint = greenColor()
+                                            tint = errorColor()
                                         )
+                                    },
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            DataStoreManager.saveEnableDataStore(true)
+                                            showToast("重启应用后生效")
+                                        }
                                     }
                                 )
                             }

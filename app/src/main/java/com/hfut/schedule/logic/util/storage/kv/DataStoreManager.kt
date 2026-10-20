@@ -208,6 +208,7 @@ object DataStoreManager : IDataStore {
     private val SHOW_CALENDAR_TIME_LINE = booleanPreferencesKey("show_calendar_time_line")
     private val UNJOINED_GRADE_ITEMS = stringPreferencesKey("unjoined_grade_items")
     private val IGNORE_UNJOINED_GRADE_ITEMS = booleanPreferencesKey("ignore_unjoined_grade_items")
+    private val ENABLE_ROOM_DATA_STORE = booleanPreferencesKey("enable_room_data_store")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -305,6 +306,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableNewBottomBarSafelyPadding(value: Boolean) = saveValue(NEW_BOTTOM_BAR_SAFELY_PADDING, value)
     suspend fun saveEnableSHowCalendarTimeLine(value: Boolean) = saveValue(SHOW_CALENDAR_TIME_LINE, value)
     suspend fun saveEnableIgnoreUnjoinedGradeItems(value: Boolean) = saveValue(IGNORE_UNJOINED_GRADE_ITEMS, value)
+    suspend fun saveEnableDataStore(value: Boolean) = saveValue(ENABLE_ROOM_DATA_STORE, value)
 
 
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
@@ -401,6 +403,7 @@ object DataStoreManager : IDataStore {
     val enableNewBottomBarSafelyPadding = getFlow(NEW_BOTTOM_BAR_SAFELY_PADDING, true)
     val enableShowCalendarTimeLine = getFlow(SHOW_CALENDAR_TIME_LINE, false)
     val enableIgnoreUnjoinedGradeItems = getFlow(IGNORE_UNJOINED_GRADE_ITEMS, false)
+    val enableDataStore = getFlow(ENABLE_ROOM_DATA_STORE, true)
 
     fun getSyncDefaultCalendar(): Int? {
         return runBlocking {

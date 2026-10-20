@@ -12,6 +12,7 @@ import com.hfut.schedule.BuildConfig
 import com.xah.common.logic.model.Campus
 import com.hfut.schedule.logic.model.enumeration.AppStatus
 import com.hfut.schedule.logic.model.Location
+import com.hfut.schedule.logic.util.dev.CrashHandler
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -34,6 +35,8 @@ class MyApplication : Application() {
         super.onCreate()
         // 暴露全局Context
         context = applicationContext
+        // 初始化崩溃处理
+        CrashHandler.init()
         // 初始化日志工具
         LogUtil.init(APP_NAME)
         // 控制SharedNav库的日志
