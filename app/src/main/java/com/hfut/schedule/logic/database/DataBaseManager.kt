@@ -11,12 +11,12 @@ import com.hfut.schedule.logic.database.dao.ShowerLabelDao
 import com.hfut.schedule.logic.database.dao.SpecialWorkDayDao
 import com.hfut.schedule.logic.database.dao.WebURLDao
 
-// 版本1到版本2
 private val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE event ADD COLUMN supabase_id INTEGER DEFAULT NULL")
     }
 }
+
 private val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
@@ -29,6 +29,7 @@ private val MIGRATION_2_3 = object : Migration(2, 3) {
         )
     }
 }
+
 private val MIGRATION_3_4 = object : Migration(3, 4) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
@@ -45,6 +46,7 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
         db.execSQL("CREATE UNIQUE INDEX index_web_url_url ON web_url(url)")
     }
 }
+
 private val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
         // 新建表friend
@@ -62,6 +64,7 @@ private val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("DROP TABLE IF EXISTS `course`")
     }
 }
+
 private val MIGRATION_5_6 = object : Migration(5, 6) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
@@ -87,6 +90,13 @@ private val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 
+private val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE event ADD COLUMN group_id TEXT")
+        db.execSQL("CREATE INDEX IF NOT EXISTS index_event_group_id ON event(group_id)")
+    }
+}
+
 object DataBaseManager {
     private val db: AppDataBase by lazy {
         Room.databaseBuilder(
@@ -98,7 +108,8 @@ object DataBaseManager {
             MIGRATION_2_3,
             MIGRATION_3_4,
             MIGRATION_4_5,
-            MIGRATION_5_6
+            MIGRATION_5_6,
+            MIGRATION_6_7
         ).build()
     }
 

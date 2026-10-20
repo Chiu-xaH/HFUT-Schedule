@@ -18,6 +18,7 @@ object CustomEventMapper {
             type = type.name,
             description = description,
             remark = remark,
+            groupId = groupId,
 //            createTime = createTime.toDate(),
             supabaseId = supabaseId
         )
@@ -34,6 +35,7 @@ object CustomEventMapper {
             type = CustomEventType.valueOf(type),
             description = description,
             remark = remark,
+            groupId = groupId,
 //            createTime = createTime.toDateTimeBean(),
             supabaseId = supabaseId
         )
@@ -61,4 +63,3 @@ object CustomEventMapper {
         )
     }
 }
-

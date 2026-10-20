@@ -18,7 +18,7 @@ import com.hfut.schedule.logic.database.entity.WebURLEntity
 import com.hfut.schedule.logic.database.util.DateTypeConverter
 
 // 每次记得升级数据库
-private const val VERSION = 6
+private const val VERSION = 7
 
 @Database(
     entities = [
@@ -28,7 +28,7 @@ private const val VERSION = 6
         WebURLEntity::class,
         FriendEntity::class,
         ExamRecordEntity::class
-               ],
+    ],
     version = VERSION
 )
 @TypeConverters(DateTypeConverter::class)

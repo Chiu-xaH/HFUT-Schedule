@@ -20,6 +20,8 @@ data class CustomEventEntity(
     val type : String,
     val remark : String,
     val description: String?,
+    @ColumnInfo("group_id")
+    val groupId: String? = null,
     @ColumnInfo(name = "supabase_id")
     val supabaseId : Int? = null
 )
@@ -35,5 +37,6 @@ data class CustomEventDTO(
     val type : CustomEventType,
     val remark : String,
     val description: String?,
-    val supabaseId : Int? = null
+    val groupId: String?,
+    val supabaseId : Int?
 )

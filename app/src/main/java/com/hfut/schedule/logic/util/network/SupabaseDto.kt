@@ -54,7 +54,8 @@ fun supabaseEventEntityToDto(entity : SupabaseEventEntity) : SupabaseEventsInput
                                     contributorId = studentId,
                                     createTime = create.fromUTC(),
                                     contributorClass = it,
-                                    campus = EventCampus.valueOf(campus)
+                                    campus = EventCampus.valueOf(campus),
+                                    groupId = null // TODO 待服务端启用此参数
                                 )
                             }
                         }

@@ -177,7 +177,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.ZoneId
+import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.uuid.Uuid
 
 private enum class ShareRoutes {
     BUTTON,SURFACE
@@ -583,6 +585,7 @@ fun AddEventUI(
     enableCopy : Boolean = false,
     showChange: (Boolean) -> Unit
 ) {
+    val groupId = remember { UUID.randomUUID().toString() }
     var enabled by remember { mutableStateOf(false) }
     val editedData by produceState<CustomEventDTO?>(initialValue = null) {
         if(eventId <= 0) {
@@ -702,7 +705,8 @@ fun AddEventUI(
                                                 type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
                                                 description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
                                                 remark = remark,
-                                                supabaseId = getInsertedEventId(vm)
+                                                supabaseId = getInsertedEventId(vm),
+                                                groupId = null
                                             )
                                         }
                                         if(enabled && entity != null) {
@@ -780,7 +784,9 @@ fun AddEventUI(
                                         dateTime = it,
                                         type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
                                         description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
-                                        remark = remark
+                                        remark = remark,
+                                        supabaseId = null,
+                                        groupId = null
                                     )
                                 }
                                 if(enabled && entity != null) {

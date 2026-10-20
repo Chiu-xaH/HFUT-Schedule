@@ -219,7 +219,8 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                                                         type = item.type,
                                                         description = item.description,
                                                         remark = item.timeDescription,
-                                                        supabaseId = item.id
+                                                        supabaseId = item.id,
+                                                        groupId = item.groupId
                                                     )
                                                     // 检查是否已经存在 若存在相同id则直接覆盖掉
                                                     DataBaseManager.customEventDao.delBySupabaseId(item.id)
@@ -250,7 +251,8 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                                                         type = item.type,
                                                         description = item.description,
                                                         remark = item.timeDescription,
-                                                        supabaseId = item.id
+                                                        supabaseId = item.id,
+                                                        groupId = item.groupId
                                                     )
                                                     // 检查是否已经存在 若存在相同id则直接覆盖掉
                                                     // 添加到数据库

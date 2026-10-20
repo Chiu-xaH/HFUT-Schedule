@@ -62,7 +62,8 @@ data class SupabaseEventsInput(
     val contributorClass : String,
     val campus : EventCampus,
     val url : String?,
-    val createTime : DateTimeBean
+    val createTime : DateTimeBean,
+    val groupId : String?
 )
 
 // 实体类 接收数据库

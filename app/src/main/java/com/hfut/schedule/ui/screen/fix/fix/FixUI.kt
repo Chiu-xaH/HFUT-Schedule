@@ -49,7 +49,9 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
+import com.hfut.schedule.ui.screen.home.cube.sub.BackupScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -66,6 +68,7 @@ fun FixUI(
     vm : NetWorkViewModel,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var showBottomSheet_version by remember { mutableStateOf(false) }
     if (showBottomSheet_version) {
@@ -87,6 +90,30 @@ fun FixUI(
                         .fillMaxSize()
                 ) {
                     VersionInfo()
+                }
+            }
+        }
+    }
+
+    var showBottomSheetBackup by remember { mutableStateOf(false) }
+    if (showBottomSheetBackup) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheetBackup = false },
+            showBottomSheet = showBottomSheetBackup
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar(SettingsBackupDestination.title.asString())
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
+                ) {
+                    BackupScreen(innerPadding,true)
                 }
             }
         }
@@ -131,6 +158,24 @@ fun FixUI(
                 headlineContent = { Text(text = "联系开发者") },
                 leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable{ emailMe(context) }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = { Text(text = "Github主页") },
+                leadingContent = { Icon(painterResource(R.drawable.github), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable{
+                    scope.launch {
+                        Starter.startWebUrlOuter(context,"${Constant.GITHUB_URL}${Constant.GITHUB_DEVELOPER_NAME}/${Constant.GITHUB_REPO_NAME}")
+                    }
+                }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = { Text(text = "备份与恢复") },
+                leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable{
+                    showBottomSheetBackup = true
+                }
             )
         }
         MyAPIItem(color = MaterialTheme.colorScheme.surface)

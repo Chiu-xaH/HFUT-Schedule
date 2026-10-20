@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -53,6 +54,7 @@ private const val error = "发生逻辑错误"
 @Composable
 fun BackupScreen(
     innerPadding : PaddingValues,
+    isInSheet : Boolean = false
 ) {
 //    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 //    var scale by remember { mutableFloatStateOf(1f) }
@@ -105,10 +107,19 @@ fun BackupScreen(
     }
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .let {
+                if(isInSheet) {
+                    it
+                } else {
+                    it.verticalScroll(rememberScrollState())
+                }
+            }
+    ) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("备份") {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = if(isInSheet) cardNormalColor() else MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("备份数据至Download文件夹") },
                     supportingContent = {
@@ -136,7 +147,7 @@ fun BackupScreen(
             }
         }
         DividerTextExpandedWith("恢复") {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = if(isInSheet) cardNormalColor() else MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("恢复数据") },
                     supportingContent = {
