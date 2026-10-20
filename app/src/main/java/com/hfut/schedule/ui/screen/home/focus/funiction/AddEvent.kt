@@ -129,7 +129,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.dialog.DateRangePickerDialog
-import com.hfut.schedule.ui.component.dialog.DatesPickerDialog
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -179,10 +178,6 @@ import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
-
-private enum class ShareRoutes {
-    BUTTON,SURFACE
-}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -601,6 +596,8 @@ fun AddEventUI(
 
     var time by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
     var date by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
+//    val dates = remember { mutableStateListOf<String>() }
+
     LaunchedEffect(editedData) {
         editedData?.let {
             isScheduleType = it.type == CustomEventType.SCHEDULE
@@ -662,7 +659,24 @@ fun AddEventUI(
     }
 
     if(showSelectDateDialog)
-        TemporaryEventDatePickerDialog(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
+        EventDatePickerDialog(
+            isScheduleType,
+            onSelected = {
+                when(it) {
+                    is EventDatePickerSelectedResult.Date -> {
+                        date = Pair(it.date,it.date)
+                        // fixme 临时写法，可以改成hashset
+//                        dates.clear()
+//                        dates.addAll(it.dates)
+                    }
+                    is EventDatePickerSelectedResult.Range -> {
+                        date = it.range
+                    }
+                }
+            }
+        ) {
+            showSelectDateDialog = false
+        }
     if(showSelectTimeDialog)
         TimeRangePickerDialog(isScheduleType,onSelected = { time = it }, defaultValue = time) { showSelectTimeDialog = false }
 
@@ -739,6 +753,7 @@ fun AddEventUI(
     }
     var bottomHeight by remember { mutableStateOf(0.dp) }
     val color = MaterialTheme.colorScheme.surface
+    val useCreate = editedData == null || enableCopy
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -792,7 +807,7 @@ fun AddEventUI(
                                     // 添加到数据库
                                     val targetEntity = CustomEventMapper.dtoToEntity(entity)
                                     val result = async {
-                                        if (editedData == null) {
+                                        if (useCreate) {
                                             DataBaseManager.customEventDao.insert(targetEntity).toInt()
                                         } else {
                                             val sId = editedData!!.supabaseId
@@ -823,8 +838,7 @@ fun AddEventUI(
             ) {
                 if(!updateLoading)
                     Text(
-                        if(enableCopy || editedData == null) "添加"
-                        else "更新"
+                        if(useCreate) "添加" else "更新"
                     )
                 else
                     LoadingIcon()
@@ -930,14 +944,30 @@ fun AddEventUI(
 
             CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text(
-                            (if(isScheduleType)"开始 ${date.first + (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) + " " + time.first}\n" else EMPTY_STRING)
-                                    + "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + time.second}"
-                        ) },
+                        headlineContent = {
+                            Text(
+                                if(isScheduleType) {
+                                    val timeStr = if(time.first.isEmpty() || time.second.isEmpty()) {
+                                        "----"
+                                    } else if(time.first == time.second) {
+                                        time.first
+                                    } else {
+                                        time.first + "~" + time.second
+                                    }
+                                    date.second.ifEmpty { "----" } +  (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + timeStr
+//                                    dates.toList().joinToString(", ")
+                                } else {
+                                    "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + time.second}"
+                                }
+                            )
+                        },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
                     BottomTextButtonGroup(
                         listOf(
+//                            CardBottomButton("清空",isScheduleType && dates.isNotEmpty(), errorColor = true) {
+//                                dates.clear()
+//                            },
                             CardBottomButton(if(isScheduleType)"选择日期" else "选择截止日期") {
                                 showSelectDateDialog = true
                             },
@@ -1309,10 +1339,14 @@ private sealed class EventDatePickerSelectedResult {
     data class Range(
         val range : Pair<String, String>
     ) : EventDatePickerSelectedResult()
-
+/*
     data class Dates(
         val dates : List<String>
-    )
+    ) : EventDatePickerSelectedResult()
+ */
+    data class Date(
+        val date : String
+    ) : EventDatePickerSelectedResult()
 }
 
 @Deprecated("即将抛弃范围选取的交互，此函数将会被删除")
@@ -1361,15 +1395,21 @@ private fun EventDatePickerDialog(
     onDismiss: () -> Unit
 ) {
     if(isRangeOrSingle) {
+        DatePickerDialog(
+            onDismiss = onDismiss,
+            onConfirm = {
+                onSelected(EventDatePickerSelectedResult.Date(it))
+            }
+        )
+        /*
         DatesPickerDialog(
             initialDates = emptyList(),
             onDismiss = onDismiss,
             onConfirm = {
-                EventDatePickerSelectedResult.Dates(it)
+                onSelected(EventDatePickerSelectedResult.Dates(it))
             }
         )
-        // 废弃方案
-//        DateRangePickerDialog(onSelected,onDismiss)
+         */
     } else {
         var startDate by remember { mutableStateOf<Long?>(null) }
         var startDateString by remember { mutableStateOf<String?>(null) }

@@ -136,7 +136,7 @@ fun StorageWeb(hazeState : HazeState) {
                                     CardBottomButton("分享") {
                                         ShareTo.shareString(url)
                                     },
-                                    CardBottomButton("删除") {
+                                    CardBottomButton("删除", errorColor = true) {
                                         selectedDelTitle = name
                                         selectedDelId = id
                                         showDialogDel = true

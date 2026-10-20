@@ -242,7 +242,7 @@ fun WebVpnScreen(
                                                                 }
                                                             }
                                                         },
-                                                        CardBottomButton("清除") {
+                                                        CardBottomButton("清除", errorColor = true) {
                                                             result = null
                                                         },
                                                     )
@@ -336,7 +336,7 @@ fun WebVpnScreen(
                                                                 Starter.startWebUrlInner(context,it)
                                                             }
                                                         },
-                                                        CardBottomButton("清除") {
+                                                        CardBottomButton("清除", errorColor = true) {
                                                             result = null
                                                         },
                                                     )

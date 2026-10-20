@@ -19,6 +19,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 data class CardBottomButton(
     val text : String,
     val show : Boolean = true,
+    val errorColor : Boolean = false,
     val clickable :  (() -> Unit)? = null
 )
 
@@ -39,7 +40,7 @@ fun ColumnScope.BottomTextButtonGroup(buttons : List<CardBottomButton>) {
                             if(clickable == null)
                                 MaterialTheme.colorScheme.onSurface
                             else {
-                                if(text.contains("删除")) {
+                                if(errorColor) {
                                     MaterialTheme.colorScheme.error
                                 } else {
                                     MaterialTheme.colorScheme.primary
