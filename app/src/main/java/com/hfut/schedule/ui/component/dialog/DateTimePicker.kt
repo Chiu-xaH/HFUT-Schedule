@@ -202,14 +202,18 @@ fun TimeRangePicker(
     onSelected: (Pair<String,String>) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var startTime by remember { mutableStateOf<String>("00:00") }
+    var startTime by remember { mutableStateOf("00:00") }
     var endTime by remember { mutableStateOf<String?>(null) }
     var enabled by remember { mutableStateOf(false) }
 
     // 重选范围 清空
     LaunchedEffect(startTime,endTime) {
         // 判定时间合法性
-        enabled = endTime != null
+        enabled = if(isSchedule) {
+            endTime != null && startTime < endTime!!
+        } else {
+            endTime != null
+        }
     }
 
     Column() {

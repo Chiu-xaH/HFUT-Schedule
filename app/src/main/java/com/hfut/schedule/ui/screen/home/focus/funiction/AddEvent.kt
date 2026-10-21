@@ -48,13 +48,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -119,7 +122,9 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroupWithoutPadding
 import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -138,6 +143,8 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.status.StatusIcon
+import com.hfut.schedule.ui.component.text.DividerText
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
@@ -571,6 +578,7 @@ private fun SharedTransitionScope.SurfaceUI(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddEventUI(
     vm: NetWorkViewModel,
@@ -846,6 +854,13 @@ fun AddEventUI(
 
         }
 
+        val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
+            value = dateToWeek(date.first)
+        }
+        val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
+            value = dateToWeek(date.second)
+        }
+
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             CustomSingleChoiceRow(
                 options = LocalEvent.entries,
@@ -885,318 +900,389 @@ fun AddEventUI(
                     )
                 }
             )
-            PaddingHorizontalDivider(isDashed = true)
-
-            Spacer(Modifier.height(CARD_NORMAL_DP*2))
+            Spacer(Modifier.height(CARD_NORMAL_DP))
             CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
-            Spacer(Modifier.height(CARD_NORMAL_DP*2))
-            CustomCard(color = cardNormalColor()) {
-                var displaySelector by rememberSaveable() { mutableStateOf(false) }
-                CustomTextField(
-                    input = description,
-                    label = { Text("备注(可为空)") },
-                    singleLine = false,
-                    shape = NoneRoundShape,
-                    colors = TextFieldDefaults.colors().copy(
-                        focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
-                        unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
-                    ),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                displaySelector = !displaySelector
+            if(isScheduleType) {
+                DividerTextExpandedWith("时间段") {
+                    CustomCard(color = cardNormalColor()) {
+                        Column {
+                            var displaySelector by rememberSaveable() { mutableStateOf(false) }
+                            CustomTextField(
+                                input = description,
+                                label = { Text("备注(可为空)") },
+                                singleLine = false,
+                                shape = NoneRoundShape,
+                                colors = TextFieldDefaults.colors().copy(
+                                    focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                                    unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
+                                ),
+                                trailingIcon = {
+                                    IconButton(
+                                        onClick = {
+                                            displaySelector = !displaySelector
+                                        }
+                                    ) {
+                                        val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
+                                        val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
+                                        Icon(painter, null)
+                                    }
+                                },
+                                modifier = Modifier,
+                            ) {
+                                description = it
                             }
-                        ) {
-                            val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
-                            val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
-                            Icon(painter, null)
+                            AnimatedVisibility(
+                                visible = displaySelector,
+                                enter = slideInVertically(
+                                    initialOffsetY = { -40 }
+                                ) + expandVertically(
+                                    expandFrom = Alignment.Top
+                                ) + scaleIn(
+                                    transformOrigin = TransformOrigin(0.5f, 0f)
+                                ) + fadeIn(initialAlpha = 0.3f),
+                                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                            ) {
+                                BuildingsSelector(vm) {
+                                    description = it
+                                }
+                            }
                         }
-                    },
-                    modifier = Modifier,
-                ) {
-                    description = it
-                }
-                AnimatedVisibility(
-                    visible = displaySelector,
-                    enter = slideInVertically(
-                        initialOffsetY = { -40 }
-                    ) + expandVertically(
-                        expandFrom = Alignment.Top
-                    ) + scaleIn(
-                        transformOrigin = TransformOrigin(0.5f, 0f)
-                    ) + fadeIn(initialAlpha = 0.3f),
-                    exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-                ) {
-                    BuildingsSelector(vm) {
-                        description = it
+                        PaddingHorizontalDivider(isDashed = true)
+                        TransplantListItem(
+                            headlineContent = {
+                                val timeStr = if(time.first.isEmpty() || time.second.isEmpty()) {
+                                    "----"
+                                } else if(time.first == time.second) {
+                                    time.first
+                                } else {
+                                    time.first + "~" + time.second
+                                }
+                                Text(
+                                    date.second.ifEmpty { "----" } +  (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + timeStr
+                                )
+                            },
+                            leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
+                        )
+                        BottomTextButtonGroup(
+                            listOf(
+//                            CardBottomButton("清空",isScheduleType && dates.isNotEmpty(), errorColor = true) {
+//                                dates.clear()
+//                            },
+                                CardBottomButton("选择日期") {
+                                    showSelectDateDialog = true
+                                },
+                                CardBottomButton("选择时间") {
+                                    showSelectTimeDialog = true
+                                },
+                                CardBottomButton("复制", show = false) {
+                                    showDevelopingToast()
+                                },
+                                CardBottomButton("删除", errorColor = true, show = false) {
+                                    showDevelopingToast()
+                                }
+                            )
+                        )
+                    }
+                    FilledTonalButton (
+                        onClick = {
+                            showDevelopingToast()
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
+                        shape = MaterialTheme.shapes.medium,
+                        colors = ButtonDefaults.filledTonalButtonColors(containerColor = cardNormalColor())
+                    ) {
+                        Text("添加")
                     }
                 }
-            }
-            Spacer(Modifier.height(CARD_NORMAL_DP))
-            val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
-                value = dateToWeek(date.first)
-            }
-            val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
-                value = dateToWeek(date.second)
-            }
-
-            CustomCard(color = cardNormalColor()) {
+            } else {
+                Spacer(Modifier.height(CARD_NORMAL_DP*2))
+                CustomCard(color = cardNormalColor()) {
+                    var displaySelector by rememberSaveable() { mutableStateOf(false) }
+                    CustomTextField(
+                        input = description,
+                        label = { Text("备注(可为空)") },
+                        singleLine = false,
+                        shape = NoneRoundShape,
+                        colors = TextFieldDefaults.colors().copy(
+                            focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                            unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        ),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    displaySelector = !displaySelector
+                                }
+                            ) {
+                                val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
+                                val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
+                                Icon(painter, null)
+                            }
+                        },
+                        modifier = Modifier,
+                    ) {
+                        description = it
+                    }
+                    AnimatedVisibility(
+                        visible = displaySelector,
+                        enter = slideInVertically(
+                            initialOffsetY = { -40 }
+                        ) + expandVertically(
+                            expandFrom = Alignment.Top
+                        ) + scaleIn(
+                            transformOrigin = TransformOrigin(0.5f, 0f)
+                        ) + fadeIn(initialAlpha = 0.3f),
+                        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                    ) {
+                        BuildingsSelector(vm) {
+                            description = it
+                        }
+                    }
+                }
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+                CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = {
                             Text(
-                                if(isScheduleType) {
-                                    val timeStr = if(time.first.isEmpty() || time.second.isEmpty()) {
-                                        "----"
-                                    } else if(time.first == time.second) {
-                                        time.first
-                                    } else {
-                                        time.first + "~" + time.second
-                                    }
-                                    date.second.ifEmpty { "----" } +  (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + timeStr
-//                                    dates.toList().joinToString(", ")
-                                } else {
-                                    "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + time.second}"
-                                }
+                                "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + time.second}"
                             )
                         },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
                     BottomTextButtonGroup(
                         listOf(
-//                            CardBottomButton("清空",isScheduleType && dates.isNotEmpty(), errorColor = true) {
-//                                dates.clear()
-//                            },
-                            CardBottomButton(if(isScheduleType)"选择日期" else "选择截止日期") {
+                            CardBottomButton("选择截止日期") {
                                 showSelectDateDialog = true
                             },
-                            CardBottomButton(if(isScheduleType)"选择时间" else "选择截止时间") {
+                            CardBottomButton("选择截止时间") {
                                 showSelectTimeDialog = true
                             },
                         )
                     )
                 }
-                Spacer(Modifier.height(CARD_NORMAL_DP*2))
-                CustomTextField(input = remark, label = { Text("时间显示文案") }, singleLine = false) { remark = it }
-                Spacer(Modifier.height(CARD_NORMAL_DP*2))
+            }
 
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
+//                CustomTextField(input = remark, label = { Text("时间显示文案") }, singleLine = false) { remark = it }
+//                Spacer(Modifier.height(CARD_NORMAL_DP*2))
 
-                if(isSupabase) {
-                    var isEditMode by remember { mutableStateOf(false) }
-                    var input by remember { mutableStateOf(EMPTY_STRING) }
-                    var id by remember { mutableIntStateOf(-1) }
-                    var showDelDialog by remember { mutableStateOf(false) }
-                    var showAddDialog by remember { mutableStateOf(false) }
+            if(isSupabase) {
+                var isEditMode by remember { mutableStateOf(false) }
+                var input by remember { mutableStateOf(EMPTY_STRING) }
+                var id by remember { mutableIntStateOf(-1) }
+                var showDelDialog by remember { mutableStateOf(false) }
+                var showAddDialog by remember { mutableStateOf(false) }
 
-                    if(showDelDialog) {
-                        LittleDialog(
-                            onConfirmation = {
-                                if(id >= 0) {
-                                    classList.removeAt(id)
+                if(showDelDialog) {
+                    LittleDialog(
+                        onConfirmation = {
+                            if(id >= 0) {
+                                classList.removeAt(id)
+                            }
+                            showDelDialog = false
+                        },
+                        onDismissRequest = { showDelDialog = false },
+                        dialogText = "要删除此项吗"
+                    )
+                }
+                if(showAddDialog) {
+                    Dialog(
+                        onDismissRequest = { showAddDialog = false }
+                    ) {
+                        Column(modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.surface)) {
+                            Column(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    TextField(
+                                        modifier = Modifier
+                                            .weight(1f),
+                                        value = input,
+                                        onValueChange = { input = it },
+                                        singleLine = true,
+                                        shape = MaterialTheme.shapes.medium,
+                                        colors = textFiledTransplant(isColorCopy = false),
+                                    )
                                 }
-                                showDelDialog = false
-                            },
-                            onDismissRequest = { showDelDialog = false },
-                            dialogText = "要删除此项吗"
-                        )
-                    }
-                    if(showAddDialog) {
-                        Dialog(
-                            onDismissRequest = { showAddDialog = false }
-                        ) {
-                            Column(modifier = Modifier
-                                .clip(MaterialTheme.shapes.medium)
-                                .background(MaterialTheme.colorScheme.surface)) {
-                                Column(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
+                                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+
+                                Row(modifier = Modifier
+                                    .fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                                    FilledTonalButton(onClick = {
+                                        showAddDialog = false
+                                    },modifier = Modifier
+                                        .weight(.5f)
                                     ) {
-                                        TextField(
-                                            modifier = Modifier
-                                                .weight(1f),
-                                            value = input,
-                                            onValueChange = { input = it },
-                                            singleLine = true,
-                                            shape = MaterialTheme.shapes.medium,
-                                            colors = textFiledTransplant(isColorCopy = false),
-                                        )
+                                        Text(text = "取消")
                                     }
-                                    Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-
-                                    Row(modifier = Modifier
-                                        .fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                                        FilledTonalButton(onClick = {
-                                            showAddDialog = false
-                                        },modifier = Modifier
-                                            .weight(.5f)
-                                        ) {
-                                            Text(text = "取消")
-                                        }
-                                        Spacer(modifier = Modifier.width(10.dp))
-                                        Button(onClick = {
-                                            classList.add(input)
-                                            showAddDialog = false
-                                        },modifier = Modifier
-                                            .weight(.5f)
-                                        ) {
-                                            Text(text = "保存")
-                                        }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Button(onClick = {
+                                        classList.add(input)
+                                        showAddDialog = false
+                                    },modifier = Modifier
+                                        .weight(.5f)
+                                    ) {
+                                        Text(text = "保存")
                                     }
                                 }
                             }
                         }
                     }
+                }
 
-                    LaunchedEffect(Unit) { getPersonInfo().className?.let { classList.add(it) } }
-                    LaunchedEffect(showAddDialog) {
-                        if(!showAddDialog) {
-                            input = EMPTY_STRING
-                        }
+                LaunchedEffect(Unit) { getPersonInfo().className?.let { classList.add(it) } }
+                LaunchedEffect(showAddDialog) {
+                    if(!showAddDialog) {
+                        input = EMPTY_STRING
                     }
+                }
 
-                    Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*2f))
-                    CustomCard(color = cardNormalColor()) {
-                        TransplantListItem(
-                            headlineContent = { Text("适用范围" ) },
-                            supportingContent = {
-                                Text("为保证统一规范，必须按 查询中心-个人信息-班级 输入班级名，例如'计算机29-9班’而不是‘计科29-9班’，不添加/清空班级则表示对所有人可见" )
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.target),null)
-                            } ,
-                            modifier = Modifier.clickable {
+                Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*2f))
+                CustomCard(color = cardNormalColor()) {
+                    TransplantListItem(
+                        headlineContent = { Text("适用范围" ) },
+                        supportingContent = {
+                            Text("为保证统一规范，必须按 查询中心-个人信息-班级 输入班级名，例如'计算机29-9班’而不是‘计科29-9班’，不添加/清空班级则表示对所有人可见" )
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.target),null)
+                        } ,
+                        modifier = Modifier.clickable {
+                        }
+                    )
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text("适用校区") },
+                        supportingContent = {
+                            Column {
+                                Row {
+                                    FilterChip(onClick = { campus = EventCampus.HEFEI }, label = { Text("合肥") }, selected = campus == EventCampus.HEFEI)
+                                    Spacer(Modifier.width(10.dp))
+                                    FilterChip(onClick = { campus = EventCampus.XUANCHENG }, label = { Text("宣城") }, selected = campus == EventCampus.XUANCHENG)
+                                    Spacer(Modifier.width(10.dp))
+                                    FilterChip(onClick = { campus = EventCampus.DEFAULT }, label = { Text("所有人可见") }, selected = campus == EventCampus.DEFAULT)
+                                }
                             }
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text("适用校区") },
-                            supportingContent = {
+
+                        }
+                    )
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text("适用班级") },
+                        supportingContent = {
+                            if(classList.isEmpty()) {
+                                RowHorizontal {
+                                    Text("所有人可见")
+                                }
+                            } else {
                                 Column {
-                                    Row {
-                                        FilterChip(onClick = { campus = EventCampus.HEFEI }, label = { Text("合肥") }, selected = campus == EventCampus.HEFEI)
-                                        Spacer(Modifier.width(10.dp))
-                                        FilterChip(onClick = { campus = EventCampus.XUANCHENG }, label = { Text("宣城") }, selected = campus == EventCampus.XUANCHENG)
-                                        Spacer(Modifier.width(10.dp))
-                                        FilterChip(onClick = { campus = EventCampus.DEFAULT }, label = { Text("所有人可见") }, selected = campus == EventCampus.DEFAULT)
-                                    }
-                                }
+                                    for(index in classList.indices step 2) {
+                                        Row {
+                                            AssistChip(
+                                                onClick = {
+                                                    id = index
+                                                    showDelDialog = true
+                                                },
+                                                label = { Text(classList[index]) },
+                                                leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
+                                            )
 
-                            }
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text("适用班级") },
-                            supportingContent = {
-                                if(classList.isEmpty()) {
-                                    RowHorizontal {
-                                        Text("所有人可见")
-                                    }
-                                } else {
-                                    Column {
-                                        for(index in classList.indices step 2) {
-                                            Row {
+                                            if(index+1 != classList.size) {
+                                                Spacer(Modifier.width(APP_HORIZONTAL_DP))
                                                 AssistChip(
                                                     onClick = {
-                                                        id = index
+                                                        id = index+1
                                                         showDelDialog = true
                                                     },
-                                                    label = { Text(classList[index]) },
+                                                    label = { Text(classList[index+1]) },
                                                     leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                 )
-
-                                                if(index+1 != classList.size) {
-                                                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
-                                                    AssistChip(
-                                                        onClick = {
-                                                            id = index+1
-                                                            showDelDialog = true
-                                                        },
-                                                        label = { Text(classList[index+1]) },
-                                                        leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
-                                                    )
-                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                        )
-                        Row(modifier = Modifier.align(Alignment.End)) {
-                            Text(
-                                text = "添加",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                modifier = Modifier
-                                    .align(Alignment.Bottom)
-                                    .padding(
-                                        horizontal = APP_HORIZONTAL_DP,
-                                        vertical = APP_HORIZONTAL_DP - 5.dp
-                                    )
-                                    .clickable {
-                                        showAddDialog = true
-                                    }
-                            )
-                            Text(
-                                text = if(!isEditMode) "编辑" else "完成",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                modifier = Modifier
-                                    .align(Alignment.Top)
-                                    .padding(
-                                        horizontal = APP_HORIZONTAL_DP,
-                                        vertical = APP_HORIZONTAL_DP - 5.dp
-                                    )
-                                    .clickable {
-                                        isEditMode = !isEditMode
-                                    }
-                            )
-                            Text(
-                                text = "清空",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                modifier = Modifier
-                                    .align(Alignment.Bottom)
-                                    .padding(
-                                        horizontal = APP_HORIZONTAL_DP,
-                                        vertical = APP_HORIZONTAL_DP - 5.dp
-                                    )
-                                    .clickable {
-                                        classList.clear()
-                                    }
-                            )
-                            Text(
-                                text = "排序(自动)",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                modifier = Modifier
-                                    .align(Alignment.Bottom)
-                                    .padding(
-                                        horizontal = APP_HORIZONTAL_DP,
-                                        vertical = APP_HORIZONTAL_DP - 5.dp
-                                    )
-                                    .clickable {
-                                        val sorted = classList.sorted() // 生成排序后的副本
-                                        classList.clear()               // 清空原列表
-                                        classList.addAll(sorted)        // 添加排序后的元素
-                                    }
-                            )
                         }
-                    }
-                    Spacer(Modifier.height(5.dp - CARD_NORMAL_DP))
-                    CardListItem(
-                        headlineContent = { Text("同时克隆卡片至本地")},
-                        supportingContent = { Text(if(isClone)"上传卡片时，同时添加入本地聚焦当中" else "仅共享卡片 自己无需使用")},
-                        trailingContent = { Switch(checked = isClone, onCheckedChange = { ch -> isClone = ch }) },
-                        modifier = Modifier.clickable { isClone = !isClone }
                     )
-                    Spacer(Modifier.height(5.dp))
-                    BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
+                    Row(modifier = Modifier.align(Alignment.End)) {
+                        Text(
+                            text = "添加",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .align(Alignment.Bottom)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP - 5.dp
+                                )
+                                .clickable {
+                                    showAddDialog = true
+                                }
+                        )
+                        Text(
+                            text = if(!isEditMode) "编辑" else "完成",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .align(Alignment.Top)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP - 5.dp
+                                )
+                                .clickable {
+                                    isEditMode = !isEditMode
+                                }
+                        )
+                        Text(
+                            text = "清空",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .align(Alignment.Bottom)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP - 5.dp
+                                )
+                                .clickable {
+                                    classList.clear()
+                                }
+                        )
+                        Text(
+                            text = "排序(自动)",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .align(Alignment.Bottom)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP - 5.dp
+                                )
+                                .clickable {
+                                    val sorted = classList.sorted() // 生成排序后的副本
+                                    classList.clear()               // 清空原列表
+                                    classList.addAll(sorted)        // 添加排序后的元素
+                                }
+                        )
+                    }
                 }
-            Spacer(Modifier
-                .height(bottomHeight + APP_HORIZONTAL_DP)
-                .navigationBarsPadding())
+                Spacer(Modifier.height(5.dp - CARD_NORMAL_DP))
+                CardListItem(
+                    headlineContent = { Text("同时克隆卡片至本地")},
+                    supportingContent = { Text(if(isClone)"上传卡片时，同时添加入本地聚焦当中" else "仅共享卡片 自己无需使用")},
+                    trailingContent = { Switch(checked = isClone, onCheckedChange = { ch -> isClone = ch }) },
+                    modifier = Modifier.clickable { isClone = !isClone }
+                )
+                Spacer(Modifier.height(5.dp))
+                BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
+            }
+
+            Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).navigationBarsPadding())
         }
     }
 }

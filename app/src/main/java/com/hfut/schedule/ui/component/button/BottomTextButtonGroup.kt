@@ -11,9 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 
 data class CardBottomButton(
@@ -26,8 +29,30 @@ data class CardBottomButton(
 val CARD_BOTTOM_BUTTON_SIZE = 14.sp
 
 @Composable
-fun ColumnScope.BottomTextButtonGroup(buttons : List<CardBottomButton>) {
-    PaddingHorizontalDivider()
+fun ColumnScope.BottomTextButtonGroup(buttons : List<CardBottomButton>) = BottomTextButtonGroup(buttons,true,APP_HORIZONTAL_DP-CARD_NORMAL_DP*2)
+
+@Composable
+fun ColumnScope.BottomTextButtonGroupWithoutPadding(
+    buttons : List<CardBottomButton>,
+    bottomPadding : Dp = 0.dp,
+    topPadding : Dp = bottomPadding,
+) = BottomTextButtonGroup(
+    buttons,
+    false,
+    bottomPadding,
+    topPadding
+)
+
+@Composable
+private fun ColumnScope.BottomTextButtonGroup(
+    buttons : List<CardBottomButton>,
+    showDivider : Boolean,
+    bottomPadding : Dp,
+    topPadding : Dp = bottomPadding,
+) {
+    if(showDivider) {
+        PaddingHorizontalDivider()
+    }
     LazyRow (modifier = Modifier.align(Alignment.End).padding(horizontal = APP_HORIZONTAL_DP)) {
         items(buttons.size,key = { it }) { index ->
             val bean = buttons[index]
@@ -48,7 +73,8 @@ fun ColumnScope.BottomTextButtonGroup(buttons : List<CardBottomButton>) {
                             },
                         fontSize = CARD_BOTTOM_BUTTON_SIZE,
                         modifier = Modifier
-                            .padding(vertical = APP_HORIZONTAL_DP - 5.dp)
+                            .padding(bottom = bottomPadding)
+                            .padding(top = topPadding)
                             .let {
                                 clickable?.let { click ->
                                     it.clickable { click() }
