@@ -156,6 +156,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEven
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.rememberHazeBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -164,6 +167,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
+import com.xah.common.ui.component.status.CustomSingleChoiceRowDefaultsColors
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.BottomTip
@@ -173,9 +177,11 @@ import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.color.topBarTransplantColor
+import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
 import com.xah.navigation.model.action.LaunchMode
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -272,7 +278,7 @@ fun AddEventScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val backDrop = rememberLayerBackdrop()
-
+    val hazeState = rememberHazeBlur()
 
     if(showDialog) {
         LittleDialog(
@@ -298,6 +304,7 @@ fun AddEventScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
+                modifier = Modifier.topBarBlur(hazeState),
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = {
@@ -375,7 +382,11 @@ fun AddEventScreen(
         val canUse by produceState<Boolean?>(initialValue = null) {
             value = if(isSupabase) loginSupabaseWithCheck(jwt,refreshToken,vm,context) else true
         }
-        Column(modifier = Modifier.padding(innerPadding)) {
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .backDropSource(backDrop)
+        ) {
             when(canUse) {
                 null -> {
                     CenterScreen {
@@ -383,7 +394,7 @@ fun AddEventScreen(
                     }
                 }
                 true -> {
-                    AddEventUI(vm,isSupabase,eventId,enableCopy) {
+                    AddEventUI(vm,isSupabase,eventId,enableCopy,innerPadding) {
                         navController.pop()
                     }
                 }
@@ -557,7 +568,7 @@ private fun SharedTransitionScope.SurfaceUI(
                             )
                         }
                         return@Column
-                        AddEventUI(vm,isSupabase,showChange = showChange)
+                        AddEventUI(vm,isSupabase,showChange = showChange, innerPadding = innerPadding)
                     }
                     false -> {
                         CenterScreen {
@@ -585,6 +596,7 @@ fun AddEventUI(
     isSupabase : Boolean,
     eventId: Int = -1,
     enableCopy : Boolean = false,
+    innerPadding : PaddingValues,
     showChange: (Boolean) -> Unit
 ) {
     val groupId = remember { UUID.randomUUID().toString() }
@@ -604,7 +616,7 @@ fun AddEventUI(
 
     var time by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
     var date by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
-//    val dates = remember { mutableStateListOf<String>() }
+    val timeParts = remember { mutableStateListOf(TimePart()) }
 
     LaunchedEffect(editedData) {
         editedData?.let {
@@ -862,6 +874,7 @@ fun AddEventUI(
         }
 
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            InnerPaddingHeight(innerPadding,true)
             CustomSingleChoiceRow(
                 options = LocalEvent.entries,
                 selected = if(isScheduleType) LocalEvent.SCHEDULE else LocalEvent.DEADLINE,
@@ -870,8 +883,8 @@ fun AddEventUI(
                     LocalEvent.DEADLINE -> false
                     LocalEvent.SCHEDULE -> true
                 }
-                date = Pair("","")
-                time = Pair("","")
+                date = Pair(EMPTY_STRING,EMPTY_STRING)
+                time = Pair(EMPTY_STRING,EMPTY_STRING)
             }
             CardListItem(
                 cardModifier = Modifier.padding(bottom = CARD_NORMAL_DP),
@@ -886,15 +899,15 @@ fun AddEventUI(
                 },
                 modifier = Modifier.clickable {
                     isScheduleType = !isScheduleType
-                    date = Pair("","")
-                    time = Pair("","")
+                    date = Pair(EMPTY_STRING,EMPTY_STRING)
+                    time = Pair(EMPTY_STRING,EMPTY_STRING)
                 },
                 leadingContent = {
                     FilledTonalIconButton(
                         onClick = {
                             isScheduleType = !isScheduleType
-                            date = Pair("","")
-                            time = Pair("","")
+                            date = Pair(EMPTY_STRING,EMPTY_STRING)
+                            time = Pair(EMPTY_STRING,EMPTY_STRING)
                         },
                         content = typeIcon
                     )
@@ -904,90 +917,93 @@ fun AddEventUI(
             CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
             if(isScheduleType) {
                 DividerTextExpandedWith("时间段") {
-                    CustomCard(color = cardNormalColor()) {
-                        Column {
-                            var displaySelector by rememberSaveable() { mutableStateOf(false) }
-                            CustomTextField(
-                                input = description,
-                                label = { Text("备注(可为空)") },
-                                singleLine = false,
-                                shape = NoneRoundShape,
-                                colors = TextFieldDefaults.colors().copy(
-                                    focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
-                                    unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent
-                                ),
-                                trailingIcon = {
-                                    IconButton(
-                                        onClick = {
-                                            displaySelector = !displaySelector
+                    timeParts.forEachIndexed { index, item ->
+                        CustomCard(color = cardNormalColor()) {
+                            Column {
+                                var displaySelector by rememberSaveable() { mutableStateOf(false) }
+                                CustomTextField(
+                                    input = description,
+                                    label = { Text("备注(可为空)") },
+                                    singleLine = false,
+                                    shape = NoneRoundShape,
+                                    colors = TextFieldDefaults.colors().copy(
+                                        focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                                        unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    ),
+                                    trailingIcon = {
+                                        IconButton(
+                                            onClick = {
+                                                displaySelector = !displaySelector
+                                            }
+                                        ) {
+                                            val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
+                                            val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
+                                            Icon(painter, null)
                                         }
-                                    ) {
-                                        val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
-                                        val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
-                                        Icon(painter, null)
-                                    }
-                                },
-                                modifier = Modifier,
-                            ) {
-                                description = it
-                            }
-                            AnimatedVisibility(
-                                visible = displaySelector,
-                                enter = slideInVertically(
-                                    initialOffsetY = { -40 }
-                                ) + expandVertically(
-                                    expandFrom = Alignment.Top
-                                ) + scaleIn(
-                                    transformOrigin = TransformOrigin(0.5f, 0f)
-                                ) + fadeIn(initialAlpha = 0.3f),
-                                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-                            ) {
-                                BuildingsSelector(vm) {
+                                    },
+                                    modifier = Modifier,
+                                ) {
                                     description = it
                                 }
-                            }
-                        }
-                        PaddingHorizontalDivider(isDashed = true)
-                        TransplantListItem(
-                            headlineContent = {
-                                val timeStr = if(time.first.isEmpty() || time.second.isEmpty()) {
-                                    "----"
-                                } else if(time.first == time.second) {
-                                    time.first
-                                } else {
-                                    time.first + "~" + time.second
+                                AnimatedVisibility(
+                                    visible = displaySelector,
+                                    enter = slideInVertically(
+                                        initialOffsetY = { -40 }
+                                    ) + expandVertically(
+                                        expandFrom = Alignment.Top
+                                    ) + scaleIn(
+                                        transformOrigin = TransformOrigin(0.5f, 0f)
+                                    ) + fadeIn(initialAlpha = 0.3f),
+                                    exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                                ) {
+                                    BuildingsSelector(vm) {
+                                        description = it
+                                    }
                                 }
-                                Text(
-                                    date.second.ifEmpty { "----" } +  (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + timeStr
-                                )
-                            },
-                            leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
-                        )
-                        BottomTextButtonGroup(
-                            listOf(
+                            }
+                            PaddingHorizontalDivider(isDashed = true)
+                            TransplantListItem(
+                                headlineContent = {
+                                    val timeStr = if(time.first.isEmpty() || time.second.isEmpty()) {
+                                        "----"
+                                    } else if(time.first == time.second) {
+                                        time.first
+                                    } else {
+                                        time.first + "~" + time.second
+                                    }
+                                    Text(
+                                        date.second.ifEmpty { "----" } +  (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + timeStr
+                                    )
+                                },
+                                leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
+                            )
+                            BottomTextButtonGroup(
+                                listOf(
 //                            CardBottomButton("清空",isScheduleType && dates.isNotEmpty(), errorColor = true) {
 //                                dates.clear()
 //                            },
-                                CardBottomButton("选择日期") {
-                                    showSelectDateDialog = true
-                                },
-                                CardBottomButton("选择时间") {
-                                    showSelectTimeDialog = true
-                                },
-                                CardBottomButton("复制", show = false) {
-                                    showDevelopingToast()
-                                },
-                                CardBottomButton("删除", errorColor = true, show = false) {
-                                    showDevelopingToast()
-                                }
+                                    CardBottomButton("选择日期") {
+                                        showSelectDateDialog = true
+                                    },
+                                    CardBottomButton("选择时间") {
+                                        showSelectTimeDialog = true
+                                    },
+//                                CardBottomButton("复制", show = false) {
+//                                    showDevelopingToast()
+//                                },
+                                    CardBottomButton("删除", errorColor = true, show = index > 0) {
+                                        timeParts.removeAt(index)
+                                    }
+                                )
                             )
-                        )
+                        }
                     }
                     FilledTonalButton (
                         onClick = {
                             showDevelopingToast()
+//                            timeParts.add(TimePart())
                         },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
                         shape = MaterialTheme.shapes.medium,
@@ -1281,7 +1297,7 @@ fun AddEventUI(
                 Spacer(Modifier.height(5.dp))
                 BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
             }
-
+            InnerPaddingHeight(innerPadding,false)
             Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).navigationBarsPadding())
         }
     }
@@ -1520,3 +1536,10 @@ private fun EventDatePickerDialog(
         )
     }
 }
+
+private data class TimePart(
+    val remark : String? = null,
+    val date : List<String> = emptyList(),
+    val time : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
+    val id : String = UUID.randomUUID().toString()
+)

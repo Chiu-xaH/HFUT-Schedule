@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ inline fun <reified T> CustomSingleChoiceRow(
     modifier: Modifier = Modifier,
     enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
+    colors : SegmentedButtonColors = CustomSingleChoiceRowDefaultsColors(),
     noinline onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice =
     CustomSingleChoiceRow(
@@ -30,6 +32,7 @@ inline fun <reified T> CustomSingleChoiceRow(
         modifier,
         enabled,
         itemShape,
+        colors,
         onItemSelected
     )
 
@@ -39,6 +42,7 @@ inline fun <reified T> CustomSingleChoiceRow(
     modifier: Modifier = Modifier,
     enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
+    colors : SegmentedButtonColors = CustomSingleChoiceRowDefaultsColors(),
     noinline onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice =
     CustomSingleChoiceRow(
@@ -47,6 +51,7 @@ inline fun <reified T> CustomSingleChoiceRow(
         modifier,
         enabled,
         itemShape,
+        colors,
         onItemSelected
     )
 
@@ -58,6 +63,7 @@ fun <T> CustomSingleChoiceRow(
     modifier: Modifier = Modifier,
     enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
+    colors : SegmentedButtonColors = CustomSingleChoiceRowDefaultsColors(),
     onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice =
     CustomSingleChoiceRow(
@@ -66,8 +72,24 @@ fun <T> CustomSingleChoiceRow(
         modifier,
         enabled,
         itemShape,
+        colors,
         onItemSelected
     )
+
+@Composable
+fun CustomSingleChoiceRowDefaultsColors() = SegmentedButtonDefaults.colors(
+    activeContainerColor = MaterialTheme.colorScheme.primary,
+    activeContentColor = MaterialTheme.colorScheme.onPrimary,
+    activeBorderColor = MaterialTheme.colorScheme.primary,
+    // pC 描边与选中颜色背景一致，但是相邻选项之间感觉少一条线
+    inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant,
+    // 适配 enabled==false 态
+    disabledInactiveContentColor = MaterialTheme.colorScheme.outlineVariant,
+    disabledActiveContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+    disabledActiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+    disabledActiveBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+    disabledInactiveBorderColor = MaterialTheme.colorScheme.outlineVariant,
+)
 
 /**
  * @author Today1337
@@ -79,6 +101,7 @@ fun <T> CustomSingleChoiceRow(
     modifier: Modifier = Modifier,
     enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
+    colors : SegmentedButtonColors = CustomSingleChoiceRowDefaultsColors(),
     onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice = SingleChoiceSegmentedButtonRow(
     modifier = modifier
@@ -101,19 +124,7 @@ fun <T> CustomSingleChoiceRow(
                 count = options.size,
                 baseShape = itemShape
             ),
-            colors = SegmentedButtonDefaults.colors(
-                activeContainerColor = MaterialTheme.colorScheme.primary,
-                activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                activeBorderColor = MaterialTheme.colorScheme.primary,
-                // pC 描边与选中颜色背景一致，但是相邻选项之间感觉少一条线
-                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                // 适配 enabled==false 态
-                disabledInactiveContentColor = MaterialTheme.colorScheme.outlineVariant,
-                disabledActiveContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledActiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                disabledActiveBorderColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledInactiveBorderColor = MaterialTheme.colorScheme.outlineVariant,
-            ),
+            colors = colors,
             icon = {
                 if (!textOverflow) {
                     SegmentedButtonDefaults.Icon(isSelected)
