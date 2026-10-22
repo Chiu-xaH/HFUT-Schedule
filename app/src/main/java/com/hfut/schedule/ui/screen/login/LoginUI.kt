@@ -787,7 +787,7 @@ private fun TwoTextField(
                                     .padding(horizontal = APP_HORIZONTAL_DP),
                                 value = inputCode,
                                 onValueChange = { inputCode = it },
-                                label = { Text("验证码(不区分大小写)") },
+                                label = { Text("验证码") },
                                 singleLine = true,
                                 shape = MaterialTheme.shapes.medium,
                                 colors = textFiledTransplant(),
