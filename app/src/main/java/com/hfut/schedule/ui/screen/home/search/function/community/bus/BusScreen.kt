@@ -26,6 +26,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -37,10 +39,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -57,25 +60,34 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.helper.getCampus
+import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
+import com.hfut.schedule.ui.component.button.BUTTON_HEIGHT
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.window.BusDestinationSelectWindow
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -368,13 +380,13 @@ private val items = listOf(
         BusBarItems.NOW.name,
         "出行",
         R.drawable.schedule,
-        R.drawable.schedule,
+        R.drawable.schedule_filled,
     ),
     NavigationBarItemData(
         BusBarItems.SEARCH.name,
-        "时刻表",
-        R.drawable.search,
-        R.drawable.search,
+        "所有安排",
+        R.drawable.directions_bus,
+        R.drawable.directions_bus_filled,
     )
 )
 
@@ -393,14 +405,37 @@ fun BusScreenV2(
     val scope = rememberCoroutineScope()
     var busDate by remember { mutableStateOf<String?>(null) }
     var busDates by remember { mutableStateOf(setOf<String>()) }
-    var busStarts by remember { mutableStateOf(setOf<String>()) }
-    var busEnds by remember { mutableStateOf(setOf<String>()) }
     val busNavController = rememberNavController()
     val targetPage = when(busNavController.currentRouteWithoutArgs()) {
         BusBarItems.NOW.name -> BusBarItems.NOW
         else -> BusBarItems.SEARCH
     }
     val floatingController = LocalFloatingController.current
+
+    val uiState by vm.busResponseV2.state.collectAsState()
+    val refreshNetwork : suspend () -> Unit = m@ {
+        if(uiState is NetworkUiState.Success) {
+            return@m
+        }
+        vm.busResponseV2.clear()
+        vm.getBusV2()
+    }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+    LaunchedEffect(targetPage) {
+        startInput = when(targetPage) {
+            BusBarItems.NOW -> getCampus()?.description
+            BusBarItems.SEARCH -> null
+        }
+        endInput = null
+        busDate = null
+    }
+
+    var date by rememberSaveable { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
+    var showSelectDateDialog by remember { mutableStateOf(false) }
+    if(showSelectDateDialog)
+        DatePickerDialog(onConfirm = { date = it }) { showSelectDateDialog = false }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -421,7 +456,15 @@ fun BusScreenV2(
                         ) {
                             when(targetPage) {
                                 BusBarItems.NOW -> {
-
+                                    LiquidButton(
+                                        onClick = {
+                                            showSelectDateDialog = true
+                                        },
+                                        isCircle = false,
+                                        backdrop = backdrop
+                                    ) {
+                                        Text(date)
+                                    }
                                 }
                                 BusBarItems.SEARCH -> {
                                     LiquidButton(
@@ -463,11 +506,11 @@ fun BusScreenV2(
                         }
                     }
                 )
-                when(targetPage) {
-                    BusBarItems.NOW -> {
-
-                    }
-                    BusBarItems.SEARCH -> {
+//                when(targetPage) {
+//                    BusBarItems.NOW -> {
+//
+//                    }
+//                    BusBarItems.SEARCH -> {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -476,7 +519,7 @@ fun BusScreenV2(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             val startWindow = BusDestinationSelectWindow(
-                                true,startInput,busStarts
+                                true,startInput,endInput
                             ) {
                                 startInput = it
                             }
@@ -496,8 +539,36 @@ fun BusScreenV2(
                                     shape = NoneRoundShape,
                                     color = Color.Transparent,
                                 ) {
-                                    CenterScreen {
-                                        Text(startInput ?: "起点")
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        Text(
+                                            startInput ?: "起点",
+                                            maxLines = 1,
+                                            color = if(startInput == null) Color.Gray else Color.Unspecified,
+                                            modifier = Modifier
+                                                .padding(start = APP_HORIZONTAL_DP)
+                                                .align(Alignment.CenterStart)
+                                        )
+                                        /*
+                                        if(targetPage == BusBarItems.NOW) {
+                                            NoPadding {
+                                                IconButton (
+                                                    onClick = {
+                                                        showDevelopingToast()
+                                                    },
+                                                    modifier = Modifier
+                                                        .padding(end = BUTTON_PADDING)
+                                                        .size(BUTTON_HEIGHT)
+                                                        .align(Alignment.CenterEnd)
+                                                ) {
+                                                    Icon(
+                                                        painterResource(R.drawable.near_me),
+                                                        null
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                         */
                                     }
                                 }
                             }
@@ -514,11 +585,12 @@ fun BusScreenV2(
                                 Icon(
                                     painterResource(R.drawable.swap_horiz),
                                     null,
+                                    tint = if(startInput == null && endInput == null) Color.Gray else LocalContentColor.current,
                                 )
                             }
                             Spacer(modifier = Modifier.width(BUTTON_PADDING))
                             val endWindow = BusDestinationSelectWindow(
-                                false,endInput,busEnds
+                                false,endInput,startInput
                             ) {
                                 endInput = it
                             }
@@ -538,15 +610,22 @@ fun BusScreenV2(
                                     shape = NoneRoundShape,
                                     color = Color.Transparent,
                                 ) {
-                                    CenterScreen {
-                                        Text(endInput ?: "终点")
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        Text(
+                                            endInput ?: "终点",
+                                            maxLines = 1,
+                                            color = if(endInput == null) Color.Gray else Color.Unspecified,
+                                            modifier = Modifier
+                                                .padding(start = APP_HORIZONTAL_DP)
+                                                .align(Alignment.CenterStart)
+                                        )
                                     }
                                 }
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))
-                    }
-                }
+//                    }
+//                }
             }
         },
         bottomBar = {
@@ -572,17 +651,29 @@ fun BusScreenV2(
                 .backDropSource(backdrop)
         ) {
             nav2Composable(BusBarItems.NOW.name) {
-                CenterScreen {
-                    DevelopingIcon()
-                }
+                BusNowScreen(vm,innerPadding,refreshNetwork)
             }
             nav2Composable(BusBarItems.SEARCH.name) {
-                BusSearchScreen(vm,innerPadding,busDate,startInput,endInput) { buses ->
+                BusSearchScreen(vm,innerPadding,busDate,startInput,endInput,refreshNetwork) { buses ->
                     busDates = buses.keys
-                    val list = buses.flatMap { it.value }
-                    busStarts = list.map { it.from }.toSet()
-                    busEnds = list.map { it.to }.toSet()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BusNowScreen(
+    vm : NetWorkViewModel,
+    innerPadding : PaddingValues,
+    refreshNetwork : suspend () -> Unit
+) {
+    val uiState by vm.busResponseV2.state.collectAsState()
+    Column(modifier = Modifier.fillMaxSize()) {
+        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+            val result = (uiState as NetworkUiState.Success).data
+            CenterScreen {
+                EmptyIcon("暂无班车")
             }
         }
     }
@@ -595,22 +686,11 @@ private fun BusSearchScreen(
     busDate : String?,
     startInput : String?,
     endInput : String?,
+    refreshNetwork : suspend () -> Unit,
     onBuses : (Map<String, List<Bus>>) -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val uiState by vm.busResponseV2.state.collectAsState()
-        val refreshNetwork : suspend () -> Unit = m@ {
-            if(uiState is NetworkUiState.Success) {
-                return@m
-            }
-            vm.busResponseV2.clear()
-            vm.getBusV2()
-        }
-        LaunchedEffect(Unit) {
-            refreshNetwork()
-        }
+    val uiState by vm.busResponseV2.state.collectAsState()
+    Column(modifier = Modifier.fillMaxSize()) {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val result = (uiState as NetworkUiState.Success).data
             LaunchedEffect(result) {

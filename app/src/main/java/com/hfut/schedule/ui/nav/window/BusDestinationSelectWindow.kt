@@ -23,17 +23,22 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.model.Campus
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
 import com.xah.floating.util.LocalFloatingController
 
+private val campus = listOf(Campus.FCH.description, Campus.TXL.description,"六安路", Campus.XC.description,NULL)
+
+private const val NULL = "全部"
+
 data class BusDestinationSelectWindow(
     val isStart : Boolean,
     val destination : String?,
-    val destinations : Set<String>,
-    val onSelected : (String) -> Unit
+    val otherDestination : String?,
+    val onSelected : (String?) -> Unit
 ) : FloatingWindow() {
     override val key = "bus_destination_select_$isStart"
     override val title = text("选择${if(isStart) "起点" else "终点"}")
@@ -65,7 +70,14 @@ data class BusDestinationSelectWindow(
                     shape = NoneRoundShape
                 ) {
                     Column(modifier = Modifier.fillMaxWidth(2/3f)) {
-                        destinations.forEachIndexed { index, item ->
+                        for(index in campus.indices) {
+                            val item = campus[index]
+                            if(item == otherDestination) {
+                                continue
+                            }
+                            if(destination == null && item == NULL) {
+                                continue
+                            }
                             TransplantListItem(
                                 headlineContent = {
                                     Text(item)
@@ -81,11 +93,17 @@ data class BusDestinationSelectWindow(
                                     null
                                 },
                                 modifier = Modifier.clickable {
-                                    onSelected(item)
+                                    onSelected(
+                                        if(item == NULL) {
+                                            null
+                                        } else {
+                                            item
+                                        }
+                                    )
                                     floatingController.pop()
                                 }
                             )
-                            if(index != destinations.size-1) {
+                            if(index != campus.size-1) {
                                 PaddingHorizontalDivider()
                             }
                         }

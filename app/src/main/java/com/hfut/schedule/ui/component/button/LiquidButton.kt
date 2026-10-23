@@ -89,6 +89,9 @@ half4 main(float2 coord) {
 val BUTTON_PADDING = 6.25.dp
 
 val BUTTON_END_PADDING = APP_HORIZONTAL_DP- CARD_NORMAL_DP-1.dp
+
+val BUTTON_HEIGHT = 42.dp
+
 @Composable
 fun LiquidButton(
     onClick: () -> Unit,
@@ -262,7 +265,7 @@ fun LiquidButton(
                     Modifier
                 }
             )
-            .height(42f.dp)
+            .height(BUTTON_HEIGHT)
             .padding(horizontal = innerPadding),
         horizontalArrangement = Arrangement.spacedBy(8f.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
