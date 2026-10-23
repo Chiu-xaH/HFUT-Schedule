@@ -252,9 +252,7 @@ fun AddEventFloatButton(
         }
     }
 }
-enum class AddEventOrigin {
-    FOCUS_EDITED,FOCUS_ADD,CALENDAR
-}
+
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventScreen(
@@ -987,7 +985,7 @@ fun AddEventUI(
 //                                CardBottomButton("复制", show = false) {
 //                                    showDevelopingToast()
 //                                },
-                                    CardBottomButton("删除", errorColor = true, show = index > 0) {
+                                    CardBottomButton("删除", errorColor = true, show = timeParts.size != 1) {
                                         timeParts.removeAt(index)
                                     }
                                 )

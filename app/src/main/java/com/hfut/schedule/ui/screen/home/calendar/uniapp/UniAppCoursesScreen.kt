@@ -35,7 +35,6 @@ import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
-
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -44,18 +43,14 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableDataUniApp
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.kyant.backdrop.Backdrop
-import com.xah.shader.state.ShaderState
-
-
-import com.xah.navigation.util.LocalNavController
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.floating.util.LocalFloatingController
-import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -220,12 +215,7 @@ fun UniAppCoursesScreen(
                 })
             },
             onDoubleTapBlankRegion = {
-                navController.push(
-                    AddEventDestination(
-                        null,
-                        AddEventOrigin.FOCUS_EDITED.name
-                    )
-                )
+                navController.push(AddEventDestination())
             }
         ) { list ->
             // 只有一节课

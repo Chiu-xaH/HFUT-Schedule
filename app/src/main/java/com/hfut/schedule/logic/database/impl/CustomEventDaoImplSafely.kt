@@ -5,6 +5,7 @@ import com.hfut.schedule.logic.database.entity.CustomEventEntity
 
 class CustomEventDaoImplSafely : CustomEventDao {
     override suspend fun getById(id: Int): CustomEventEntity? = null
+    override suspend fun getGroupById(eventId: Int): List<CustomEventEntity> = emptyList()
     override suspend fun getAll(type: String): List<CustomEventEntity> = emptyList()
     override suspend fun del(id: Int) = Unit
     override suspend fun insert(event: CustomEventEntity): Long = -1L

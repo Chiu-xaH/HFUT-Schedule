@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +34,6 @@ import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
 import com.hfut.schedule.ui.nav.window.TimeTableSquareWindow
-
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -44,18 +42,14 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableData
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.kyant.backdrop.Backdrop
-import com.xah.shader.state.ShaderState
-
-
-import com.xah.navigation.util.LocalNavController
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.floating.util.LocalFloatingController
-import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -221,11 +215,7 @@ fun CommunityCourseTableUI(
             },
             onDoubleTapBlankRegion = {
                 if(!isFriend) {
-                    navController.push(
-                        AddEventDestination(
-                            origin = AddEventOrigin.FOCUS_EDITED.name
-                        )
-                    )
+                    navController.push(AddEventDestination())
                 }
             }
         ) { list ->

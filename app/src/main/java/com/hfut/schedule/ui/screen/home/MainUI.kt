@@ -152,6 +152,7 @@ import com.hfut.schedule.ui.model.NewNavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
 import com.hfut.schedule.ui.nav.destination.FunctionsSortDestination
+import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.SettingsSearchDestination
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
@@ -171,7 +172,6 @@ import com.hfut.schedule.ui.screen.home.cube.HomeSettingScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
-import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
@@ -412,9 +412,7 @@ fun MainScreen(
             }
         },
         floatingActionButton = {
-            val dest = AddEventDestination(
-                origin = AddEventOrigin.FOCUS_ADD.name
-            )
+            val dest = AddEventDestination(origin = HomeDestination(FOCUS).key)
             AnimatedVisibility(
                 enter = scaleIn(),
                 exit = scaleOut(),

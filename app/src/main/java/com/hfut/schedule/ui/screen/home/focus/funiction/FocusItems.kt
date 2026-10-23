@@ -472,7 +472,7 @@ fun CustomItemUI(
 
     val dest = AddEventDestination(
         item.id,
-        AddEventOrigin.FOCUS_EDITED.name
+        "FOCUS_EDITED"
     )
 
     CardListItem(
