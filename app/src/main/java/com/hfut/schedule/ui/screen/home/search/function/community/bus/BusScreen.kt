@@ -9,9 +9,11 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -34,8 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,17 +52,18 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.xah.common.logic.state.NetworkUiState
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -69,21 +72,29 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.BusDestination
-
+import com.hfut.schedule.ui.nav.window.BusDestinationSelectWindow
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
-
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.SharedContainer
+import com.xah.floating.util.LocalFloatingController
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 private enum class BusDate(val type : String,val description: String) {
@@ -348,6 +359,24 @@ fun BusScreen(
     }
 }
 
+enum class BusBarItems(val page : Int) {
+    NOW(0),SEARCH(1)
+}
+
+private val items = listOf(
+    NavigationBarItemData(
+        BusBarItems.NOW.name,
+        "出行",
+        R.drawable.schedule,
+        R.drawable.schedule,
+    ),
+    NavigationBarItemData(
+        BusBarItems.SEARCH.name,
+        "时刻表",
+        R.drawable.search,
+        R.drawable.search,
+    )
+)
 
 // 新数据源
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -356,14 +385,22 @@ fun BusScreenV2(
     vm : NetWorkViewModel,
 ) {
     val hazeState = rememberHazeBlur()
-    var startInput by remember { mutableStateOf(EMPTY_STRING) }
-    var endInput by remember { mutableStateOf(EMPTY_STRING) }
+    var startInput by remember { mutableStateOf<String?>(null) }
+    var endInput by remember { mutableStateOf<String?>(null) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var busDate by remember { mutableStateOf<String?>(null) }
     var busDates by remember { mutableStateOf(setOf<String>()) }
+    var busStarts by remember { mutableStateOf(setOf<String>()) }
+    var busEnds by remember { mutableStateOf(setOf<String>()) }
+    val busNavController = rememberNavController()
+    val targetPage = when(busNavController.currentRouteWithoutArgs()) {
+        BusBarItems.NOW.name -> BusBarItems.NOW
+        else -> BusBarItems.SEARCH
+    }
+    val floatingController = LocalFloatingController.current
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -382,249 +419,348 @@ fun BusScreenV2(
                         Row(
                             modifier = Modifier.padding(end = BUTTON_END_PADDING)
                         ) {
-                            LiquidButton(
-                                onClick = {
-                                    busDate = if (busDates.isEmpty()) {
-                                        null
-                                    } else {
-                                        if (busDate == null) {
-                                            busDates.first()
-                                        } else {
-                                            val i = busDates.indexOf(busDate)
-                                            if (i == busDates.size - 1) {
+                            when(targetPage) {
+                                BusBarItems.NOW -> {
+
+                                }
+                                BusBarItems.SEARCH -> {
+                                    LiquidButton(
+                                        onClick = {
+                                            busDate = if (busDates.isEmpty()) {
                                                 null
                                             } else {
-                                                busDates.elementAt(i + 1)
-                                            }
-                                        }
-                                    }
-                                },
-                                backdrop = backdrop,
-                                isCircle = false,
-                            ) {
-                                Text(busDate ?: "全部")
-                            }
-                            Spacer(Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                onClick = {
-                                    scope.launch {
-                                        Starter.startWebUrlInner(context, Constant.HFUT_URL + "xcxx.htm")
-                                    }
-                                },
-                                backdrop = backdrop,
-                                isCircle = true,
-                            ) {
-                                Icon(painterResource(R.drawable.net),null)
-                            }
-                        }
-                    }
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = APP_HORIZONTAL_DP),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    TextField(
-                        modifier = Modifier
-                            .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
-                            .weight(.5f),
-                        value = startInput,
-                        onValueChange = {
-                            startInput = it
-                        },
-                        label = { Text("起点") },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledAllTransplant(),
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextField(
-                        modifier = Modifier
-                            .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
-                            .weight(.5f),
-                        value = endInput,
-                        onValueChange = {
-                            endInput = it
-                        },
-                        label = { Text("终点") },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledAllTransplant(),
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))
-            }
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .backDropSource(backdrop)
-                .hazeSource(hazeState)
-                .fillMaxSize()
-        ) {
-            val uiState by vm.busResponseV2.state.collectAsState()
-            val refreshNetwork : suspend () -> Unit = m@ {
-                if(uiState is NetworkUiState.Success) {
-                    return@m
-                }
-                vm.busResponseV2.clear()
-                vm.getBusV2()
-            }
-            LaunchedEffect(Unit) {
-                refreshNetwork()
-            }
-            CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                val result = (uiState as NetworkUiState.Success).data
-                LaunchedEffect(result) {
-                    busDates = result.keys
-                }
-
-                val list = result
-                    .let { l ->
-                        if(busDate == null) {
-                            l.flatMap { it.value }
-                        } else {
-                            l[busDate] ?: l.flatMap { it.value }
-                        }
-                    }
-                    .filter {
-                        it.from.contains(startInput) && it.to.contains(endInput)
-                    }
-
-                LazyColumn {
-                    item { InnerPaddingHeight(innerPadding,true) }
-                    items(list.size, key = { it }) { index ->
-                        val item = list[index]
-                        with(item) {
-                            val pointList = stops.toMutableList()
-                            // 向首部添加from 尾部添加to
-                            pointList.add(0, from)
-                            pointList.add(to)
-                            // 用线路图显示
-                            CustomCard(color = cardNormalColor()) {
-                                TransplantListItem(
-                                    headlineContent = {
-                                        Text("$week $time")
-                                    },
-                                    supportingContent = {
-                                        Text("上车地点 : $place")
-                                    },
-                                    trailingContent = {
-                                        Text(count.toString() + "辆")
-                                    },
-                                    leadingContent = {
-                                        Icon(painterResource(R.drawable.schedule),null)
-                                    },
-                                )
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = APP_HORIZONTAL_DP)
-                                        .padding(bottom = APP_HORIZONTAL_DP),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    // 第一行：横线贯穿全宽，圆点平均分布
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Box {
-                                            val transition = rememberInfiniteTransition(label = "scroll")
-                                            var barWidthPx by remember { mutableStateOf(0f) }
-
-                                            val offsetX by transition.animateFloat(
-                                                initialValue = -1f,
-                                                targetValue = 2f, // 扫完整条 + 额外一点
-                                                animationSpec = infiniteRepeatable(
-                                                    animation = tween(durationMillis = 3000, easing = LinearEasing),
-                                                    repeatMode = RepeatMode.Restart
-                                                ),
-                                                label = "offsetX"
-                                            )
-
-
-
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(10.dp)
-                                                    .onSizeChanged {
-                                                        barWidthPx = it.width.toFloat()
-                                                    }
-                                                    .background(
-                                                        Brush.linearGradient(
-                                                            colors = listOf(
-                                                                MaterialTheme.colorScheme.primary.copy(
-                                                                    alpha = 0.25f
-                                                                ),
-                                                                MaterialTheme.colorScheme.primary.copy(
-                                                                    alpha = 0.55f
-                                                                ),
-                                                                MaterialTheme.colorScheme.primary.copy(
-                                                                    alpha = 0.25f
-                                                                ),
-                                                            ),
-                                                            start = Offset(
-                                                                barWidthPx * offsetX,
-                                                                0f
-                                                            ),
-                                                            // 0.5f为渐变宽度
-                                                            end = Offset(
-                                                                barWidthPx * (offsetX + 0.5f),
-                                                                0f
-                                                            ) // 始终保持横跨一段宽度
-                                                        ),
-                                                        shape = CircleShape
-                                                    ),
-                                            )
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                pointList.forEachIndexed { index, _ ->
-                                                    val isPort = index == 0 || index == pointList.size-1
-                                                    // 圆点
-                                                    Box(
-                                                        Modifier
-                                                            .size(10.dp)
-                                                            .clip(CircleShape)
-                                                            .background(MaterialTheme.colorScheme.primary)
-                                                    )
-                                                    if (index != pointList.lastIndex) {
-                                                        Box(Modifier
-                                                            .weight(1f)
-                                                            .background(Color.Transparent))
+                                                if (busDate == null) {
+                                                    busDates.first()
+                                                } else {
+                                                    val i = busDates.indexOf(busDate)
+                                                    if (i == busDates.size - 1) {
+                                                        null
+                                                    } else {
+                                                        busDates.elementAt(i + 1)
                                                     }
                                                 }
                                             }
-
-                                        }
-                                    }
-
-
-                                    // 第二行：竖排文字，平均分布到圆点下方
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.Top
+                                        },
+                                        backdrop = backdrop,
+                                        isCircle = false,
                                     ) {
-                                        pointList.forEachIndexed { index,point ->
-                                            Text(
-                                                text = point.toCharArray().joinToString("\n"),
-                                                color = MaterialTheme.colorScheme.primary,
-                                                style = MaterialTheme.typography.labelMedium,
-                                                lineHeight = 16.sp,
-                                                modifier = Modifier.padding(top = CARD_NORMAL_DP*2)
-                                            )
-                                        }
+                                        Text(busDate ?: "全部")
+                                    }
+                                    Spacer(Modifier.width(BUTTON_PADDING))
+                                    LiquidButton(
+                                        onClick = {
+                                            scope.launch {
+                                                Starter.startWebUrlInner(context, Constant.HFUT_URL + "xcxx.htm")
+                                            }
+                                        },
+                                        backdrop = backdrop,
+                                        isCircle = true,
+                                    ) {
+                                        Icon(painterResource(R.drawable.net),null)
                                     }
                                 }
                             }
                         }
                     }
-                    item { InnerPaddingHeight(innerPadding,false) }
+                )
+                when(targetPage) {
+                    BusBarItems.NOW -> {
+
+                    }
+                    BusBarItems.SEARCH -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = APP_HORIZONTAL_DP),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val startWindow = BusDestinationSelectWindow(
+                                true,startInput,busStarts
+                            ) {
+                                startInput = it
+                            }
+                            SharedContainer(
+                                shape = MaterialTheme.shapes.medium,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                key = startWindow.key,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Surface(
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                        .clickable {
+                                            floatingController.push(startWindow)
+                                        },
+                                    shape = NoneRoundShape,
+                                    color = Color.Transparent,
+                                ) {
+                                    CenterScreen {
+                                        Text(startInput ?: "起点")
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                onClick = {
+                                    val temp = startInput
+                                    startInput = endInput
+                                    endInput = temp
+                                },
+                                backdrop = backdrop,
+                                isCircle = true
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.swap_horiz),
+                                    null,
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(BUTTON_PADDING))
+                            val endWindow = BusDestinationSelectWindow(
+                                false,endInput,busEnds
+                            ) {
+                                endInput = it
+                            }
+                            SharedContainer(
+                                shape = MaterialTheme.shapes.medium,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                key = endWindow.key,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Surface(
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                        .clickable {
+                                            floatingController.push(endWindow)
+                                        },
+                                    shape = NoneRoundShape,
+                                    color = Color.Transparent,
+                                ) {
+                                    CenterScreen {
+                                        Text(endInput ?: "终点")
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))
+                    }
                 }
+            }
+        },
+        bottomBar = {
+            HazeBottomBarV2(
+                hazeState,
+                backdrop,
+                items,
+                busNavController
+            )
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = busNavController,
+            startDestination = BusBarItems.NOW.name,
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
+            modifier = Modifier
+                .hazeSource(state = hazeState)
+                .backDropSource(backdrop)
+        ) {
+            nav2Composable(BusBarItems.NOW.name) {
+                CenterScreen {
+                    DevelopingIcon()
+                }
+            }
+            nav2Composable(BusBarItems.SEARCH.name) {
+                BusSearchScreen(vm,innerPadding,busDate,startInput,endInput) { buses ->
+                    busDates = buses.keys
+                    val list = buses.flatMap { it.value }
+                    busStarts = list.map { it.from }.toSet()
+                    busEnds = list.map { it.to }.toSet()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BusSearchScreen(
+    vm : NetWorkViewModel,
+    innerPadding : PaddingValues,
+    busDate : String?,
+    startInput : String?,
+    endInput : String?,
+    onBuses : (Map<String, List<Bus>>) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val uiState by vm.busResponseV2.state.collectAsState()
+        val refreshNetwork : suspend () -> Unit = m@ {
+            if(uiState is NetworkUiState.Success) {
+                return@m
+            }
+            vm.busResponseV2.clear()
+            vm.getBusV2()
+        }
+        LaunchedEffect(Unit) {
+            refreshNetwork()
+        }
+        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+            val result = (uiState as NetworkUiState.Success).data
+            LaunchedEffect(result) {
+                onBuses(result)
+            }
+
+            val list = result
+                .let { l ->
+                    if(busDate == null) {
+                        l.flatMap { it.value }
+                    } else {
+                        l[busDate] ?: l.flatMap { it.value }
+                    }
+                }
+                .filter {
+                    it.from.contains(startInput ?: EMPTY_STRING) && it.to.contains(endInput ?: EMPTY_STRING)
+                }
+
+            LazyColumn {
+                item { InnerPaddingHeight(innerPadding,true) }
+                items(list.size, key = { it }) { index ->
+                    val item = list[index]
+                    with(item) {
+                        val pointList = stops.toMutableList()
+                        // 向首部添加from 尾部添加to
+                        pointList.add(0, from)
+                        pointList.add(to)
+                        // 用线路图显示
+                        CustomCard(color = cardNormalColor()) {
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text("$week $time")
+                                },
+                                supportingContent = {
+                                    Text("上车地点 : $place")
+                                },
+                                trailingContent = {
+                                    Text(count.toString() + "辆")
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.schedule),null)
+                                },
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = APP_HORIZONTAL_DP)
+                                    .padding(bottom = APP_HORIZONTAL_DP),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                // 第一行：横线贯穿全宽，圆点平均分布
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box {
+                                        val transition = rememberInfiniteTransition(label = "scroll")
+                                        var barWidthPx by remember { mutableStateOf(0f) }
+
+                                        val offsetX by transition.animateFloat(
+                                            initialValue = -1f,
+                                            targetValue = 2f, // 扫完整条 + 额外一点
+                                            animationSpec = infiniteRepeatable(
+                                                animation = tween(durationMillis = 3000, easing = LinearEasing),
+                                                repeatMode = RepeatMode.Restart
+                                            ),
+                                            label = "offsetX"
+                                        )
+
+
+
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(10.dp)
+                                                .onSizeChanged {
+                                                    barWidthPx = it.width.toFloat()
+                                                }
+                                                .background(
+                                                    Brush.linearGradient(
+                                                        colors = listOf(
+                                                            MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.25f
+                                                            ),
+                                                            MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.55f
+                                                            ),
+                                                            MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.25f
+                                                            ),
+                                                        ),
+                                                        start = Offset(
+                                                            barWidthPx * offsetX,
+                                                            0f
+                                                        ),
+                                                        // 0.5f为渐变宽度
+                                                        end = Offset(
+                                                            barWidthPx * (offsetX + 0.5f),
+                                                            0f
+                                                        ) // 始终保持横跨一段宽度
+                                                    ),
+                                                    shape = CircleShape
+                                                ),
+                                        )
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            pointList.forEachIndexed { index, _ ->
+                                                val isPort = index == 0 || index == pointList.size-1
+                                                // 圆点
+                                                Box(
+                                                    Modifier
+                                                        .size(10.dp)
+                                                        .clip(CircleShape)
+                                                        .background(MaterialTheme.colorScheme.primary)
+                                                )
+                                                if (index != pointList.lastIndex) {
+                                                    Box(Modifier
+                                                        .weight(1f)
+                                                        .background(Color.Transparent))
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
+
+                                // 第二行：竖排文字，平均分布到圆点下方
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.Top
+                                ) {
+                                    pointList.forEachIndexed { index,point ->
+                                        Text(
+                                            text = point.toCharArray().joinToString("\n"),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            lineHeight = 16.sp,
+                                            modifier = Modifier.padding(top = CARD_NORMAL_DP*2)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item { InnerPaddingHeight(innerPadding,false) }
             }
         }
     }
