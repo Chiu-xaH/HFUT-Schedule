@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.model.ExperimentalNavigationBarApi
 import com.hfut.schedule.ui.model.NavigationBarIcon
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.ui.model.NavigationBarItemDataDynamic
+import com.hfut.schedule.ui.style.navigationBarSupplementPadding
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.layerGlass
@@ -57,6 +58,7 @@ import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.mask
 import com.xah.common.ui.style.padding.NavigationBarSpacer
+import com.xah.common.ui.style.padding.getNavigationBarHeight
 import com.xah.shader.state.ShaderState
 import dev.chrisbanes.haze.HazeState
 
@@ -298,7 +300,8 @@ fun HazeBottomBarV2(
                         if (paddingSafely) {
                             it.padding(bottom = APP_HORIZONTAL_DP)
                         } else {
-                            it.padding(bottom = CARD_NORMAL_DP)
+                            // 额外垫高
+                            it.navigationBarSupplementPadding()
                         }
                     }
                     .navigationBarsPadding(),

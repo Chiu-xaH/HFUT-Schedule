@@ -179,6 +179,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculatedReadNotificationCount
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.navigationBarSupplementPadding
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.newBottomBarBlur
@@ -210,6 +211,7 @@ import com.xah.common.ui.style.color.TransparentSystemBars
 import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.mask
+import com.xah.common.ui.style.padding.getNavigationBarHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.anim.effect.Direction
@@ -1019,7 +1021,8 @@ fun MainScreen(
                                 if (paddingSafely) {
                                     it.padding(bottom = APP_HORIZONTAL_DP)
                                 } else {
-                                    it.padding(bottom = CARD_NORMAL_DP)
+                                    // 额外垫高
+                                    it.navigationBarSupplementPadding()
                                 }
                             }
                             .navigationBarsPadding()

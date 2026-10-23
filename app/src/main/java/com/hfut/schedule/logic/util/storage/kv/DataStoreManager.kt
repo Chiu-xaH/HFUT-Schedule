@@ -400,7 +400,7 @@ object DataStoreManager : IDataStore {
     val enableUse = getFlow(CAN_USE, false)
     val uniAppGradeCount = getFlow(UNI_APP_GRADE_COUNT, -1)
     val enableNewBottomBar = getFlow(NEW_BOTTOM_BAR, false)
-    val enableNewBottomBarSafelyPadding = getFlow(NEW_BOTTOM_BAR_SAFELY_PADDING, true)
+    val enableNewBottomBarSafelyPadding = getFlow(NEW_BOTTOM_BAR_SAFELY_PADDING, false)
     val enableShowCalendarTimeLine = getFlow(SHOW_CALENDAR_TIME_LINE, false)
     val enableIgnoreUnjoinedGradeItems = getFlow(IGNORE_UNJOINED_GRADE_ITEMS, false)
     val enableDataStore = getFlow(ENABLE_ROOM_DATA_STORE, true)

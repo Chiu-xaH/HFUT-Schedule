@@ -968,7 +968,7 @@ fun SharedAppearanceSettingsScreen(
                         trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
                     )
                 } else {
-                    val enablePaddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = true)
+                    val enablePaddingSafely by DataStoreManager.enableNewBottomBarSafelyPadding.collectAsState(initial = false)
                     TransplantListItem(
                         headlineContent = {
                             Text("底部安全边距")

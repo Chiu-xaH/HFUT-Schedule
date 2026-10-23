@@ -41,7 +41,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -57,7 +56,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -103,13 +101,10 @@ import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
-import com.xah.common.logic.model.Campus
 import com.hfut.schedule.logic.model.enumeration.LocalEvent
-import com.hfut.schedule.logic.util.helper.getCampus
 import com.hfut.schedule.logic.model.supabase.SupabaseEventOutput
-import com.hfut.schedule.network.api.util.getUinAppCampusId
 import com.hfut.schedule.logic.network.repo.UniAppRepository
-import com.xah.common.logic.state.NetworkUiState
+import com.hfut.schedule.logic.util.helper.getCampus
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -119,12 +114,11 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.util.getUinAppCampusId
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
-import com.hfut.schedule.ui.component.button.BottomTextButtonGroupWithoutPadding
 import com.hfut.schedule.ui.component.button.CardBottomButton
-import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -143,7 +137,6 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
@@ -155,20 +148,20 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCa
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
+import com.hfut.schedule.ui.style.appNavigationBarPadding
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.model.Campus
+import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
-import com.xah.common.ui.component.status.CustomSingleChoiceRowDefaultsColors
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.component.text.ScrollText
@@ -181,6 +174,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
 import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -793,7 +787,7 @@ fun AddEventUI(
                         )
                     )
                 )
-                .navigationBarsPadding()
+                .appNavigationBarPadding()
         ){
 
             OutlinedCard(
@@ -1298,7 +1292,7 @@ fun AddEventUI(
                 BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
             }
             InnerPaddingHeight(innerPadding,false)
-            Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).navigationBarsPadding())
+            Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).appNavigationBarPadding())
         }
     }
 }
