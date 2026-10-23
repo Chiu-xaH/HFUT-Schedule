@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
@@ -52,10 +53,9 @@ import com.xah.floating.util.LocalFloatingController
 import kotlin.math.roundToInt
 
 private val padding = 4.dp
-private const val columnCount = 4
 private const val endCourseTime = "21:50"
-private val itemWidth = 90.dp
-private val itemHeight = 150.dp
+private val minWeekItemWidth = 84.dp
+private const val weekItemAspectRatio = 0.6f
 
 @Composable
 fun TimeTablePreview(
@@ -74,8 +74,7 @@ fun TimeTablePreview(
             var innerPadding by remember { mutableStateOf(0.dp) }
 
             LazyVerticalGrid(
-//            columns = GridCells.Adaptive(minSize = itemWidth),
-                columns = GridCells.Fixed(columnCount),
+                columns = GridCells.Adaptive(minSize = minWeekItemWidth),
                 modifier = Modifier.padding(horizontal = padding),
                 horizontalArrangement = Arrangement.spacedBy(padding),
                 verticalArrangement = Arrangement.spacedBy(padding)
@@ -87,13 +86,13 @@ fun TimeTablePreview(
                     val list = items[week]
                     val isCurrentWeek = currentWeek == week+1
 
-                    ColumnVertical {
+                    ColumnVertical(modifier = Modifier.fillMaxWidth()) {
                         MiniTimetablePreview(
                             items = list,
                             endTime = parseTimeToFloat(endCourseTime),
                             modifier = Modifier
-                                .height(itemHeight)
-                                .width(itemWidth)
+                                .fillMaxWidth()
+                                .aspectRatio(weekItemAspectRatio)
                                 .border(
                                     1.dp,
                                     if (isCurrentWeek) MaterialTheme.colorScheme.primary else DividerDefaults.color,

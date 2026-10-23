@@ -210,7 +210,7 @@ fun TimeRangePicker(
     LaunchedEffect(startTime,endTime) {
         // 判定时间合法性
         enabled = if(isSchedule) {
-            endTime != null && startTime < endTime!!
+            endTime != null && startTime <= endTime!!
         } else {
             endTime != null
         }
