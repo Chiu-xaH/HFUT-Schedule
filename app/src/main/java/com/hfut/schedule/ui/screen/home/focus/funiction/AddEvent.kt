@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.BackEventCompat
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
@@ -60,7 +58,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -79,6 +76,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,27 +88,23 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.core.DataBaseManager
-import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.database.repository.CustomEventRepository
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.model.enumeration.LocalEvent
-import com.hfut.schedule.logic.model.supabase.SupabaseEventOutput
 import com.hfut.schedule.logic.network.repo.UniAppRepository
 import com.hfut.schedule.logic.util.helper.getCampus
-import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.util.getUinAppCampusId
@@ -145,7 +139,6 @@ import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
-import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.appNavigationBarPadding
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -160,6 +153,7 @@ import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.model.Campus
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.isNotEmptyAndBlank
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.BottomTip
@@ -183,6 +177,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.util.UUID
+import kotlin.Pair
 import kotlin.coroutines.cancellation.CancellationException
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -580,6 +575,28 @@ private fun SharedTransitionScope.SurfaceUI(
     }
 }
 
+private fun generateRemark(
+    isScheduleType : Boolean,
+    date : Pair<String,String>,
+    time : Pair<String, String>
+) : String {
+    return if(isScheduleType) {
+        if(date.first == date.second) { // 当天日程
+            "${date.first.substringAfter("-")} " +
+                    // 同时间
+                    if(time.first == time.second) {
+                        time.first
+                    } else {
+                        time.first + " ~ " + time.second
+                    }
+        } else {
+            "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
+        }
+    } else {
+        date.second.substringAfter("-") + " " + time.second + " 截止"
+    }
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddEventUI(
@@ -592,74 +609,54 @@ fun AddEventUI(
 ) {
     val groupId = remember { UUID.randomUUID().toString() }
     var enabled by remember { mutableStateOf(false) }
-    val editedData by produceState<CustomEventDTO?>(initialValue = null) {
+    val editedData by produceState(initialValue = emptyList()) {
         if(eventId <= 0) {
             return@produceState
         }
-        value = DataBaseManager.customEventDao.getById(eventId)?.let {
+        value = CustomEventRepository.getGroupById(eventId).map {
             CustomEventMapper.entityToDto(it)
         }
     }
     var isScheduleType by remember { mutableStateOf(true) }
     var title by remember { mutableStateOf(EMPTY_STRING) }
-    var description by remember { mutableStateOf(EMPTY_STRING) }
-    var remark by remember { mutableStateOf(EMPTY_STRING) }
-
-    var time by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
-    var date by remember { mutableStateOf(Pair(EMPTY_STRING,EMPTY_STRING)) }
     val timeParts = remember { mutableStateListOf(TimePart()) }
 
+    // 外置数据填入
     LaunchedEffect(editedData) {
-        editedData?.let {
-            isScheduleType = it.type == CustomEventType.SCHEDULE
-            title = it.title
-            description = it.description ?: EMPTY_STRING
-            remark = it.remark
+        if(editedData.isEmpty()) {
+            return@LaunchedEffect
+        }
+        val head = editedData[0]
+        isScheduleType = head.type == CustomEventType.SCHEDULE
+        title = head.title
 
+        timeParts.clear()
+        editedData.forEach {
             val preDateTime = it.dateTime
             val preStart = preDateTime.start
             val preEnd = preDateTime.end
-            time = Pair(
-                "${parseTimeItem(preStart.hour)}:${parseTimeItem(preStart.minute)}",
-                "${parseTimeItem(preEnd.hour)}:${parseTimeItem(preEnd.minute)}"
+            val bean = TimePart(
+                description = it.description ?: EMPTY_STRING,
+                remark = it.remark,
+                time = Pair(
+                    "${parseTimeItem(preStart.hour)}:${parseTimeItem(preStart.minute)}",
+                    "${parseTimeItem(preEnd.hour)}:${parseTimeItem(preEnd.minute)}"
+                ),
+                date = Pair(
+                    "${preStart.year}-${parseTimeItem(preStart.month)}-${parseTimeItem(preStart.day)}",
+                    "${preEnd.year}-${parseTimeItem(preEnd.month)}-${parseTimeItem(preEnd.day)}"
+                )
             )
-            date = Pair(
-                "${preStart.year}-${parseTimeItem(preStart.month)}-${parseTimeItem(preStart.day)}",
-                "${preEnd.year}-${parseTimeItem(preEnd.month)}-${parseTimeItem(preEnd.day)}"
-            )
+            timeParts.add(bean)
         }
     }
 
-    var showSelectDateDialog by remember { mutableStateOf(false) }
-    var showSelectTimeDialog by remember { mutableStateOf(false) }
     var showSupabaseDialog by remember { mutableStateOf(false) }
 
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(date,time) {
-        remark = if(isScheduleType) {
-            if(date.first == date.second) { // 当天日程
-                "${date.first.substringAfter("-")} " +
-                        // 同时间
-                        if(time.first == time.second) {
-                            time.first
-                        } else {
-                            time.first + " ~ " + time.second
-                        }
-            } else {
-                "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
-            }
-        } else {
-            date.second.substringAfter("-") + " " + time.second + " 截止"
-        }
-    }
     var campus by remember { mutableStateOf(getEventCampus()) }
-
-    // 向上回传数据
-    LaunchedEffect(title,time,date,remark) {
-        enabled = title.isNotBlank() && title.isNotEmpty() && time.first.isNotEmpty() && time.second.isNotEmpty() && date.first.isNotEmpty() && date.second.isNotEmpty() && remark.isNotBlank() && remark.isNotEmpty()
-    }
 
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = EMPTY_STRING)
     var isClone by remember { mutableStateOf(true) }
@@ -669,29 +666,7 @@ fun AddEventUI(
         Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.timer),null)
     }
 
-    if(showSelectDateDialog)
-        EventDatePickerDialog(
-            isScheduleType,
-            onSelected = {
-                when(it) {
-                    is EventDatePickerSelectedResult.Date -> {
-                        date = Pair(it.date,it.date)
-                        // fixme 临时写法，可以改成hashset
-//                        dates.clear()
-//                        dates.addAll(it.dates)
-                    }
-                    is EventDatePickerSelectedResult.Range -> {
-                        date = it.range
-                    }
-                }
-            }
-        ) {
-            showSelectDateDialog = false
-        }
-    if(showSelectTimeDialog)
-        TimeRangePickerDialog(isScheduleType,onSelected = { time = it }, defaultValue = time) { showSelectTimeDialog = false }
-
-
+    /* TODO P2 数据回填至Model
     LaunchedEffect(updateLoading) {
         if(isSupabase && updateLoading) {
             val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
@@ -752,6 +727,8 @@ fun AddEventUI(
         }
     }
 
+     */
+
     if(showSupabaseDialog) {
         LittleDialog(
             onConfirmation = {
@@ -764,7 +741,7 @@ fun AddEventUI(
     }
     var bottomHeight by remember { mutableStateOf(0.dp) }
     val color = MaterialTheme.colorScheme.surface
-    val useCreate = editedData == null || enableCopy
+    val useCreate = editedData.isEmpty() || enableCopy
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -786,7 +763,7 @@ fun AddEventUI(
                 )
                 .appNavigationBarPadding()
         ){
-
+            /* TODO P3 堆叠UI
             OutlinedCard(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
@@ -798,8 +775,10 @@ fun AddEventUI(
                     supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description,maxLines = 1,overflow = TextOverflow.Ellipsis) } } else null,
                 )
             }
+             */
             Button(
                 onClick = {
+                    /* TODO 点击事件
                     if(!isSupabase) {
                         scope.launch {
                             async {
@@ -839,8 +818,9 @@ fun AddEventUI(
                         if(enabled)
                             showSupabaseDialog = true
                     }
+                     */
                 },
-                shape = MaterialTheme.shapes.medium,
+//                shape = MaterialTheme.shapes.medium,
                 enabled = updateLoading || enabled,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -857,13 +837,6 @@ fun AddEventUI(
 
         }
 
-        val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
-            value = dateToWeek(date.first)
-        }
-        val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
-            value = dateToWeek(date.second)
-        }
-
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             InnerPaddingHeight(innerPadding,true)
             CustomSingleChoiceRow(
@@ -874,8 +847,6 @@ fun AddEventUI(
                     LocalEvent.DEADLINE -> false
                     LocalEvent.SCHEDULE -> true
                 }
-                date = Pair(EMPTY_STRING,EMPTY_STRING)
-                time = Pair(EMPTY_STRING,EMPTY_STRING)
             }
             CardListItem(
                 cardModifier = Modifier.padding(bottom = CARD_NORMAL_DP),
@@ -890,15 +861,11 @@ fun AddEventUI(
                 },
                 modifier = Modifier.clickable {
                     isScheduleType = !isScheduleType
-                    date = Pair(EMPTY_STRING,EMPTY_STRING)
-                    time = Pair(EMPTY_STRING,EMPTY_STRING)
                 },
                 leadingContent = {
                     FilledTonalIconButton(
                         onClick = {
                             isScheduleType = !isScheduleType
-                            date = Pair(EMPTY_STRING,EMPTY_STRING)
-                            time = Pair(EMPTY_STRING,EMPTY_STRING)
                         },
                         content = typeIcon
                     )
@@ -908,38 +875,74 @@ fun AddEventUI(
             CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
             if(isScheduleType) {
                 DividerTextExpandedWith("时间段") {
+                    LaunchedEffect(Unit) {
+                        snapshotFlow {
+                            timeParts.map { it.enabled }
+                        }.collect { enabledList ->
+                            enabled = enabledList.all { it } && title.isNotEmptyAndBlank()
+                        }
+                    }
+                    // TODO bug手动刷新才预填充
                     timeParts.forEachIndexed { index, item ->
+                        var thisDescription by remember { mutableStateOf(item.description ?: EMPTY_STRING) }
+                        var thisTime by remember { mutableStateOf(item.time) }
+                        var thisDate by remember { mutableStateOf(item.date) }
+                        val thisRemark by produceState(initialValue = EMPTY_STRING, key1 = thisDate, key2 = thisTime) {
+                            // remark自动生成
+                            value = generateRemark(true,thisDate,thisTime)
+                        }
+                        var thisShowSelectDateDialog by remember { mutableStateOf(false) }
+                        var thisShowSelectTimeDialog by remember { mutableStateOf(false) }
+
+                        if(thisShowSelectDateDialog)
+                            EventDatePickerDialog(
+                                isScheduleType,
+                                onSelected = {
+                                    val d = (it as EventDatePickerSelectedResult.Date).date
+                                    thisDate = Pair(d,d)
+                                }
+                            ) {
+                                thisShowSelectDateDialog = false
+                            }
+                        if(thisShowSelectTimeDialog)
+                            TimeRangePickerDialog(isScheduleType,onSelected = { thisTime = it }, defaultValue = thisTime) { thisShowSelectTimeDialog = false }
+
+                        // 每一个TImePart都是合法的
+                        LaunchedEffect(thisTime,thisDate) {
+                            item.enabled = thisTime.first.isNotEmpty() && thisTime.second.isNotEmpty() && thisDate.first.isNotEmpty() && thisDate.second.isNotEmpty() && thisRemark.isNotEmptyAndBlank()
+                        }
+
                         CustomCard(color = cardNormalColor()) {
                             Column {
-                                var displaySelector by remember { mutableStateOf(false) }
+                                var thisDisplaySelector by remember { mutableStateOf(false) }
                                 CustomTextField(
-                                    input = description,
+                                    input = thisDescription,
                                     label = { Text("备注(可为空)") },
                                     singleLine = false,
                                     shape = NoneRoundShape,
                                     colors = TextFieldDefaults.colors().copy(
-                                        focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
-                                        unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                                        focusedIndicatorColor = if(!thisDisplaySelector) Color.Transparent else defaultDividerColor(),
+                                        unfocusedIndicatorColor = if(!thisDisplaySelector) Color.Transparent else defaultDividerColor(),
                                         focusedContainerColor = Color.Transparent,
                                         unfocusedContainerColor = Color.Transparent
                                     ),
                                     trailingIcon = {
                                         IconButton(
                                             onClick = {
-                                                displaySelector = !displaySelector
+                                                thisDisplaySelector = !thisDisplaySelector
                                             }
                                         ) {
                                             val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
-                                            val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
+                                            val painter = rememberAnimatedVectorPainter(animatedImageVector, thisDisplaySelector)
                                             Icon(painter, null)
                                         }
                                     },
                                     modifier = Modifier,
                                 ) {
-                                    description = it
+                                    thisDescription = it
                                 }
                                 AnimatedVisibility(
-                                    visible = displaySelector,
+                                    visible = thisDisplaySelector,
                                     enter = slideInVertically(
                                         initialOffsetY = { -40 }
                                     ) + expandVertically(
@@ -950,22 +953,25 @@ fun AddEventUI(
                                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                                 ) {
                                     BuildingsSelector(vm) {
-                                        description = it
+                                        thisDescription = it
                                     }
                                 }
                             }
                             PaddingHorizontalDivider(isDashed = true)
                             TransplantListItem(
                                 headlineContent = {
-                                    val timeStr = if(time.first.isEmpty() || time.second.isEmpty()) {
+                                    val thisWeekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = thisDate) {
+                                        value = dateToWeek(thisDate.first)
+                                    }
+                                    val thisTimeStr = if(thisTime.first.isEmpty() || thisTime.second.isEmpty()) {
                                         "----"
-                                    } else if(time.first == time.second) {
-                                        time.first
+                                    } else if(thisTime.first == thisTime.second) {
+                                        thisTime.first
                                     } else {
-                                        time.first + "~" + time.second
+                                        thisTime.first + "~" + thisTime.second
                                     }
                                     Text(
-                                        date.second.ifEmpty { "----" } +  (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + timeStr
+                                        thisDate.second.ifEmpty { "----" } +  (thisWeekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + thisTimeStr
                                     )
                                 },
                                 leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
@@ -976,10 +982,10 @@ fun AddEventUI(
 //                                dates.clear()
 //                            },
                                     CardBottomButton("选择日期") {
-                                        showSelectDateDialog = true
+                                        thisShowSelectDateDialog = true
                                     },
                                     CardBottomButton("选择时间") {
-                                        showSelectTimeDialog = true
+                                        thisShowSelectTimeDialog = true
                                     },
 //                                CardBottomButton("复制", show = false) {
 //                                    showDevelopingToast()
@@ -993,8 +999,7 @@ fun AddEventUI(
                     }
                     FilledTonalButton (
                         onClick = {
-                            showDevelopingToast()
-//                            timeParts.add(TimePart())
+                            timeParts.add(TimePart())
                         },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
                         shape = MaterialTheme.shapes.medium,
@@ -1004,37 +1009,92 @@ fun AddEventUI(
                     }
                 }
             } else {
+                var thisTime by remember {
+                    mutableStateOf(
+                        if(timeParts.isEmpty()) {
+                            Pair(EMPTY_STRING,EMPTY_STRING)
+                        } else {
+                            timeParts[0].time
+                        }
+                    )
+                }
+                var thisDate by remember {
+                    mutableStateOf(
+                        if(timeParts.isEmpty()) {
+                            Pair(EMPTY_STRING,EMPTY_STRING)
+                        } else {
+                            timeParts[0].date
+                        }
+                    )
+                }
+                var thisDescription by remember {
+                    mutableStateOf(
+                        if(timeParts.isEmpty()) {
+                            EMPTY_STRING
+                        } else {
+                            timeParts[0].description ?: EMPTY_STRING
+                        }
+                    )
+                }
+                val thisRemark by produceState(initialValue = EMPTY_STRING, key1 = thisDate, key2 = thisTime) {
+                    // remark自动生成
+                    value = generateRemark(false,thisDate,thisTime)
+                }
+                var thisShowSelectDateDialog by remember { mutableStateOf(false) }
+                var thisShowSelectTimeDialog by remember { mutableStateOf(false) }
+
+                if(thisShowSelectDateDialog)
+                    EventDatePickerDialog(
+                        false,
+                        onSelected = {
+                            thisDate = (it as EventDatePickerSelectedResult.Range).range
+                        }
+                    ) {
+                        thisShowSelectDateDialog = false
+                    }
+                if(thisShowSelectTimeDialog)
+                    TimeRangePickerDialog(false,onSelected = { thisTime = it }, defaultValue = thisTime) { thisShowSelectTimeDialog = false }
+
+                val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = thisDate) {
+                    value = dateToWeek(thisDate.second)
+                }
+
+                // 每一个TImePart都是合法的
+                LaunchedEffect(title,thisTime,thisDate) {
+                    enabled = title.isNotEmptyAndBlank() && thisTime.first.isNotEmpty() && thisTime.second.isNotEmpty() && thisDate.first.isNotEmpty() && thisDate.second.isNotEmpty() && thisRemark.isNotEmptyAndBlank()
+                }
+
                 Spacer(Modifier.height(CARD_NORMAL_DP*2))
                 CustomCard(color = cardNormalColor()) {
-                    var displaySelector by remember { mutableStateOf(false) }
+                    var thisDisplaySelector by remember { mutableStateOf(false) }
                     CustomTextField(
-                        input = description,
+                        input = thisDescription,
                         label = { Text("备注(可为空)") },
                         singleLine = false,
                         shape = NoneRoundShape,
                         colors = TextFieldDefaults.colors().copy(
-                            focusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
-                            unfocusedIndicatorColor = if(!displaySelector) Color.Transparent else defaultDividerColor(),
+                            focusedIndicatorColor = if(!thisDisplaySelector) Color.Transparent else defaultDividerColor(),
+                            unfocusedIndicatorColor = if(!thisDisplaySelector) Color.Transparent else defaultDividerColor(),
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent
                         ),
                         trailingIcon = {
                             IconButton(
                                 onClick = {
-                                    displaySelector = !displaySelector
+                                    thisDisplaySelector = !thisDisplaySelector
                                 }
                             ) {
                                 val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.ic_anim_expand)
-                                val painter = rememberAnimatedVectorPainter(animatedImageVector, displaySelector)
+                                val painter = rememberAnimatedVectorPainter(animatedImageVector, thisDisplaySelector)
                                 Icon(painter, null)
                             }
                         },
                         modifier = Modifier,
                     ) {
-                        description = it
+                        thisDescription = it
                     }
                     AnimatedVisibility(
-                        visible = displaySelector,
+                        visible = thisDisplaySelector,
                         enter = slideInVertically(
                             initialOffsetY = { -40 }
                         ) + expandVertically(
@@ -1045,7 +1105,7 @@ fun AddEventUI(
                         exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                     ) {
                         BuildingsSelector(vm) {
-                            description = it
+                            thisDescription = it
                         }
                     }
                 }
@@ -1054,7 +1114,7 @@ fun AddEventUI(
                     TransplantListItem(
                         headlineContent = {
                             Text(
-                                "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + time.second}"
+                                "结束 ${thisDate.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: EMPTY_STRING) +" " + thisTime.second}"
                             )
                         },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
@@ -1062,10 +1122,10 @@ fun AddEventUI(
                     BottomTextButtonGroup(
                         listOf(
                             CardBottomButton("选择截止日期") {
-                                showSelectDateDialog = true
+                                thisShowSelectDateDialog = true
                             },
                             CardBottomButton("选择截止时间") {
-                                showSelectTimeDialog = true
+                                thisShowSelectTimeDialog = true
                             },
                         )
                     )
@@ -1073,8 +1133,6 @@ fun AddEventUI(
             }
 
             Spacer(Modifier.height(CARD_NORMAL_DP*2))
-//                CustomTextField(input = remark, label = { Text("时间显示文案") }, singleLine = false) { remark = it }
-//                Spacer(Modifier.height(CARD_NORMAL_DP*2))
 
             if(isSupabase) {
                 var isEditMode by remember { mutableStateOf(false) }
@@ -1295,7 +1353,7 @@ fun AddEventUI(
 }
 
 private class OuterApp
-// TODO:后续改成滚轮
+
 @Composable
 private fun BuildingsSelector(
     vm : NetWorkViewModel,
@@ -1529,8 +1587,11 @@ private fun EventDatePickerDialog(
 }
 
 private data class TimePart(
+    val description : String? = null,
     val remark : String? = null,
-    val date : List<String> = emptyList(),
+    val date : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
     val time : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
     val id : String = UUID.randomUUID().toString()
-)
+) {
+    var enabled : Boolean by mutableStateOf(false)
+}

@@ -11,17 +11,9 @@ interface CustomEventDao {
     // 获取
     @Query("SELECT * FROM event WHERE id = :id LIMIT 1")
     suspend fun getById(id: Int) : CustomEventEntity?
-    // 根据id，返回聚簇日程
-    @Query("""
-        SELECT * FROM event
-        WHERE group_id = (
-            SELECT group_id FROM event
-            WHERE id = :eventId
-            LIMIT 1
-        )
-        ORDER BY start_time ASC, id ASC
-    """)
-    suspend fun getGroupById(eventId: Int) : List<CustomEventEntity>
+    // 根据groupId，返回聚簇日程
+    @Query("SELECT * FROM event WHERE group_id = :groupId ORDER BY start_time ASC, id ASC")
+    suspend fun getByGroupId(groupId: String) : List<CustomEventEntity>
     // 获取某类型
     @Query("SELECT * FROM event WHERE type = :type")
     suspend fun getAll(type: String) : List<CustomEventEntity>
