@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.common.logic.util.EMPTY_STRING
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 
 
 /**
@@ -125,6 +126,7 @@ fun DateRangePickerDialog(
 @Composable
 fun DatePickerDialog(
     text : String = EMPTY_STRING,
+    allowSelectPrevious : Boolean = true,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -134,11 +136,26 @@ fun DatePickerDialog(
     val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = endDateString) {
         value = endDateString?.let { dateToWeek(it) }
     }
+    var todayDate by remember {
+        mutableStateOf<Long?>(
+            DateTimeManager.getToday()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        )
+    }
+
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                enabled = endDateString != null,
+                enabled = endDateString != null &&
+                        (
+                                if(allowSelectPrevious)
+                                    true
+                                else
+                                    endDate?.let { e -> todayDate?.let { s -> s <= e } } == true
+                        ),
                 onClick = {
                     if(endDateString != null) {
                         onConfirm(endDateString!!)

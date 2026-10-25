@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
@@ -40,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -50,7 +50,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -61,33 +60,31 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.helper.getCampus
-import com.hfut.schedule.logic.util.helper.getCampusRegion
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.showDevelopingToast
+import com.hfut.schedule.logic.util.sys.datetime.SpecialDay
+import com.hfut.schedule.logic.util.sys.datetime.isHolidayOrSpecificWorkDay
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
-import com.hfut.schedule.ui.component.button.BUTTON_HEIGHT
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.BusDestination
+import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.nav.window.BusDestinationSelectWindow
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -100,14 +97,21 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
 import com.xah.floating.util.LocalFloatingController
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.util.Calendar
 
 private enum class BusDate(val type : String,val description: String) {
     WORK_DAY("0","周一至周五"),
@@ -397,14 +401,13 @@ fun BusScreenV2(
     vm : NetWorkViewModel,
 ) {
     val hazeState = rememberHazeBlur()
-    var startInput by remember { mutableStateOf<String?>(null) }
-    var endInput by remember { mutableStateOf<String?>(null) }
+    var startInput by rememberSaveable() { mutableStateOf<String?>(null) }
+    var endInput by rememberSaveable() { mutableStateOf<String?>(null) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var busDate by remember { mutableStateOf<String?>(null) }
-    var busDates by remember { mutableStateOf(setOf<String>()) }
+//    var busDate by rememberSaveable() { mutableStateOf<BusDate?>(null) }
     val busNavController = rememberNavController()
     val targetPage = when(busNavController.currentRouteWithoutArgs()) {
         BusBarItems.NOW.name -> BusBarItems.NOW
@@ -424,18 +427,23 @@ fun BusScreenV2(
         refreshNetwork()
     }
     LaunchedEffect(targetPage) {
-        startInput = when(targetPage) {
-            BusBarItems.NOW -> getCampus()?.description
-            BusBarItems.SEARCH -> null
+        when(targetPage) {
+            BusBarItems.NOW -> {
+                if(startInput == null && endInput == null) {
+                    startInput = getCampus()?.description
+                }
+            }
+            BusBarItems.SEARCH -> {
+//                startInput = null
+//                endInput = null
+            }
         }
-        endInput = null
-        busDate = null
     }
 
     var date by rememberSaveable { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
-        DatePickerDialog(onConfirm = { date = it }) { showSelectDateDialog = false }
+        DatePickerDialog(onConfirm = { date = it },allowSelectPrevious = false) { showSelectDateDialog = false }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -467,29 +475,23 @@ fun BusScreenV2(
                                     }
                                 }
                                 BusBarItems.SEARCH -> {
+                                    /*
                                     LiquidButton(
                                         onClick = {
-                                            busDate = if (busDates.isEmpty()) {
-                                                null
-                                            } else {
-                                                if (busDate == null) {
-                                                    busDates.first()
-                                                } else {
-                                                    val i = busDates.indexOf(busDate)
-                                                    if (i == busDates.size - 1) {
-                                                        null
-                                                    } else {
-                                                        busDates.elementAt(i + 1)
-                                                    }
-                                                }
+                                            busDate = when(busDate) {
+                                                null -> BusDate.WORK_DAY
+                                                BusDate.WORK_DAY -> BusDate.SATURDAY
+                                                BusDate.SATURDAY -> BusDate.SUNDAY
+                                                BusDate.SUNDAY -> null
                                             }
                                         },
                                         backdrop = backdrop,
                                         isCircle = false,
                                     ) {
-                                        Text(busDate ?: "全部")
+                                        Text(busDate?.description ?: "全部")
                                     }
                                     Spacer(Modifier.width(BUTTON_PADDING))
+                                     */
                                     LiquidButton(
                                         onClick = {
                                             scope.launch {
@@ -506,126 +508,122 @@ fun BusScreenV2(
                         }
                     }
                 )
-//                when(targetPage) {
-//                    BusBarItems.NOW -> {
-//
-//                    }
-//                    BusBarItems.SEARCH -> {
-                        Row(
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val startWindow = BusDestinationSelectWindow(
+                        true,startInput,endInput
+                    ) {
+                        startInput = it
+                    }
+                    SharedContainer(
+                        shape = MaterialTheme.shapes.medium,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        key = startWindow.key,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Surface(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            val startWindow = BusDestinationSelectWindow(
-                                true,startInput,endInput
-                            ) {
-                                startInput = it
-                            }
-                            SharedContainer(
-                                shape = MaterialTheme.shapes.medium,
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                key = startWindow.key,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Surface(
-                                    modifier = Modifier
-                                        .height(56.dp)
-                                        .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
-                                        .clickable {
-                                            floatingController.push(startWindow)
-                                        },
-                                    shape = NoneRoundShape,
-                                    color = Color.Transparent,
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize()) {
-                                        Text(
-                                            startInput ?: "起点",
-                                            maxLines = 1,
-                                            color = if(startInput == null) Color.Gray else Color.Unspecified,
-                                            modifier = Modifier
-                                                .padding(start = APP_HORIZONTAL_DP)
-                                                .align(Alignment.CenterStart)
-                                        )
-                                        /*
-                                        if(targetPage == BusBarItems.NOW) {
-                                            NoPadding {
-                                                IconButton (
-                                                    onClick = {
-                                                        showDevelopingToast()
-                                                    },
-                                                    modifier = Modifier
-                                                        .padding(end = BUTTON_PADDING)
-                                                        .size(BUTTON_HEIGHT)
-                                                        .align(Alignment.CenterEnd)
-                                                ) {
-                                                    Icon(
-                                                        painterResource(R.drawable.near_me),
-                                                        null
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                         */
-                                    }
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                onClick = {
-                                    val temp = startInput
-                                    startInput = endInput
-                                    endInput = temp
+                                .height(56.dp)
+                                .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                .clickable {
+                                    floatingController.push(startWindow)
                                 },
-                                backdrop = backdrop,
-                                isCircle = true
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.swap_horiz),
-                                    null,
-                                    tint = if(startInput == null && endInput == null) Color.Gray else LocalContentColor.current,
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(BUTTON_PADDING))
-                            val endWindow = BusDestinationSelectWindow(
-                                false,endInput,startInput
-                            ) {
-                                endInput = it
-                            }
-                            SharedContainer(
-                                shape = MaterialTheme.shapes.medium,
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                key = endWindow.key,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Surface(
+                            shape = NoneRoundShape,
+                            color = Color.Transparent,
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                Text(
+                                    startInput ?: "起点",
+                                    maxLines = 1,
+                                    color = if(startInput == null) Color.Gray else Color.Unspecified,
                                     modifier = Modifier
-                                        .height(56.dp)
-                                        .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
-                                        .clickable {
-                                            floatingController.push(endWindow)
-                                        },
-                                    shape = NoneRoundShape,
-                                    color = Color.Transparent,
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize()) {
-                                        Text(
-                                            endInput ?: "终点",
-                                            maxLines = 1,
-                                            color = if(endInput == null) Color.Gray else Color.Unspecified,
+                                        .padding(start = APP_HORIZONTAL_DP)
+                                        .align(Alignment.CenterStart)
+                                )
+                                /*
+                                if(targetPage == BusBarItems.NOW) {
+                                    NoPadding {
+                                        IconButton (
+                                            onClick = {
+                                                showDevelopingToast()
+                                            },
                                             modifier = Modifier
-                                                .padding(start = APP_HORIZONTAL_DP)
-                                                .align(Alignment.CenterStart)
-                                        )
+                                                .padding(end = BUTTON_PADDING)
+                                                .size(BUTTON_HEIGHT)
+                                                .align(Alignment.CenterEnd)
+                                        ) {
+                                            Icon(
+                                                painterResource(R.drawable.near_me),
+                                                null
+                                            )
+                                        }
                                     }
                                 }
+
+                                 */
                             }
                         }
-                        Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))
-//                    }
-//                }
+                    }
+                    Spacer(modifier = Modifier.width(BUTTON_PADDING))
+                    LiquidButton(
+                        onClick = {
+                            val temp = startInput
+                            startInput = endInput
+                            endInput = temp
+                        },
+                        backdrop = backdrop,
+                        isCircle = true
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.swap_horiz),
+                            null,
+                            tint = if(startInput == null && endInput == null) Color.Gray else LocalContentColor.current,
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(BUTTON_PADDING))
+                    val endWindow = BusDestinationSelectWindow(
+                        false,endInput,startInput
+                    ) {
+                        endInput = it
+                    }
+                    SharedContainer(
+                        shape = MaterialTheme.shapes.medium,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        key = endWindow.key,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Surface(
+                            modifier = Modifier
+                                .height(56.dp)
+                                .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                                .clickable {
+                                    floatingController.push(endWindow)
+                                },
+                            shape = NoneRoundShape,
+                            color = Color.Transparent,
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                Text(
+                                    endInput ?: "终点",
+                                    maxLines = 1,
+                                    color = if(endInput == null) Color.Gray else Color.Unspecified,
+                                    modifier = Modifier
+                                        .padding(start = APP_HORIZONTAL_DP)
+                                        .align(Alignment.CenterStart)
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))
+                if(uiState is NetworkUiState.Error) {
+                    GoToHolidayUI(false,date)
+                }
             }
         },
         bottomBar = {
@@ -651,12 +649,70 @@ fun BusScreenV2(
                 .backDropSource(backdrop)
         ) {
             nav2Composable(BusBarItems.NOW.name) {
-                BusNowScreen(vm,innerPadding,refreshNetwork)
+                BusNowScreen(vm,innerPadding,startInput,endInput,date,refreshNetwork)
             }
             nav2Composable(BusBarItems.SEARCH.name) {
-                BusSearchScreen(vm,innerPadding,busDate,startInput,endInput,refreshNetwork) { buses ->
-                    busDates = buses.keys
-                }
+                BusSearchScreen(vm,innerPadding,null,startInput,endInput,refreshNetwork)
+            }
+        }
+    }
+}
+
+
+private fun getBusDate(dateStr : String) : BusDate? {
+    try {
+        val date = LocalDate.parse(dateStr)
+        return when (date.dayOfWeek) {
+            DayOfWeek.SATURDAY -> BusDate.SATURDAY
+            DayOfWeek.SUNDAY -> BusDate.SUNDAY
+            else -> BusDate.WORK_DAY
+        }
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return null
+    }
+}
+
+
+@Composable
+private fun GoToHolidayUI(
+    bottomPadding : Boolean,
+    date: String
+) {
+    val navController = LocalNavController.current
+    val isHolidayOrSpecificWorkDay = remember(date) { isHolidayOrSpecificWorkDay(date) }
+
+    if(isHolidayOrSpecificWorkDay != SpecialDay.NORMAL) {
+        val dest = remember { NewsApiDestination(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE.keyword) }
+        Column {
+            CardListItem(
+                headlineContent = {
+                    val typeStr = when(isHolidayOrSpecificWorkDay) {
+                        SpecialDay.HOLIDAY -> "假期"
+                        SpecialDay.WORK_DAY -> "调休工作日"
+                        else -> ""
+                    }
+                    Text("此日期为$typeStr，点击可跳转至调休通知公告，以实际安排为准")
+                },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.stream),
+                        null
+                    )
+                },
+                modifier = Modifier.clickable {
+                    navController.push(dest)
+                },
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = NoneRoundShape,
+                cardModifier = Modifier.sharedContainer(
+                    key = dest.key,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = MaterialTheme.shapes.medium
+                )
+            )
+            if(bottomPadding) {
+                Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))
             }
         }
     }
@@ -666,14 +722,102 @@ fun BusScreenV2(
 private fun BusNowScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
+    startInput : String?,
+    endInput : String?,
+    date : String,
     refreshNetwork : suspend () -> Unit
 ) {
     val uiState by vm.busResponseV2.state.collectAsState()
     Column(modifier = Modifier.fillMaxSize()) {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val result = (uiState as NetworkUiState.Success).data
-            CenterScreen {
-                EmptyIcon("暂无班车")
+            val result = remember(uiState,date) {
+                (uiState as NetworkUiState.Success).data
+                    .filter { map ->
+                        getBusDate(date)?.let {
+                            map.key == it.description
+                        } ?: true
+                    }
+                    .flatMap { it.value }
+                    .sortedBy { it.time }
+            }
+
+            var refresh by remember { mutableStateOf(0) }
+            // 整分钟对齐刷新
+            LaunchedEffect(Unit) {
+                while (true) {
+                    val now = Calendar.getInstance()
+                    val second = now.get(Calendar.SECOND)
+                    val millis = now.get(Calendar.MILLISECOND)
+                    delay((60 - second) * 1000L - millis)
+                    refresh++
+                }
+            }
+
+            var hasPassed by remember { mutableStateOf(false) }
+            val list = remember(startInput,endInput,date,refresh) {
+                hasPassed = false
+                result
+                    .filter {
+                        it.from.contains(startInput ?: EMPTY_STRING) &&
+                        it.to.contains(endInput ?: EMPTY_STRING)
+                    }
+                    .filter {
+                        if(date == DateTimeManager.Date_yyyy_MM_dd) {
+                            val state = DateTimeManager.getTimeStateReal(it.time,it.time).first
+                            if(state == DateTimeManager.TimeState.NOT_STARTED) {
+                                true
+                            } else {
+                                hasPassed = true
+                                false
+                            }
+                        } else {
+                            true
+                        }
+                    }
+            }
+
+            if(list.isEmpty()) {
+                CenterScreen {
+                    EmptyIcon(
+                        if(date == DateTimeManager.Date_yyyy_MM_dd && hasPassed) {
+                            "今天的运营已结束"
+                        } else {
+                            "暂无班车安排"
+                        }
+                    )
+                }
+                return@CommonNetworkScreen
+            }
+            LazyColumn {
+                item { InnerPaddingHeight(innerPadding,true) }
+                item {
+                    GoToHolidayUI(true,date)
+                }
+                items(list.size, key = { it }) { index ->
+                    val item = list[index]
+                    with(item) {
+                        CustomCard(color = cardNormalColor()) {
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text("$from → $to")
+                                },
+                                overlineContent = {
+                                    Text("$place | $time | ${count}辆")
+                                },
+//                                trailingContent = {
+//                                    // 不足30min时显示 X分钟后发车
+//                                    // 否则不显示内容
+//                                    Text("10分钟后发车")
+//                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.directions_bus),null)
+                                },
+                            )
+                            BusPathUI(this)
+                        }
+                    }
+                }
+                item { InnerPaddingHeight(innerPadding,false) }
             }
         }
     }
@@ -683,42 +827,38 @@ private fun BusNowScreen(
 private fun BusSearchScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
-    busDate : String?,
+    busDate : BusDate?,
     startInput : String?,
     endInput : String?,
     refreshNetwork : suspend () -> Unit,
-    onBuses : (Map<String, List<Bus>>) -> Unit,
 ) {
     val uiState by vm.busResponseV2.state.collectAsState()
     Column(modifier = Modifier.fillMaxSize()) {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val result = (uiState as NetworkUiState.Success).data
-            LaunchedEffect(result) {
-                onBuses(result)
-            }
 
             val list = result
                 .let { l ->
-                    if(busDate == null) {
-                        l.flatMap { it.value }
-                    } else {
-                        l[busDate] ?: l.flatMap { it.value }
+                    busDate?.description?.let {
+                        l[it]
                     }
+                        ?: l.flatMap { it.value }
                 }
                 .filter {
                     it.from.contains(startInput ?: EMPTY_STRING) && it.to.contains(endInput ?: EMPTY_STRING)
                 }
 
+            if(list.isEmpty()) {
+                CenterScreen {
+                    EmptyIcon("无符合条件的校车安排")
+                }
+                return@CommonNetworkScreen
+            }
             LazyColumn {
                 item { InnerPaddingHeight(innerPadding,true) }
                 items(list.size, key = { it }) { index ->
                     val item = list[index]
                     with(item) {
-                        val pointList = stops.toMutableList()
-                        // 向首部添加from 尾部添加to
-                        pointList.add(0, from)
-                        pointList.add(to)
-                        // 用线路图显示
                         CustomCard(color = cardNormalColor()) {
                             TransplantListItem(
                                 headlineContent = {
@@ -734,113 +874,121 @@ private fun BusSearchScreen(
                                     Icon(painterResource(R.drawable.schedule),null)
                                 },
                             )
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = APP_HORIZONTAL_DP)
-                                    .padding(bottom = APP_HORIZONTAL_DP),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // 第一行：横线贯穿全宽，圆点平均分布
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box {
-                                        val transition = rememberInfiniteTransition(label = "scroll")
-                                        var barWidthPx by remember { mutableStateOf(0f) }
-
-                                        val offsetX by transition.animateFloat(
-                                            initialValue = -1f,
-                                            targetValue = 2f, // 扫完整条 + 额外一点
-                                            animationSpec = infiniteRepeatable(
-                                                animation = tween(durationMillis = 3000, easing = LinearEasing),
-                                                repeatMode = RepeatMode.Restart
-                                            ),
-                                            label = "offsetX"
-                                        )
-
-
-
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(10.dp)
-                                                .onSizeChanged {
-                                                    barWidthPx = it.width.toFloat()
-                                                }
-                                                .background(
-                                                    Brush.linearGradient(
-                                                        colors = listOf(
-                                                            MaterialTheme.colorScheme.primary.copy(
-                                                                alpha = 0.25f
-                                                            ),
-                                                            MaterialTheme.colorScheme.primary.copy(
-                                                                alpha = 0.55f
-                                                            ),
-                                                            MaterialTheme.colorScheme.primary.copy(
-                                                                alpha = 0.25f
-                                                            ),
-                                                        ),
-                                                        start = Offset(
-                                                            barWidthPx * offsetX,
-                                                            0f
-                                                        ),
-                                                        // 0.5f为渐变宽度
-                                                        end = Offset(
-                                                            barWidthPx * (offsetX + 0.5f),
-                                                            0f
-                                                        ) // 始终保持横跨一段宽度
-                                                    ),
-                                                    shape = CircleShape
-                                                ),
-                                        )
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            pointList.forEachIndexed { index, _ ->
-                                                val isPort = index == 0 || index == pointList.size-1
-                                                // 圆点
-                                                Box(
-                                                    Modifier
-                                                        .size(10.dp)
-                                                        .clip(CircleShape)
-                                                        .background(MaterialTheme.colorScheme.primary)
-                                                )
-                                                if (index != pointList.lastIndex) {
-                                                    Box(Modifier
-                                                        .weight(1f)
-                                                        .background(Color.Transparent))
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-
-
-                                // 第二行：竖排文字，平均分布到圆点下方
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.Top
-                                ) {
-                                    pointList.forEachIndexed { index,point ->
-                                        Text(
-                                            text = point.toCharArray().joinToString("\n"),
-                                            color = MaterialTheme.colorScheme.primary,
-                                            style = MaterialTheme.typography.labelMedium,
-                                            lineHeight = 16.sp,
-                                            modifier = Modifier.padding(top = CARD_NORMAL_DP*2)
-                                        )
-                                    }
-                                }
-                            }
+                            BusPathUI(this)
                         }
                     }
                 }
                 item { InnerPaddingHeight(innerPadding,false) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BusPathUI(
+    bus : Bus
+) = with(bus) {
+    val pointList by produceState(initialValue = emptyList(), key1 = bus) {
+        val list = stops.toMutableList()
+        // 向首部添加from 尾部添加to
+        list.add(0, from)
+        list.add(to)
+        value = list.toList()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = APP_HORIZONTAL_DP)
+            .padding(bottom = APP_HORIZONTAL_DP),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box {
+                val transition = rememberInfiniteTransition(label = "scroll")
+                var barWidthPx by remember { mutableStateOf(0f) }
+
+                val offsetX by transition.animateFloat(
+                    initialValue = -1f,
+                    targetValue = 2f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 3000, easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart
+                    ),
+                    label = "offsetX"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .onSizeChanged {
+                            barWidthPx = it.width.toFloat()
+                        }
+                        .background(
+                            Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.25f
+                                    ),
+                                    MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.55f
+                                    ),
+                                    MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.25f
+                                    ),
+                                ),
+                                start = Offset(
+                                    barWidthPx * offsetX,
+                                    0f
+                                ),
+                                end = Offset(
+                                    barWidthPx * (offsetX + 0.5f),
+                                    0f
+                                )
+                            ),
+                            shape = CircleShape
+                        ),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    pointList.forEachIndexed { index, _ ->
+                        val isPort = index == 0 || index == pointList.size-1
+                        // 圆点
+                        Box(
+                            Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary)
+                        )
+                        if (index != pointList.lastIndex) {
+                            Box(Modifier
+                                .weight(1f)
+                                .background(Color.Transparent))
+                        }
+                    }
+                }
+
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            pointList.forEachIndexed { index,point ->
+                Text(
+                    text = point.toCharArray().joinToString("\n"),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelMedium,
+                    lineHeight = 16.sp,
+                    modifier = Modifier.padding(top = CARD_NORMAL_DP*2)
+                )
             }
         }
     }

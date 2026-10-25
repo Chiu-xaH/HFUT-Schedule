@@ -78,7 +78,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -912,7 +911,7 @@ fun AddEventUI(
                     timeParts.forEachIndexed { index, item ->
                         CustomCard(color = cardNormalColor()) {
                             Column {
-                                var displaySelector by rememberSaveable() { mutableStateOf(false) }
+                                var displaySelector by remember { mutableStateOf(false) }
                                 CustomTextField(
                                     input = description,
                                     label = { Text("备注(可为空)") },
@@ -1007,7 +1006,7 @@ fun AddEventUI(
             } else {
                 Spacer(Modifier.height(CARD_NORMAL_DP*2))
                 CustomCard(color = cardNormalColor()) {
-                    var displaySelector by rememberSaveable() { mutableStateOf(false) }
+                    var displaySelector by remember { mutableStateOf(false) }
                     CustomTextField(
                         input = description,
                         label = { Text("备注(可为空)") },
@@ -1473,7 +1472,7 @@ private fun TemporaryEventDatePickerDialog(
                     onSelected(Pair(s, it))
                 }
             },
-            onDismiss
+            onDismiss = onDismiss
         )
     }
 }
@@ -1524,7 +1523,7 @@ private fun EventDatePickerDialog(
                     onSelected(EventDatePickerSelectedResult.Range(Pair(s, it)))
                 }
             },
-            onDismiss
+            onDismiss = onDismiss
         )
     }
 }

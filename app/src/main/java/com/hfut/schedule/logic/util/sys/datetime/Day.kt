@@ -95,16 +95,25 @@ fun isInGraduation() : Boolean = getGraduationYear()?.let { DateTimeManager.isCu
 // APP周年
 fun isAppBirthday() : Boolean = DateTimeManager.isTodayAnniversary(DateTimeManager.APP_BIRTHDAY.substringAfter("-"))
 // 节假日
-fun isHoliday() : Boolean = getHolidays().any { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }
+fun isHoliday(date : String = DateTimeManager.Date_yyyy_MM_dd) : Boolean = getHolidays().any { it.isOffDay && it.date == date }
 //
-fun isHolidayTomorrow() : Boolean = getHolidays().any { it.isOffDay && it.date == DateTimeManager.tomorrow_YYYY_MM_DD }
+fun isHolidayTomorrow() : Boolean = isHoliday(DateTimeManager.tomorrow_YYYY_MM_DD)
 // 今天调休
-fun isSpecificWorkDay() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }
+fun isSpecificWorkDay(date : String = DateTimeManager.Date_yyyy_MM_dd) : Boolean = getHolidays().any { !it.isOffDay && it.date == date }
 // 明天调休
-fun isSpecificWorkDayTomorrow() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeManager.tomorrow_YYYY_MM_DD }
+fun isSpecificWorkDayTomorrow() : Boolean = isSpecificWorkDay(DateTimeManager.tomorrow_YYYY_MM_DD)
 
 fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name
-//    ?.substringBefore("节")
+
+fun isHolidayOrSpecificWorkDay(date : String = DateTimeManager.Date_yyyy_MM_dd) : SpecialDay = when(getHolidays().find { it.date == date }?.isOffDay) {
+    null -> SpecialDay.NORMAL
+    true -> SpecialDay.WORK_DAY
+    false -> SpecialDay.HOLIDAY
+}
+
+enum class SpecialDay {
+    WORK_DAY,HOLIDAY,NORMAL
+}
 
 data class Celebration(val use : Boolean,val str : String?,val time : Long = 1L)
 

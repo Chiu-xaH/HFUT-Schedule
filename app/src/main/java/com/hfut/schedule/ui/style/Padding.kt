@@ -11,7 +11,6 @@ import com.xah.common.ui.style.padding.getNavigationBarHeight
 
 fun Modifier.navigationBarSupplementPadding() : Modifier = composed {
     val navigationBarHeight = getNavigationBarHeight()
-    LogUtil.error("navigationBarHeight=$navigationBarHeight")
     return@composed this.padding(
         bottom = if(navigationBarHeight > APP_HORIZONTAL_DP) {
             0.dp

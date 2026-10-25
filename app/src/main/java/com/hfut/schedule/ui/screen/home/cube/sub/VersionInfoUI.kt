@@ -72,12 +72,12 @@ fun VersionInfo() {
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
-        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))//
+        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
         UpdateItems("新增 支持克隆已有日程","编辑日程时右上角的复制图标，点击后会复制此日程信息到新建页面")//
         UpdateItems("新增 支持极端场景下数据库升级失败而导致崩溃的止损措施")//
         UpdateItems("新增 支持自动获取教务系统密码")//
         UpdateItems("新增 修改教务系统密码的入口","位于 查询中心-个人信息-密码信息",to = To.Screen(SettingsJxglstuPasswordDestination))//
-        UpdateItems("新增 校车支持更多维度地查询","位于 查询中心-校车",to = To.Screen(BusDestination))
+        UpdateItems("新增 校车支持以实时的形式展示今天的可用安排","位于 查询中心-校车",to = To.Screen(BusDestination))//
         UpdateItems("优化 新样式底栏启用时，关闭底部安全边距开关后的显示效果",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("优化 适配课程表周数预览浮窗的大屏适配")//
         UpdateItems("修复 主题色鲜艳度黑白模式下大卡片无背景的Bug")//

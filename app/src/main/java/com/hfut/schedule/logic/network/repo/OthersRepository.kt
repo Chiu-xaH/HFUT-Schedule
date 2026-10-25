@@ -50,6 +50,7 @@ import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTa
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianMsgResponse
 import com.hfut.schedule.network.api.repo.OthersRepositoryInf
 import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.state.UiStateHolder
@@ -388,11 +389,20 @@ object OthersRepository : OthersRepositoryInf {
             if (cells.size < 6) continue // 防御：结构异常的行跳过
 
             val fromTo = cells[0].text().trim().split("—")
+
+            val timeStr = cells[1].text().trim()
+            val timeStrList = timeStr.split(":")
+            if(timeStrList.size != 2) {
+                throw Exception("时间解析错误：$timeStr")
+            }
+            val hour = timeStrList[0].toIntOrNull() ?: throw Exception("小时解析错误：$timeStr")
+            val minute = timeStrList[1].toIntOrNull() ?: throw Exception("分钟解析错误：$timeStr")
+
             busList += Bus(
                 place = cells[2].text().trim(),
                 count = cells[4].text().trim().toIntOrNull() ?: 0,
                 week = dayGroup.remove(" ").trim(),
-                time = cells[1].text().trim(),
+                time = "${parseTimeItem(hour)}:${parseTimeItem(minute)}",
                 from = fromTo.getOrElse(0) { EMPTY_STRING },
                 to = fromTo.getOrElse(1) { cells[0].text().trim() },
                 stops = cells[3].text().trim().split(Regex("\\s+")).filter { it.isNotBlank() }
