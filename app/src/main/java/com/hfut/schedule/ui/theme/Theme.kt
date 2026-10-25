@@ -115,7 +115,8 @@ fun AppTheme(
                 it.copy(
                     primaryContainer = it.secondaryContainer.deepen(if(isInDark) 0.3f else 0.2f,isInDark),
                     primary = it.primary.deepen(-0.2f,isInDark),
-                    surfaceVariant = it.surface.deepen(0.1f,isInDark)
+                    surfaceVariant = it.surface.deepen(0.1f,isInDark),
+                    onPrimaryContainer = it.onSecondaryContainer.deepen(0.1f,isInDark)
                 )
             } else {
                 it

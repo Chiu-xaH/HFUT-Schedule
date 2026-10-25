@@ -80,6 +80,7 @@ fun VersionInfo() {
         UpdateItems("新增 校车支持更多维度地查询","位于 查询中心-校车",to = To.Screen(BusDestination))
         UpdateItems("优化 新样式底栏启用时，关闭底部安全边距开关后的显示效果",to = To.Screen(SettingsAppearanceDestination))//
         UpdateItems("优化 适配课程表周数预览浮窗的大屏适配")//
+        UpdateItems("修复 主题色鲜艳度黑白模式下大卡片无背景的Bug")//
 //        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination()))
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 //        UpdateItems("重构 去掉翻页器，改为尾部追加")
