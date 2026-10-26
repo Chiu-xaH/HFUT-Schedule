@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
@@ -14,16 +15,19 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
+import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.util.text
 import com.xah.container.component.base.SharedContent
 import com.xah.container.model.ContentStrategy
+import com.xah.floating.util.LocalFloatingController
 
 data class TimeTablePreviewWindow(
     val items: List<List<TimeTableItem>>,
     val currentWeek: Int,
-    val onItemClick : (Int) -> Unit,
+//    val onItemClick : (Int) -> Unit,
 ) : FloatingWindow() {
     override val key = KEY
 
@@ -31,6 +35,17 @@ data class TimeTablePreviewWindow(
 
     companion object {
         const val KEY = "time_table_preview"
+
+        @Composable
+        fun Listener(weekSwap: TimeTableWeekSwap) {
+            val floatingController = LocalFloatingController.current
+            LaunchedEffect(weekSwap) {
+                GlobalEventHolder.goToWeekCallback.flow.collect { event ->
+                    weekSwap.goToWeek(event.toLong())
+                    floatingController.pop()
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -53,8 +68,9 @@ data class TimeTablePreviewWindow(
                     items = items, // 一周课程,
                     currentWeek = currentWeek,
                     title = semester?.let { SemesterParser.parseSemesterSimply(it) } ?: title.asString(),
-                    onItemClick = onItemClick
-                )
+                ) {
+                    GlobalEventHolder.goToWeekCallback.emit(it)
+                }
             }
         }
     }

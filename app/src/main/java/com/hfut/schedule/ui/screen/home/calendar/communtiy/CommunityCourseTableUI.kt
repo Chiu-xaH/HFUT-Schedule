@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.kyant.backdrop.Backdrop
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -191,6 +192,7 @@ fun CommunityCourseTableUI(
             )
         }
     ) {
+        TimeTablePreviewWindow.Listener(weekSwap)
         TimeTable(
             items,
             currentWeek.toInt(),
@@ -208,10 +210,7 @@ fun CommunityCourseTableUI(
                 }
             },
             onLongTapBlankRegion = {
-                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
-                    weekSwap.goToWeek(it.toLong())
-                    floatingController.pop()
-                })
+                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()))
             },
             onDoubleTapBlankRegion = {
                 if(!isFriend) {
@@ -262,10 +261,7 @@ fun CommunityCourseTableUI(
             onNext = { weekSwap.nextWeek() },
             onPrevious = { weekSwap.previousWeek() },
             onLongClick = {
-                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
-                    weekSwap.goToWeek(it.toLong())
-                    floatingController.pop()
-                })
+                floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()))
             }
         )
     }

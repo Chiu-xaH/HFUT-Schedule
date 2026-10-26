@@ -54,6 +54,7 @@ object GlobalEventHolder {
     val captchaRefreshCallback = AutoEventFlow<Unit>()
     // 刷新教务成绩列表（评教完成后）
     val gradeRefreshCallback = AutoEventFlow<Unit>()
+    val goToWeekCallback = AutoEventFlow<Int>()
 
     // 分钟级时间变化
     fun minuteTicker() = flow {

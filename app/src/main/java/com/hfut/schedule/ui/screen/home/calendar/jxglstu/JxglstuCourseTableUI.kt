@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getHuiXinPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.Backdrop
@@ -509,6 +510,7 @@ fun JxglstuCourseTableUI(
                 )
             }
         ) {
+            TimeTablePreviewWindow.Listener(weekSwap)
             TimeTable(
                 items,
                 currentWeek.toInt(),
@@ -526,10 +528,7 @@ fun JxglstuCourseTableUI(
                     }
                 },
                 onLongTapBlankRegion = {
-                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt() ) {
-                        weekSwap.goToWeek(it.toLong())
-                        floatingController.pop()
-                    })
+                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()))
                 },
                 onDoubleTapBlankRegion = {
                     navController.push(AddEventDestination())
@@ -573,10 +572,7 @@ fun JxglstuCourseTableUI(
                 onNext = { weekSwap.nextWeek() },
                 onPrevious = { weekSwap.previousWeek() },
                 onLongClick = {
-                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
-                        weekSwap.goToWeek(it.toLong())
-                        floatingController.pop()
-                    })
+                    floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()))
                 }
             )
         }

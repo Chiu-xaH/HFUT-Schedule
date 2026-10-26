@@ -128,6 +128,7 @@ import com.hfut.schedule.ui.theme.warnColor
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -1045,6 +1046,7 @@ fun ClassroomLessonsScreen(
                         )
                     }
                 ) {
+                    TimeTablePreviewWindow.Listener(weekSwap)
                     TimeTable(
                         items,
                         currentWeek.toInt(),
@@ -1061,10 +1063,7 @@ fun ClassroomLessonsScreen(
                         },
                         scaleFactor = scaleFactor.floatValue,
                         onLongTapBlankRegion = {
-                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
-                                weekSwap.goToWeek(it.toLong())
-                                floatingController.pop()
-                            })
+                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()))
                         },
                         onSquareClick = null
                     )
@@ -1085,10 +1084,7 @@ fun ClassroomLessonsScreen(
                         onNext = { weekSwap.nextWeek() },
                         onPrevious = { weekSwap.previousWeek() },
                         onLongClick = {
-                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()) {
-                                weekSwap.goToWeek(it.toLong())
-                                floatingController.pop()
-                            })
+                            floatingController.push(TimeTablePreviewWindow(items,currentWeek.toInt()))
                         }
                     )
                 }
