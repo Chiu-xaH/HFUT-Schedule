@@ -2,10 +2,12 @@ package com.hfut.schedule.ui.screen.home.search.function.huiXin.electric
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -79,25 +81,57 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, hazeState: HazeState) {
         false
     }
 
+    val color = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
+
     TransplantListItem(
         headlineContent = {
-            ScrollText(
-                text = if(!card) stringResource(R.string.navigation_label_dormitory_electricity_bill) else "￥${f}",
-                color = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
-            )
+            if(card) {
+                Row {
+                    Text(
+                        text = "￥",
+                        color = color
+                    )
+                    ScrollText(
+                        text = "$f",
+                        color = color
+                    )
+                }
+            } else {
+                ScrollText(
+                    text = stringResource(R.string.navigation_label_dormitory_electricity_bill),
+                    color = color
+                )
+            }
         },
         overlineContent = {
-            ScrollText(
-                text = if(!card) "￥${f}" else room,
-                color = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
+            if(card) {
+                ScrollText(
+                    text = room,
+                    color = color
+                )
+            } else {
+                Row {
+                    Text(
+                        text = "￥",
+                        color = color
+                    )
+                    ScrollText(
+                        text = "$f",
+                        color = color
+                    )
+                }
+            }
+        },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.flash_on),
+                contentDescription = "Localized description",
+                tint = color
             )
         },
-        leadingContent = { Icon(
-            painterResource(R.drawable.flash_on),
-            contentDescription = "Localized description",
-            tint = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
-            ) },
-        modifier = Modifier.clickable { showBottomSheet  = true }
+        modifier = Modifier.clickable {
+            showBottomSheet  = true
+        }
     )
 }
 

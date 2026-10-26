@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -72,14 +73,25 @@ fun SchoolCardItem(isFromFocus : Boolean) {
     TransplantListItem(
         color = cardNormalColor(),
         headlineContent = {
-            ScrollText(
-                text = "￥$text",
-                color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                    if(text!!.length <= 4){
-                        MaterialTheme.colorScheme.error
-                    } else LocalContentColor.current
-                } else LocalContentColor. current
-            )
+            val color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
+                if(text!!.length <= 4) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    LocalContentColor.current
+                }
+            } else {
+                LocalContentColor.current
+            }
+            Row {
+                Text(
+                    text = "￥",
+                    color = color
+                )
+                ScrollText(
+                    text = "$text",
+                    color = color
+                )
+            }
         },
         overlineContent = {
             ScrollText(
@@ -111,6 +123,7 @@ fun SchoolCardItem(isFromFocus : Boolean) {
             )
         },
         trailingContent={
+            // TODO 支持自定义按钮为付款码还是充值
             if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login) && (showAdd || text!!.length <= 4)) {
                 FilledTonalIconButton(
                     modifier = Modifier
