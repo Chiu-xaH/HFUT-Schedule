@@ -124,7 +124,12 @@ fun SchoolCardItem(isFromFocus : Boolean) {
         },
         trailingContent={
             // TODO 支持自定义按钮为付款码还是充值
-            if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login) && (showAdd || text!!.length <= 4)) {
+            val showButton = if(isFromFocus) {
+                text != null && text != stringResource(R.string.navigation_label_school_card_not_login) && (showAdd || text!!.length <= 4)
+            } else {
+                true
+            }
+            if (showButton) {
                 FilledTonalIconButton(
                     modifier = Modifier
                         .scale(scale2.value)
