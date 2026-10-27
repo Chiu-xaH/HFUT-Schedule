@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.nav.destination.ProgramConfirmationDestination
 import com.hfut.schedule.ui.nav.destination.ProgramDestination
+import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -95,12 +96,11 @@ fun Program(
                 containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
             ) {
                 NoPadding {
-                    FilledTonalIconButton(
+                    QuickButtonForSearchScreen(
                         shape = NoneRoundShape,
                         onClick = {
                             navController.push(dest)
-                        },
-                        modifier = Modifier.size(30.dp)
+                        }
                     ) {
                         Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
                     }

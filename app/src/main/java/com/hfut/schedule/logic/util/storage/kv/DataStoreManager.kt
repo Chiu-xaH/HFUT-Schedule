@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.model.enumeration.FocusSchoolCardQuickButton
 import com.xah.common.logic.model.CampusRegion
 import com.hfut.schedule.logic.model.enumeration.Language
 import com.hfut.schedule.logic.util.helper.getCampusRegion
@@ -199,7 +200,7 @@ object DataStoreManager : IDataStore {
     private val SHOW_FOCUS_SCHOOL_NET = booleanPreferencesKey("show_focus_school_net")
     private val SHOW_FOCUS_SCHOOL_CARD = booleanPreferencesKey("show_focus_school_card")
     private val SHOW_FOCUS_TODAY = booleanPreferencesKey("show_focus_today")
-    private val SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON = booleanPreferencesKey("show_focus_school_card_add_button")
+    private val FOCUS_SCHOOL_CARD_QUICK_BUTTON = intPreferencesKey("focus_school_card_quick_button")
     private val SHOW_FOCUS_GRADE = intPreferencesKey("show_focus_grade")
     private val CAN_USE = booleanPreferencesKey("can_use")
     private val UNI_APP_GRADE_COUNT = intPreferencesKey("uni_app_grade_count")
@@ -298,7 +299,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveEnableFocusElectric(value: Boolean) = saveValue(SHOW_FOCUS_ELECTRIC, value)
     suspend fun saveEnableFocusSchoolNet(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_NET, value)
     suspend fun saveEnableFocusSchoolCard(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD, value)
-    suspend fun saveEnableFocusSchoolCardAddButton(value: Boolean) = saveValue(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON, value)
+    suspend fun saveFocusSchoolCardQuickButton(value: FocusSchoolCardQuickButton) = saveValue(FOCUS_SCHOOL_CARD_QUICK_BUTTON, value.code)
     suspend fun saveEnableUse(value: Boolean) = saveValue(CAN_USE, value)
     suspend fun saveEnableShowFocusGrade(value: GradeAutoCheckMode) = saveValue(SHOW_FOCUS_GRADE, value.code)
     suspend fun saveUniAppGradeCount(value: Int) = saveValue(UNI_APP_GRADE_COUNT, value)
@@ -394,7 +395,7 @@ object DataStoreManager : IDataStore {
     val enableShowFocusElectric = getFlow(SHOW_FOCUS_ELECTRIC,true)
     val enableShowFocusSchoolNet = getFlow(SHOW_FOCUS_SCHOOL_NET,true)
     val enableShowFocusSchoolCard = getFlow(SHOW_FOCUS_SCHOOL_CARD,true)
-    val enableShowFocusSchoolCardAddButton = getFlow(SHOW_FOCUS_SCHOOL_CARD_ADD_BUTTON,true)
+    val focusSchoolCardQuickButton = getFlow(FOCUS_SCHOOL_CARD_QUICK_BUTTON,FocusSchoolCardQuickButton.ADD.code)
     val enableShowFocusGrade = getFlow(SHOW_FOCUS_GRADE,GradeAutoCheckMode.ONLY_VACATION.code)
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
     val enableUse = getFlow(CAN_USE, false)

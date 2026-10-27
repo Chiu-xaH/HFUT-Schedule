@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
+import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -75,9 +76,8 @@ fun Life() {
                 containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
             ) {
                 NoPadding {
-                    FilledTonalIconButton(
+                    QuickButtonForSearchScreen(
                         shape = NoneRoundShape,
-                        modifier = Modifier.size(30.dp),
                         onClick = {
                             navController.push(TermReportDestination)
                         }

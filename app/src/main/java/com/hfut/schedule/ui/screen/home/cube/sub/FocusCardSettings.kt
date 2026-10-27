@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
@@ -25,6 +27,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -36,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -43,10 +47,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.core.DataBaseManager
 import com.hfut.schedule.logic.database.util.insertSafely
-import com.xah.common.logic.model.CampusRegion
+import com.hfut.schedule.logic.model.enumeration.FocusSchoolCardQuickButton
 import com.hfut.schedule.logic.util.helper.getCampusRegion
-import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
-import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -55,6 +57,8 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeResponse
+import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinFeeType
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -80,12 +84,14 @@ import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.model.CampusRegion
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.navigation.util.LocalNavController
@@ -104,10 +110,10 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
     val enableShowFocusElectric by DataStoreManager.enableShowFocusElectric.collectAsState(true)
     val enableShowFocusSchoolNet by DataStoreManager.enableShowFocusSchoolNet.collectAsState(true)
     val enableShowFocusSchoolCard by DataStoreManager.enableShowFocusSchoolCard.collectAsState(true)
-    val enableShowFocusSchoolCardAddButton by DataStoreManager.enableShowFocusSchoolCardAddButton.collectAsState(true)
     val enableShowFocusGrade by DataStoreManager.enableShowFocusGrade.collectAsState(GradeAutoCheckMode.ONLY_VACATION.code)
     val enableShowFocusWeatherWarn by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
     val electricUseHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
+    val focusSchoolCardQuickButton by DataStoreManager.focusSchoolCardQuickButton.collectAsState(FocusSchoolCardQuickButton.NONE.code)
 
     val scope = rememberCoroutineScope()
 
@@ -125,28 +131,42 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                     headlineContent = { Text(text = "一卡通")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = EMPTY_STRING)},
                     trailingContent = {
-                        Row {
-                            Switch(
-                                checked = enableShowFocusSchoolCardAddButton,
-                                onCheckedChange = {
-                                    scope.launch {
-                                        DataStoreManager.saveEnableFocusSchoolCardAddButton(!enableShowFocusSchoolCardAddButton)
-                                    }
-                                },
-                                thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = EMPTY_STRING)}
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Switch(
-                                checked = enableShowFocusSchoolCard,
-                                onCheckedChange = {
-                                    scope.launch {
-                                        DataStoreManager.saveEnableFocusSchoolCard(!enableShowFocusSchoolCard)
-                                    }
+                        Switch(
+                            checked = enableShowFocusSchoolCard,
+                            onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveEnableFocusSchoolCard(!enableShowFocusSchoolCard)
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
                 )
+                DividerTextExpandedWith("聚焦右侧显示的按钮") {
+                    RowHorizontal (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .padding(bottom = APP_HORIZONTAL_DP)
+                    ) {
+                        Surface(
+                            modifier = Modifier.weight(.5f),
+                            color = cardNormalColor(),
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                SchoolCardItem(true)
+                            }
+                        }
+                    }
+                    CustomSingleChoiceRow<FocusSchoolCardQuickButton>(
+                        selected = focusSchoolCardQuickButton,
+                        modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                    ) {
+                        scope.launch {
+                            DataStoreManager.saveFocusSchoolCardQuickButton(it)
+                        }
+                    }
+                }
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "寝室电费")} ,

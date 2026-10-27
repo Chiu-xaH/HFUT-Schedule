@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
+import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
 
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.container.component.base.SharedContainer
@@ -82,12 +83,11 @@ fun Washing(
                 containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
             ) {
                 NoPadding {
-                    FilledTonalIconButton(
+                    QuickButtonForSearchScreen(
                         shape = NoneRoundShape,
-                        modifier = Modifier.size(30.dp),
                         onClick = {
                             navController.push(HaiLeWashingDestination)
-                        },
+                        }
                     ) {
                         Icon(
                             painterResource(R.drawable.search),

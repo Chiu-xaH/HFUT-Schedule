@@ -22,6 +22,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
 
 
 import com.xah.common.ui.component.text.ScrollText
@@ -42,11 +43,10 @@ fun LePaoYun() {
             Icon(painterResource(icon), contentDescription = null)
         },
         trailingContent = {
-            FilledTonalIconButton(
-                modifier = Modifier.size(30.dp),
+            QuickButtonForSearchScreen(
                 onClick = {
                     Starter.startAppLaunch(Starter.AppPackages.LE_PAO, context)
-                },
+                }
             ) { Icon( painterResource(R.drawable.directions_run), contentDescription = null, modifier = Modifier.size(20.dp)) }
         },
         modifier = Modifier.clickable {
