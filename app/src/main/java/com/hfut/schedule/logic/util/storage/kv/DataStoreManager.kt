@@ -51,13 +51,13 @@ import kotlinx.coroutines.withContext
 /**
  * 键值对存储
  *
- * 尽量别用SP了，要弃用了，存键值对来这里存
+ * 尽量别用[SharedPrefs]了，要弃用了，存键值对来这里存
  *
  * 需要数据变更时，在key的尾部添加版本号。例如  enable_new_style_bottom_bar_v2
  *
- * 对于多个选项的存储，有封装好的BaseChoice，可以去看一下怎么用的，然后子类就不要放在这里了目前已有的我后续也会清理出去
+ * 对于多个选项的存储，有封装好的[BaseChoice]，可以去看一下怎么用的，然后子类就不要放在这里了目前已有的我后续也会清理出去
  *
- * 对于大文本的存储，建议去LargeDataStoreManager
+ * 对于大文本的存储，建议去[LargeStringDataManager]
  *
  * 对于简单的List、Map等，允许在这里存储
  *
