@@ -95,15 +95,13 @@ fun Program(
                 shape = CircleShape,
                 containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
             ) {
-                NoPadding {
-                    QuickButtonForSearchScreen(
-                        shape = NoneRoundShape,
-                        onClick = {
-                            navController.push(dest)
-                        }
-                    ) {
-                        Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
+                QuickButtonForSearchScreen(
+                    shape = NoneRoundShape,
+                    onClick = {
+                        navController.push(dest)
                     }
+                ) {
+                    Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
                 }
             }
         },

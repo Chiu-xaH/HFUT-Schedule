@@ -146,7 +146,7 @@ object GlobalUiStateHolder {
         SearchAppBeanLite(44, R.string.navigation_label_hui_xin ,R.drawable.corporate_fare),
         SearchAppBeanLite(45, SecondClassDestination.title.resId,SecondClassDestination.icon),
         SearchAppBeanLite(46, CommunityAppointmentDestination.title.resId,CommunityAppointmentDestination.icon),
-        SearchAppBeanLite(47, AiDestination.title.resId,AiDestination.icon),
+//        SearchAppBeanLite(47, AiDestination.title.resId,AiDestination.icon),
         SearchAppBeanLite(48, TrackDestination.title.resId,TrackDestination.icon),
         SearchAppBeanLite(49, R.string.navigation_label_express,R.drawable.package_2),
         SearchAppBeanLite(50, R.string.navigation_label_feedback,R.drawable.voice_selection),

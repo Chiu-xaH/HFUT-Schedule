@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
@@ -152,7 +153,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 )
             }
         }
-        BottomTip("平台管理请联系 zsh0908@outlook.com")
+        BottomTip("平台管理请联系 ${MyApplication.DEVELOPER_EMAIL}")
         InnerPaddingHeight(innerPadding,false)
     }
 }

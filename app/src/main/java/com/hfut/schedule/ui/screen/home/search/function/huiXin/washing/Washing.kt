@@ -82,19 +82,17 @@ fun Washing(
                 shape = CircleShape,
                 containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
             ) {
-                NoPadding {
-                    QuickButtonForSearchScreen(
-                        shape = NoneRoundShape,
-                        onClick = {
-                            navController.push(HaiLeWashingDestination)
-                        }
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.search),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
+                QuickButtonForSearchScreen(
+                    shape = NoneRoundShape,
+                    onClick = {
+                        navController.push(HaiLeWashingDestination)
                     }
+                ) {
+                    Icon(
+                        painterResource(R.drawable.search),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         },

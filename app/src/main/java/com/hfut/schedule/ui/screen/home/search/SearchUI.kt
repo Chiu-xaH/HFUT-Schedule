@@ -260,7 +260,7 @@ fun SearchScreen(
                 SearchAppBean(44,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 合肥" , { HuiXin() }, WebViewDestination.getKey(getHuiXinURL())),
                 SearchAppBean(45,"${SecondClassDestination.title.asString(context)}", { SecondClass() }, SecondClassDestination.key),
                 SearchAppBean(46,"${CommunityAppointmentDestination.title.asString(context)} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment() }, CommunityAppointmentDestination.key),
-                SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI() }, AiDestination.key),
+//                SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI() }, AiDestination.key),
                 SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track() }, TrackDestination.key),
                 SearchAppBean(49,"拼多多 淘宝 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() },ExpressWindow.key),
                 SearchAppBean(50,"${context.getString(R.string.navigation_label_feedback)} 反馈 建议", { Feedback() }, FeedbackWindow.key),
@@ -378,10 +378,12 @@ fun QuickButtonForSearchScreen(
     shape : Shape = IconButtonDefaults.filledShape,
     content : @Composable () -> Unit,
 ) {
-    FilledTonalIconButton(
-        modifier = modifier.size(30.dp),
-        shape = shape,
-        onClick = onClick,
-        content = content
-    )
+    NoPadding {
+        FilledTonalIconButton(
+            modifier = modifier.size(30.dp),
+            shape = shape,
+            onClick = onClick,
+            content = content
+        )
+    }
 }

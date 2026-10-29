@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.container.component.base.sharedContainer
 import com.xah.navigation.util.LocalNavController
@@ -50,65 +51,61 @@ fun SchoolCardItem(isFromFocus : Boolean) {
     val navController = LocalNavController.current
     val cardValue by remember { derivedStateOf { GlobalUiStateHolder.cardValue } }
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
-    val context = LocalContext.current
+    val nullStr = remember { "--" }
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
-        if(text == "00") { text = context.getString(R.string.navigation_label_school_card_not_login) }
+        if(text == "00") { text = nullStr }
     }
 
     val focusSchoolCardQuickButton by DataStoreManager.focusSchoolCardQuickButton.collectAsState(FocusSchoolCardQuickButton.NONE.code)
+    val color = if (text != null && text != nullStr) {
+        if(text!!.length <= 4) {
+            MaterialTheme.colorScheme.error
+        } else {
+            LocalContentColor.current
+        }
+    } else {
+        LocalContentColor.current
+    }
+
 
     TransplantListItem(
         color = cardNormalColor(),
         headlineContent = {
-            val color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                if(text!!.length <= 4) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    LocalContentColor.current
-                }
-            } else {
-                LocalContentColor.current
-            }
-            Row {
-                Text(
-                    text = "￥",
-                    color = color
-                )
+            if(!isFromFocus || focusSchoolCardQuickButton != FocusSchoolCardQuickButton.NONE.code) {
                 ScrollText(
-                    text = "$text",
+                    text = "￥$text",
                     color = color
                 )
+            } else {
+                Row {
+                    Text(
+                        text = "￥",
+                        color = color
+                    )
+                    ScrollText(
+                        text = "$text",
+                        color = color
+                    )
+                }
             }
         },
         overlineContent = {
             ScrollText(
-                if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
+                if (text != null && text != nullStr) {
                     if(text!!.length <= 4){
                         stringResource(R.string.navigation_label_school_card_warn)
                     } else stringResource(R.string.navigation_label_school_card)
                 } else stringResource(R.string.navigation_label_school_card),
-                color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                    if(text!!.length <= 4){
-                        MaterialTheme.colorScheme.error
-                    } else LocalContentColor.current
-                } else LocalContentColor. current
+                color = color
             )
         },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.credit_card),
                 contentDescription = "Localized description",
-                tint = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
-                    if(text!!.length <= 4) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        LocalContentColor.current
-                    }
-                } else {
-                    LocalContentColor. current
-                }
+                tint = color
             )
         },
         trailingContent= {

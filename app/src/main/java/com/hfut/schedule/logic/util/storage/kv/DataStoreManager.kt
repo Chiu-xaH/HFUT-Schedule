@@ -395,7 +395,7 @@ object DataStoreManager : IDataStore {
     val enableShowFocusElectric = getFlow(SHOW_FOCUS_ELECTRIC,true)
     val enableShowFocusSchoolNet = getFlow(SHOW_FOCUS_SCHOOL_NET,true)
     val enableShowFocusSchoolCard = getFlow(SHOW_FOCUS_SCHOOL_CARD,true)
-    val focusSchoolCardQuickButton = getFlow(FOCUS_SCHOOL_CARD_QUICK_BUTTON,FocusSchoolCardQuickButton.ADD.code)
+    val focusSchoolCardQuickButton = getFlow(FOCUS_SCHOOL_CARD_QUICK_BUTTON,FocusSchoolCardQuickButton.NONE.code)
     val enableShowFocusGrade = getFlow(SHOW_FOCUS_GRADE,GradeAutoCheckMode.ONLY_VACATION.code)
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
     val enableUse = getFlow(CAN_USE, false)

@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.component.text.BottomTip
+import com.xah.common.ui.component.text.ScrollText
 
 private fun formatFlow(mb: Double): String {
     return if (mb >= 1024) {
@@ -120,7 +121,7 @@ fun SchoolNetHistoryUsage(vm: NetWorkViewModel) {
                 },
                 modifier = Modifier.weight(1/3f)
             ) {
-                Text(
+                ScrollText(
                     selectedYear?.let { "${it}年" } ?: "${DateTimeManager.Date_yyyy}年"
                 )
             }

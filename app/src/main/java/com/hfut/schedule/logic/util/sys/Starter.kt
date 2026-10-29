@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.util.sys
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -18,6 +19,7 @@ import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.FixActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.util.WebViewActivity
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.enumeration.BottomBarItems
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.network.api.model.Constant
@@ -25,14 +27,12 @@ import com.hfut.schedule.network.api.util.WebVpnConvertor
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hfut.schedule.ui.util.getPureUrl
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
 import com.xah.navigation.controller.NavigationController
-import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
-import com.xah.navigation.model.anim.TransitionEffect
 
 
 object Starter {
@@ -65,7 +65,11 @@ object Starter {
             if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
                 showToast("检测到为鸿蒙NEXT，启动外部应用失败")
             } else {
-                showToast("启动外部应用失败")
+                if(e is ActivityNotFoundException) {
+                    showToast("未找到${app.appName}应用")
+                } else {
+                    showToast("启动外部应用失败")
+                }
             }
         }
     }
@@ -78,6 +82,9 @@ object Starter {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
+        } catch (e : ActivityNotFoundException) {
+            LogUtil.error(e)
+            showToast("未找到可用的WLAN设置应用")
         } catch (e: Exception) {
             LogUtil.error(e)
             showToast("打开WLAN设置失败")
@@ -96,6 +103,9 @@ object Starter {
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+        } catch (e : ActivityNotFoundException) {
+            LogUtil.error(e)
+            showToast("未找到${AppPackages.PDD.appName}应用")
         } catch (e : Exception) {
             LogUtil.error(e)
             showToast("打开${AppPackages.PDD.appName}失败")
@@ -111,6 +121,9 @@ object Starter {
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+        } catch (e : ActivityNotFoundException) {
+            LogUtil.error(e)
+            showToast("未找到${AppPackages.TAO_BAO.appName}应用")
         } catch (e : Exception) {
             LogUtil.error(e)
             showToast("打开${AppPackages.TAO_BAO.appName}失败")
@@ -125,20 +138,24 @@ object Starter {
             val intent = Intent(Intent.ACTION_DEFAULT, url.toUri())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+        } catch (e : ActivityNotFoundException) {
+            LogUtil.error(e)
+            showToast("未找到${getName(url,appName)}应用")
         } catch (e : Exception) {
             LogUtil.error(e)
-            val name = if(appName == null) {
-                val scheme = url.substringBefore("://")
-                 when(scheme) {
-                    "alipays" -> "支付宝"
-                    // ...
-                    else -> scheme
-                }
-            } else appName
-            
-            showToast("打开${name}失败")
+            showToast("打开${getName(url,appName)}失败")
         }
     }
+
+    private fun getName(url : String,appName : String? = null) = if(appName == null) {
+        val scheme = url.substringBefore("://")
+        when(scheme) {
+            "alipays" -> "支付宝"
+            // ...
+            else -> scheme
+        }
+    } else appName
+
     //传入网页URL打开
     @JvmStatic
     fun startWebUrlOuter(context: Context, url : String) {
@@ -148,6 +165,9 @@ object Starter {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(it)
+        } catch (e : ActivityNotFoundException) {
+            LogUtil.error(e)
+            showToast("未找到可用的浏览器应用")
         } catch (e : Exception) {
             LogUtil.error(e)
             showToast("启动浏览器失败")
@@ -257,14 +277,17 @@ object Starter {
     @JvmStatic
     fun emailMe(context: Context) {
         try {
-            val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
+            val it = Intent(Intent.ACTION_SENDTO, "mailto:${MyApplication.DEVELOPER_EMAIL}".toUri())
             if (context !is Activity) {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(it)
+        } catch (e : ActivityNotFoundException) {
+            LogUtil.error(e)
+            showToast("未找到可用的邮箱应用，请下载后向${MyApplication.DEVELOPER_EMAIL}发送邮件")
         } catch (e : Exception) {
             LogUtil.error(e)
-            showToast("启动邮箱应用失败，请向zsh0908@outlook.com发送邮件")
+            showToast("启动邮箱应用失败，请向${MyApplication.DEVELOPER_EMAIL}发送邮件")
         }
     }
     @Deprecated("为KMP适配计划的开始做铺垫，即将被合入至SharedNav统一管理")

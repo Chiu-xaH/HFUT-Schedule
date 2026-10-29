@@ -138,6 +138,7 @@ class MyApplication : Application() {
         const val APP_NAME = "聚在工大"
         // 邮箱后缀
         const val EMAIL = "@mail.hfut.edu.cn"
+        const val DEVELOPER_EMAIL = "zsh0908@outlook.com"
         // Activity栈
         private val activities = Collections.synchronizedList(mutableListOf<Activity>())
         // 安全地退出App
