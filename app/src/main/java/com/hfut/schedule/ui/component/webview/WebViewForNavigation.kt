@@ -29,6 +29,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
+import com.hfut.schedule.ui.util.FORCE_DARK_JS
 import com.hfut.schedule.ui.util.WebViewBackHandler
 import com.hfut.schedule.ui.util.WebViewBackIcon
 import com.hfut.schedule.ui.util.WebViewContent
@@ -153,15 +154,19 @@ fun WebViewScreenForNavigation(
                 }
 
                 webViewClient = object : WebViewClient() {
+                    override fun onPageCommitVisible(view: WebView?, url: String?) {
+                        super.onPageCommitVisible(view, url)
+                        view?.evaluateJs(isDark, webViewDark, bottom) {
+                            topColor = it
+                        }
+                    }
+
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
                         // 更新
                         webView = view
                         updateUrl(url) {
                             currentUrl = it
-                        }
-                        view?.evaluateJs(isDark, webViewDark, bottom) {
-                            topColor = it
                         }
                         loading = false
                     }

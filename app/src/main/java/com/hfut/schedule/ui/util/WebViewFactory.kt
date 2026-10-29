@@ -755,6 +755,10 @@ fun WebView.evaluateJs(
     onColorChange : (Color?) -> Unit
 ) {
     if (isDark && webViewDark) {
+        // 办事大厅不适配
+        if(url?.contains(Constant.OFFICE_HALL_URL) == true) {
+            return
+        }
         val js = FORCE_DARK_JS.trimIndent()
         this.evaluateJavascript(js, null)
     }
