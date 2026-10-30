@@ -1,7 +1,8 @@
 package com.hfut.schedule.network.api.model.response.json.qweather
 
 data class QWeatherNowResponse(
-    val now : QWeatherNow
+    val now : QWeatherNow,
+    val fxLink : String?
 )
 
 data class QWeatherNow(

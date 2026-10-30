@@ -44,8 +44,10 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
+import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
 import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
+import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
 import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
 import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
@@ -71,7 +73,10 @@ fun VersionInfo() {
     VersionInfoCard()
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
+        UpdateItems("新增 生活服务中的实时天气和天气预警支持点击查看详情",to = To.Screen(LifeDestination))//
+        UpdateItems("新增 支持调整聚焦中一卡通右侧按钮的功能","位于 选项-偏好与配置-聚焦-聚焦首卡片功能",to = To.Screen(SettingsFocusCardDestination))
         UpdateItems("修复 课程表自由选择周数后顶部日期值错误的Bug")//
+        UpdateItems("优化 部分页面的显示")//
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
 //        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination()))

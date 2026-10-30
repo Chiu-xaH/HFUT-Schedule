@@ -356,7 +356,7 @@ fun FocusCard(
                         exit = AppAnimationManager.fadeAnimation.exit,
                         enter = AppAnimationManager.fadeAnimation.enter
                     ) {
-                        val list = (uiStateWarn as NetworkUiState.Success).data
+                        val list = (uiStateWarn as NetworkUiState.Success).data.warning
                         AnimatedVisibility(
                             visible = list.isNotEmpty(),
                             exit = AppAnimationManager.fadeAnimation.exit,

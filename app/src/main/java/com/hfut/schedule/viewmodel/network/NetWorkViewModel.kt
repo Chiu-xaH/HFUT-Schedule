@@ -128,6 +128,8 @@ import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDet
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNowResponse
+import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarnResponse
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
 import com.xah.common.logic.util.EMPTY_STRING
 
@@ -563,9 +565,9 @@ class NetWorkViewModel() : ViewModel() {
 
     fun checkApplying(token : String, id : String, isOk : Boolean) = CommunityRepository.checkApplying(token,id,isOk)
 
-    val weatherWarningData = UiStateHolder<List<QWeatherWarning>>()
+    val weatherWarningData = UiStateHolder<QWeatherWarnResponse>()
     suspend fun getWeatherWarn(campus: CampusRegion) = QWeatherRepository.getWeatherWarn(campus,weatherWarningData)
-    val qWeatherResult = UiStateHolder<QWeatherNow>()
+    val qWeatherResult = UiStateHolder<QWeatherNowResponse>()
     suspend fun getWeather(campus: CampusRegion) = QWeatherRepository.getWeather(campus,qWeatherResult)
 
     val loginSchoolNetResponse = UiStateHolder<Boolean>()

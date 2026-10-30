@@ -18,7 +18,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 object QWeatherRepository : QWeatherRepositoryInf {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
-    override suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<List<QWeatherWarning>>) =
+    override suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : UiStateHolder<QWeatherWarnResponse>) =
         launchRequestState(
             holder = weatherWarningData,
             request = { qWeather.getWeatherWarn(locationID = getLocation(campus)) },
@@ -26,11 +26,11 @@ object QWeatherRepository : QWeatherRepositoryInf {
         )
 
     @JvmStatic
-    private fun parseWeatherWarn(json : String) : List<QWeatherWarning> = try {
-        GsonInstance.fromJson(json, QWeatherWarnResponse::class.java).warning
+    private fun parseWeatherWarn(json : String) : QWeatherWarnResponse = try {
+        GsonInstance.fromJson(json, QWeatherWarnResponse::class.java)
     } catch (e : Exception) { throw e }
 
-    override suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNow>) =
+    override suspend fun getWeather(campus: CampusRegion, qWeatherResult : UiStateHolder<QWeatherNowResponse>) =
         launchRequestState(
             holder = qWeatherResult,
             request = { qWeather.getWeather(locationID = getLocation(campus)) },
@@ -38,9 +38,9 @@ object QWeatherRepository : QWeatherRepositoryInf {
         )
 
     @JvmStatic
-    private fun parseWeatherNow(json : String) : QWeatherNow = try {
+    private fun parseWeatherNow(json : String) : QWeatherNowResponse = try {
         if(json.contains(StatusCode.OK.code.toString()))
-            GsonInstance.fromJson(json, QWeatherNowResponse::class.java).now
+            GsonInstance.fromJson(json, QWeatherNowResponse::class.java)
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
