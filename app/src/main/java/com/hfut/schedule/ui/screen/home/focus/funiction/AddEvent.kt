@@ -94,6 +94,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.core.DataBaseManager
+import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.repository.CustomEventRepository
 import com.hfut.schedule.logic.database.util.CustomEventMapper
@@ -105,6 +106,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.util.getUinAppCampusId
@@ -153,7 +155,9 @@ import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.model.Campus
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.isNotEmptyAndBlank
+import com.xah.common.logic.util.isNotNullAndEmptyAndBlank
 import com.xah.common.ui.component.status.CustomSingleChoiceRow
 import com.xah.common.ui.component.status.LoadingUI
 import com.xah.common.ui.component.text.BottomTip
@@ -666,7 +670,7 @@ fun AddEventUI(
         Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.timer),null)
     }
 
-    /* TODO P2 数据回填至Model
+    /* TODO P3 Supabase
     LaunchedEffect(updateLoading) {
         if(isSupabase && updateLoading) {
             val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
@@ -778,36 +782,42 @@ fun AddEventUI(
              */
             Button(
                 onClick = {
-                    /* TODO 点击事件
                     if(!isSupabase) {
                         scope.launch {
                             async {
-                                val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
-                                    CustomEventDTO(
-                                        title = title,
-                                        dateTime = it,
-                                        type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
-                                        description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
-                                        remark = remark,
-                                        supabaseId = null,
-                                        groupId = null
-                                    )
-                                }
-                                if(enabled && entity != null) {
-                                    // 添加到数据库
-                                    val targetEntity = CustomEventMapper.dtoToEntity(entity)
-                                    val result = async {
-                                        if (useCreate) {
-                                            DataBaseManager.customEventDao.insert(targetEntity).toInt()
-                                        } else {
-                                            val sId = editedData!!.supabaseId
-                                            DataBaseManager.customEventDao.update(targetEntity.copy(id = eventId, supabaseId = sId))
+                                val isSingle = timeParts.size == 1
+                                timeParts.forEach { item ->
+                                    with(item) {
+                                        val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
+                                            CustomEventDTO(
+                                                title = title,
+                                                dateTime = it,
+                                                type = if (isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
+                                                description = description?.let { desp -> if (desp.isNotEmpty() && desp.isNotBlank()) desp else null },
+                                                remark = remark!!,
+                                                supabaseId = null,
+                                                groupId = if(isSingle) null else groupId
+                                            )
                                         }
-                                    }.await()
-                                    if(result <= 0) {
-                                        showToast("执行失败")
-                                    } else {
-                                        showToast("执行成功")
+                                        if(enabled && entity != null) {
+                                            // 添加到数据库
+                                            val targetEntity = CustomEventMapper.dtoToEntity(entity)
+                                            val result = async {
+                                                if (useCreate) {
+                                                    DataBaseManager.customEventDao.insert(targetEntity).toInt()
+                                                } else {
+                                                    // TODO p2 更新时怎么取supabaseId和eventId
+                                                    -1
+//                                                    val sId = editedData!!.supabaseId
+//                                                    DataBaseManager.customEventDao.update(targetEntity.copy(id = eventId, supabaseId = sId))
+                                                }
+                                            }.await()
+                                            if(result <= 0) {
+                                                showToast("执行失败")
+                                            } else {
+                                                showToast("执行成功")
+                                            }
+                                        }
                                     }
                                 }
                             }.await()
@@ -818,7 +828,6 @@ fun AddEventUI(
                         if(enabled)
                             showSupabaseDialog = true
                     }
-                     */
                 },
 //                shape = MaterialTheme.shapes.medium,
                 enabled = updateLoading || enabled,
@@ -882,15 +891,11 @@ fun AddEventUI(
                             enabled = enabledList.all { it } && title.isNotEmptyAndBlank()
                         }
                     }
-                    // TODO bug手动刷新才预填充
+                    // TODO p3 改成直接数据类持有mutableStat3Of，bug手动刷新才预填充 bug手动切换tab才更新enabled
                     timeParts.forEachIndexed { index, item ->
                         var thisDescription by remember { mutableStateOf(item.description ?: EMPTY_STRING) }
                         var thisTime by remember { mutableStateOf(item.time) }
                         var thisDate by remember { mutableStateOf(item.date) }
-                        val thisRemark by produceState(initialValue = EMPTY_STRING, key1 = thisDate, key2 = thisTime) {
-                            // remark自动生成
-                            value = generateRemark(true,thisDate,thisTime)
-                        }
                         var thisShowSelectDateDialog by remember { mutableStateOf(false) }
                         var thisShowSelectTimeDialog by remember { mutableStateOf(false) }
 
@@ -909,8 +914,24 @@ fun AddEventUI(
 
                         // 每一个TImePart都是合法的
                         LaunchedEffect(thisTime,thisDate) {
-                            item.enabled = thisTime.first.isNotEmpty() && thisTime.second.isNotEmpty() && thisDate.first.isNotEmpty() && thisDate.second.isNotEmpty() && thisRemark.isNotEmptyAndBlank()
+                            // remark自动生成
+                            val target = generateRemark(true,thisDate,thisTime)
+                            item.remark = target
+                            item.enabled = item.time.first.isNotEmpty() && item.time.second.isNotEmpty() && item.date.first.isNotEmpty() && item.date.second.isNotEmpty() && item.remark.isNotNullAndEmptyAndBlank()
                         }
+                        LaunchedEffect(thisTime) {
+                            item.time = thisTime
+                        }
+                        LaunchedEffect(thisDate) {
+                            item.date = thisDate
+                        }
+                        LaunchedEffect(thisDate) {
+                            item.date = thisDate
+                        }
+                        LaunchedEffect(thisDescription) {
+                            item.description = thisDescription
+                        }
+
 
                         CustomCard(color = cardNormalColor()) {
                             Column {
@@ -1001,11 +1022,13 @@ fun AddEventUI(
                         onClick = {
                             timeParts.add(TimePart())
                         },
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = APP_HORIZONTAL_DP),
                         shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.filledTonalButtonColors(containerColor = cardNormalColor())
                     ) {
-                        Text("添加")
+                        Text("添加时间段")
                     }
                 }
             } else {
@@ -1347,7 +1370,9 @@ fun AddEventUI(
                 BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
             }
             InnerPaddingHeight(innerPadding,false)
-            Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).appNavigationBarPadding())
+            Spacer(Modifier
+                .height(bottomHeight + APP_HORIZONTAL_DP)
+                .appNavigationBarPadding())
         }
     }
 }
@@ -1587,10 +1612,10 @@ private fun EventDatePickerDialog(
 }
 
 private data class TimePart(
-    val description : String? = null,
-    val remark : String? = null,
-    val date : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
-    val time : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
+    var description : String? = null,
+    var remark : String? = null,
+    var date : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
+    var time : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
     val id : String = UUID.randomUUID().toString()
 ) {
     var enabled : Boolean by mutableStateOf(false)
