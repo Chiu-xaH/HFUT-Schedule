@@ -154,9 +154,9 @@ fun SelectCourseScreen(
             return@m
         }
         val result = vm.verify(cookie)
-        if(result != StatusCode.REDIRECT.code) {
-            showToast("验证出现问题")
-        }
+//        if(result != StatusCode.REDIRECT.code) {
+//            showToast("验证出现问题")
+//        }
         vm.selectCourseData.clear()
         vm.getSelectCourse(cookie)
     }

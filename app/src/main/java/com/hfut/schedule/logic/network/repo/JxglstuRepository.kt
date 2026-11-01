@@ -550,7 +550,7 @@ object JxglstuRepository : JxglstuRepositoryInf {
         holder = holder,
         request = { jxglstu.getStudentId(cookie) },
         transformRedirect = { headers -> parseStudentId(headers) },
-        transformSuccess = { _, _ -> -1 }
+        transformSuccess = { _, html -> parseStudentIdForMulti(html) }
     )
     @JvmStatic
     private fun parseStudentId(headers: Headers): Int {
@@ -563,6 +563,23 @@ object JxglstuRepository : JxglstuRepositoryInf {
             } else {
                 throw Exception(headers["Location"].toString())
             }
+        } catch (e : Exception) {
+            throw e
+        }
+    }
+    // 拥有多个学籍，一般是创新班
+    @JvmStatic
+    private fun parseStudentIdForMulti(html: String): Int {
+        try {
+            val document = Jsoup.parse(html)
+
+            val value = document
+                .selectFirst(".student-panel-block button[value]")
+                ?.attr("value")
+                ?.trim()
+                ?.takeIf { it.matches(Regex("""\d+""")) }
+                ?: error("未找到StudentId，请联系开发者")
+            return value.toInt()
         } catch (e : Exception) {
             throw e
         }
