@@ -28,6 +28,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +47,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
@@ -58,6 +61,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -85,9 +89,11 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -118,6 +124,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.ComponentStack
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -649,7 +656,10 @@ fun AddEventUI(
                 date = Pair(
                     "${preStart.year}-${parseTimeItem(preStart.month)}-${parseTimeItem(preStart.day)}",
                     "${preEnd.year}-${parseTimeItem(preEnd.month)}-${parseTimeItem(preEnd.day)}"
-                )
+                ),
+                eventId = it.id,
+                supabaseId = it.supabaseId,
+                groupId = it.groupId
             )
             timeParts.add(bean)
         }
@@ -767,19 +777,31 @@ fun AddEventUI(
                 )
                 .appNavigationBarPadding()
         ){
-            /* TODO P3 堆叠UI
+            val dividerColor = defaultDividerColor().compositeOver(MaterialTheme.colorScheme.surface)
             OutlinedCard(
                 shape = MaterialTheme.shapes.medium,
+                border = BorderStroke(1.dp, dividerColor),
+                colors = CardDefaults.outlinedCardColors(containerColor = dividerColor),
                 modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
             ) {
-                TransplantListItem(
-                    headlineContent = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                    leadingContent = typeIcon,
-                    overlineContent = { Text(remark,maxLines = 1,overflow = TextOverflow.Ellipsis) },
-                    supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description,maxLines = 1,overflow = TextOverflow.Ellipsis) } } else null,
-                )
+                val firstIdx = timeParts.indexOfFirst { it.eventId == eventId }.takeIf { it != -1 } ?: 0
+                ComponentStack(timeParts, initialIndex = firstIdx) { item ->
+                    with(item) {
+                        TransplantListItem(
+                            headlineContent = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            leadingContent = typeIcon,
+                            overlineContent = { Text(remark ?: EMPTY_STRING,maxLines = 1,overflow = TextOverflow.Ellipsis) },
+                            supportingContent =  if(description.isNotNullAndEmptyAndBlank()) {
+                                { Text(description!!,maxLines = 1,overflow = TextOverflow.Ellipsis) }
+                            } else {
+                                null
+                            },
+                            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+                            color = MaterialTheme.colorScheme.surface
+                        )
+                    }
+                }
             }
-             */
             Button(
                 onClick = {
                     if(!isSupabase) {
@@ -806,10 +828,7 @@ fun AddEventUI(
                                                 if (useCreate) {
                                                     DataBaseManager.customEventDao.insert(targetEntity).toInt()
                                                 } else {
-                                                    // TODO p2 更新时怎么取supabaseId和eventId
-                                                    -1
-//                                                    val sId = editedData!!.supabaseId
-//                                                    DataBaseManager.customEventDao.update(targetEntity.copy(id = eventId, supabaseId = sId))
+                                                    DataBaseManager.customEventDao.update(targetEntity.copy(id = item.eventId!!, supabaseId = item.supabaseId, groupId = item.groupId))
                                                 }
                                             }.await()
                                             if(result <= 0) {
@@ -829,7 +848,7 @@ fun AddEventUI(
                             showSupabaseDialog = true
                     }
                 },
-//                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.medium,
                 enabled = updateLoading || enabled,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -891,7 +910,7 @@ fun AddEventUI(
                             enabled = enabledList.all { it } && title.isNotEmptyAndBlank()
                         }
                     }
-                    // TODO p3 改成直接数据类持有mutableStat3Of，bug手动刷新才预填充 bug手动切换tab才更新enabled
+                    // TODO p2 改成直接数据类持有mutableStat3Of，bug手动刷新才预填充 bug手动切换tab才更新enabled
                     timeParts.forEachIndexed { index, item ->
                         var thisDescription by remember { mutableStateOf(item.description ?: EMPTY_STRING) }
                         var thisTime by remember { mutableStateOf(item.time) }
@@ -1616,7 +1635,9 @@ private data class TimePart(
     var remark : String? = null,
     var date : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
     var time : Pair<String,String> = Pair(EMPTY_STRING,EMPTY_STRING),
-    val id : String = UUID.randomUUID().toString()
+    val eventId : Int? = null,
+    val supabaseId : Int? = null,
+    val groupId : String? = null
 ) {
     var enabled : Boolean by mutableStateOf(false)
 }
