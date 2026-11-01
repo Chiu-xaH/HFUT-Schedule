@@ -21,9 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -64,24 +62,37 @@ private fun DashedDivider(
     dashLength: Dp = 5.dp,
     gapLength: Dp = 5.dp,
 ) {
-    val stroke = with(LocalDensity.current) {
-        Stroke(
-            width = strokeWidth.toPx(),
-            pathEffect = PathEffect.dashPathEffect(
-                floatArrayOf(dashLength.toPx(), gapLength.toPx())
-            )
-        )
-    }
+    Canvas(modifier = modifier.fillMaxWidth().height(strokeWidth)) {
+        val strokeWidthPx = strokeWidth.toPx()
+        val dashLengthPx = dashLength.toPx()
+        val gapLengthPx = gapLength.toPx()
+        val stepPx = dashLengthPx + gapLengthPx
+        val centerY = size.height / 2f
 
-   Canvas (modifier = modifier.fillMaxWidth().height(strokeWidth)) {
-        drawLine(
-            color = color,
-            start = Offset(0f, size.height / 2),
-            end = Offset(size.width, size.height / 2),
-            strokeWidth = stroke.width,
-            pathEffect = stroke.pathEffect
-        )
-   }
+        if (
+            strokeWidthPx <= 0f ||
+            dashLengthPx <= 0f ||
+            gapLengthPx < 0f ||
+            stepPx <= 0f
+        ) {
+            return@Canvas
+        }
+
+        var startX = 0f
+        while (startX < size.width) {
+            drawLine(
+                color = color,
+                start = Offset(startX, centerY),
+                end = Offset(
+                    x = minOf(startX + dashLengthPx, size.width),
+                    y = centerY,
+                ),
+                strokeWidth = strokeWidthPx,
+                cap = StrokeCap.Butt,
+            )
+            startX += stepPx
+        }
+    }
 }
 
 
