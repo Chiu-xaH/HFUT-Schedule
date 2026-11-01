@@ -9,7 +9,7 @@ import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.isEmptyOrBlank
 
 object LanguageHelper {
-    private fun getCurrentAppLanguageTag(context: Context): String? {
+    fun getCurrentAppLanguageTag(context: Context = MyApplication.context): String? {
         val config = context.resources.configuration
         val currentLanguage: String? = config.locale.language
         return currentLanguage

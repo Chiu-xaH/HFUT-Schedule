@@ -30,6 +30,7 @@ suspend fun saveErrorLog() : Int = withContext(Dispatchers.IO) {
         val head = """
                 软件版本: ${AppVersion.getVersionName()} (${AppVersion.getVersionCode()})
                 系统版本: ${AppVersion.sdkInt}
+                设备: ${AppVersion.deviceName}
                 时间: ${dateTime.format(DateTimeManager.formatterAll)}
                 用户: ${getPersonInfo().getStudentIdFinally() ?: "游客"}
                 

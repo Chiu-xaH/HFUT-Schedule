@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -44,19 +46,23 @@ fun <T> ComponentStack(
         return
     }
 
-    var currentIndex by remember {
+    var currentIndex by rememberSaveable {
         mutableIntStateOf(initialIndex.coerceIn(items.indices))
     }
     var dragOffsetPx by remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(initialIndex, items.size) {
+        val targetIndex = initialIndex.coerceIn(items.indices)
+        if (currentIndex != targetIndex || dragOffsetPx != 0f) {
+            dragOffsetPx = 0f
+            currentIndex = targetIndex
+        }
+    }
     var pageHeightPx by remember { mutableFloatStateOf(0f) }
 
+    val density = LocalDensity.current
     val currentOnIndexChanged by rememberUpdatedState(onIndexChanged)
-    val velocityThresholdPx = with(LocalDensity.current) { 600.dp.toPx() }
-
-    if (currentIndex !in items.indices) {
-        currentIndex = currentIndex.coerceIn(items.indices)
-        dragOffsetPx = 0f
-    }
+    val velocityThresholdPx = with(density) { 600.dp.toPx() }
 
     fun targetIndexFor(offset: Float): Int? = when {
         offset < 0f && currentIndex < items.lastIndex -> currentIndex + 1
@@ -69,7 +75,6 @@ fun <T> ComponentStack(
 
         val proposed = dragOffsetPx + delta
         val hasTarget = targetIndexFor(proposed) != null
-
         dragOffsetPx = if (hasTarget) {
             proposed.coerceIn(-pageHeightPx, pageHeightPx)
         } else {
@@ -87,19 +92,15 @@ fun <T> ComponentStack(
                 onDragStopped = { velocity ->
                     val height = pageHeightPx
                     val targetIndex = targetIndexFor(dragOffsetPx)
-                    val movingTowardTarget =
-                        dragOffsetPx != 0f && sign(velocity) == sign(dragOffsetPx)
+                    val movingTowardTarget = dragOffsetPx != 0f && sign(velocity) == sign(dragOffsetPx)
                     val shouldSwitch = targetIndex != null && (
-                            abs(dragOffsetPx) >= height * 0.5f ||
-                                    movingTowardTarget && abs(velocity) >= velocityThresholdPx
-                            )
-
+                        abs(dragOffsetPx) >= height * 0.5f || movingTowardTarget && abs(velocity) >= velocityThresholdPx
+                    )
                     val destination = if (shouldSwitch) {
                         sign(dragOffsetPx) * height
                     } else {
                         0f
                     }
-
                     val remainingFraction = if (height > 0f) {
                         (abs(destination - dragOffsetPx) / height).coerceIn(0f, 1f)
                     } else {
@@ -119,10 +120,9 @@ fun <T> ComponentStack(
                     }
 
                     if (shouldSwitch) {
-                        val newIndex = requireNotNull(targetIndex)
-                        currentIndex = newIndex
+                        currentIndex = targetIndex
                         dragOffsetPx = 0f
-                        currentOnIndexChanged(newIndex)
+                        currentOnIndexChanged(targetIndex)
                     }
                 },
             ),
@@ -139,7 +139,6 @@ fun <T> ComponentStack(
                         translationY = dragOffsetPx
                         scaleX = scale
                         scaleY = scale
-                        transformOrigin = TransformOrigin.Center
                     },
                 ) {
                     content(items[currentIndex])
@@ -159,7 +158,6 @@ fun <T> ComponentStack(
                             translationY = targetTranslationY
                             scaleX = scale
                             scaleY = scale
-                            transformOrigin = TransformOrigin.Center
                         },
                     ) {
                         content(items[targetIndex])

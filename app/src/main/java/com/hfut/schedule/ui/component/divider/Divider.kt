@@ -45,7 +45,6 @@ fun PaddingHorizontalDivider(
     ) {
         DashedDivider(color = color)
     }
-
 } else {
     HorizontalDivider(
         modifier = Modifier.padding(
@@ -58,12 +57,12 @@ fun PaddingHorizontalDivider(
 
 
 @Composable
-fun DashedDivider(
+private fun DashedDivider(
+    modifier: Modifier = Modifier,
     color: Color = DividerDefaults.color,
     strokeWidth: Dp = 1.dp,
     dashLength: Dp = 5.dp,
     gapLength: Dp = 5.dp,
-    modifier: Modifier = Modifier.fillMaxWidth()
 ) {
     val stroke = with(LocalDensity.current) {
         Stroke(
@@ -74,7 +73,7 @@ fun DashedDivider(
         )
     }
 
-   Canvas (modifier = modifier.height(strokeWidth)) {
+   Canvas (modifier = modifier.fillMaxWidth().height(strokeWidth)) {
         drawLine(
             color = color,
             start = Offset(0f, size.height / 2),
