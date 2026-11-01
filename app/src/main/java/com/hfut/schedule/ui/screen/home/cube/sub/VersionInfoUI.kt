@@ -74,17 +74,8 @@ fun VersionInfo() {
     VersionInfoCard()
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 支持调整聚焦中一卡通右侧按钮的功能","位于 选项-偏好与配置-聚焦-聚焦首卡片功能",to = To.Screen(SettingsFocusCardDestination))
-        UpdateItems("新增 支持显示部分扩展信息","位于 选项-维护与关于-开发者选项",to = To.Screen(SettingsDeveloperDestination))
-        UpdateItems("新增 生活服务中的实时天气和天气预警支持点击查看详情",to = To.Screen(LifeDestination))//
-        UpdateItems("新增 支持判断是否运行在iOS Husk转译环境中","iOS用户可以了解一下这个项目(github.com/Leviidev/Husk)，因为等这边开发适配iOS应该还要一段时间呢，此项目可以在iOS转译运行安卓App，实测运行本App虽然有一些UI上的瑕疵，但正常使用是没问题的")//
-        UpdateItems("修复 创新班无法登陆教务系统的问题")//
-        UpdateItems("修复 恢复数据时应用高版本系统的数据时，部分兼容性开关无法修改的Bug")//
-        UpdateItems("修复 课程表自由选择周数后顶部日期值错误的Bug")//
-        UpdateItems("修复 部分设备渲染虚线分割线为实线的Bug")//
-        UpdateItems("优化 部分页面的显示")//
+        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
-//        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination()))
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
 //        UpdateItems("重构 去掉翻页器，改为尾部追加")
