@@ -163,6 +163,12 @@ class MainActivity : BaseActivity() {
                 if(!AppVersion.CAN_PREDICTIVE) {
                     DataStoreManager.savePredict(false)
                 }
+                if(AppVersion.isRunningOnHusk) {
+                    DataStoreManager.saveMotionBlur(false)
+                    DataStoreManager.saveLiquidGlass(false)
+                    DataStoreManager.savePredict(false)
+                    DataStoreManager.saveHazeBlur(false)
+                }
             }
         }
     }

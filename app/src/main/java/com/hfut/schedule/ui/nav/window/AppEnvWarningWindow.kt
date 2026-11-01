@@ -177,7 +177,7 @@ object AppEnvWarningWindow: FloatingWindow() {
                                     }
                                 )
                             }
-                            if(DeviceOs.isHarmonyOsNextAndroidCompatible()) {
+                            if(AppVersion.isRunningOnHarmonyNext) {
                                 CardListItem(
                                     headlineContent = {
                                         Text(stringResource(R.string.settings_person_info_tag_harmony_next))
@@ -185,6 +185,20 @@ object AppEnvWarningWindow: FloatingWindow() {
                                     leadingContent = {
                                         Icon(
                                             painterResource(R.drawable.circle),
+                                            null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                )
+                            }
+                            if(AppVersion.isRunningOnHusk) {
+                                CardListItem(
+                                    headlineContent = {
+                                        Text("转译运行在iOS Husk环境，部分功能和体验可能降级")
+                                    },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.apple),
                                             null,
                                             tint = MaterialTheme.colorScheme.primary
                                         )

@@ -115,11 +115,19 @@ object AppVersion {
     val isSignatureValid by lazy { getIsSignatureValid() }
     val isRunningOnAvd by lazy{ deviceName.startsWith("sdk_gphone") || deviceName.startsWith("Android SDK built for") }
     val isRunningOnWsa by lazy { deviceName.startsWith("Subsystem for Android") }
+    val isRunningOnHarmonyNext by lazy { DeviceOs.isHarmonyOsNextAndroidCompatible() }
+    val isRunningOnHusk by lazy {
+        try {
+            Class.forName("husk.Native", false, this::class.java.classLoader)
+            true
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            false
+        }
+    }
     val isDev : Boolean by lazy { !Regex("^\\d+\\.\\d+(\\.\\d+)*$").matches(getVersionName()) }
 
-    val isHarmony : Boolean by lazy { DeviceOs.isHarmonyOsNextAndroidCompatible() }
-
-    val isNormalEnv : Boolean by lazy { !isDebug && isSignatureValid && !isDev && !isRunningOnAvd && !isRunningOnWsa && !isHarmony }
+    val isNormalEnv : Boolean by lazy { !isDebug && isSignatureValid && !isDev && !isRunningOnAvd && !isRunningOnWsa && !isRunningOnHarmonyNext && !isRunningOnHusk }
 
     data class SignatureInfo(
         val issuer: String,

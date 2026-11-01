@@ -156,7 +156,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
-                            Text("CPU频率 当前${CpuFreqUtil.getCurrentCpuMaxFreq()?.toGhzString()}GHZ 最大${CpuFreqUtil.getCpuMaxFreq()?.toGhzString()}GHz")
+                            Text("CPU频率 当前${CpuFreqUtil.getCurrentCpuMaxFreq()?.toGhzString()}GHz 最大${CpuFreqUtil.getCpuMaxFreq()?.toGhzString()}GHz")
                         }
                     )
                     PaddingHorizontalDivider()
