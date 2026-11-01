@@ -81,8 +81,12 @@ suspend fun <T> launchRequestState(
         holder.emitData(result)
     }
     else {
-        // 承接错误解析 可选
-        holder.emitError(HttpException(response), response.code())
+        // 承接错误解析
+        val request = response.raw().request
+        val exception = Exception(
+            "[${response.code()}] ${request.url}\nerrBody=${response.errorBody()?.string()}\nbody=${response.body()?.string()}"
+        )
+        holder.emitError(exception, response.code())
     }
 } catch (e: Exception) {
     holder.emitError(e)
