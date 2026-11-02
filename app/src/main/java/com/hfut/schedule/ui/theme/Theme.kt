@@ -22,8 +22,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.logic.model.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.model.choice.ColorMode
 import com.hfut.schedule.ui.model.ColorStyle
 import com.hfut.schedule.ui.util.deepen
@@ -132,6 +134,13 @@ fun AppTheme(
         content = content
     )
     TransparentSystemBars(isInDark)
+
+    val language by DataStoreManager.language.collectAsState(initial = null)
+    LaunchedEffect(language) {
+        language?.let {
+            LanguageHelper.changeAppLanguage(it)
+        }
+    }
 }
 
 /**
@@ -302,6 +311,5 @@ fun setNightMode(
         )
     }
 }
-
 
 

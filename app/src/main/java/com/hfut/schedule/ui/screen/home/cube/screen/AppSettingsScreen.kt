@@ -231,11 +231,9 @@ fun ConfigurationSettingsScreen(innerPaddings: PaddingValues, ) {
 
                 CustomSingleChoiceRow<Language> (
                     selected = language,
-                    enabled = false,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                 ) {
                     scope.launch {
-                        showDevelopingToast()
                         DataStoreManager.saveLanguage(it)
                     }
                 }

@@ -2,7 +2,7 @@ package com.hfut.schedule.activity.util
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -12,7 +12,7 @@ import com.hfut.schedule.ui.theme.AppTheme
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
-abstract class BaseActivity : ComponentActivity() {
+abstract class BaseActivity : AppCompatActivity() {
     val networkVm by lazy { ViewModelProvider(this)[NetWorkViewModel::class.java] }
     val loginVm by lazy { ViewModelProvider(this)[LoginViewModel::class.java] }
 
