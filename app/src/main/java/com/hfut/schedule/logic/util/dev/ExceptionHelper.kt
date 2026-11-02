@@ -9,6 +9,14 @@ object ExceptionHelper {
 
     @JvmStatic
     fun getKeyStackTrace(e: Throwable): KeyThrowable {
+        if (e is AnrDiagnosticException) {
+            return KeyThrowable(
+                type = "系统 ANR",
+                cause = e.message,
+                position = "进程: ${e.report.processName}"
+            )
+        }
+
         val appPackage = AppVersion.appPackageName
         val sw = StringWriter()
         val pw = PrintWriter(sw)
@@ -33,6 +41,17 @@ object ExceptionHelper {
         val appStackLine = data.position
 
         return "类型: ${firstLine}\n原因: ${data.cause ?: "--"}\n位置: ${appStackLine?:"--"}"
+    }
+
+    @JvmStatic
+    fun getDiagnosticText(e: Throwable): String = buildString {
+        append(e.stackTraceToString())
+        if (e is AnrDiagnosticException) {
+            appendLine()
+            appendLine()
+            appendLine("系统 ANR Trace:")
+            append(e.report.traceText ?: "不可用")
+        }
     }
 
     data class KeyThrowable(

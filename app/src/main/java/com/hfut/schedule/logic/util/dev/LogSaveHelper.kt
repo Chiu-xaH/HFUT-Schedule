@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.util.dev
 
 import android.os.Environment
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.dev.ExceptionHelper.getDiagnosticText
 import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -42,7 +43,7 @@ suspend fun saveErrorLog() : Int = withContext(Dispatchers.IO) {
                 appendLine("--[${index + 1}]------------------------------------------------")
                 appendLine(getKeyStackTraceDesc(throwable))
                 appendLine("时间: ${entry.timestamp.format(DateTimeManager.formatterAll)}")
-                appendLine("堆栈: ${throwable.stackTraceToString()}")
+                appendLine("堆栈: ${getDiagnosticText(throwable)}")
                 appendLine()
             }
             result.append(log)

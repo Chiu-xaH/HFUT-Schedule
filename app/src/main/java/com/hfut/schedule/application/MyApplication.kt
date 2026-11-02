@@ -12,6 +12,7 @@ import com.hfut.schedule.BuildConfig
 import com.xah.common.logic.model.Campus
 import com.hfut.schedule.logic.model.enumeration.AppStatus
 import com.hfut.schedule.logic.model.Location
+import com.hfut.schedule.logic.util.dev.AnrHelper
 import com.hfut.schedule.logic.util.dev.CrashHandler
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
@@ -94,6 +95,10 @@ class MyApplication : Application() {
 
             override fun onActivityStopped(activity: Activity) {}
         })
+        // 后台收集Anr
+        GlobalScope.launch {
+            AnrHelper.logAnrTraces()
+        }
     }
 
     companion object {
@@ -151,4 +156,3 @@ class MyApplication : Application() {
         fun getCurrentActivity() = activities.lastOrNull()
     }
 }
-
