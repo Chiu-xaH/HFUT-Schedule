@@ -815,6 +815,7 @@ private fun parseScheduleText(text : String) : List<Schedule> {
         }
         return result
     } catch (e : Exception) {
+        LogUtil.error(e)
         return result
     }
 }

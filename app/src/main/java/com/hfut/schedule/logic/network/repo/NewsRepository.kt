@@ -20,6 +20,7 @@ import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.isEmptyOrBlank
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -44,7 +45,9 @@ object NewsRepository : NewsRepositoryInf {
 //                newsXuanChengResult.value = response.body()?.string()
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
     override suspend fun getXuanChengNews(page: Int, newsXuanChengResult : UiStateHolder<List<News>>) =

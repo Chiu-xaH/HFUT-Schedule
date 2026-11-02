@@ -72,7 +72,7 @@ class LoginViewModel : ViewModel() {
 
                             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                                 code.value = "XXX"
-                                t.printStackTrace()
+                                LogUtil.error(t)
                             }
                         })
                     }
@@ -101,7 +101,7 @@ class LoginViewModel : ViewModel() {
 
                         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                             code.value = "XXX"
-                            t.printStackTrace()
+                            LogUtil.error(t)
                         }
                     })
                 }
@@ -122,7 +122,7 @@ class LoginViewModel : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 code.value = "XXX"
-                t.printStackTrace()
+                LogUtil.error(t)
             }
         })
     }
@@ -158,7 +158,7 @@ class LoginViewModel : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 code.value = "XXX"
-                t.printStackTrace()
+                LogUtil.error(t)
             }
         })
     }

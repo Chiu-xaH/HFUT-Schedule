@@ -32,7 +32,7 @@ object AppVersion {
         var versionCode = 0
         try {
             versionCode = packageName.versionCode
-        } catch ( e : PackageManager.NameNotFoundException) {
+        } catch (e : Exception) {
             LogUtil.error(e)
         }
         return versionCode
@@ -57,7 +57,7 @@ object AppVersion {
         var versionName = EMPTY_STRING
         try {
             versionName = packageName.versionName.toString()
-        } catch ( e : PackageManager.NameNotFoundException) {
+        } catch (e : Exception) {
             LogUtil.error(e)
         }
         return versionName

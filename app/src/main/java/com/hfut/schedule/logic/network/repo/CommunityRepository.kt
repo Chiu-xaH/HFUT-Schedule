@@ -240,7 +240,7 @@ object CommunityRepository : CommunityRepositoryInf {
                     SharedPrefs.saveString("Course${studentId}", response.body()?.string())
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { LogUtil.error(t) }
         })
     }
 
@@ -249,7 +249,7 @@ object CommunityRepository : CommunityRepositoryInf {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { LogUtil.error(t) }
         })
     }
 
@@ -421,7 +421,9 @@ object CommunityRepository : CommunityRepositoryInf {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 SharedPrefs.saveString("feiends", response.body()?.string())
             }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
 
@@ -430,7 +432,9 @@ object CommunityRepository : CommunityRepositoryInf {
             CommunityService.RequestApplyingJson(id,if(isOk) 1 else 0)) }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
 

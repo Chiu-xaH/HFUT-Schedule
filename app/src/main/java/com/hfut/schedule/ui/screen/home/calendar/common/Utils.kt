@@ -97,6 +97,7 @@ fun calculateTermStartDate(
             .minusDays(daysToSubtract.toLong())
             .format(formatter)
     } catch (e: Exception) {
+        LogUtil.error(e)
         null
     }
 }

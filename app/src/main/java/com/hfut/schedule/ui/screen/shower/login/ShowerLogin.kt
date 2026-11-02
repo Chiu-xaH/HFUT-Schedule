@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.navigation.controller.NavigationController
@@ -298,6 +299,7 @@ suspend fun loginGuaGuaClick(
 fun getGuaGuaPersonInfo() : GuaGuaLoginData? = try {
     val json = prefs.getString("GuaGuaPersonInfo",null)
     GsonInstance.fromJson(json, GuaGuaLoginResponse::class.java).data
-} catch (_:Exception) {
+} catch (e: Exception) {
+    LogUtil.error(e)
     null
 }

@@ -219,11 +219,13 @@ object AppDownloadManager {
         try {
             MyApplication.context.startActivity(intent)
         } catch (e: Exception) {
+            LogUtil.error(e)
             // 部分定制 ROM 可能不支持此 Intent，可以跳转到存储设置
             val storageIntent = Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS)
             try {
                 MyApplication.context.startActivity(storageIntent)
             } catch (ex: Exception) {
+                LogUtil.error(ex)
                 // 最后尝试打开文件管理器
                 val fileManagerIntent = Intent(Intent.ACTION_VIEW)
                 fileManagerIntent.data = "content://downloads/public_downloads".toUri()

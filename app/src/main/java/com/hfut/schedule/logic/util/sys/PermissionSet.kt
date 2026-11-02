@@ -12,6 +12,7 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import com.xah.common.logic.util.LogUtil
 
 object PermissionSet {
     @JvmStatic
@@ -23,6 +24,7 @@ object PermissionSet {
                     intent.data = "package:${activity.packageName}".toUri()
                     activity.startActivityForResult(intent, 1)
                 } catch (e: Exception) {
+                    LogUtil.error(e)
                     // 某些手机拉不出来 , 使用全局设置页面
                     val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
                     activity.startActivityForResult(intent, 1)

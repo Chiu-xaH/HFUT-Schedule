@@ -8,6 +8,7 @@ import android.os.Looper
 import android.os.Trace
 import android.util.Log
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -197,6 +198,7 @@ object AppTracer {
             val method = clazz.getMethod("currentPackageName")
             method.invoke(null) as String
         } catch (e: Exception) {
+            LogUtil.error(e)
             "unknown"
         }
     }

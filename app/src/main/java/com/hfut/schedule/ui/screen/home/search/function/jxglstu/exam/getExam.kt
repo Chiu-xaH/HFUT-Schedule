@@ -148,6 +148,7 @@ fun isValidDateTime(str : String) : Boolean {
         timeFormat.parse(timeEnd)
         true
     } catch (e: Exception) {
+        LogUtil.error(e)
         false
     }
 }

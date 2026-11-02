@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import androidx.core.graphics.set
+import com.xah.common.logic.util.LogUtil
 
 fun preprocessCaptcha(bitmap: Bitmap): Bitmap {
     try {
@@ -28,6 +29,7 @@ fun preprocessCaptcha(bitmap: Bitmap): Bitmap {
 
         return dst
     } catch (e : Exception) {
+        LogUtil.error(e)
         return bitmap
     }
 }

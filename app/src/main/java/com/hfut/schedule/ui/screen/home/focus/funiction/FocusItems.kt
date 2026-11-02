@@ -157,6 +157,8 @@ private fun ScheduleItemUI(listItem: GithubIoSchedule, isFuture : Boolean, activ
                             } catch (e : SecurityException) {
                                 showToast("未授予权限")
                                 LogUtil.error(e)
+                            } catch (e : Exception) {
+                                LogUtil.error(e)
                             }
                         }
                     }

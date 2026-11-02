@@ -15,6 +15,7 @@ import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.logic.util.LogUtil
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,7 +34,9 @@ object GuaGuaRepository : GuaGuaRepositoryInf {
                 guaGuaUserInfo.value = response.body()?.string()
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
 

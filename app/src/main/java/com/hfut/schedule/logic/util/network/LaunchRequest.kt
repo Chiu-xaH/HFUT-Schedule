@@ -38,7 +38,7 @@ fun <T> makeRequest(
         }
 
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-            t.printStackTrace()
+            LogUtil.error(t)
         }
     })
 }

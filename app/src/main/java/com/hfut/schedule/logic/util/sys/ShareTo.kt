@@ -30,7 +30,9 @@ object ShareTo {
             MyApplication.context.startActivity(
                 Intent.createChooser(shareIntent,"分享安装包").addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK))
-        } catch (e : Exception) { }
+        } catch (e : Exception) {
+            LogUtil.error(e)
+        }
     }
     @JvmStatic
     private fun getAPK(destinationPath : String) {

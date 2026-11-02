@@ -31,6 +31,7 @@ import com.xah.common.logic.model.HuiXinBill
 import com.xah.common.logic.model.HuiXinBillResponse
 import com.consumption.forecast.model.result.TotalResult
 import com.hfut.schedule.network.api.repo.HuiXinRepositoryInf
+import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -73,7 +74,9 @@ object HuiXinRepository : HuiXinRepositoryInf {
                 SharedPrefs.saveString("cardyue", body)
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
 
@@ -409,7 +412,9 @@ object HuiXinRepository : HuiXinRepositoryInf {
                 }
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
 

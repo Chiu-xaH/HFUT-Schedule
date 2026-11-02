@@ -232,7 +232,7 @@ object JxglstuRepository : JxglstuRepositoryInf {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
+                LogUtil.error(t)
             }
         })
     }
@@ -507,7 +507,9 @@ object JxglstuRepository : JxglstuRepositoryInf {
         val call = jxglstu.jxglstulogin(cookie)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                LogUtil.error(t)
+            }
         })
     }
 
@@ -656,7 +658,7 @@ object JxglstuRepository : JxglstuRepositoryInf {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
+                    LogUtil.error(t)
                 }
             })
             val call2 = jxglstu.getMyProfile(cookie)
@@ -673,7 +675,7 @@ object JxglstuRepository : JxglstuRepositoryInf {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
+                    LogUtil.error(t)
                 }
             })
         }
@@ -854,7 +856,7 @@ object JxglstuRepository : JxglstuRepositoryInf {
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        t.printStackTrace()
+                        LogUtil.error(t)
                     }
                 })
             }
