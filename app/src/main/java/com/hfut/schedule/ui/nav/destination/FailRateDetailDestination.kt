@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.nav.destination
 
+import android.content.pm.ActivityInfo
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -8,18 +9,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.hfut.schedule.R
 import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseFailRate
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateDetailScreen
-import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateDetailScreen
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.hazeSource
@@ -33,6 +31,7 @@ data class FailRateDetailDestination(
     override val description = courseName
     override val title = TITLE
     override val icon = ICON
+    override val requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     companion object {
         val TITLE = res(R.string.navigation_label_fail_rate)

@@ -40,11 +40,13 @@ fun CustomCard(
     shadow : Dp = 0.dp,
     shape: Shape = MaterialTheme.shapes.medium,
     border : BorderStroke? = null,
+    horizontalPadding : Boolean = true,
+    verticalPadding : Boolean = true,
     content: @Composable () -> Unit
 ) {
     val baseModifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP)
+        .padding(horizontal = if(horizontalPadding) APP_HORIZONTAL_DP else 0.dp, vertical = if(verticalPadding) CARD_NORMAL_DP else 0.dp)
 
     Card(
         border = border,
@@ -127,10 +129,12 @@ private fun PCardListItem(
     color : Color? = null,
     shape: Shape = MaterialTheme.shapes.medium,
     shadow: Dp = 0.dp,
+    horizontalPadding : Boolean = true,
+    verticalPadding : Boolean = true,
     modifier: Modifier = Modifier,
     cardModifier : Modifier = Modifier
 ) {
-    CustomCard( color = color, modifier = cardModifier, shape = shape, shadow = shadow) {
+    CustomCard( color = color, modifier = cardModifier, shape = shape, shadow = shadow, horizontalPadding = horizontalPadding, verticalPadding = verticalPadding) {
         TransplantListItem(
             headlineContent = headlineContent,
             overlineContent = overlineContent,
@@ -154,11 +158,13 @@ fun CardListItem(
     color : Color? = null,
     shape: Shape = MaterialTheme.shapes.medium,
     shadow: Dp = 0.dp,
+    horizontalPadding : Boolean = true,
+    verticalPadding : Boolean = true,
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
     PCardListItem(
-        headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
+        headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier, horizontalPadding = horizontalPadding, verticalPadding = verticalPadding,
         color = color ?: cardNormalColor(),
         shape = shape, shadow = shadow
     )

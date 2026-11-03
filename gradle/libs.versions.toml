@@ -1,4 +1,5 @@
 [versions]
+adaptive = "1.2.0"
 baseline = "1.4.1"
 # 这个库新版跟现在的api变动有点多，暂时先不升级
 androidliquidglass = "1.0.0"
@@ -72,6 +73,7 @@ vectordrawable = "1.2.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
+androidx-compose-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
