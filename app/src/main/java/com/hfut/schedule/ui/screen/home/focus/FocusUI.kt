@@ -233,8 +233,8 @@ fun TodayScreen(
         // 一分钟更新时间 触发重组
         launch {
             while (true) {
-                delay(1000L*60)
                 DateTimeManager.updateTime { timeNow = it }
+                delay(1000L*60)
             }
         }
     }
