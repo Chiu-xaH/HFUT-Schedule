@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.nav.destination
 
+import android.content.pm.ActivityInfo
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScreen
@@ -10,6 +11,7 @@ object HolidayDestination : NavDestination() {
     override val key = "holiday"
     override val title = res(R.string.navigation_label_holiday)
     override val icon = R.drawable.beach_access
+    override val requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     @Composable
     override fun Content() {

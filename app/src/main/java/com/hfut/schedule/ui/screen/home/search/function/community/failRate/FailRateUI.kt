@@ -17,15 +17,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
-import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 import com.hfut.schedule.R
 import com.hfut.schedule.network.api.model.response.json.community.CommunityCourseFailRate
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -36,7 +32,7 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDetailDestination
-import com.hfut.schedule.ui.util.layout.currentUiWidthSizeColumns
+import com.hfut.schedule.ui.util.layout.currentUiWidthSizeColumnsForCard
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
@@ -106,7 +102,7 @@ fun FailRateDetailScreen(
     innerPadding : PaddingValues,
     detailList : List<CommunityCourseFailRate>
 ) {
-    val columns = currentUiWidthSizeColumns()
+    val columns = currentUiWidthSizeColumnsForCard()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),

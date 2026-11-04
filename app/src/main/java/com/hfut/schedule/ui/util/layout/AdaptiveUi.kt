@@ -11,20 +11,27 @@ fun currentUiWidthSize() : UiWidthSize {
     val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
     return when {
         sizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND) -> {
-            UiWidthSize.EXPANDED
+            UiWidthSize.LARGE
         }
         sizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND) -> {
             UiWidthSize.MEDIUM
         }
         else -> {
-            UiWidthSize.COMPACT
+            UiWidthSize.SMALL
         }
     }
 }
 
 @Composable
-fun currentUiWidthSizeColumns() : Int = when (currentUiWidthSize()) {
-    UiWidthSize.COMPACT -> 1
-    UiWidthSize.MEDIUM -> 2
-    UiWidthSize.EXPANDED -> 2
+fun currentUiWidthSizeColumnsForCard() : Int = when (currentUiWidthSize()) {
+    UiWidthSize.SMALL -> 1
+    UiWidthSize.MEDIUM -> 1
+    UiWidthSize.LARGE -> 2
+}
+
+@Composable
+fun currentUiWidthSizeColumnsForSmallCard() : Int = when (currentUiWidthSize()) {
+    UiWidthSize.SMALL -> 2
+    UiWidthSize.MEDIUM -> 3
+    UiWidthSize.LARGE -> 4
 }
