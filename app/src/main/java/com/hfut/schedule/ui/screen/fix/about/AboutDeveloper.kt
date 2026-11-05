@@ -151,8 +151,8 @@ fun About(vm : NetWorkViewModel) {
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .verticalScroll(scrollState)
                 .hazeSource(hazeState)
+                .verticalScroll(scrollState)
         ) {
             InnerPaddingHeight(innerPadding,true)
             DividerTextExpandedWith("开发人员") {

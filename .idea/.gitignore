@@ -1,3 +1,9 @@
 *
 !/.gitignore
+!/.name
 !/icon.png
+!/gradle.xml
+!/runConfigurations/
+!/runConfigurations/.xml
+!/runConfigurations/app.xml
+!/runConfigurations/lite.xml
