@@ -51,6 +51,7 @@ import com.xah.common.logic.state.NetworkUiState
 import com.hfut.schedule.logic.util.other.AppVersion
 
 import com.hfut.schedule.logic.util.parse.roundOffString
+import com.hfut.schedule.logic.util.sys.AppDownloadManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
@@ -65,6 +66,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.CircleProgressIcon
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
@@ -330,7 +332,7 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1 / 3f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_install),
                     icon = R.drawable.apk_document,
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -343,7 +345,7 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1 / 3f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -357,7 +359,7 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1 / 3f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_delete),
                     icon = R.drawable.delete,
                     containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -367,6 +369,8 @@ fun UpdateUI(
         }
         is DownloadResult.Prepare -> {}
         is DownloadResult.Progress -> {
+            val downloadId = (downloadState as DownloadResult.Progress).downloadId
+            val progress = (downloadState as DownloadResult.Progress).progress
             // 更新进度
             Row(modifier = Modifier
                 .fillMaxWidth()
@@ -380,9 +384,11 @@ fun UpdateUI(
                     enabled = false,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(.5f),
-                    text = "${(downloadState as DownloadResult.Progress).progress}%",
-                    icon = R.drawable.apk_install,
+                        .weight(1/3f),
+                    text = "${progress}%",
+                    icon = {
+                        CircleProgressIcon(progress/100f)
+                    },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
@@ -393,15 +399,30 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(.5f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
+                Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                LargeButton(
+                    onClick = {
+                        AppDownloadManager.dlManager.remove(downloadId)
+                        viewModel.reset()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1/3f),
+                    text = stringResource(R.string.settings_update_button_delete),
+                    icon = R.drawable.delete,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                )
             }
         }
         is DownloadResult.Success -> {
+            val downloadId = (downloadState as DownloadResult.Success).downloadId
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = BUTTON_PADDING-CARD_NORMAL_DP),
@@ -413,7 +434,7 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(.5f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_install),
                     icon = R.drawable.apk_document,
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -426,15 +447,30 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(.5f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
+                Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                LargeButton(
+                    onClick = {
+                        AppDownloadManager.dlManager.remove(downloadId)
+                        viewModel.reset()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1/3f),
+                    text = stringResource(R.string.settings_update_button_delete),
+                    icon = R.drawable.delete,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                )
             }
         }
         is DownloadResult.Failed -> {
+            val downloadId = (downloadState as DownloadResult.Failed).downloadId
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = BUTTON_PADDING-CARD_NORMAL_DP),
@@ -446,11 +482,11 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(.5f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_failed),
                     icon = R.drawable.refresh,
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
                 )
                 Spacer(Modifier.width(LARGE_BUTTON_PADDING))
                 LargeButton(
@@ -459,11 +495,25 @@ fun UpdateUI(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(.5f),
+                        .weight(1/3f),
                     text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                LargeButton(
+                    onClick = {
+                        AppDownloadManager.dlManager.remove(downloadId)
+                        viewModel.reset()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1/3f),
+                    text = stringResource(R.string.settings_update_button_delete),
+                    icon = R.drawable.delete,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
             Spacer(Modifier.height(CARD_NORMAL_DP))
@@ -580,7 +630,7 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1 / 3f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_install),
                         icon = R.drawable.apk_document,
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -593,7 +643,7 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1 / 3f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -607,7 +657,7 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1 / 3f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_delete),
                         icon = R.drawable.delete,
                         containerColor = MaterialTheme.colorScheme.error,
@@ -617,6 +667,8 @@ fun PatchUpdateUI(
             }
             is DownloadResult.Prepare -> {}
             is DownloadResult.Progress -> {
+                val progress = (downloadState as DownloadResult.Progress).progress
+                val downloadId = (downloadState as DownloadResult.Progress).downloadId
                 // 更新进度
                 Row(modifier = Modifier
                     .fillMaxWidth()
@@ -628,9 +680,11 @@ fun PatchUpdateUI(
                         enabled = false,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(.5f),
-                        text = "${(downloadState as DownloadResult.Progress).progress}%",
-                        icon = R.drawable.apk_install,
+                            .weight(1/3f),
+                        text = "${progress}%",
+                        icon = {
+                            CircleProgressIcon(progress/100f)
+                        },
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
@@ -641,15 +695,30 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(.5f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
+                    Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                    LargeButton(
+                        onClick = {
+                            AppDownloadManager.dlManager.remove(downloadId)
+                            viewModel.reset()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1/3f),
+                        text = stringResource(R.string.settings_update_button_delete),
+                        icon = R.drawable.delete,
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
                 }
             }
             is DownloadResult.Success -> {
+                val downloadId = (downloadState as DownloadResult.Success).downloadId
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP, vertical = BUTTON_PADDING-CARD_NORMAL_DP), horizontalArrangement = Arrangement.Center)  {
@@ -667,7 +736,7 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(.5f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_install),
                         icon = R.drawable.apk_document,
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -680,15 +749,30 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(.5f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
+                    Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                    LargeButton(
+                        onClick = {
+                            AppDownloadManager.dlManager.remove(downloadId)
+                            viewModel.reset()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1/3f),
+                        text = stringResource(R.string.settings_update_button_delete),
+                        icon = R.drawable.delete,
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
                 }
             }
             is DownloadResult.Failed -> {
+                val downloadId = (downloadState as DownloadResult.Failed).downloadId
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP, vertical = BUTTON_PADDING-CARD_NORMAL_DP), horizontalArrangement = Arrangement.Center)  {
@@ -698,7 +782,7 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(.5f),
+                            .weight(1/3f),
                         text =  stringResource(R.string.settings_update_button_failed),
                         icon = R.drawable.refresh,
                         containerColor = MaterialTheme.colorScheme.error,
@@ -711,11 +795,25 @@ fun PatchUpdateUI(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(.5f),
+                            .weight(1/3f),
                         text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                    LargeButton(
+                        onClick = {
+                            AppDownloadManager.dlManager.remove(downloadId)
+                            viewModel.reset()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1/3f),
+                        text = stringResource(R.string.settings_update_button_delete),
+                        icon = R.drawable.delete,
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
                     )
                 }
                 Spacer(Modifier.height(CARD_NORMAL_DP))
