@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.ui.component.button.LARGE_BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -123,8 +124,8 @@ fun MailUI(vm: NetWorkViewModel) {
                         text = "进入邮箱",
                         icon = R.drawable.mail
                     )
-                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
-                    LargeButton (
+                    Spacer(Modifier.width(LARGE_BUTTON_PADDING))
+                    LargeButton(
                         onClick = {
                             response.data.let {
                                 if(it != null) {

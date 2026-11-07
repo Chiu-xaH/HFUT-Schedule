@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.ui.component.button.LARGE_BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -223,7 +224,7 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
                                 .fillMaxWidth()
                                 .weight(1/2f)
                         )
-                        Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                        Spacer(Modifier.width(LARGE_BUTTON_PADDING))
                         LargeButton(
                             onClick = {
                                 scope.launch {

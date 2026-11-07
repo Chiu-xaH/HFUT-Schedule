@@ -44,6 +44,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LARGE_BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.NoPadding
@@ -179,7 +180,7 @@ fun ProgramScreen(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.secondary
                             )
-                            Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                            Spacer(Modifier.width(LARGE_BUTTON_PADDING))
                             LargeButton(
                                 modifier = Modifier
                                     .fillMaxWidth()

@@ -63,6 +63,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.button.BottomButton
+import com.hfut.schedule.ui.component.button.LARGE_BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -338,7 +339,7 @@ fun LoginWebUI(vm : NetWorkViewModel) {
                         text = textLogin,
                         icon = R.drawable.login
                     )
-                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                    Spacer(Modifier.width(LARGE_BUTTON_PADDING))
                     LargeButton(
                         modifier = Modifier
                             .fillMaxWidth()

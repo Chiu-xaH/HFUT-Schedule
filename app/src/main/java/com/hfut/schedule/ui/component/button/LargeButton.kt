@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.common.ui.component.text.ScrollText
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 
 
@@ -44,3 +45,6 @@ fun LargeButton(
         }
     }
 }
+
+
+val LARGE_BUTTON_PADDING = APP_HORIZONTAL_DP/2
