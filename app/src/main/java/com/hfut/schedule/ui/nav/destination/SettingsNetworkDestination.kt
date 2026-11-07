@@ -64,6 +64,7 @@ object SettingsNetworkDestination : NavDestination() {
                         TopBarNavigationIcon()
                     },
                     actions = {
+                        return@MediumTopAppBar
                         LiquidButton(
                             onClick = {
                                 navController.push(SettingsSearchDestination, effect = RollTransitionEffect())

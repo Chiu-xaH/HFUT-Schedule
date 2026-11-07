@@ -117,7 +117,7 @@ import com.hfut.schedule.ui.model.choice.ColorMode
 import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.model.choice.SharedNavEffect
 import com.hfut.schedule.ui.model.choice.SharedNavTilt
-import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.nav.destination.SettingsScreenCornerDestination
 import com.hfut.schedule.ui.nav.effect.CONTROL_CENTER_ALPHA
 import com.hfut.schedule.ui.style.shader.scaleMirror
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -129,7 +129,6 @@ import com.hfut.schedule.ui.util.longToHexColor
 import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.parseColor
-import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.manager.AnimationSpecManager
 import com.xah.common.logic.util.EMPTY_STRING
@@ -891,7 +890,7 @@ fun SharedAppearanceSettingsScreen(
                     }
                     PaddingHorizontalDivider()
                     SharedContainer(
-                        key = CornerSettingsDestination.key,
+                        key = SettingsScreenCornerDestination.key,
                         shape = MaterialTheme.shapes.medium.copy(
                             topEnd = CornerSize(0.dp),
                             topStart = CornerSize(0.dp),
@@ -911,10 +910,10 @@ fun SharedAppearanceSettingsScreen(
                                         delay(50)
                                         navController.awaitTransition()
                                     }
-                                    navController.push(CornerSettingsDestination)
+                                    navController.push(SettingsScreenCornerDestination)
                                 }
                             },
-                            leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
+                            leadingContent = { Icon(painterResource(SettingsScreenCornerDestination.icon), contentDescription = "Localized description") },
                         )
                     }
                 }

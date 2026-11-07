@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.nav.destination.CornerSettingsDestination
+import com.hfut.schedule.ui.nav.destination.SettingsScreenCornerDestination
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.component.slider.CustomSlider
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -54,7 +54,7 @@ fun CornerSettingsScreen() {
             topBar = {
                 MediumTopAppBar(
                     colors = topBarTransplantColor(),
-                    title = { Text(CornerSettingsDestination.title.asString()) },
+                    title = { Text(SettingsScreenCornerDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

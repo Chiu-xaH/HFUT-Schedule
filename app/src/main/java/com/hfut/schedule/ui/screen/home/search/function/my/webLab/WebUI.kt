@@ -74,7 +74,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
 import com.hfut.schedule.ui.nav.destination.NotificationBoxDestination
 import com.hfut.schedule.ui.nav.destination.SettingsBackupDestination
-import com.hfut.schedule.ui.nav.destination.SettingsTipsDestination
+import com.hfut.schedule.ui.nav.destination.TipsDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.WebFolderDestination
 import com.hfut.schedule.ui.screen.home.cube.screen.QR_CODE_PADDING
@@ -413,14 +413,14 @@ fun NotificationBoxScreen(
                         Text("解锁聚在工大的更多场景与用法")
                     },
                     leadingContent = {
-                        Icon(painterResource(SettingsTipsDestination.icon),null)
+                        Icon(painterResource(TipsDestination.icon),null)
                     },
                     modifier = Modifier.clickable {
-                        navController.push(SettingsTipsDestination)
+                        navController.push(TipsDestination)
                     },
                     shape = NoneRoundShape,
                     cardModifier = Modifier.sharedContainer(
-                        SettingsTipsDestination.key,
+                        TipsDestination.key,
                         MaterialTheme.shapes.medium,
                         cardNormalColor()
                     )

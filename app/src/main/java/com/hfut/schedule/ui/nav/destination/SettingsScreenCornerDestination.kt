@@ -5,9 +5,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.cube.sub.CornerSettingsScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.common.ui.util.res
-import com.xah.common.ui.util.text
 
-data object CornerSettingsDestination : NavDestination() {
+data object SettingsScreenCornerDestination : NavDestination() {
 
     override val title = res(R.string.navigation_label_settings_corner)
     override val key = "settings_corner"

@@ -2,21 +2,15 @@ package com.hfut.schedule.ui.nav.destination
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -27,7 +21,7 @@ import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.util.text
 
-object SettingsTipsDestination : NavDestination() {
+object TipsDestination : NavDestination() {
     override val key: String = "settings_tips"
     override val title: UiText = text("使用提示")
     override val icon = R.drawable.lightbulb
