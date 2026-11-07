@@ -21,22 +21,18 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +47,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -60,10 +55,8 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.cleanCache
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.backToHome
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.NoPadding
@@ -72,23 +65,19 @@ import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
-
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
-import com.xah.container.component.base.SharedContainer
-import com.xah.navigation.model.action.ActionType
-import com.xah.navigation.model.action.LaunchMode
-import com.xah.navigation.util.LocalNavController
-
+import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.align.ColumnVertical
 import com.xah.common.ui.style.color.ShimmerAngle
 import com.xah.common.ui.style.color.shimmerEffect
-import com.sharednav.common.helper.NoneRoundShape
-import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.container.component.base.SharedContainer
+import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -158,7 +147,7 @@ fun UpdateSuccessScreen() {
                                     AppVersion.getVersionName()
                                 )
                             }.await()
-                            navController.backToHome()
+                            navController.backToHome(simplyEffect = true)
                         }
                     },
 //                    shape = NoneRoundShape,
@@ -170,7 +159,11 @@ fun UpdateSuccessScreen() {
                             ShimmerAngle.START_TO_END,
                             MaterialTheme.colorScheme.surface.copy(0.25f)
                         )
-//                        .sharedContainer(HomeDestination.key,MaterialTheme.shapes.extraLarge)
+//                        .sharedContainer(
+//                            HomeDestination().key,
+//                            shape = CircleShape,
+//                            containerColor = MaterialTheme.colorScheme.primary
+//                        )
                 ) {
                     Text(
                         "开始使用",

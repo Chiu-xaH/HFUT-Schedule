@@ -31,6 +31,10 @@ import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.anim.effect.RollTransitionEffect
+import com.xah.navigation.anim.effect.ScaleTransitionEffect
+import com.xah.navigation.anim.effect.SlideTransitionEffect
+import com.xah.navigation.anim.effect.SlideTransitionEffect2
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.model.action.LaunchMode
 
@@ -187,6 +191,7 @@ object Starter {
     @JvmStatic
     fun NavigationController.backToHome(
         subStartDestination : BottomBarItems = BottomBarItems.FOCUS,
+        simplyEffect : Boolean = false
     ) {
 //        if(navController.containsDestination(navController.startDestination)) {
 //            navController.push(
@@ -194,10 +199,18 @@ object Starter {
 //                launchMode = LaunchMode.PopToExisting(),
 //            )
 //        } else {
-            push(
-                HomeDestination(subStartDestination),
-                launchMode = LaunchMode.Clear(),
-            )
+            if(simplyEffect) {
+                push(
+                    HomeDestination(),
+                    launchMode = LaunchMode.Clear(),
+                    effect = ScaleTransitionEffect(false, true)
+                )
+            } else {
+                push(
+                    HomeDestination(subStartDestination),
+                    launchMode = LaunchMode.Clear(),
+                )
+            }
 //        }
     }
     @JvmStatic
