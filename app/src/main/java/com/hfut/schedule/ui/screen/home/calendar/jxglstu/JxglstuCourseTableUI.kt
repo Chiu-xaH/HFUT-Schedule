@@ -452,7 +452,7 @@ fun JxglstuCourseTableUI(
                launch {
                    vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
                    val lessonResponse = (vm.lessonIds.state.value as? NetworkUiState.Success)?.data ?: return@launch
-                   vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
+//                   vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
                    vm.getDatum(cookie,lessonResponse.lessonIds)
                    val datum = (vm.datumData.state.value as? NetworkUiState.Success)?.data
                    if(datum == null) {

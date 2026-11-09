@@ -281,7 +281,7 @@ suspend fun updateCourses(vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
     val bizTypeId = (vm.bizTypeIdResponse.state.value as? NetworkUiState.Success)?.data ?: return@withContext
     vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
     val lessonResponse = (vm.lessonIds.state.value as? NetworkUiState.Success)?.data ?: return@withContext
-    vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
+//    vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
     vm.getDatum(cookie,lessonResponse.lessonIds)
     val datum = (vm.datumData.state.value as? NetworkUiState.Success)?.data ?: return@withContext
     LargeStringDataManager.save(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()),datum)

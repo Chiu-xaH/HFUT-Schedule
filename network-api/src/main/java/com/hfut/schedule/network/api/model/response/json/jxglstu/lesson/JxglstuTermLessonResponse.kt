@@ -5,9 +5,7 @@ import com.hfut.schedule.network.api.model.response.json.shared.MultiLanguageBas
 data class JxglstuTermLessonResponse(
     val lessonIds : List<Int>,
     val lessons : List<JxglstuLesson>,
-    val timeTableLayoutId : Int,
-    val weekIndices : List<Int>,
-    val currentWeek : Int
+//    val timeTableLayoutId : Int,
 )
 
 data class JxglstuLesson(
