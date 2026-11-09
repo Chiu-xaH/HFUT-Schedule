@@ -132,6 +132,7 @@ class MyApplication : Application() {
                 "Today1337" to 110648923,
                 "zxbmmmmmmmmm" to 96322503,
                 "Junpgle" to 81464408,
+                "G-E-E-D" to 131581653
             )
         }
         // App名称
