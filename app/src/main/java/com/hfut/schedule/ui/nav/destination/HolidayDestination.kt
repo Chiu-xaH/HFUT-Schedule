@@ -11,7 +11,7 @@ object HolidayDestination : NavDestination() {
     override val key = "holiday"
     override val title = res(R.string.navigation_label_holiday)
     override val icon = R.drawable.beach_access
-    override val requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    override val orientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     @Composable
     override fun Content() {

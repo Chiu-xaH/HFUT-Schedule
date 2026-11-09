@@ -31,7 +31,7 @@ data class FailRateDetailDestination(
     override val description = courseName
     override val title = TITLE
     override val icon = ICON
-    override val requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    override val orientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     companion object {
         val TITLE = res(R.string.navigation_label_fail_rate)
