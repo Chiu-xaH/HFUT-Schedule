@@ -569,22 +569,21 @@ object JxglstuRepository : JxglstuRepositoryInf {
             throw e
         }
     }
-    // 拥有多个学籍，一般是创新班
+    // 多学籍默认使用主修，兼容未标注培养类型的旧版页面。
     @JvmStatic
     private fun parseStudentIdForMulti(html: String): Int {
-        try {
-            val document = Jsoup.parse(html)
-
-            val value = document
-                .selectFirst(".student-panel-block button[value]")
-                ?.attr("value")
-                ?.trim()
-                ?.takeIf { it.matches(Regex("""\d+""")) }
-                ?: error("未找到StudentId，请联系开发者")
-            return value.toInt()
-        } catch (e : Exception) {
-            throw e
+        val document = Jsoup.parse(html)
+        val mainCard = document.select(".student-panel-block").firstOrNull { card ->
+            card.select("dt").any { label ->
+                label.text() == "培养类型" && label.nextElementSibling()?.text() == "主修"
+            }
         }
+        val button = mainCard?.selectFirst("button[value]")
+            ?: document.selectFirst(".student-panel-block button[value]")
+        return button?.attr("value")?.trim()
+            ?.takeIf { it.matches(Regex("""\d+""")) }
+            ?.toIntOrNull()
+            ?: error("未找到StudentId，请联系开发者")
     }
 
     override suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int,holder : UiStateHolder<JxglstuTermLessonResponse>) =
