@@ -13,11 +13,13 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.impl.JxglstuServiceCreator
 import com.hfut.schedule.network.api.inf.JxglstuService
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuGrade
+import com.hfut.schedule.network.api.model.response.html.JxglstuStudentId
 import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
@@ -63,6 +65,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -548,10 +551,10 @@ object JxglstuRepository : JxglstuRepositoryInf {
     }
 
 
-    override suspend fun getStudentId(cookie : String,holder : UiStateHolder<Int>) = launchRequestState(
+    override suspend fun getStudentId(cookie : String,holder : UiStateHolder<List<JxglstuStudentId>>) = launchRequestState(
         holder = holder,
         request = { jxglstu.getStudentId(cookie) },
-        transformRedirect = { headers -> parseStudentId(headers) },
+        transformRedirect = { headers -> listOf(JxglstuStudentId(parseStudentId(headers))) },
         transformSuccess = { _, html -> parseStudentIdForMulti(html) }
     )
     @JvmStatic
@@ -569,22 +572,56 @@ object JxglstuRepository : JxglstuRepositoryInf {
             throw e
         }
     }
-    // 拥有多个学籍，一般是创新班
+    // 拥有多个学籍，一般是创新班、微专业
     @JvmStatic
-    private fun parseStudentIdForMulti(html: String): Int {
-        try {
-            val document = Jsoup.parse(html)
-
-            val value = document
-                .selectFirst(".student-panel-block button[value]")
+    private fun parseStudentIdForMulti(html: String): List<JxglstuStudentId> = try {
+        /**
+         * 重新设计交互形态
+         * UI：课程表，多课表切换
+         * 逻辑：大文本存储时附加用StudentId存储
+         *
+         * 需要选择的板块：选课、个人信息+学籍照、培养方案+完成情况、成绩单、考试查询、开课查询、转专业、获取BizTypeID、教材、课程汇总、课程表
+         */
+        val document = Jsoup.parse(html)
+        document.select(".student-panel-block").mapNotNull { block ->
+            val id = block.selectFirst("button[value]")
                 ?.attr("value")
                 ?.trim()
-                ?.takeIf { it.matches(Regex("""\d+""")) }
-                ?: error("未找到StudentId，请联系开发者")
-            return value.toInt()
-        } catch (e : Exception) {
-            throw e
+                ?.takeIf {
+                    it.matches(Regex("""\d+"""))
+                }
+                ?.toIntOrNull() ?: return@mapNotNull null
+
+            val fields = parseDl(block.selectFirst("dl"))
+
+            JxglstuStudentId(
+                studentId = id,
+                type = fields["培养类型"],
+                department = fields["专业院系"],
+                major = fields["专业"],
+                direction = fields["专业方向"].takeIf { it != "-" },
+                level = fields["学生类别"],
+                status = fields["学籍状态"]
+            )
         }
+    } catch (e : Exception) { throw e }
+
+    private fun parseDl(dl: Element?): Map<String, String> {
+        if (dl == null) return emptyMap()
+        val result = LinkedHashMap<String, String>()
+        val children = dl.children()
+        var i = 0
+        while (i < children.size - 1) {
+            val dt = children[i]
+            val dd = children[i + 1]
+            if (dt.tagName() == "dt" && dd.tagName() == "dd") {
+                result[dt.text().trim()] = dd.text().trim()
+                i += 2
+            } else {
+                i++
+            }
+        }
+        return result
     }
 
     override suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int,holder : UiStateHolder<JxglstuTermLessonResponse>) =

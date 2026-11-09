@@ -2,6 +2,7 @@ package com.hfut.schedule.network.api.repo
 
 import com.google.gson.JsonObject
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
+import com.hfut.schedule.network.api.model.response.html.JxglstuStudentId
 import com.hfut.schedule.network.api.model.response.html.JxglstuTermGrade
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
@@ -103,7 +104,7 @@ interface JxglstuRepositoryInf {
     suspend fun parseJxglstuGrade(html: String): List<JxglstuTermGrade>
     fun jxglstuLogin(cookie : String)
     suspend fun getBizTypeId(cookie: String,studentId : Int,holder : UiStateHolder<Int>)
-    suspend fun getStudentId(cookie : String,holder : UiStateHolder<Int>)
+    suspend fun getStudentId(cookie : String,holder : UiStateHolder<List<JxglstuStudentId>>)
     suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int,holder : UiStateHolder<JxglstuTermLessonResponse>)
     suspend fun getDatum(
         cookie : String,
