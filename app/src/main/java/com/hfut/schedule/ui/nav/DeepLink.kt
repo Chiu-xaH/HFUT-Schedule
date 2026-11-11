@@ -10,7 +10,7 @@ import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
-import com.hfut.schedule.ui.nav.destination.CourseClassmatesScreen
+import com.hfut.schedule.ui.nav.destination.CourseClassmatesDestination
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
 import com.hfut.schedule.ui.nav.destination.DormitoryDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -184,11 +184,11 @@ val deepLinks = listOf(
         val filteredLessonCode = uri.getQueryParameter("lesson_code")
         FailRateApiDestination(courseName,filteredLessonCode)
     },
-    DeepLink(CourseClassmatesScreen.KEY) { uri ->
+    DeepLink(CourseClassmatesDestination.KEY) { uri ->
         val lessonId = uri.getQueryParameter("lesson_id")?.toIntOrNull() ?: return@DeepLink ExceptionDestination(
             Exception("lesson_id 字段解析失败，要求Int值")
         )
-        CourseClassmatesScreen(lessonId,null,false)
+        CourseClassmatesDestination(lessonId,null,false)
     },
     DeepLink(HomeDestination.KEY) { uri ->
         val subPage = uri.getQueryParameter("page") ?: return@DeepLink HomeDestination()

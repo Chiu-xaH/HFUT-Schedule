@@ -72,7 +72,7 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
-import com.hfut.schedule.ui.nav.destination.CourseClassmatesScreen
+import com.hfut.schedule.ui.nav.destination.CourseClassmatesDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailDestination
 import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
 import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
@@ -273,7 +273,7 @@ fun DetailItems(
             }
         }
         item {
-            val dest = CourseClassmatesScreen(
+            val dest = CourseClassmatesDestination(
                 lessons.id,
                 lessons.course.nameZh,
                 lessons.stdCount == 0

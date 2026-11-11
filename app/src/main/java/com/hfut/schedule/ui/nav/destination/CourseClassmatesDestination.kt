@@ -8,7 +8,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.util.text
 
-data class CourseClassmatesScreen(
+data class CourseClassmatesDestination(
     val lessonId : Int,
     val courseName : String?,
     val isScheduled : Boolean

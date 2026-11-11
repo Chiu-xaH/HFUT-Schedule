@@ -66,7 +66,7 @@ import com.xah.navigation.util.LocalNavController
 import com.xah.navigation.util.LocalNavControllerSafely
 import kotlinx.coroutines.launch
 
-private const val RELEASE_DATE = "2026-11-09"
+private const val RELEASE_DATE = "2026-11-11"
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -74,12 +74,9 @@ fun VersionInfo() {
     VersionInfoCard()
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 少量页面支持手机横屏、平板大屏适配")//
-        UpdateItems("修复 聚焦首页自动刷新机制首次被推迟1分钟的Bug")
-        UpdateItems("修复 适配微专业", developers = listOf("G-E-E-D"))//
-//        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
-//        UpdateItems("新增 扫码页面支持点击手动对焦")
-//        UpdateItems("新增 语言切换功能","位于 选项-偏好与配置-语言，支持中英文",to = To.Screen(SettingsConfigurationDestination))
+        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
+        UpdateItems("新增 扫码页面支持点击手动对焦")
+        UpdateItems("新增 语言切换功能","位于 选项-偏好与配置-语言，支持中英文",to = To.Screen(SettingsConfigurationDestination))
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
 //        UpdateItems("新增 支持接入大模型帮助创建日程","位于右上角彩色图标",to = To.Screen(AddEventDestination()))
         // 重新引入历史记录，然后持久化到本地数据库，统计其次数。在查询中心顶部推荐并允许用户自定义固定
