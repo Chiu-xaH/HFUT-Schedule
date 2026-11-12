@@ -26,8 +26,6 @@ import com.hfut.schedule.network.api.model.response.json.huixin.HuiXinHefeiBuild
 import com.hfut.schedule.network.api.model.response.html.news.News
 import com.hfut.schedule.network.api.model.response.json.hall.OfficeHallSearchRecord
 import com.hfut.schedule.network.api.model.response.json.one.OneFeeData
-import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherNow
-import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarning
 import com.hfut.schedule.network.api.model.response.json.second.SecondClassActivity
 import com.hfut.schedule.logic.model.supabase.SupabaseEventOutput
 import com.hfut.schedule.logic.model.supabase.SupabaseEventsInput
@@ -116,7 +114,9 @@ import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
 import com.xah.common.logic.model.HuiXinBill
 import com.consumption.forecast.model.result.TotalResult
+import com.hfut.schedule.logic.model.enumeration.DeepSeekModel
 import com.hfut.schedule.logic.network.repo.AdmissionRepository
+import com.hfut.schedule.logic.network.repo.DeepSeekRepository
 import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.network.api.model.response.html.FloorMap
 import com.hfut.schedule.network.api.model.request.community.CommunityLibraryContent
@@ -125,6 +125,8 @@ import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.network.api.model.response.html.Bus
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
+import com.hfut.schedule.network.api.model.response.json.ai.AiChatChoice
+import com.hfut.schedule.network.api.model.response.json.ai.AiChatMsg
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
 import com.hfut.schedule.network.api.model.response.json.one.OneSchoolEmailResponse
@@ -655,4 +657,7 @@ class NetWorkViewModel() : ViewModel() {
 
     val jxglstuSelectedCourseConfirmationResp = UiStateHolder<Map<JxglstuSelectedCourseConfirmationType, List<JxglstuSelectedCourseConfirmation>>>()
     suspend fun getSelectCourseConfirmation(cookie : String) = JxglstuRepository.getSelectCourseConfirmation(cookie,studentId,jxglstuSelectedCourseConfirmationResp)
+
+    val aiChatResp = UiStateHolder<List<AiChatChoice>>()
+    suspend fun chatWithAi(apiKey : String,msgs : List<AiChatMsg>,model : DeepSeekModel = DeepSeekModel.FLASH) = DeepSeekRepository.chat(apiKey,msgs,model,aiChatResp)
 }

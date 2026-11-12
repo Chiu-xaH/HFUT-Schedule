@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.other.AIScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.util.res
+import com.xah.navigation.util.LocalNavDependencies
 
 object AiDestination : NavDestination() {
     override val key = "ai"
@@ -13,6 +15,7 @@ object AiDestination : NavDestination() {
 
     @Composable
     override fun Content() {
-        AIScreen()
+        val networkVm = LocalNavDependencies.current.get<NetWorkViewModel>()
+        AIScreen(networkVm)
     }
 }

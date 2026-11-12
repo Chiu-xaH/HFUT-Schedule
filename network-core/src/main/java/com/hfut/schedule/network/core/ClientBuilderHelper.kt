@@ -8,6 +8,7 @@ fun OkHttpClient.Builder.timeoutMaxValue(timeSeconds : Long) = this
     .readTimeout(timeSeconds, TimeUnit.SECONDS)      // 读取超时
     .writeTimeout(timeSeconds, TimeUnit.SECONDS)     // 写入超时
 
+fun OkHttpClient.Builder.timeoutNone() = this.timeoutMaxValue(0)
 
 // 允许自动处理302
 fun OkHttpClient.Builder.allowAutoRedirect(allow : Boolean) = this

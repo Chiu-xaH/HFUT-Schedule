@@ -3,8 +3,7 @@ package com.hfut.schedule.network.api.model.response.json.ai
 import com.google.gson.annotations.SerializedName
 
 data class AiChatResponse(
-    val usage : AiChatUsageBean,
-    val model : String,
+//    val usage : AiChatUsageBean,
     val choices : List<AiChatChoice>
 )
 
@@ -19,7 +18,6 @@ data class AiChatUsageBean(
 
 data class AiChatChoice(
     val message: AiChatMsg,
-    val index : Int,
     @SerializedName("finish_reason")
     val finishReason : String
 )
