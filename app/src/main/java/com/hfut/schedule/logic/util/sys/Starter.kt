@@ -31,10 +31,7 @@ import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.hjq.device.compat.DeviceOs
 import com.xah.common.logic.util.LogUtil
-import com.xah.navigation.anim.effect.RollTransitionEffect
 import com.xah.navigation.anim.effect.ScaleTransitionEffect
-import com.xah.navigation.anim.effect.SlideTransitionEffect
-import com.xah.navigation.anim.effect.SlideTransitionEffect2
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.model.action.LaunchMode
 
@@ -182,6 +179,17 @@ object Starter {
     fun refreshLogin(context: Context) {
         val it = Intent(context, MainActivity::class.java).apply {
             putExtra("login",true)
+            if (context !is Activity) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+        context.startActivity(it)
+    }
+    @JvmStatic
+    fun startDeepLink(context: Context, deepLink : String) {
+        val it = Intent(context, MainActivity::class.java).apply {
+            putExtra("login",false)
+            data = deepLink.toUri()
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }

@@ -74,6 +74,8 @@ fun VersionInfo() {
     VersionInfoCard()
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
+        UpdateItems("新增 大模型","位于 查询中心-大模型，目前仅支持DeepSeek")
+        UpdateItems("新增 网页支持使用DeepSeek进行提炼与询问")
 //        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 语言切换功能","位于 选项-偏好与配置-语言，支持中英文",to = To.Screen(SettingsConfigurationDestination))
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
@@ -95,7 +97,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
 //            UpdateItems("新增 图书馆我的书架、收藏","位于 查询中心-图书馆")
 //            UpdateItems("新增 图书馆斛兵知搜支持阅读电子书")
-//            UpdateItems("新增 大模型","位于 查询中心-大模型,应用场景：通知公告的提炼、新增聚焦日程")
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("新增 合肥校区电费的快速充值")

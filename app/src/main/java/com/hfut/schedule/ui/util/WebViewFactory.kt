@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.model.choice.ColorMode
+import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.ktx.darken
 import com.xah.common.logic.util.EMPTY_STRING
@@ -87,6 +88,7 @@ import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
+import org.json.JSONObject
 
 fun getWebView(
     context : Context,
@@ -124,6 +126,7 @@ fun WebViewTools(
     currentTitle : String,
     url : String,
     onSearch : () -> Unit,
+    loading : Boolean,
     onExtend :  @Composable (() -> Unit) = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -252,6 +255,18 @@ fun WebViewTools(
     IconButton(onClick = {
         onSearch()
     }) { Icon(painterResource(id = R.drawable.search), contentDescription = EMPTY_STRING) }
+
+    IconButton(
+        onClick = {
+            webView?.getTextByEvalJs {
+                Starter.startDeepLink(
+                    context,
+                    AiDestination("简明扼要地归纳 关键信息：\n$it").toDeepLink()
+                )
+            }
+        },
+        enabled = !loading
+    ) { Icon(painterResource(id = R.drawable.wand_stars), contentDescription = EMPTY_STRING) }
 
     IconButton(onClick = {
         on = {}
@@ -765,4 +780,21 @@ fun WebView.evaluateJs(
     selectColor(this, onColor = onColorChange)
     // 注入 JS，为网页内容添加 padding（单位 px）
     this.evaluateJavascript(getPaddingPxJs(null,bottom), null)
+}
+
+
+private fun WebView.getTextByEvalJs(
+    onResult : (String) -> Unit
+) {
+    // 注入JS，提取网页文本供AI
+    this.evaluateJavascript(
+        """
+    (function() {
+        return document.body.innerText;
+    })();
+    """.trimIndent()
+    ) { result ->
+        val text = JSONObject("""{"value":$result}""").getString("value")
+        onResult(text)
+    }
 }

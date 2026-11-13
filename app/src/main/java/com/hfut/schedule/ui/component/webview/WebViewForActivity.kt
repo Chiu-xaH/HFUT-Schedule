@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.luminance
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.network.api.model.Constant
-import com.hfut.schedule.ui.util.FORCE_DARK_JS
 import com.hfut.schedule.ui.util.WebViewBackHandler
 import com.hfut.schedule.ui.util.WebViewBackIcon
 import com.hfut.schedule.ui.util.WebViewContent
@@ -95,6 +94,7 @@ fun WebViewScreenForActivity(
             currentUrl,
             currentTitle,
             url,
+            loading = loading,
             onSearch = {
                 showSearch = !showSearch
             }

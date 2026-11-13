@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.other
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -36,13 +37,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.enumeration.ChatRole
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.response.json.ai.AiChatChoice
 import com.hfut.schedule.network.api.model.response.json.ai.AiChatMsg
-import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -53,18 +54,23 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.nav.destination.AiDestination
+import com.hfut.schedule.ui.nav.destination.SettingsAiApiKeyDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.isNotNullAndEmptyAndBlank
+import com.xah.common.logic.util.isNullOrEmptyOrBlank
 import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.util.text
@@ -78,14 +84,14 @@ import kotlinx.coroutines.launch
 fun AI() {
     val navController = LocalNavController.current
     TransplantListItem(
-        headlineContent = { ScrollText(text = AiDestination.title.asString()) },
+        headlineContent = { ScrollText(text = AiDestination.TITLE.asString()) },
         leadingContent = {
             Box() {
-                Icon(painterResource(AiDestination.icon), contentDescription = null)
+                Icon(painterResource(AiDestination.ICON), contentDescription = null)
             }
         },
         modifier = Modifier.clickable {
-            navController.push(AiDestination)
+            navController.push(AiDestination())
         }
     )
 }
@@ -136,22 +142,47 @@ fun RotatingRainbowGlow(
 }
 
 
-
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AIScreen(
-    vm : NetWorkViewModel
+fun AiScreen(
+    vm : NetWorkViewModel,
+    keyword : String? = null,
 ) {
     val hazeState = rememberHazeBlur()
     val backdrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navController = LocalNavController.current
 
-    var input by remember { mutableStateOf(EMPTY_STRING) }
+    var input by remember { mutableStateOf(keyword ?: EMPTY_STRING) }
     val uiState by vm.aiChatResp.state.collectAsState()
     val apiKey by DataStoreManager.apiKey.collectAsState(initial = EMPTY_STRING)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(apiKey,keyword) {
+        // ApiKey
+        if(apiKey.isNullOrEmptyOrBlank()) {
+            return@LaunchedEffect
+        }
+        // 注入对话 直接开始
+        if(keyword.isNotNullAndEmptyAndBlank()) {
+            val newMsg = AiChatMsg(
+                role = ChatRole.USER.name.lowercase(),
+                content = keyword!!
+            )
+            vm.chatWithAi(apiKey, listOf(newMsg))
+            when(val uiState = vm.aiChatResp.state.first()) {
+                is NetworkUiState.Success -> {
+                    val newData = uiState.data
+                    vm.aiChatResp.emitData(
+                        listOf(AiChatChoice(newMsg,EMPTY_STRING)) + newData
+                    )
+                    input = EMPTY_STRING
+                }
+                else -> Unit
+            }
+            return@LaunchedEffect
+        }
+        // 非注入对话
         if(uiState is NetworkUiState.Success) {
             return@LaunchedEffect
         }
@@ -165,7 +196,7 @@ fun AIScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AiDestination.title.asString()) },
+                title = { Text(AiDestination.TITLE.asString()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -192,7 +223,11 @@ fun AIScreen(
             )
         },
         bottomBar = {
-            Column(
+            val display = uiState !is NetworkUiState.Loading
+            AnimatedVisibility(
+                visible = display,
+                enter = AppAnimationManager.toBottomAnimation.enter,
+                exit = AppAnimationManager.toBottomAnimation.exit,
                 modifier = Modifier.bottomBarBlur(hazeState)
             ) {
                 CustomTextField(
@@ -205,7 +240,7 @@ fun AIScreen(
                     input = input,
                     singleLine = false,
                     trailingIcon = {
-                         IconButton(
+                        IconButton(
                             enabled = input.isNotEmpty() && uiState !is NetworkUiState.Loading,
                             onClick = {
                                 scope.launch {
@@ -247,7 +282,7 @@ fun AIScreen(
                         }
                     },
                     label = {
-                        Text("输入内容")
+                        Text("输入内容后发送")
                     }
                 ) {
                     input = it
@@ -261,6 +296,18 @@ fun AIScreen(
                 .hazeSource(hazeState)
                 .backDropSource(backdrop)
         ) {
+            if(apiKey.isNullOrEmptyOrBlank()) {
+                CenterScreen {
+                    StatusIcon(
+                        R.drawable.settings,
+                        text("请先点击配置ApiKey"),
+                        onTextClick = {
+                            navController.push(SettingsAiApiKeyDestination)
+                        }
+                    )
+                }
+                return@Column
+            }
             CommonNetworkScreen(
                 uiState,
                 onReload = {
@@ -279,7 +326,7 @@ fun AIScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(data.size, key = { it }) { index ->
                         val item = data[index]
-                        ChatMsgUI(item)
+                        ChatMsgUI(item,index == 0 && keyword.isNotNullAndEmptyAndBlank())
                     }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
@@ -289,7 +336,10 @@ fun AIScreen(
 }
 
 @Composable
-private fun ChatMsgUI(item: AiChatChoice) {
+private fun ChatMsgUI(
+    item: AiChatChoice,
+    fold : Boolean
+) {
     val role = when (item.message.role.uppercase()) {
         ChatRole.USER.name -> ChatRole.USER
         ChatRole.ASSISTANT.name -> ChatRole.ASSISTANT
@@ -315,39 +365,15 @@ private fun ChatMsgUI(item: AiChatChoice) {
                 )
                 .padding(vertical = CARD_NORMAL_DP*2)
         ) {
-            if(role == ChatRole.USER) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP/3, horizontal = APP_HORIZONTAL_DP/2)
-                ) {
-                    Text(item.message.content)
-                    /*
-                    Icon(
-                        painterResource(R.drawable.person),
-                        null,
-//                        modifier = Modifier.padding(start = BUTTON_PADDING)
-                    )
-                     */
-                }
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP/3, horizontal = APP_HORIZONTAL_DP/2)
-                ) {
-                    /*
-                    Icon(
-                        painterResource(
-                            when(role) {
-                                ChatRole.ASSISTANT -> R.drawable.wand_stars
-                                else -> R.drawable.more_vert
-                            }
-                        ),
-                        null,
-                        modifier = Modifier.padding(end = BUTTON_PADDING)
-                    )
-                     */
-                    Text(item.message.content)
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP/3, horizontal = APP_HORIZONTAL_DP/2)
+            ) {
+                Text(
+                    item.message.content,
+                    maxLines = if(fold) 3 else Int.MAX_VALUE,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
     }

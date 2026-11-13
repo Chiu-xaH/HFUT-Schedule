@@ -5,6 +5,7 @@ import com.hfut.schedule.logic.model.enumeration.BottomBarItems
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AgreementDestination
+import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.AllExamDestination
 import com.hfut.schedule.ui.nav.destination.AllProgramsDestination
 import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
@@ -56,6 +57,9 @@ import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.navigation.model.dest.DeepLink
+
+
+const val DEEPLINK_SCHEME = "hfut_schedule://"
 
 private fun createDeepLinkByKey(destination : NavDestination) = with(destination) {
     DeepLink(this.key) { this }
@@ -198,6 +202,10 @@ val deepLinks = listOf(
         } catch (e : Exception) {
             ExceptionDestination(e)
         }
+    },
+    DeepLink(AiDestination.KEY) { uri ->
+        val keyword = uri.getQueryParameter("keyword")
+        AiDestination(keyword)
     },
 )
 
