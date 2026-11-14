@@ -138,6 +138,7 @@ import com.hfut.schedule.ui.component.input.WheelPicker
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
+import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
@@ -319,7 +320,39 @@ fun AddEventScreen(
                     if(eventId <= 0) {
                         LiquidButton(
                             onClick = {
-                                showDevelopingToast()
+                                navController.push(
+                                    AiDestination(
+                                        """
+                                            你帮忙理解用户意图并创建日程，中间可以做正常询问交流，但最终回答需以以下形式返回，必须返回规范的JSON：
+                                        {
+                                            "title": String,
+                                            "type": "DeadLine"或"Schedule",
+                                            "timeParts": [
+                                                {
+                                                    "dateTime": {
+                                                        "start": "YYYY-MM-DD HH:MM",
+                                                        "end": "YYYY-MM-DD HH:MM",
+                                                    },
+                                                    "description" : String或null,
+                                                },
+                                                ... 
+                                            ]
+                                        }
+                                        
+                                        注意事项：
+                                        1.type中的DeadLine代表DDL日程，只需要关心结束时间，dateTime的start直接为null即可；
+                                        2.type中的Schedule代表普通日程，有始有终。且此时每个dateTime不能为跨天日程，如果用户要求跨天择返回不支持。
+                                        3.关于type的判断，取决于用户的描述，如不确定可以询问是DDL还是普通日程，并解释其区别：
+                                            - 日程类型旨在用户自行添加额外的课程、实训、实验、班会等，强调线下活动、有始有终;添加后，将同时显示在课程表方格中，在进行期间会显示为重要事项，否则在其他事项中；
+                                            - DDL类型旨在用户自行添加需要在截止日期之前的作业、实验报告等，强调线上活动，相比日程类型只需注意结束时间;添加后，当剩余72h内时将会显示为重要事项，否则在其他事项中;
+                                        4.description一般填充本事件的地点、位置、链接等信息。是否为空取决于用户的描述是否带有，如不确定可以先行询问。
+                                        5.你接下来可以说：让我帮你创建日程，告诉我DDL类型还是普通日程、标题、时间、地点或备注（可选）~。
+                                        
+                                        环境变量：
+                                        1.现在时间：${DateTimeManager.Date_yyyy_MM_dd} ${DateTimeManager.Time_HH_MM}
+                                        """.trimIndent()
+                                    )
+                                )
                             },
                             isCircle = true,
                             backdrop = backDrop
