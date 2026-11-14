@@ -36,10 +36,14 @@ import com.hfut.schedule.network.api.model.request.uniapp.UniAppEmptyClassroomRe
 import com.hfut.schedule.network.api.model.request.uniapp.UniAppSearchProgramRequest
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.response.html.JxglstuExam
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppPersonInfo
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppPersonInfoResponse
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppSurveyResponse
 import com.hfut.schedule.network.api.repo.UniAppRepositoryInf
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
@@ -347,4 +351,31 @@ object UniAppRepository : UniAppRepositoryInf {
     ) = launchRequestNone {
         uniApp.getExams(token)
     }
+
+    override suspend fun getPersonInfo(
+        token : String,
+        holder : UiStateHolder<List<UniAppPersonInfo>>
+    ) = launchRequestState(
+        request = { uniApp.getPersonInfo(token) },
+        holder = holder,
+        transformSuccess = { _, json -> parsePersonInfo(json) }
+    )
+    @JvmStatic
+    private fun parsePersonInfo(json : String) = try {
+        GsonInstance.fromJson(json, UniAppPersonInfoResponse::class.java).data
+    } catch (e : Exception) { throw e }
+
+    override suspend fun getSurveyList(
+        token : String,
+        semester: Int,
+        holder : UiStateHolder<List<JxglstuSurveyLesson>>
+    ) = launchRequestState(
+        request = { uniApp.getSurveyList(semester,token) },
+        holder = holder,
+        transformSuccess = { _, json -> parseSurveyList(json) }
+    )
+    @JvmStatic
+    private fun parseSurveyList(json : String) = try {
+        GsonInstance.fromJson(json, UniAppSurveyResponse::class.java).data.list
+    } catch (e : Exception) { throw e }
 }

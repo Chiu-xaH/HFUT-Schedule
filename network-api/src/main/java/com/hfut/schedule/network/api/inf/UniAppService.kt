@@ -87,12 +87,49 @@ interface UniAppService {
         @Query("roomAssoc") roomId : Int,
         @Header("Authorization") auth : String
     ) : Call<ResponseBody>
-    // 评教 非必需，教务系统就有
-    // TODO
-    // 个人信息 非必需，教务系统就有
-    // TODO
-    // 培养方案 非必需，教务系统就有
-    // TODO
-    // 转专业 非必需，教务系统就有
-    // TODO
+    // 评教
+    @GET("eams-app-service/api/v1/for-std/summative-eva/task/semester/{semesterId}")
+    fun getSurveyList(
+        @Path("semesterId") semesterId : Int,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 个人信息
+    @GET("eams-micro-server/api/v1/student/base-info")
+    fun getPersonInfo(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 培养方案
+    @GET("eams-micro-server/api/v1/plan/student/my-program")
+    fun getProgramList(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 培养方案
+    @GET("eams-micro-server/api/v1/plan/student/plan-courses/{programId}/0")
+    fun getProgram(
+        @Path("programId") programId : Int,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 培养方案完成情况
+    @GET("eams-micro-server/api/v1/plan/search/completion/cultivateTypes")
+    fun getProgramCompletionList(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 培养方案完成情况
+    @GET("eams-micro-server/api/v1/plan/search/completion/info")
+    fun getProgramCompletion(
+        @Query("code") code : String,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 转专业
+    @GET("eams-micro-server/api/v1/change/student/change-batchs")
+    fun getTransferList(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 开课查询
+    @GET("eams-micro-server/api/v1/lesson-search")
+    fun searchCourses(
+        @Query("term") keyword : String,// 课程名 教学班名 教师名
+        @Header("Authorization") auth : String,
+        @Query("queryPage__") page : String = "1,${Constant.DEFAULT_PAGE_SIZE}",
+    ) : Call<ResponseBody>
 }

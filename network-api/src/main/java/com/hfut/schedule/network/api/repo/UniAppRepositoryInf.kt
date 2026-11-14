@@ -1,5 +1,6 @@
 package com.hfut.schedule.network.api.repo
 
+import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppBuilding
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassmate
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomCourse
@@ -7,6 +8,7 @@ import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppClassroomS
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppCourse
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppEmptyClassroom
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppGrade
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppPersonInfo
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramData
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchData
 import com.xah.common.logic.model.Campus
@@ -66,4 +68,13 @@ interface UniAppRepositoryInf {
     suspend fun checkLogin(
         token : String
     ): Int
+    suspend fun getPersonInfo(
+        token : String,
+        holder : UiStateHolder<List<UniAppPersonInfo>>
+    )
+    suspend fun getSurveyList(
+        token : String,
+        semester: Int,
+        holder : UiStateHolder<List<JxglstuSurveyLesson>>
+    )
 }
