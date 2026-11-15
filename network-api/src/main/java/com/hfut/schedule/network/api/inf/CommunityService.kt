@@ -135,4 +135,17 @@ interface CommunityService {
         @Query("pageNo") page : Int = 1,
         @Query("pageSize") pageSize : Int = Constant.DEFAULT_PAGE_SIZE,
     ) : Call<ResponseBody>
+
+    @GET("api/mobile/community/site/getSiteByIdOrTime")
+    fun getAppointmentPlaceDetail(
+        @Header("X-Access-Token") token : String,
+        @Query("localDate") date : String,
+        @Query("siteId") page : String,
+    ) : Call<ResponseBody>
+
+    @GET("api//mobile/community/appointment/queryAppointmentDetail")
+    fun getAppointmentPlaceTimeFrameDetail(
+        @Header("X-Access-Token") token : String,
+        @Query("id") id : String,
+    ) : Call<ResponseBody>
 }

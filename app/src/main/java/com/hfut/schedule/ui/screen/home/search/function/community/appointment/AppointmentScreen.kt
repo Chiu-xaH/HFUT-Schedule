@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -24,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,24 +33,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarV2
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.dialog.DatePickerDialog
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.DEFAULT_IMAGE_SIZE
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.model.NavigationBarItemData
 import com.hfut.schedule.ui.nav.destination.AppointmentDestination
+import com.hfut.schedule.ui.nav.destination.AppointmentPlaceDestination
 import com.hfut.schedule.ui.nav.destination.AppointmentSeatDestination
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -60,11 +70,10 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.state.NetworkUiState
-import com.xah.common.ui.style.align.CenterScreen
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
-import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
@@ -104,6 +113,19 @@ fun AppointmentScreen(
         else -> AppointmentBarItems.SEAT
     }
 
+    var date by rememberSaveable { mutableStateOf(DateTimeManager.Date_yyyy_MM_dd) }
+    var showSelectDateDialog by remember { mutableStateOf(false) }
+    if(showSelectDateDialog) {
+        DatePickerDialog(
+            onConfirm = {
+                date = it
+            },
+            allowSelectPrevious = false
+        ) {
+            showSelectDateDialog = false
+        }
+    }
+
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -116,6 +138,22 @@ fun AppointmentScreen(
                     title = { Text(AppointmentDestination.title.asString()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
+                    },
+                    actions = {
+                        when(targetPage) {
+                            AppointmentBarItems.PLACE -> {
+                                LiquidButton(
+                                    onClick = {
+                                        showSelectDateDialog = true
+                                    },
+                                    backdrop = backdrop,
+                                    modifier = Modifier.padding(end = BUTTON_END_PADDING)
+                                ) {
+                                    Text(date)
+                                }
+                            }
+                            else -> Unit
+                        }
                     }
                 )
             }
@@ -143,12 +181,10 @@ fun AppointmentScreen(
                 .backDropSource(backdrop)
         ) {
             nav2Composable(AppointmentBarItems.PLACE.name) {
-                CenterScreen {
-                    DevelopingIcon()
-                }
+                AppointmentPlacesScreen(vm,innerPadding,date)
             }
             nav2Composable(AppointmentBarItems.SEAT.name) {
-                AppointmentSeatScreen(vm,innerPadding)
+                AppointmentSeatsScreen(vm,innerPadding)
             }
         }
     }
@@ -157,7 +193,7 @@ fun AppointmentScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun AppointmentSeatScreen(
+private fun AppointmentSeatsScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues
 ) {
@@ -219,6 +255,123 @@ private fun AppointmentSeatScreen(
                                     painterResource(R.drawable.near_me),
                                     null
                                 )
+                            },
+                            modifier = Modifier.clickable {
+                                navController.push(dest)
+                            },
+                            cardModifier = Modifier.sharedContainer(
+                                dest.key,
+                                MaterialTheme.shapes.medium,
+                                cardNormalColor()
+                            ),
+                            shape = NoneRoundShape
+                        )
+                    }
+                    item { PaddingForPageControllerButton() }
+                    item { InnerPaddingHeight(innerPadding,false) }
+                }
+                PageController(
+                    listState,
+                    page,
+                    onNextPage = {
+                        scope.launch {
+                            page = it
+                            refreshNetwork(false)
+                        }
+                    },
+                    onPreviousPage = {
+                        scope.launch {
+                            page = it
+                            refreshNetwork(false)
+                        }
+                    },
+                    paddingBottom = false,
+                    paddingSafely = enableNewBottomBar,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        }
+        RefreshIndicator(
+            refreshing,
+            pullRefreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(innerPadding)
+        )
+    }
+}
+
+// TODO date
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun AppointmentPlacesScreen(
+    vm : NetWorkViewModel,
+    innerPadding : PaddingValues,
+    date : String
+) {
+    var page by rememberSaveable { mutableIntStateOf(1) }
+
+    val navController = LocalNavController.current
+    val uiState by vm.communityPlacesAppointmentResp.state.collectAsState()
+    val refreshNetwork: suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
+        if(skip && uiState is NetworkUiState.Success) {
+            return@m
+        }
+        prefs.getString("TOKEN","")?.let {
+            vm.communityPlacesAppointmentResp.clear()
+            vm.getCommunityPlacesAppointment(it,date,page)
+        }
+    }
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+    val refreshing = uiState is NetworkUiState.Loading
+    val scope = rememberCoroutineScope()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            scope.launch {
+                refreshNetwork(false)
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        refreshNetwork(true)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
+    ) {
+        CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
+            val list = (uiState as NetworkUiState.Success).data
+            val listState = rememberLazyListState()
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                LazyColumn(state = listState) {
+                    item { InnerPaddingHeight(innerPadding,true) }
+                    items(list.size, key = { list[it].id }) { index ->
+                        val item = list[index]
+                        val title = "${item.campus}-${item.communityName}"
+                        val dest = AppointmentPlaceDestination(item)
+                        CardListItem(
+                            headlineContent = {
+                                Text(item.name, fontWeight = FontWeight.Bold)
+                            },
+                            overlineContent = {
+                                Text(item.startTime + "~" + item.endTime + " | $title")
+                            },
+                            leadingContent = {
+                                UrlImage(
+                                    item.logo ?: EMPTY_STRING,
+                                    modifier = Modifier.size(DEFAULT_IMAGE_SIZE),
+                                    shape = MaterialTheme.shapes.medium,
+                                    contentScale = ContentScale.Fit
+                                )
+                            },
+                            supportingContent = {
+                                Text(item.address)
                             },
                             modifier = Modifier.clickable {
                                 navController.push(dest)

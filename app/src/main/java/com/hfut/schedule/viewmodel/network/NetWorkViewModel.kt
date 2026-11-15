@@ -127,6 +127,7 @@ import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.html.JxglstuTransferMajorDetail
 import com.hfut.schedule.network.api.model.response.json.ai.AiChatChoice
 import com.hfut.schedule.network.api.model.response.json.ai.AiChatMsg
+import com.hfut.schedule.network.api.model.response.json.community.CommunityPlacesAppointment
 import com.hfut.schedule.network.api.model.response.json.community.CommunitySeatsAppointment
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmation
 import com.hfut.schedule.network.api.model.response.json.jxglstu.JxglstuSelectedCourseConfirmationType
@@ -665,4 +666,6 @@ class NetWorkViewModel() : ViewModel() {
     val communitySeatsAppointmentResp = UiStateHolder<List<CommunitySeatsAppointment>>()
     suspend fun getCommunitySeatsAppointment(token: String,page: Int) = CommunityRepository.getAppointmentSeats(token,page,communitySeatsAppointmentResp)
 
+    val communityPlacesAppointmentResp = UiStateHolder<List<CommunityPlacesAppointment>>()
+    suspend fun getCommunityPlacesAppointment(token: String,date : String,page: Int) = CommunityRepository.getAppointmentPlaces(token,date,page,communityPlacesAppointmentResp)
 }

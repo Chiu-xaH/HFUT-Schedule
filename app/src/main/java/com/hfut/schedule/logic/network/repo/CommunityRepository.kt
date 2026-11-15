@@ -42,6 +42,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.xah.common.logic.state.NetworkUiState
 import com.xah.common.logic.state.UiStateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.impl.CommunityServiceCreator
 import com.xah.common.logic.util.LogUtil
@@ -49,6 +50,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.hfut.schedule.network.api.inf.CommunityService
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.json.community.CommunityPlacesAppointment
+import com.hfut.schedule.network.api.model.response.json.community.CommunityPlacesAppointmentResponse
 import com.hfut.schedule.network.api.model.response.json.community.CommunitySeatsAppointment
 import com.hfut.schedule.network.api.model.response.json.community.CommunitySeatsAppointmentResponse
 import com.hfut.schedule.network.api.repo.CommunityRepositoryInf
@@ -65,6 +68,8 @@ import kotlinx.coroutines.ensureActive
 object CommunityRepository : CommunityRepositoryInf {
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
     private var allSemestersRankingsToken: String? = null
+
+    private const val SUCCESS_TAG = "操作成功"
 
     override suspend fun loginCommunity(ticket : String, holder : UiStateHolder<String>) = launchRequestState(
         holder = holder,
@@ -101,7 +106,7 @@ object CommunityRepository : CommunityRepositoryInf {
         )
     @JvmStatic
     private fun parseFailRate(json : String) : List<CommunityFailRateRecord> = try {
-        if(json.contains("操作成功")) {
+        if(json.contains(SUCCESS_TAG)) {
             GsonInstance.fromJson(json, CommunityFailRateResponse::class.java).result.records
         } else
             throw Exception(json)
@@ -212,7 +217,7 @@ object CommunityRepository : CommunityRepositoryInf {
         )
     @JvmStatic
     private fun parseSearchBooks(json : String) : List<CommunityLibraryRecord> = try {
-        if(json.contains("操作成功"))
+        if(json.contains(SUCCESS_TAG))
             GsonInstance.fromJson(json, CommunityLibraryResponse::class.java).result.records
         else
             throw Exception(json)
@@ -263,7 +268,7 @@ object CommunityRepository : CommunityRepositoryInf {
         )
     @JvmStatic
     private fun parseDormitory(result : String) : CommunityDormitory = try {
-        if (result.contains("操作成功")) {
+        if (result.contains(SUCCESS_TAG)) {
             GsonInstance.fromJson(result, CommunityDormitoryResponse::class.java).result ?: throw Exception("无住宿信息")
         }
         else
@@ -285,7 +290,7 @@ object CommunityRepository : CommunityRepositoryInf {
         }
     @JvmStatic
     private fun parseDormitoryInfo(result : String) : List<CommunityDormitoryUser> = try {
-        if (result.contains("操作成功")) {
+        if (result.contains(SUCCESS_TAG)) {
             val list1 = GsonInstance.fromJson(result, CommunityDormitoryInfoResponse::class.java).result?.profileList ?: throw Exception("未查询到宿舍")
             list1.flatMap { it.userList }.distinct()
         }
@@ -335,7 +340,7 @@ object CommunityRepository : CommunityRepositoryInf {
     )
     @JvmStatic
     private fun parseMaps(result : String) : List<CommunitySchoolMap> = try {
-        if(result.contains("操作成功"))
+        if(result.contains(SUCCESS_TAG))
             GsonInstance.fromJson(result, CommunitySchoolMapResponse::class.java).result
         else
             throw Exception(result)
@@ -349,7 +354,7 @@ object CommunityRepository : CommunityRepositoryInf {
         )
     @JvmStatic
     private fun parseStuApps(result : String) : List<CommunityStuAppDetail> = try {
-        if(result.contains("操作成功")) {
+        if(result.contains(SUCCESS_TAG)) {
             val list = GsonInstance.fromJson(result, CommunityStuAppResponse::class.java).result
             val totalList = list.flatMap { it.subList }
             totalList.filter { it.url?.startsWith(Constant.STU_URL) == true }
@@ -365,7 +370,7 @@ object CommunityRepository : CommunityRepositoryInf {
     )
     @JvmStatic
     private fun parseBus(result : String) : List<CommunityBus> = try {
-        if(result.contains("操作成功")) {
+        if(result.contains(SUCCESS_TAG)) {
             GsonInstance.fromJson(result, CommunityBusResponse::class.java).result
         }
         else
@@ -488,7 +493,7 @@ object CommunityRepository : CommunityRepositoryInf {
                 if (response.isSuccessful) {
                     val json = response.body()?.string() ?: continue
 
-                    if (json.contains("操作成功")) {
+                    if (json.contains(SUCCESS_TAG)) {
                         val allScores = parseDormitoryScore(json)
                         val totalItem = allScores.find { it.title == "评分" }
                         val totalValue = totalItem?.value?.toDoubleOrNull()
@@ -509,7 +514,7 @@ object CommunityRepository : CommunityRepositoryInf {
  
     @JvmStatic
     private fun parseDormitoryScore(result : String) : List<CommunityDormitoryScore> = try {
-        if (result.contains("操作成功")) {
+        if (result.contains(SUCCESS_TAG)) {
             GsonInstance.fromJson(result, CommunityDormitoryScoreResponse::class.java)?.result ?: emptyList()
         } else {
             throw Exception(result)
@@ -526,7 +531,28 @@ object CommunityRepository : CommunityRepositoryInf {
         transformSuccess = { _, json -> parseAppointmentSeats(json) }
     )
     @JvmStatic
-    private fun parseAppointmentSeats(result : String) : List<CommunitySeatsAppointment> = try {
-        GsonInstance.fromJson(result, CommunitySeatsAppointmentResponse::class.java).result.records
+    private fun parseAppointmentSeats(json : String) : List<CommunitySeatsAppointment> = try {
+        if(json.contains(SUCCESS_TAG)) {
+            GsonInstance.fromJson(json, CommunitySeatsAppointmentResponse::class.java).result.records
+        } else
+            throw Exception(json)
+    } catch (e : Exception) { throw e }
+
+    override suspend fun getAppointmentPlaces(
+        token : String,
+        date : String,
+        page : Int,
+        holder : UiStateHolder<List<CommunityPlacesAppointment>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { community.getAppointmentPlaces(token,date,page) },
+        transformSuccess = { _, json -> parseAppointmentPlaces(json) }
+    )
+    @JvmStatic
+    private fun parseAppointmentPlaces(json : String) : List<CommunityPlacesAppointment> = try {
+        if(json.contains(SUCCESS_TAG)) {
+            GsonInstance.fromJson(json, CommunityPlacesAppointmentResponse::class.java).result.records
+        } else
+            throw Exception(json)
     } catch (e : Exception) { throw e }
 }
