@@ -76,6 +76,7 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         UpdateItems("新增 大模型","位于 查询中心-大模型，目前仅支持DeepSeek")
         UpdateItems("新增 网页支持使用DeepSeek进行提炼与询问")
+        UpdateItems("修复 指间工大在新底栏下的避让Bug")
 //        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 语言切换功能","位于 选项-偏好与配置-语言，支持中英文",to = To.Screen(SettingsConfigurationDestination))
 //        UpdateItems("新增 允许在课程表显示日历账户的日程")
