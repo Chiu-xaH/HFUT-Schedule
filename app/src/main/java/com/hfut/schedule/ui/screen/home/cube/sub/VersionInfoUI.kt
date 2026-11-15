@@ -25,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.room.Update
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -42,18 +41,10 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
-import com.hfut.schedule.ui.nav.destination.BusDestination
-import com.hfut.schedule.ui.nav.destination.ClassroomDestination
-import com.hfut.schedule.ui.nav.destination.LifeDestination
-import com.hfut.schedule.ui.nav.destination.SettingsAppearanceDestination
-import com.hfut.schedule.ui.nav.destination.SettingsConfigurationDestination
-import com.hfut.schedule.ui.nav.destination.SettingsDeveloperDestination
-import com.hfut.schedule.ui.nav.destination.SettingsFocusCardDestination
-import com.hfut.schedule.ui.nav.destination.SettingsHuiXinPasswordDestination
-import com.hfut.schedule.ui.nav.destination.SettingsJxglstuPasswordDestination
-import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
+import com.hfut.schedule.ui.nav.destination.AiDestination
+import com.hfut.schedule.ui.nav.destination.AppointmentDestination
+import com.hfut.schedule.ui.nav.destination.PersonInfoDestination
 import com.hfut.schedule.ui.nav.destination.TrackDestination
-import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.sharednav.common.helper.NoneRoundShape
@@ -74,8 +65,10 @@ fun VersionInfo() {
     VersionInfoCard()
     // 适配iOS后版本号跳为5.0
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 大模型","位于 查询中心-大模型，目前仅支持DeepSeek")
-        UpdateItems("新增 网页支持使用DeepSeek进行提炼与询问")
+        UpdateItems("新增 大模型","位于 查询中心-大模型，目前仅支持DeepSeek",to = To.Screen(AiDestination()))
+        UpdateItems("新增 新建日程及网页支持使用DeepSeek辅助",to = To.Screen(AddEventDestination()))
+        UpdateItems("新增 合工大教务数据源的开课查询、培养方案、个人信息",to = To.Screen(PersonInfoDestination))
+        UpdateItems("新增 社区预约","位于 查询中心-社区预约",to = To.Screen(AppointmentDestination))
         UpdateItems("修复 指间工大在新底栏下的避让Bug")
 //        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 语言切换功能","位于 选项-偏好与配置-语言，支持中英文",to = To.Screen(SettingsConfigurationDestination))

@@ -375,7 +375,7 @@ fun BusScreen(
     }
 }
 
-enum class BusBarItems(val page : Int) {
+private enum class BusBarItems(val page : Int) {
     NOW(0),SEARCH(1)
 }
 

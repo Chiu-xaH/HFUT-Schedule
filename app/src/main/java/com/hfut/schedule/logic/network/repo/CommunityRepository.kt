@@ -49,6 +49,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.hfut.schedule.network.api.inf.CommunityService
 import com.hfut.schedule.network.api.model.Constant
+import com.hfut.schedule.network.api.model.response.json.community.CommunitySeatsAppointment
+import com.hfut.schedule.network.api.model.response.json.community.CommunitySeatsAppointmentResponse
 import com.hfut.schedule.network.api.repo.CommunityRepositoryInf
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
@@ -512,5 +514,19 @@ object CommunityRepository : CommunityRepositoryInf {
         } else {
             throw Exception(result)
         }
+    } catch (e : Exception) { throw e }
+
+    override suspend fun getAppointmentSeats(
+        token : String,
+        page : Int,
+        holder : UiStateHolder<List<CommunitySeatsAppointment>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { community.getAppointmentSeats(token,page) },
+        transformSuccess = { _, json -> parseAppointmentSeats(json) }
+    )
+    @JvmStatic
+    private fun parseAppointmentSeats(result : String) : List<CommunitySeatsAppointment> = try {
+        GsonInstance.fromJson(result, CommunitySeatsAppointmentResponse::class.java).result.records
     } catch (e : Exception) { throw e }
 }

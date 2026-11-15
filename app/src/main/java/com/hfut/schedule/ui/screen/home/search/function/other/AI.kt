@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,9 +42,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.enumeration.ChatRole
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.network.api.model.response.json.ai.AiChatChoice
 import com.hfut.schedule.network.api.model.response.json.ai.AiChatMsg
+import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
@@ -78,6 +83,18 @@ import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
+/*
+TODO
+
+输入框：模型切换
+
+右上角：TOken情况、上下文情况、保存（三期规划）
+
+我的对话：复制、编辑并重发（二期规划）
+
+对方对话：复制，顶部思考（四期规划）
+ */
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -204,13 +221,41 @@ fun AiScreen(
                     if(uiState is NetworkUiState.Success) {
                         LiquidButton(
                             onClick = {
+                                // TODO TOken、上下文情况
+                                showDevelopingToast()
+                            },
+                            isCircle = true,
+                            backdrop = backdrop,
+                            modifier = Modifier.padding(end = BUTTON_PADDING)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.planner_review),
+                                null,
+                            )
+                        }
+                        LiquidButton(
+                            onClick = {
+                                // TODO 保存
+                                showDevelopingToast()
+                            },
+                            isCircle = true,
+                            backdrop = backdrop,
+                            modifier = Modifier.padding(end = BUTTON_PADDING)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.save),
+                                null,
+                            )
+                        }
+                        LiquidButton(
+                            onClick = {
                                 // TODO Dialog
                                 input = EMPTY_STRING
                                 vm.aiChatResp.emitPrepare()
                             },
                             isCircle = true,
                             backdrop = backdrop,
-                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP)
+                            modifier = Modifier.padding(end = BUTTON_END_PADDING)
                         ) {
                             Icon(
                                 painterResource(R.drawable.delete),
@@ -239,6 +284,19 @@ fun AiScreen(
                         .containerBackDrop(backdrop, MaterialTheme.shapes.medium),
                     input = input,
                     singleLine = false,
+                    leadingIcon = {
+                        IconButton(
+                            onClick = {
+                                // TODO 切换模型
+                                showDevelopingToast()
+                            }
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.swap_vert),
+                                null
+                            )
+                        }
+                    },
                     trailingIcon = {
                         IconButton(
                             enabled = input.isNotEmpty() && uiState !is NetworkUiState.Loading,
@@ -316,8 +374,8 @@ fun AiScreen(
                 },
                 prepareContent = {
                     StatusIcon(
-                        R.drawable.send_money,
-                        text("发送消息以开始聊天")
+                        R.drawable.waving_hand,
+                        text("发送消息以开始对话")
                     )
                 }
             ) {
@@ -364,6 +422,19 @@ private fun ChatMsgUI(
                     }
                 )
                 .padding(vertical = CARD_NORMAL_DP*2)
+                .combinedClickable(
+                    onClick = {
+                        if(role == ChatRole.USER) {
+                            // TODO 编辑
+                            showDevelopingToast()
+                        } else {
+                            showToast("长按复制")
+                        }
+                    },
+                    onLongClick = {
+                        ClipBoardHelper.copy(item.message.content)
+                    }
+                )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

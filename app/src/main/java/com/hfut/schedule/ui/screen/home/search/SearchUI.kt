@@ -55,7 +55,7 @@ import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.AlumniDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
-import com.hfut.schedule.ui.nav.destination.CommunityAppointmentDestination
+import com.hfut.schedule.ui.nav.destination.AppointmentDestination
 import com.hfut.schedule.ui.nav.destination.CourseSearchDestination
 import com.hfut.schedule.ui.nav.destination.DormitoryDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -259,7 +259,7 @@ fun SearchScreen(
                 SearchAppBean(43,"${OfficeHallDestination.title.asString(context)}", { OfficeHall() }, OfficeHallDestination.key),
                 SearchAppBean(44,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 合肥" , { HuiXin() }, WebViewDestination.getKey(getHuiXinURL())),
                 SearchAppBean(45,"${SecondClassDestination.title.asString(context)}", { SecondClass() }, SecondClassDestination.key),
-                SearchAppBean(46,"${CommunityAppointmentDestination.title.asString(context)} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment() }, CommunityAppointmentDestination.key),
+                SearchAppBean(46,"${AppointmentDestination.title.asString(context)} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment() }, AppointmentDestination.key),
                 SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI() }, AiDestination().key),
                 SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track() }, TrackDestination.key),
                 SearchAppBean(49,"拼多多 淘宝 快递 取件码 包裹 ${context.getString(R.string.navigation_label_express)}", { Express() },ExpressWindow.key),

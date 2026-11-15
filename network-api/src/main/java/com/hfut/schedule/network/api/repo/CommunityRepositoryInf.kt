@@ -14,6 +14,7 @@ import com.hfut.schedule.network.api.model.response.json.community.CommunityGrad
 import com.hfut.schedule.network.api.model.request.community.CommunityLibraryContent
 import com.hfut.schedule.network.api.model.response.json.community.CommunityLibraryRecord
 import com.hfut.schedule.network.api.model.response.json.community.CommunitySchoolMap
+import com.hfut.schedule.network.api.model.response.json.community.CommunitySeatsAppointment
 import com.hfut.schedule.network.api.model.response.json.community.CommunityStuAppDetail
 import com.hfut.schedule.network.api.model.response.json.community.CommunityToday
 import com.hfut.schedule.network.api.model.response.json.community.DormitoryWeeklyScoresDto
@@ -57,5 +58,11 @@ interface CommunityRepositoryInf {
         semester : String,
         semesterInt : Int,
         holder : UiStateHolder<DormitoryWeeklyScoresDto>,
+    )
+
+    suspend fun getAppointmentSeats(
+        token : String,
+        page : Int,
+        holder : UiStateHolder<List<CommunitySeatsAppointment>>
     )
 }
