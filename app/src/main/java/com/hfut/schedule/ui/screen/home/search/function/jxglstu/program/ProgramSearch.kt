@@ -105,9 +105,10 @@ fun ProgramSearchScreen(
     }
     val uiState by vm.searchProgramsResp.state.collectAsState()
 
-    LaunchedEffect(page,jwt) {
-        refreshNetwork()
+    LaunchedEffect(Unit) {
+        vm.searchProgramsResp.emitPrepare()
     }
+
     var id by remember { mutableIntStateOf(-1) }
     var title by remember { mutableStateOf("培养方案详情") }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -243,7 +244,22 @@ fun ProgramSearchScreen(
                             item { InnerPaddingHeight(innerPadding,false) }
                             item { PaddingForPageControllerButton() }
                         }
-                        PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it })
+                        PageController(
+                            listState,
+                            page,
+                            onNextPage = {
+                                scope.launch {
+                                    page = it
+                                    refreshNetwork()
+                                }
+                            },
+                            onPreviousPage = {
+                                scope.launch {
+                                    page = it
+                                    refreshNetwork()
+                                }
+                            }
+                        )
                     }
                 }
             }
