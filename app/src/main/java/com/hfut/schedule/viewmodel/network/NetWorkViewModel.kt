@@ -137,7 +137,7 @@ import com.hfut.schedule.network.api.model.response.json.qweather.QWeatherWarnRe
 import com.hfut.schedule.network.api.model.response.json.zhijian.ZhiJianCourseTableDto
 import com.xah.common.logic.util.EMPTY_STRING
 
-class NetWorkViewModel() : ViewModel() {
+class NetWorkViewModel : ViewModel() {
     val studentId = UiStateHolder<Int>()
     suspend fun getStudentId(cookie : String) = JxglstuRepository.getStudentId(cookie,studentId)
 
@@ -606,11 +606,14 @@ class NetWorkViewModel() : ViewModel() {
     val searchProgramsResp = UiStateHolder<List<UniAppProgramSearchData>>()
     suspend fun searchPrograms(token : String, page : Int , keyword : String) = UniAppRepository.searchPrograms(token,page,keyword,searchProgramsResp)
 
+    val uniAppMyProgramsResp = UiStateHolder<List<UniAppProgramSearchData>>()
+    suspend fun getMyProgramsByUniApp(token : String) = UniAppRepository.getMyPrograms(token,uniAppMyProgramsResp)
+
     val departmentsResp = UiStateHolder<List<Department>>()
     suspend fun getDepartments() = OthersRepository.getDepartments(departmentsResp)
 
     val getProgramByIdResp = UiStateHolder<UniAppProgramData>()
-    suspend fun getProgramById(id : Int, token: String, ) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
+    suspend fun getProgramById(id : Int, token: String) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
 
     val dormitoryScoreResp = UiStateHolder<List<CommunityDormitoryScore>>()
     suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
@@ -622,7 +625,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getBuildings(token : String) = UniAppRepository.getBuildings(token,uniAppBuildingsResp)
 
     val uniAppEmptyClassroomsResp = UiStateHolder<List<UniAppEmptyClassroom>>()
-    suspend fun getEmptyClassrooms(page : Int, date : String, campus: Campus?, buildings : List<Int>?, floors : List<Int>?, token : String, ) = UniAppRepository.getEmptyClassrooms(page,date,campus,buildings,floors,token,uniAppEmptyClassroomsResp)
+    suspend fun getEmptyClassrooms(page : Int, date : String, campus: Campus?, buildings : List<Int>?, floors : List<Int>?, token : String) = UniAppRepository.getEmptyClassrooms(page,date,campus,buildings,floors,token,uniAppEmptyClassroomsResp)
 
     val uniAppSearchClassroomsResp = UiStateHolder<List<UniAppClassroomSearchResult>>()
     suspend fun searchClassrooms(input : String, token : String, page : Int) = UniAppRepository.searchClassrooms(input,token,page,uniAppSearchClassroomsResp)

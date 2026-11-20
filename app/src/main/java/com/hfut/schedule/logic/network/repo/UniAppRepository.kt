@@ -39,6 +39,7 @@ import com.hfut.schedule.network.api.model.response.html.JxglstuExam
 import com.hfut.schedule.network.api.model.response.json.jxglstu.survey.JxglstuSurveyLesson
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppPersonInfo
 import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppPersonInfoResponse
+import com.hfut.schedule.network.api.model.response.json.uniapp.UniAppProgramSearchList
 import com.hfut.schedule.network.api.util.CryptoUtil
 import com.hfut.schedule.network.core.GsonInstance
 import com.hfut.schedule.network.core.StatusCode
@@ -241,6 +242,20 @@ object UniAppRepository : UniAppRepositoryInf {
     @JvmStatic
     private fun parseProgramSearch(json : String) : List<UniAppProgramSearchData> = try {
         GsonInstance.fromJson(json, UniAppProgramSearchResponse::class.java).data.data
+    } catch (e : Exception) { throw e }
+
+    override suspend fun getMyPrograms(
+        token : String,
+        holder : UiStateHolder<List<UniAppProgramSearchData>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.getProgramList(token) },
+        transformSuccess = { _, json -> parseProgramList(json) }
+    )
+
+    @JvmStatic
+    private fun parseProgramList(json : String) : List<UniAppProgramSearchData> = try {
+        GsonInstance.fromJson(json, UniAppProgramSearchList::class.java).data
     } catch (e : Exception) { throw e }
 
     override suspend fun getProgramById(

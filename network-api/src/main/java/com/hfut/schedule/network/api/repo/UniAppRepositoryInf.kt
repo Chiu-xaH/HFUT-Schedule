@@ -77,4 +77,8 @@ interface UniAppRepositoryInf {
         semester: Int,
         holder : UiStateHolder<List<JxglstuSurveyLesson>>
     )
+    suspend fun getMyPrograms(
+        token : String,
+        holder : UiStateHolder<List<UniAppProgramSearchData>>
+    )
 }
