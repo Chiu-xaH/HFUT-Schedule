@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,21 +39,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
-import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
-import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletionResponse
 import com.hfut.schedule.logic.model.dto.JxglstuProgramItemDto
-import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramResponse
-import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletion
 import com.hfut.schedule.logic.util.parse.roundOffString
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramPlanCourse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.JxglstuProgramResponse
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletion
+import com.hfut.schedule.network.api.model.response.json.jxglstu.program.competition.JxglstuProgramSimpleCompletionResponse
 import com.hfut.schedule.network.core.GsonInstance
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -64,24 +65,27 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.filterDepartmentName
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
+import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
+import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.EMPTY_STRING
-import com.xah.common.logic.util.safeDiv
-import com.xah.common.ui.component.status.LoadingUI
-import com.xah.common.ui.component.text.BottomTip
-import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.common.ui.style.padding.InnerPaddingHeight
-import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.component.chart.StackedBarChart
 import com.xah.common.ui.component.chart.StackedBarData
+import com.xah.common.ui.component.status.LoadingUI
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.padding.InnerPaddingHeight
+import com.xah.container.component.base.sharedContainer
+import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -141,6 +145,7 @@ suspend fun createProgramMap() : Map<String, JxglstuProgramPlanCourse> {
 
 @Composable
 fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
+    val navController = LocalNavController.current
     val programData by produceState<JxglstuProgramResponse?>(initialValue = null) {
         if(!ifSaved) {
             onListenStateHolder(vm.programData) { data ->
@@ -174,7 +179,7 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
 
     val loading = programData == null
     Column(modifier = Modifier.padding(innerPadding)) {
-        DividerTextExpandedWith(text = getPersonInfo().program ?: "方案安排") {
+        DividerTextExpandedWith(text = getPersonInfo().program ?: "我的方案") {
             Box {
                 androidx.compose.animation.AnimatedVisibility (
                     visible = loading,
@@ -239,7 +244,9 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
             }
         }
     }
-
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val navController = LocalNavController.current
 
     val state = rememberScrollState()
     Column(
@@ -280,7 +287,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                     StackedBarChart(list)
                 }
             }
-            Spacer(Modifier.height(APP_HORIZONTAL_DP))
+            Spacer(Modifier.height(DIVIDER_TEXT_VERTICAL_PADDING))
 
             CustomLineProgressIndicator(
                 (completion.total.actual safeDiv completion.total.full).toFloat(),
@@ -292,6 +299,37 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                 if(i != completion.other.size-1) {
                     Spacer(Modifier.height(CARD_NORMAL_DP*2))
                 }
+            }
+        }
+        DividerTextExpandedWith("详情") {
+            val dest = ProgramCompetitionDestination(ifSaved)
+            Row(
+                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+            ) {
+                LargeButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .sharedContainer(
+                            dest.key,
+                            MaterialTheme.shapes.medium,
+                            MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                    onClick = {
+                        scope.launch {
+                            val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
+                            if (json?.contains("children") == true || !ifSaved) {
+                                navController.push(dest)
+                            } else {
+                                refreshLogin(context)
+                            }
+                        }
+                    },
+                    icon = ProgramCompetitionDestination.ICON,
+                    text = "完成情况",
+                    shape = NoneRoundShape,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.secondary
+                )
             }
         }
         InnerPaddingHeight(innerPadding,false)
