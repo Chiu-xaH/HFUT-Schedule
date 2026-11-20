@@ -13,13 +13,12 @@ import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
 import com.hfut.schedule.ui.nav.destination.AgreementDestination
 import com.hfut.schedule.ui.nav.destination.ExceptionDestination
 import com.hfut.schedule.ui.nav.destination.HomeDestination
-import com.hfut.schedule.ui.nav.destination.TestDestination
 import com.hfut.schedule.ui.nav.destination.UpdateSuccessfullyDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder.postedUse
-import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.common.logic.util.LogUtil
+import com.xah.navigation.registry.DeepLinkRegistry
 import com.xah.navigation.util.toDeepLinkUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
