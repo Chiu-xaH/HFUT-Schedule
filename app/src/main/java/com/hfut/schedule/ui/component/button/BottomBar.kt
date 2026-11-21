@@ -267,7 +267,7 @@ fun HazeBottomBarV2(
             @OptIn(ExperimentalNavigationBarApi::class)
             (com.hfut.schedule.ui.model.NavigationBar(
                 enabled = enabled,
-                hazeState = hazeState,
+                hazeState = null,
                 hapticsEnabled = false,
                 aimAssist = true,
                 elevation = 0.dp,

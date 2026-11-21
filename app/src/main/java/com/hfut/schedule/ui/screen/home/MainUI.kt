@@ -984,7 +984,7 @@ fun MainScreen(
                     @OptIn(ExperimentalNavigationBarApi::class)
                     NavigationBar(
                         enabled = isEnabled,
-                        hazeState = hazeState,
+                        hazeState = null,
                         hapticsEnabled = false,
                         trackColor = if(useBackground) MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha) else MaterialTheme.colorScheme.surfaceContainerLow.copy(.75f),
                         aimAssist = true,

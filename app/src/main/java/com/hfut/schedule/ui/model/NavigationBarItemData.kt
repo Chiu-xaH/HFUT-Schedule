@@ -277,7 +277,7 @@ class NavigationBarScope internal constructor(
 @Composable
 @ExperimentalNavigationBarApi
 fun NavigationBar(
-    hazeState : HazeState,
+    hazeState : HazeState?,
     modifier: Modifier = Modifier,
     hazeModifier: Modifier = Modifier,
     // 撑满
@@ -683,7 +683,7 @@ fun NavigationBar(
                                 .border(0.25.dp, selectedContentColor.copy(.15f),shape)
                                 .clip(shape)
                                 .let {
-                                    if(indicatorBlur == 0.dp || !canLayerBlur()) {
+                                    if(hazeState == null || !canLayerBlur()) {
                                         it.background(indicatorColor, shape)
                                     } else {
                                         it.hazeEffect(

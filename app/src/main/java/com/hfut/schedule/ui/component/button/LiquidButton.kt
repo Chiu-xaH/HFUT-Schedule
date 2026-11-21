@@ -452,7 +452,7 @@ fun Modifier.bottomBarBackDrop(
     backdrop: Backdrop,
     shape : RoundedCornerShape = CircleShape,
 ) : Modifier {
-    val color = MaterialTheme.colorScheme.surfaceVariant.copy(.25f)
+    val color = MaterialTheme.colorScheme.surfaceContainer.copy(.5f)
     val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     return this.drawBackdrop(
@@ -462,10 +462,9 @@ fun Modifier.bottomBarBackDrop(
         backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
-            val value = 22.5f
             vibrancy()
-//            blur(10f)
-            lens(value.dp.toPx(), value.dp.toPx())
+            blur(4f)
+            lens(17.5.dp.toPx(), 22.5f.dp.toPx())
         },
         shadow = null,
         onDrawSurface = {
