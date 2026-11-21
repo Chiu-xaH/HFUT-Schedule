@@ -973,18 +973,19 @@ fun MainScreen(
                         val backgroundAlpha = customBackgroundAlpha.coerceIn(maxValue/2f,maxValue)
                         MaterialTheme.colorScheme.secondaryContainer.copy(backgroundAlpha)
                     } else {
-                        (
-                                if(isThemeDark())
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                else
-                                    MaterialTheme.colorScheme.surfaceBright
-                        ).copy(maxValue)
+                        MaterialTheme.colorScheme.primary.copy(.1f)
+//                        (
+//                                if(isThemeDark())
+//                                    MaterialTheme.colorScheme.secondaryContainer
+//                                else
+//                                    MaterialTheme.colorScheme.surfaceBright
+//                        ).copy(maxValue)
 //                        MaterialTheme.colorScheme.surfaceBright.copy(maxValue)
                     }
                     @OptIn(ExperimentalNavigationBarApi::class)
                     NavigationBar(
                         enabled = isEnabled,
-                        hazeState = hazeState,
+                        hazeState = null,
                         hapticsEnabled = false,
                         trackColor = if(useBackground) MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha) else MaterialTheme.colorScheme.surfaceContainerLow.copy(.75f),
                         aimAssist = true,

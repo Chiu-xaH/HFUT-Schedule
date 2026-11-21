@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.model.ExperimentalNavigationBarApi
 import com.hfut.schedule.ui.model.NavigationBarIcon
 import com.hfut.schedule.ui.model.NavigationBarItemData
@@ -52,6 +53,7 @@ import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.kyant.backdrop.Backdrop
 import com.sharednav.common.helper.ScreenCornerHelper
+import com.sharednav.common.modifier.defaultMask
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.color.ShimmerAngle
@@ -267,19 +269,19 @@ fun HazeBottomBarV2(
             @OptIn(ExperimentalNavigationBarApi::class)
             (com.hfut.schedule.ui.model.NavigationBar(
                 enabled = enabled,
-                hazeState = hazeState,
+                hazeState = null,
                 hapticsEnabled = false,
                 aimAssist = true,
                 elevation = 0.dp,
                 itemHorizontalPadding = 0.dp,
                 indicatorBlur = 2.dp,
-                indicatorColor =
-                    (
-                            if(isThemeDark())
-                                MaterialTheme.colorScheme.secondaryContainer
-                            else
-                                MaterialTheme.colorScheme.surfaceBright
-                    ).copy(.8f),
+                indicatorColor = MaterialTheme.colorScheme.primary.copy(.1f),
+//                    (
+//                            if(isThemeDark())
+//                                MaterialTheme.colorScheme.secondaryContainer
+//                            else
+//                                MaterialTheme.colorScheme.surfaceBright
+//                    ).copy(.8f),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 hazeModifier = Modifier
                     .bottomBarBackDrop(backdrop, shape = shape)
