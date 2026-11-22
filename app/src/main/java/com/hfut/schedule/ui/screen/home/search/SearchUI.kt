@@ -52,7 +52,6 @@ import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
-import com.hfut.schedule.ui.nav.destination.AlumniDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.AppointmentDestination
@@ -125,11 +124,11 @@ import com.hfut.schedule.ui.screen.home.search.function.other.AI
 import com.hfut.schedule.ui.screen.home.search.function.other.Track
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Express
-import com.hfut.schedule.ui.screen.home.search.function.other.wechat.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
 import com.hfut.schedule.ui.screen.home.search.function.school.Feedback
 import com.hfut.schedule.ui.screen.home.search.function.school.SecondClass
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
+import com.hfut.schedule.ui.screen.home.search.function.school.alumni.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreXuanCheng
 import com.hfut.schedule.ui.screen.home.search.function.school.hall.OfficeHall
 import com.hfut.schedule.ui.screen.home.search.function.school.ietp.IETP
@@ -152,6 +151,7 @@ import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.LogUtil
+import com.xah.common.ui.util.res
 import dev.chrisbanes.haze.HazeState
 
 data class SearchAppBean(
@@ -247,7 +247,7 @@ fun SearchScreen(
                 SearchAppBean(31,"${TeacherSearchDestination.title.asString(context)} 老师检索", { TeacherSearch() }, TeacherSearchDestination.key),
                 SearchAppBean(32,"${FeeDestination.title.asString(context)} 费用 欠缴学费", { Pay() }, FeeDestination.key),
 //                SearchAppBean(33,"实习", { Practice(ifSaved) }),
-                SearchAppBean(34,"${AlumniDestination.title.asString(context)} 校友 毕业", { Alumni() }, AlumniDestination.key),
+                SearchAppBean(34,"${res(R.string.navigation_label_alumni).asString(context)} 校友 毕业", { Alumni() }, WebViewDestination.getKey(Constant.ALUMNI_URL)),
                 SearchAppBean(35,"${StuTodayCampusDestination.title.asString(context)} 学工系统 学工平台 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus() }, StuTodayCampusDestination.key),
                 SearchAppBean(36,"${context.getString(R.string.navigation_label_ietp)} 大学生创新创业系统", { IETP() }, WebViewDestination.getKey(Constant.IETP_URL)),
                 SearchAppBean(37,"${WorkDestination.title.asString(context)} 实习 春招 双选 秋招", { Work() }, WorkDestination.key),

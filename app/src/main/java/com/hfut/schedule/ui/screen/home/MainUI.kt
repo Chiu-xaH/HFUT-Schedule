@@ -132,6 +132,7 @@ import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.bottomBarBackDrop
 import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -763,7 +764,7 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            ZhiJianSearchBar(backdrop,zhiJianStudentId,showAll) {
+                            ZhiJianSearchBar(backdrop,true,zhiJianStudentId,showAll) {
                                 zhiJianStudentId = it
                             }
                         }
@@ -840,7 +841,7 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            ZhiJianSearchBar(null,zhiJianStudentId,showAll) {
+                            ZhiJianSearchBar(backdrop,false,zhiJianStudentId,showAll) {
                                 zhiJianStudentId = it
                             }
                         }
@@ -1476,7 +1477,8 @@ fun SearchEditScreen() {
 
 @Composable
 private fun ZhiJianSearchBar(
-    backdrop: Backdrop? = null,
+    backdrop: Backdrop,
+    useBg : Boolean,
     input : String,
     showAll : Boolean,
     onValueChange : (String) -> Unit,
@@ -1644,16 +1646,21 @@ private fun ZhiJianSearchBar(
         )) {
             TextField(
                 modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
                     .let {
-                        backdrop?.let { state ->
-                            it
-                                .clip(MaterialTheme.shapes.medium)
-                                .calendarSquareBackDrop(
-                                    state,
-                                    CalendarSquareBackDropSource.SQUARE,
-                                    MaterialTheme.shapes.medium
-                                )
-                        } ?: it
+                        if(useBg) {
+                            it.calendarSquareBackDrop(
+                                backdrop,
+                                CalendarSquareBackDropSource.SQUARE,
+                                MaterialTheme.shapes.medium
+                            )
+                        } else {
+                            it.containerBackDrop(
+                                backdrop,
+                                MaterialTheme.shapes.medium,
+                                surfaceColor = Color.Transparent
+                            )
+                        }
                     }
                     .weight(1f),
                 value = input,

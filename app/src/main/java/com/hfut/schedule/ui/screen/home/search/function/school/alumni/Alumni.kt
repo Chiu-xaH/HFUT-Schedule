@@ -18,6 +18,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.ui.util.res
 import kotlinx.coroutines.launch
 
 
@@ -25,12 +26,13 @@ import kotlinx.coroutines.launch
 fun Alumni() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val title = res(R.string.navigation_label_alumni).asString()
     TransplantListItem(
-        headlineContent = { Text(text = "校友平台") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.local_library), contentDescription = EMPTY_STRING) },
+        headlineContent = { Text(text = title) },
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.person_book), contentDescription = EMPTY_STRING) },
         modifier = Modifier.clickable {
             scope.launch {
-                Starter.startWebUrlInner(context,Constant.ALUMNI_URL,"校友平台", icon = R.drawable.local_library)
+                Starter.startWebUrlInner(context,Constant.ALUMNI_URL,title, icon = R.drawable.person_book)
             }
         }
     )

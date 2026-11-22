@@ -69,6 +69,7 @@ fun VersionInfo() {
         UpdateItems("新增 新建日程及网页支持使用DeepSeek辅助",to = To.Screen(AddEventDestination()))
         UpdateItems("新增 合工大教务数据源的开课查询、培养方案、个人信息",to = To.Screen(PersonInfoDestination))
         UpdateItems("新增 社区预约","位于 查询中心-社区预约",to = To.Screen(AppointmentDestination))
+        UpdateItems("新增 校友平台的入口","位于 查询中心-校友平台")
         UpdateItems("修复 指间工大在新底栏下的避让Bug")
 //        UpdateItems("重构 新增日程","支持一次性添加若干时间段、选择日期时支持多选若干天",to = To.Screen(AddEventDestination(origin = VersionInfoDestination.key)))
 //        UpdateItems("新增 语言切换功能","位于 选项-偏好与配置-语言，支持中英文",to = To.Screen(SettingsConfigurationDestination))

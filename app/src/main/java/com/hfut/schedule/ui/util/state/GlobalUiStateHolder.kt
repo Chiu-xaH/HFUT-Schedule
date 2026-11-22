@@ -13,7 +13,6 @@ import com.hfut.schedule.logic.network.repo.JxglstuRepository
 import com.hfut.schedule.network.api.model.response.dto.SchoolNetInfo
 import com.hfut.schedule.ui.nav.destination.AdmissionDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
-import com.hfut.schedule.ui.nav.destination.AlumniDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.AppointmentDestination
@@ -131,7 +130,7 @@ object GlobalUiStateHolder {
         SearchAppBeanLite(31, TeacherSearchDestination.title.resId, TeacherSearchDestination.icon),
         SearchAppBeanLite(32, FeeDestination.title.resId,FeeDestination.icon),
 //        SearchAppBeanLite(33,"实习",R.drawable.work),
-        SearchAppBeanLite(34, AlumniDestination.title.resId,AlumniDestination.icon),
+        SearchAppBeanLite(34, R.string.navigation_label_alumni,R.drawable.person_book),
         SearchAppBeanLite(35, StuTodayCampusDestination.title.resId,StuTodayCampusDestination.icon),
         SearchAppBeanLite(36, R.string.navigation_label_ietp,R.drawable.groups),
         SearchAppBeanLite(37, WorkDestination.title.resId,WorkDestination.icon),
