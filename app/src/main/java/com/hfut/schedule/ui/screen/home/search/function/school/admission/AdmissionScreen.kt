@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.nav.destination.AdmissionDetailDestination
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -66,6 +67,7 @@ import com.xah.common.ui.style.clickableWithScale
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.container.component.base.sharedContainer
 import com.sharednav.common.helper.NoneRoundShape
+import com.xah.common.ui.style.align.CenterScreen
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -132,6 +134,12 @@ fun AdmissionListUI(
             HorizontalPager(pagerState) { page ->
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
                     val list = (uiState as NetworkUiState.Success).data.second.entries.toList()
+                    if(list.isEmpty()) {
+                        CenterScreen {
+                            EmptyIcon()
+                        }
+                        return@CommonNetworkScreen
+                    }
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP),
