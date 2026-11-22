@@ -52,6 +52,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.shader.largeStyle
+import com.hfut.schedule.ui.style.special.enableEffect
 import com.hfut.schedule.ui.style.special.layerGlass
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -60,10 +61,10 @@ import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
+import com.sharednav.common.helper.NoneRoundShape
 import com.xah.common.logic.util.safeDiv
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
-import com.xah.container.util.LocalSharedRegistrySafely
-import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.container.component.base.SharedContainer
 import com.xah.shader.state.ShaderState
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -122,7 +123,7 @@ fun LiquidButton(
             Unit
         }
     }
-    val isTransiting = LocalNavControllerSafely.current?.isTransitioning == true
+    val isTransiting = enableEffect()
 
     Row(
         modifier
@@ -130,7 +131,7 @@ fun LiquidButton(
                 highlight = {
                     Highlight.Default.copy(width = 0.25.dp)
                 },
-                backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+                backdrop = if (isTransiting) backdrop else rememberLayerBackdrop(),
                 shape = { CircleShape },
                 effects =  {
                     vibrancy()
@@ -290,13 +291,13 @@ fun Modifier.containerBackDrop(
     enabled : Boolean = true,
     surfaceColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(if(enabled).3f else .7f),
 ) : Modifier {
-    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val isTransiting = enableEffect()
 
     return this.drawBackdrop(
         highlight = {
             Highlight.Default.copy(width = 0.25.dp)
         },
-        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+        backdrop = if (isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
             vibrancy()
@@ -317,7 +318,7 @@ fun Modifier.containerBackDrop(
     shape: Shape,
     surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(.7f),
 ) : Modifier {
-    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val isTransiting = enableEffect()
 
     return this
         .clip(shape)
@@ -345,7 +346,7 @@ fun LiquidButton(
     shape: Shape,
     content: @Composable () -> Unit
 ) {
-    val isRunning = LocalSharedRegistrySafely.current?.isRunning ?: false
+    val isRunning = enableEffect()
 
 //    if(!isRunning) {
 //        LiquidButton(
@@ -359,7 +360,7 @@ fun LiquidButton(
 //        }
 //    } else {
         val color = MaterialTheme.colorScheme.surfaceVariant.copy(
-            if(!isRunning) 0.65f else 1f
+            if(isRunning) 0.65f else 1f
         )
         NoPadding {
             if(isCircle) {
@@ -401,13 +402,13 @@ fun Modifier.bottomBarBackDrop(
     shape : RoundedCornerShape = CircleShape,
 ) : Modifier {
     val color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(.3f)
-    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val isTransiting = enableEffect()
 
     return this.drawBackdrop(
         highlight = {
             Highlight.Default.copy(width = 0.25.dp)
         },
-        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+        backdrop = if (isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
             vibrancy()
@@ -436,13 +437,13 @@ fun Modifier.calendarSquareBackDrop(
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val customBackgroundBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
     val color = overlayColor.copy(customBackgroundAlpha)
-    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val isTransiting = enableEffect()
 
     return this.drawBackdrop(
         highlight = {
             Highlight.Default.copy(width = 0.25.dp)
         },
-        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+        backdrop = if (isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
             vibrancy()
@@ -469,4 +470,44 @@ fun Modifier.calendarSquareBackDrop(
             drawRect(color)
         }
     )
+}
+
+@Composable
+fun LiquidButtonWithSharedContainer(
+    key: String?,
+    backdrop: Backdrop,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isCircle: Boolean = false,
+    content: @Composable (() -> Unit)
+) {
+    val enableEffect = enableEffect()
+    SharedContainer(
+        key,
+        CircleShape,
+        MaterialTheme.colorScheme.surfaceVariant,
+        modifier
+    ) {
+        if(!enableEffect) {
+            LiquidButton(
+                onClick = onClick,
+                isCircle = isCircle,
+                shape = NoneRoundShape,
+                backdrop = backdrop,
+                enabled = enabled,
+            ) {
+                content()
+            }
+        } else {
+            LiquidButton(
+                onClick = onClick,
+                isCircle = isCircle,
+                backdrop = backdrop,
+                enabled = enabled,
+            ) {
+                content()
+            }
+        }
+    }
 }

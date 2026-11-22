@@ -81,7 +81,7 @@ fun enableEffect() : Boolean {
     val navController = LocalNavControllerSafely.current
     val floatingController = LocalFloatingControllerSafely.current
     val registry = LocalSharedRegistrySafely.current
-    if(navController?.currentDestination is ControlCenterDestination) {
+    if(navController?.current?.keepPreviousAlive == true) {
         return false
     }
     if(navController?.isTransitioning == true) {
@@ -246,7 +246,6 @@ fun Modifier.topBarBlur(
 fun Modifier.backDropSource(
     backdrop : ShaderState
 ): Modifier {
-    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
     val enableEffect = enableEffect()
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     return if(enableLiquidGlass && enableEffect) {
@@ -259,7 +258,6 @@ fun Modifier.backDropSource(
 fun Modifier.backDropSource(
     backdrop : LayerBackdrop
 ): Modifier {
-    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
     val enableEffect = enableEffect()
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     return if(enableLiquidGlass && enableEffect) {

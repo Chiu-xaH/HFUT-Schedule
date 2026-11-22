@@ -68,6 +68,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.LiquidButtonWithSharedContainer
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -370,46 +371,18 @@ fun TransferDetailScreen(
                                 Text("我的申请")
                             }
                             Spacer(modifier = Modifier.width(BUTTON_PADDING))
-//                            LiquidButton(
-//                                onClick = {
-//                                    // TODO 图片形式保存
-//                                    showDevelopingToast()
-//                                },
-//                                isCircle = true,
-//                                backdrop = backDrop
-//                            ) {
-//                                Icon(painterResource(R.drawable.ios_share),null)
-//                            }
                             val window = TransferMajorDetailOptionsWindow(sortByHot) {
                                 sortByHot = it
                             }
-                            SharedContainer(
+                            LiquidButtonWithSharedContainer(
                                 window.key,
-                                shape = CircleShape,
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                backdrop = backDrop,
+                                onClick = {
+                                    floatingController.push(window)
+                                },
+                                isCircle = true,
                             ) {
-                                if(floatingController.isRunning) {
-                                    LiquidButton(
-                                        onClick = {
-                                            floatingController.push(window)
-                                        },
-                                        isCircle = true,
-                                        shape = NoneRoundShape,
-                                        backdrop = backDrop
-                                    ) {
-                                        Icon(painterResource(R.drawable.more_vert),null)
-                                    }
-                                } else {
-                                    LiquidButton(
-                                        onClick = {
-                                            floatingController.push(window)
-                                        },
-                                        isCircle = true,
-                                        backdrop = backDrop
-                                    ) {
-                                        Icon(painterResource(R.drawable.more_vert),null)
-                                    }
-                                }
+                                Icon(painterResource(R.drawable.more_vert),null)
                             }
                         }
                     }

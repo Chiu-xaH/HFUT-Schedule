@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 
 
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.LiquidButtonWithSharedContainer
 
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.xah.common.ui.style.padding.InnerPaddingHeight
@@ -104,21 +105,17 @@ fun HolidayScreen(
                 },
                 actions = {
                     val dest = NewsApiDestination.create(NewsApiDestination.Keyword.HOLIDAY_SCHEDULE)
-                    SharedContainer(
+                    LiquidButtonWithSharedContainer(
                         key = dest.key,
-                        shape = CircleShape,
                         modifier = Modifier.padding(end = BUTTON_END_PADDING),
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        backdrop = backdrop,
+                        onClick = {
+                            navController.push(dest)
+                        },
+                        isCircle = false
                     ) {
-                        LiquidButton(
-                            backdrop = backdrop,
-                            shape = NoneRoundShape,
-                            onClick = { navController.push(dest) }
-                        ) {
-                            Text("调休通知")
-                        }
+                        Text("调休通知")
                     }
-
                 },
                 modifier = Modifier.topBarBlur(hazeState)
             )
