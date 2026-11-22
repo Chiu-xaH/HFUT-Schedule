@@ -25,7 +25,7 @@ data class CommunityPlacesAppointment(
 )
 
 data class CommunityPlacesAppointmentTimeFrame(
-    val appointmentFlag : String,// 0空闲 1占用
+    val appointmentFlag : String,// 1空闲 0占用
     val timeFrame : String,// HH:MM-HH:MM
     val appointmentId : String?
 )
