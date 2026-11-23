@@ -68,7 +68,7 @@ class MainActivity : BaseActivity() {
     private fun parseStartDestinationByRoute(route : String) : NavDestination {
         return try {
             val finalClassName = if(route.split(".").size == 1) {
-                "com.hfut.schedule.ui.nav.destination.$route"
+                "${AppVersion.appPackageName}.ui.nav.destination.$route"
             } else {
                 route
             }

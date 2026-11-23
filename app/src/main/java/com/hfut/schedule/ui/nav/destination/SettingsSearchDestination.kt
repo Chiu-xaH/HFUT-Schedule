@@ -4,8 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
@@ -13,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.hfut.schedule.R
@@ -25,7 +22,6 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.style.align.CenterScreen
 import com.xah.common.ui.style.color.topBarTransplantColor
-import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.util.text
 import dev.chrisbanes.haze.hazeSource
 

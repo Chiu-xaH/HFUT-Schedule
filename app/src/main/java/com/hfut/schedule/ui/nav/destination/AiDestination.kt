@@ -12,17 +12,16 @@ import com.xah.navigation.util.LocalNavDependencies
 data class AiDestination(
     val keyword : String? = null,
 ) : NavDestination() {
-    override val key = "${KEY}_$keyword"
     override val title = TITLE
     override val icon = ICON
+    override val deepLink = "$DEEPLINK_SCHEME$KEY?keyword=$keyword"
+    override val key = deepLink
 
     companion object {
         const val KEY = "ai"
         val TITLE = res(R.string.navigation_label_ai)
         val ICON = R.drawable.wand_stars
     }
-
-    fun toDeepLink() : String = "$DEEPLINK_SCHEME$KEY?keyword=$keyword"
 
     @Composable
     override fun Content() {

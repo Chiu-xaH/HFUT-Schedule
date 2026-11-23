@@ -47,6 +47,7 @@ class CourseLiveUpdateReceiver : BroadcastReceiver() {
         }
         val eventType = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_EVENT_TYPE) ?: "上课"
         val place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE)
+        val code = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_CODE)
 
         AppNotificationManager.showCourseLiveUpdate(
             courseName = courseName,
@@ -60,6 +61,7 @@ class CourseLiveUpdateReceiver : BroadcastReceiver() {
                 eventType = eventType,
                 title = courseName,
                 place = place,
+                code = code,
                 startMillis = startMillis,
             ),
         )

@@ -17,6 +17,7 @@ abstract class NavDestination : Destination() {
     abstract val title : UiText
     open val description : String? = null
     open val icon : Int = R.drawable.texture
+    open val deepLink : String? = null
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override val PlaceHolder = @Composable {
         Box(

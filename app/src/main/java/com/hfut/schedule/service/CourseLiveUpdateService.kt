@@ -3,6 +3,7 @@ package com.hfut.schedule.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.logic.util.sys.CourseLiveUpdateScheduler
 import com.xah.common.logic.util.LogUtil
@@ -22,7 +23,7 @@ class CourseLiveUpdateService : Service() {
     private val activeCourses: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     companion object {
-        const val ACTION_STOP_SERVICE = "com.hfut.schedule.action.STOP_COURSE_LIVE_SERVICE"
+        val ACTION_STOP_SERVICE = "${AppVersion.appPackageName}.action.STOP_COURSE_LIVE_SERVICE"
 
         fun stopService(context: Context) {
             context.startService(
@@ -54,14 +55,12 @@ class CourseLiveUpdateService : Service() {
 
         val place = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_PLACE)
         val teacher = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_TEACHER)
+        val code = intent.getStringExtra(CourseLiveUpdateScheduler.EXTRA_CODE)
 
-        // Immediately show + foreground with this course's notification.
-        // Must be called within 5 seconds on Android 14+.
-        showAndUpdateForeground(courseName, place, teacher, startMillis, endMillis)
+        showAndUpdateForeground(courseName, place, teacher, code, startMillis, endMillis)
 
-        // Start the 60-second refresh loop for this course.
         scope.launch {
-            refreshLoop(courseName, place, teacher, startMillis, endMillis)
+            refreshLoop(courseName, place, teacher, code, startMillis, endMillis)
         }
 
         return if (wasEmpty) START_STICKY else START_REDELIVER_INTENT
@@ -71,6 +70,7 @@ class CourseLiveUpdateService : Service() {
         courseName: String,
         place: String?,
         teacher: String?,
+        code: String?,
         startMillis: Long,
         endMillis: Long,
     ) {
@@ -81,7 +81,7 @@ class CourseLiveUpdateService : Service() {
             startMillis = startMillis,
             endMillis = endMillis,
             contentIntent = CourseLiveUpdateScheduler.buildOpenCourseIntent(
-                this, courseName, place, startMillis
+                this, courseName, place, code,startMillis
             ),
             asForeground = true,
         ) ?: return
@@ -96,6 +96,7 @@ class CourseLiveUpdateService : Service() {
         courseName: String,
         place: String?,
         teacher: String?,
+        code: String?,
         startMillis: Long,
         endMillis: Long,
     ) {
@@ -110,7 +111,7 @@ class CourseLiveUpdateService : Service() {
                     startMillis = startMillis,
                     endMillis = endMillis,
                     contentIntent = CourseLiveUpdateScheduler.buildOpenCourseIntent(
-                        this, courseName, place, startMillis
+                        this, courseName, place, code,startMillis
                     ),
                 )
             }

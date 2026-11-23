@@ -26,6 +26,7 @@ import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.util.WebVpnConvertor
 import com.hfut.schedule.ui.nav.destination.HomeDestination
 import com.hfut.schedule.ui.nav.destination.WebViewDestination
+import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.getPureUrl
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
@@ -186,9 +187,14 @@ object Starter {
         context.startActivity(it)
     }
     @JvmStatic
+    fun startDestinationByDeepLink(context: Context, destination : NavDestination) {
+        destination.deepLink?.let { deepLink ->
+            startDeepLink(context,deepLink)
+        } ?: showToast("打开失败，空DeepLink")
+    }
+    @JvmStatic
     fun startDeepLink(context: Context, deepLink : String) {
         val it = Intent(context, MainActivity::class.java).apply {
-            putExtra("login",false)
             data = deepLink.toUri()
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

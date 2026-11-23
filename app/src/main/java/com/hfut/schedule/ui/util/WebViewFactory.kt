@@ -259,9 +259,9 @@ fun WebViewTools(
     IconButton(
         onClick = {
             webView?.getTextByEvalJs {
-                Starter.startDeepLink(
+                Starter.startDestinationByDeepLink(
                     context,
-                    AiDestination("简明扼要地归纳 关键信息：\n$it").toDeepLink()
+                    AiDestination("简明扼要地归纳 关键信息：\n$it")
                 )
             }
         },

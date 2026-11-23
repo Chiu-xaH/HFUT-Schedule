@@ -8,6 +8,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.util.LocalNavDependencies
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
+import com.xah.common.ui.util.text
 
 data class AddEventDestination(
     val id : Int? = null,
@@ -16,14 +17,17 @@ data class AddEventDestination(
     val isSupabase : Boolean = false
 ) : NavDestination() {
     override val key: String = "${KEY}_${origin}_${id}_${isSupabase}_${enableCopy}"
-    override val title: UiText = TITLE
-    override val description = "日程 $id"
-    override val icon = ICON
+    override val title: UiText = text(
+        if(id == null) "添加日程" else "修改日程"
+    )
+    override val description = if(id == null) null else "日程id: $id"
+    override val icon = if(id == null) ADD_ICON else EDIT_ICON
 
     companion object {
         const val KEY = "add_event"
         val TITLE = res(R.string.navigation_label_add_event)
-        val ICON = R.drawable.add
+        val EDIT_ICON = R.drawable.edit
+        val ADD_ICON = R.drawable.add
     }
 
     @Composable

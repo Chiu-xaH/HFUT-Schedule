@@ -13,6 +13,7 @@ data class ExceptionDestination(
     override val key = "exception_${exception.hashCode()}"
     override val title = TITLE
     override val icon = ICON
+    override val description = exception.message
 
     companion object {
         val TITLE = res(R.string.navigation_label_exception)

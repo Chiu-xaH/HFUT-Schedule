@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.util.sys
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -8,13 +9,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.receiver.CourseLiveUpdateReceiver
 import com.hfut.schedule.service.CourseLiveUpdateService
-import com.hfut.schedule.ui.nav.destination.CourseLiveUpdateDetailDestination
+import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
+import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.xah.common.logic.util.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +33,7 @@ object CourseLiveUpdateScheduler {
     const val EXTRA_COURSE_NAME = "course_name"
     const val EXTRA_PLACE = "place"
     const val EXTRA_TEACHER = "teacher"
+    const val EXTRA_CODE = "course_code"
     const val EXTRA_START_MILLIS = "start_millis"
     const val EXTRA_END_MILLIS = "end_millis"
     const val EXTRA_EVENT_TYPE = "event_type"
@@ -121,8 +125,10 @@ object CourseLiveUpdateScheduler {
 
         if (firstUnscheduledMillis != null) {
             val fallbackMillis = now + RESCHEDULE_INTERVAL_MILLIS
-            val triggerMillis = maxOf(now + WINDOW_CHECK_INTERVAL_MILLIS, firstUnscheduledMillis - RESCHEDULE_BEFORE_NEXT_MILLIS)
-                .let { minOf(it, fallbackMillis) }
+            val triggerMillis = minOf(
+                maxOf(now + WINDOW_CHECK_INTERVAL_MILLIS, firstUnscheduledMillis - RESCHEDULE_BEFORE_NEXT_MILLIS),
+                fallbackMillis
+            )
             scheduleRescheduleAlarm(context, alarmManager, triggerMillis)
         }
 
@@ -247,6 +253,7 @@ object CourseLiveUpdateScheduler {
                 startMillis = course.time.start.toMillis(),
                 endMillis = course.time.end.toMillis(),
                 eventType = "上课",
+                code = course.courseCode,
                 destination = LiveReminderDestination.COURSE,
             )
         }
@@ -266,6 +273,7 @@ object CourseLiveUpdateScheduler {
                 startMillis = startMillis,
                 endMillis = endMillis,
                 eventType = "考试",
+                code = null,
                 destination = LiveReminderDestination.EXAM,
             )
         }
@@ -301,8 +309,16 @@ object CourseLiveUpdateScheduler {
         context: Context,
         courseName: String,
         place: String?,
+        code: String?,
         startMillis: Long,
     ): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            data = CourseDetailApiDestination(courseName,this@CourseLiveUpdateScheduler.javaClass.simpleName,code,place).deepLink.toUri()
+            if (context !is Activity) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+        /*
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("route", CourseLiveUpdateDetailDestination::class.java.name)
@@ -310,6 +326,7 @@ object CourseLiveUpdateScheduler {
             putExtra(EXTRA_PLACE, place)
             putExtra(EXTRA_START_MILLIS, startMillis)
         }
+         */
         return PendingIntent.getActivity(
             context,
             requestCode(courseName, startMillis, "open"),
@@ -323,32 +340,40 @@ object CourseLiveUpdateScheduler {
         eventType: String,
         title: String,
         place: String?,
+        code: String?,
         startMillis: Long,
     ): PendingIntent =
         if (eventType == "考试") {
-            buildOpenExamIntent(context, title, place, startMillis)
+            buildOpenExamIntent(context, title, startMillis)
         } else {
-            buildOpenCourseIntent(context, title, place, startMillis)
+            buildOpenCourseIntent(context, title, place, code,startMillis)
         }
 
     private fun buildOpenIntent(context: Context, item: LiveReminderItem): PendingIntent =
         when (item.destination) {
-            LiveReminderDestination.COURSE -> buildOpenCourseIntent(context, item.title, item.place, item.startMillis)
-            LiveReminderDestination.EXAM -> buildOpenExamIntent(context, item.title, item.place, item.startMillis)
+            LiveReminderDestination.COURSE -> buildOpenCourseIntent(context, item.title, item.place, item.code, item.startMillis)
+            LiveReminderDestination.EXAM -> buildOpenExamIntent(context, item.title, item.startMillis)
         }
 
     private fun buildOpenExamIntent(
         context: Context,
         examName: String,
-        place: String?,
         startMillis: Long,
     ): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            data = ExamDestination(this@CourseLiveUpdateScheduler.javaClass.simpleName).deepLink.toUri()
+            if (context !is Activity) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+        /*
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(EXTRA_COURSE_NAME, examName)
             putExtra(EXTRA_PLACE, place)
             putExtra(EXTRA_START_MILLIS, startMillis)
         }
+         */
         return PendingIntent.getActivity(
             context,
             requestCode(examName, startMillis, "open_exam"),
@@ -417,6 +442,7 @@ object CourseLiveUpdateScheduler {
         val startMillis: Long,
         val endMillis: Long,
         val eventType: String,
+        val code: String?,
         val destination: LiveReminderDestination,
     )
 

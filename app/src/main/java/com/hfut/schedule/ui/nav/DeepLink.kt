@@ -12,6 +12,7 @@ import com.hfut.schedule.ui.nav.destination.AverageGradeDestination
 import com.hfut.schedule.ui.nav.destination.BusDestination
 import com.hfut.schedule.ui.nav.destination.ClassroomDestination
 import com.hfut.schedule.ui.nav.destination.CourseClassmatesDestination
+import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.DepartmentsDestination
 import com.hfut.schedule.ui.nav.destination.DormitoryDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
@@ -93,7 +94,7 @@ data class DeepLinkBean(
  *
  * ...
  *
- * 虽然格式要求很激进，但这样可以降低开发和管理成本，不让安卓项目趋于网页化
+ * 虽然格式要求很激进，但这样可以降低开发和管理成本
  */
 val deepLinks = listOf(
     // 无参链接 -> 无参Dest
@@ -206,6 +207,14 @@ val deepLinks = listOf(
     DeepLink(AiDestination.KEY) { uri ->
         val keyword = uri.getQueryParameter("keyword")
         AiDestination(keyword)
+    },
+    DeepLink(CourseDetailApiDestination.KEY) { uri ->
+        val courseName = uri.getQueryParameter("name") ?: return@DeepLink ExceptionDestination(
+            Exception("name 字段解析失败，要求String值")
+        )
+        val courseCode = uri.getQueryParameter("code")
+        val classroom = uri.getQueryParameter("classroom")
+        CourseDetailApiDestination(courseName,"DeepLink",courseCode,classroom)
     },
 )
 

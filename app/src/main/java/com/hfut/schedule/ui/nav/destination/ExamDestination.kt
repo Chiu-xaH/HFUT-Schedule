@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.nav.DEEPLINK_SCHEME
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.xah.common.ui.util.res
@@ -12,6 +13,7 @@ data class ExamDestination(
     override val key = "${KEY}_$origin"
     override val title = TITLE
     override val icon = ICON
+    override val deepLink = "${DEEPLINK_SCHEME}${KEY}"
 
     companion object {
         const val KEY = "exam"

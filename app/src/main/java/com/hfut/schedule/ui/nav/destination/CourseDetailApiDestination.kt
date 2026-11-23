@@ -2,8 +2,10 @@ package com.hfut.schedule.ui.nav.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.nav.DEEPLINK_SCHEME
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.util.res
 
 data class CourseDetailApiDestination(
@@ -14,14 +16,19 @@ data class CourseDetailApiDestination(
     // 重新规定Key的拼接，避免出现碰撞：origin_startTime_endTime
     val classroom : String? = null,
 ) : NavDestination() {
-    override val key = "course_detail_api_${endKey}_${courseName}_$courseCode"
+    override val key = "${KEY}_${endKey}_${courseName}_$courseCode"
     override val description = courseName
     override val title = TITLE
     override val icon = ICON
+    override val deepLink =
+        "${DEEPLINK_SCHEME}${KEY}?name=$courseName" +
+        (courseCode?.let { "&code=$it" } ?: EMPTY_STRING) +
+        (classroom?.let { "&classroom=$it" } ?: EMPTY_STRING)
 
     companion object {
         val TITLE = res(R.string.navigation_label_course_detail)
         val ICON = R.drawable.category
+        const val KEY = "course_detail_api"
     }
 
     @Composable

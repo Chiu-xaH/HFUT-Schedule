@@ -187,7 +187,6 @@ import com.hfut.schedule.ui.style.special.newBottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.theme.warnColor
-import com.hfut.schedule.ui.util.isThemeDark
 import com.hfut.schedule.ui.util.loadBitmap
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -212,7 +211,6 @@ import com.xah.common.ui.style.color.TransparentSystemBars
 import com.xah.common.ui.style.color.shimmerEffect
 import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.mask
-import com.xah.common.ui.style.padding.getNavigationBarHeight
 import com.xah.container.component.base.SharedContainer
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.anim.effect.Direction
@@ -432,7 +430,7 @@ fun MainScreen(
                         },
                     ) {
                         Icon(
-                            painterResource(AddEventDestination.ICON),
+                            painterResource(AddEventDestination.ADD_ICON),
                             "Add Button",
                         )
                     }
