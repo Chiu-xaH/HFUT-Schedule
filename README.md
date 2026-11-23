@@ -2,7 +2,7 @@
 ![封面](/src/img/cover.png)
 
 ## 下载
-### 正式版
+### 正式版（Stage）
 <div align="center">
 
 [![GitHub](https://img.shields.io/github/v/release/Chiu-xaH/HFUT-Schedule?logo=github&label=GitHub&style=for-the-badge)](https://github.com/Chiu-xaH/HFUT-Schedule/releases/latest)
@@ -11,19 +11,21 @@
 
 </div>
 
+> 从 stage 分支构建；
+> 
 > F-Droid 发行的版本经过重签名（无法与其他渠道版本更新覆盖安装 Apk），且节奏较慢，不推荐 ；
 > 
 > Github 发行的版本有三个 Apk，分别对应 arm64, x86_64, 通用包（universal），按需选择安装（一般选 arm64）；
 > 
 > Gitee 发行的版本只有 arm64，且只有 arm64 版本支持增量更新。
 
-### [开发版（Dev）](https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Devevlop)
-> 供尝鲜正在开发中的版本，每次随代码 Push 而更新发行的 Apk，不代表最终正式版。
+### [开发版（Dev）](https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Develop)
+> 供尝鲜正在开发中的版本，每次随 dev 分支代码提交而触发 CI 构建 Apk，不代表最终正式版。
 
 ### 资源包（可选）
-- 图片验证码识别模型（应用内下载，位于【选项-偏好与配置-图片验证码自动填充】）
+- 图片验证码识别模型（应用内下载，位于【选项-偏好与配置-图片验证码自动填充】，或者[此处下载](/tools/Captcha-Ocr/成品/captcha.traineddata)）
 > 为减少 Apk 包体大小，验证码识别模型（约 11MB）拆分出来并支持可选下载；
-- 游客体验专用数据包（应用内下载，位于【选项-偏好与配置-备份与恢复】）
+- 游客体验专用数据包（应用内下载，位于【选项-偏好与配置-备份与恢复】，或者[此处下载](/src/hfut_schedule_guest_data.zip)）
 > 为让其他开发者也可体验本应用，提供了游客数据包，导入后可解锁更多功能，但并非所有功能均可用，如有相关需求可联系开发者。
 
 ## 简介
@@ -34,13 +36,15 @@
 ![截图](/src/img/ui.jpg)
 
 ## 亮点
-界面: 使用着色器、实时模糊等特效，与 Material Design 3 融合，简约高效
+设计: 基于 Material Design 3 融合 Shader、实时模糊等高级效果，风格简约统一
 
 动效：自研第二代全局转场动画体系，符合直觉的一镜到底动效
 
-更新：250+ 版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
+功能：覆盖较全面，多种数据源汇聚，断网可用，DAU 15000+
 
-性能：冷启动迅速，开屏即展示关键信息；内存与存储占用适中
+更新：自 2023 年累计 250+ 版本迭代，10w+ 行代码沉淀，平均每周至少更新一次，带来新的体验
+
+可持续：核心逻辑内聚至端侧处理，无需依靠服务器
 
 ## 开始使用
 ### 要求
@@ -169,5 +173,5 @@ Android 8.0 (SDK26+) 及以上，接入互联网
 若干开发者和用户的帮助：
 - linsui 帮助上架 F-Droid
 - James-Zhang2 提供 GPA 评定数据源
-- tinyvan,Today1337, zxbmmmmmmmmm, Junpgle 提交 RR 助力开发
+- tinyvan,Today1337, zxbmmmmmmmmm, Junpgle, G-E-E-D 提交 RR 助力开发
 - 其他用户帮助推广、通过邮件、issue 等提供功能建议与反馈等，在此不一一列举了

@@ -86,6 +86,10 @@ android {
         }
 
         release {
+            // -PDEV_SIGNING=true时用debug密钥签名
+            if (project.findProperty("DEV_SIGNING")?.toBoolean() == true) {
+                signingConfig signingConfigs.debug
+            }
             // R8混淆
             // 开启前 需要制定proguard-rules.pro规则文件，否则会有些功能被误删
             minifyEnabled false
