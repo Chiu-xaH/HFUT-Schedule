@@ -172,7 +172,7 @@ fun ExamNotificationsScreen(
                                     page,
                                     onNextPage = { page = it },
                                     onPreviousPage = { page = it },
-                                    paddingSafely = false,
+                                    paddingSafely = true,
                                     modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
                                 )
                             }
