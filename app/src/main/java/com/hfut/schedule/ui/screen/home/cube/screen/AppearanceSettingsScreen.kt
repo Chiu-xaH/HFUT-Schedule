@@ -272,9 +272,10 @@ fun SharedAppearanceSettingsScreen(
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
         val enableContainerTilt by DataStoreManager.enableContainerTilt.collectAsState(initial = SharedNavTilt.ROTATION.code)
         val enableQuadraticCornerLerp by DataStoreManager.enableQuadraticCornerLerp.collectAsState(initial = false)
-        val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
+//        val enableContainerShare by DataStoreManager.enableContainerShare.collectAsState(initial = true)
         val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
         val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
+        val enableContainerShare = remember { true }
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -795,6 +796,7 @@ fun SharedAppearanceSettingsScreen(
                     leadingContent = { Icon(painterResource(R.drawable.resize), contentDescription = "Localized description") },
                 )
                 if(transition != EffectLevel.NONE.levelNum) {
+                    /*
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = { Text(text = "容器共享") },
@@ -810,6 +812,7 @@ fun SharedAppearanceSettingsScreen(
                         },
                         leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
                     )
+                     */
                     PaddingHorizontalDivider()
                     if(enableContainerShare) {
                         TransplantListItem(
