@@ -66,10 +66,10 @@ import com.hfut.schedule.ui.nav.destination.UpdateHistoryDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
-import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
-import com.hfut.schedule.ui.screen.home.cube.sub.update.UpdateUI
-import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
-import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
+import com.hfut.schedule.ui.screen.home.cube.sub.update.ui.PatchUpdateUI
+import com.hfut.schedule.ui.screen.home.cube.sub.update.ui.ReleaseUpdateUI
+import com.hfut.schedule.ui.screen.home.cube.sub.update.logic.getPatchVersions
+import com.hfut.schedule.ui.screen.home.cube.sub.update.logic.getUpdates
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -242,7 +242,7 @@ fun HomeSettingScreen(innerPaddings : PaddingValues, vm : NetWorkViewModel, ) {
                 if (showUpdate) {
                     val canUseUpdate = AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64
                     DividerTextExpandedWith(text = stringResource(R.string.settings_update_half_title)) {
-                        UpdateUI(vm,update)
+                        ReleaseUpdateUI(vm,update)
                         if(canUseUpdate) {
                             val activity = LocalActivity.current
                             LaunchedEffect(activity) {

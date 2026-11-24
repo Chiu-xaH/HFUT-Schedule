@@ -171,7 +171,7 @@ import com.hfut.schedule.ui.screen.home.calendar.uniapp.UniAppCoursesScreen
 import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
 import com.hfut.schedule.ui.screen.home.cube.HomeSettingScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
-import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
+import com.hfut.schedule.ui.screen.home.cube.sub.update.logic.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs

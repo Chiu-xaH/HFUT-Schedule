@@ -1,0 +1,109 @@
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 513
+WaitTime: 529
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 515
+WaitTime: 532
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 504
+WaitTime: 507
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 509
+WaitTime: 515
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 514
+WaitTime: 532
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 458
+WaitTime: 471
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 519
+WaitTime: 528
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 479
+WaitTime: 486
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 499
+WaitTime: 520
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 494
+WaitTime: 506
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 486
+WaitTime: 490
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> adb shell am start -W -S -n com.hfut.schedule/.activity.MainActivity
+Stopping: com.hfut.schedule
+Starting: Intent { cmp=com.hfut.schedule/.activity.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.hfut.schedule/.activity.MainActivity
+TotalTime: 479
+WaitTime: 509
+Complete
+PS D:\Android-Studio-Project\Project\HFUT-Schedule> 

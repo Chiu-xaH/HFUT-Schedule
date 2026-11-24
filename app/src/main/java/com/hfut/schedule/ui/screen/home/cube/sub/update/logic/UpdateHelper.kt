@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.cube.sub.update
+package com.hfut.schedule.ui.screen.home.cube.sub.update.logic
 
 import com.hfut.schedule.network.api.model.response.json.gitee.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
