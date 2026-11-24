@@ -141,6 +141,7 @@ import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseDestination
 import com.hfut.schedule.ui.nav.destination.SupabaseLoginDestination
+import com.hfut.schedule.ui.nav.effect.ControlCenterTransitionEffect
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -173,7 +174,10 @@ import com.xah.common.ui.style.color.topBarTransplantColor
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import com.xah.common.ui.style.padding.navigationBarHeightPadding
 import com.xah.common.ui.util.text
+import com.xah.navigation.anim.effect.IslandTransitionEffect
+import com.xah.navigation.anim.effect.RollTransitionEffect
 import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.model.anim.effect.sub.Rotation
 import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
@@ -351,7 +355,13 @@ fun AddEventScreen(
                                         环境变量：
                                         1.现在时间：${DateTimeManager.Date_yyyy_MM_dd} ${DateTimeManager.Time_HH_MM}
                                         """.trimIndent()
+                                    ),
+                                    effect = IslandTransitionEffect(
+                                        position = TransformOrigin(1f,0f),
+                                        rotation = Rotation(z = 30f)
                                     )
+//                                    launchMode = LaunchMode.Push(keepPreviousAlive = true),
+//                                    effect = ControlCenterTransitionEffect()
                                 )
                             },
                             isCircle = true,

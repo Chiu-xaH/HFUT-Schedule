@@ -206,7 +206,10 @@ val deepLinks = listOf(
     },
     DeepLink(AiDestination.KEY) { uri ->
         val keyword = uri.getQueryParameter("keyword")
-        AiDestination(keyword)
+        val immediatelyRequest = uri.getQueryParameter("immediately").toBooleanStrictly() ?: return@DeepLink ExceptionDestination(
+            Exception("immediately 字段解析失败，要求Boolean值")
+        )
+        AiDestination(keyword,immediatelyRequest)
     },
     DeepLink(CourseDetailApiDestination.KEY) { uri ->
         val courseName = uri.getQueryParameter("name") ?: return@DeepLink ExceptionDestination(
@@ -219,3 +222,9 @@ val deepLinks = listOf(
 )
 
 //val deepLinks = deepLinkBeans.map { it }
+
+private fun String?.toBooleanStrictly() = when(this) {
+    "true" -> true
+    "false" -> false
+    else -> null
+}

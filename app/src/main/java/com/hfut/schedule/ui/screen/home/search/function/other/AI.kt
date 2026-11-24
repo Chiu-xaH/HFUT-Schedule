@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.search.function.other
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -164,6 +166,7 @@ fun RotatingRainbowGlow(
 fun AiScreen(
     vm : NetWorkViewModel,
     keyword : String? = null,
+    immediatelyRequest : Boolean = false,
 ) {
     val hazeState = rememberHazeBlur()
     val backdrop = rememberLayerBackdrop()
@@ -180,24 +183,38 @@ fun AiScreen(
         if(apiKey.isNullOrEmptyOrBlank()) {
             return@LaunchedEffect
         }
-        // 注入对话 直接开始
+        // 注入对话
         if(keyword.isNotNullAndEmptyAndBlank()) {
-            val newMsg = AiChatMsg(
-                role = ChatRole.USER.name.lowercase(),
-                content = keyword!!
-            )
-            vm.chatWithAi(apiKey, listOf(newMsg))
-            when(val uiState = vm.aiChatResp.state.first()) {
-                is NetworkUiState.Success -> {
-                    val newData = uiState.data
-                    vm.aiChatResp.emitData(
-                        listOf(AiChatChoice(newMsg,EMPTY_STRING)) + newData
-                    )
-                    input = EMPTY_STRING
+            if(immediatelyRequest) {
+                // 直接开始
+                val newMsg = AiChatMsg(
+                    role = ChatRole.USER.name.lowercase(),
+                    content = keyword!!
+                )
+                vm.chatWithAi(apiKey, listOf(newMsg))
+                when(val uiState = vm.aiChatResp.state.first()) {
+                    is NetworkUiState.Success -> {
+                        val newData = uiState.data
+                        vm.aiChatResp.emitData(
+                            listOf(AiChatChoice(newMsg,EMPTY_STRING)) + newData
+                        )
+                        input = EMPTY_STRING
+                    }
+                    else -> Unit
                 }
-                else -> Unit
+                return@LaunchedEffect
+            } else {
+                // 注入到system
+                val newMsg = AiChatMsg(
+                    role = ChatRole.SYSTEM.name.lowercase(),
+                    content = keyword!!
+                )
+                vm.aiChatResp.emitData(
+                    listOf(AiChatChoice(newMsg,EMPTY_STRING))
+                )
+                input = EMPTY_STRING
+                return@LaunchedEffect
             }
-            return@LaunchedEffect
         }
         // 非注入对话
         if(uiState is NetworkUiState.Success) {
@@ -207,6 +224,7 @@ fun AiScreen(
     }
 
     Scaffold (
+        containerColor = if(navController.current.keepPreviousAlive) Color.Transparent else MaterialTheme.colorScheme.surface,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -384,7 +402,10 @@ fun AiScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(data.size, key = { it }) { index ->
                         val item = data[index]
-                        ChatMsgUI(item,index == 0 && keyword.isNotNullAndEmptyAndBlank())
+                        var fold by rememberSaveable { mutableStateOf(index == 0 && keyword.isNotNullAndEmptyAndBlank()) }
+                        ChatMsgUI(item,fold) {
+                            fold = it
+                        }
                     }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
@@ -396,7 +417,8 @@ fun AiScreen(
 @Composable
 private fun ChatMsgUI(
     item: AiChatChoice,
-    fold : Boolean
+    fold : Boolean,
+    onFoldChange : (Boolean) -> Unit
 ) {
     val role = when (item.message.role.uppercase()) {
         ChatRole.USER.name -> ChatRole.USER
@@ -426,9 +448,9 @@ private fun ChatMsgUI(
                     onClick = {
                         if(role == ChatRole.USER) {
                             // TODO 编辑
-                            showDevelopingToast()
+                            showToast("编辑功能开发中")
                         } else {
-                            showToast("长按复制")
+                            onFoldChange(!fold)
                         }
                     },
                     onLongClick = {

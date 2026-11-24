@@ -261,7 +261,7 @@ fun WebViewTools(
             webView?.getTextByEvalJs {
                 Starter.startDestinationByDeepLink(
                     context,
-                    AiDestination("简明扼要地归纳 关键信息：\n$it")
+                    AiDestination(it)
                 )
             }
         },

@@ -6,15 +6,20 @@ import com.hfut.schedule.ui.nav.DEEPLINK_SCHEME
 import com.hfut.schedule.ui.screen.home.search.function.other.AiScreen
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.util.res
 import com.xah.navigation.util.LocalNavDependencies
 
+/**
+ * @param immediatelyRequest 立刻请求对话
+ */
 data class AiDestination(
     val keyword : String? = null,
+    val immediatelyRequest : Boolean = false
 ) : NavDestination() {
     override val title = TITLE
     override val icon = ICON
-    override val deepLink = "$DEEPLINK_SCHEME$KEY?keyword=$keyword"
+    override val deepLink = "$DEEPLINK_SCHEME$KEY?immediately=$immediatelyRequest" + (keyword?.let { "&keyword=$it" } ?: EMPTY_STRING)
     override val key = deepLink
 
     companion object {
@@ -26,6 +31,6 @@ data class AiDestination(
     @Composable
     override fun Content() {
         val networkVm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        AiScreen(networkVm,keyword)
+        AiScreen(networkVm,keyword,immediatelyRequest)
     }
 }
