@@ -83,6 +83,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -951,7 +952,23 @@ fun MainScreen(
                 }
                 Box(
                     modifier = Modifier
+                        .let {
+                            if (useBackground) {
+                                it
+                            } else {
+                                it
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colorStops = arrayOf(
+                                                0.0f to color.copy(alpha = 0f),
+                                                1.0f to color.copy(alpha = 0.95f),
+                                            )
+                                        )
+                                    )
+                            }
+                        }
                 ) {
+                    /*
                     Spacer(
                         modifier = Modifier
                             .let {
@@ -966,6 +983,7 @@ fun MainScreen(
                             .navigationBarsPadding()
                             .height(APP_HORIZONTAL_DP * if(paddingSafely) 1.75f else 1f)
                     )
+                     */
                     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
                     val maxValue = remember { .8f }
                     val finalColor = if(useBackground) {
@@ -999,7 +1017,7 @@ fun MainScreen(
                                 if(useBackground) {
                                     it.calendarSquareBackDrop(backdrop,CalendarSquareBackDropSource.BOTTOM, shape = shape)
                                 } else {
-                                    it.bottomBarBackDrop(backdrop, shape = shape)
+                                    it.bottomBarBackDrop(backdrop,color ,shape)
                                 }
                             }
                             .let {

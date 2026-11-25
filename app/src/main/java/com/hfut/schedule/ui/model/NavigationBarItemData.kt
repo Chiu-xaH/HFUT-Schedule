@@ -285,7 +285,7 @@ fun NavigationBar(
     arrangement: NavigationBarArrangement = NavigationBarArrangement.VERTICAL,
     trackColor: Color = MaterialTheme.colorScheme.surfaceContainerLow.copy(.75f),
     // TODO 这里应该改成按比例？
-    trackHeight: Dp = if (arrangement == NavigationBarArrangement.HORIZONTAL) 54.dp else 69.dp,
+    trackHeight: Dp = if (arrangement == NavigationBarArrangement.HORIZONTAL) 54.dp else 66.dp,
     // 指示器颜色
     indicatorBlur: Dp = 0.dp,
     indicatorColor: Color = MaterialTheme.colorScheme.secondaryContainer,

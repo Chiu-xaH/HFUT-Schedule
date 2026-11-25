@@ -7,6 +7,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -54,6 +55,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.shader.largeStyle
 import com.hfut.schedule.ui.style.special.enableEffect
 import com.hfut.schedule.ui.style.special.layerGlass
+import com.hfut.schedule.ui.util.isThemeDark
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
@@ -399,25 +401,32 @@ fun NoPadding(content: @Composable () -> Unit) {
 @Composable
 fun Modifier.bottomBarBackDrop(
     backdrop: Backdrop,
+    color : Color = MaterialTheme.colorScheme.surface,
     shape : RoundedCornerShape = CircleShape,
 ) : Modifier {
-    val color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(.3f)
+    val finalColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(.6f)
+//   .275f
     val isTransiting = enableEffect()
+    val isThemeDark = isThemeDark()
 
     return this.drawBackdrop(
         highlight = {
-            Highlight.Default.copy(width = 0.25.dp)
+            if(isThemeDark) {
+                Highlight.Default.copy(width = 0.25.dp)
+            } else {
+                Highlight.Plain
+            }
         },
         backdrop = if (isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
             vibrancy()
-            blur(4f)
+            blur(1.75f.dp.toPx())
             lens(17.5.dp.toPx(), 24.dp.toPx())
         },
         shadow = null,
         onDrawSurface = {
-            drawRect(color)
+            drawRect(finalColor)
         }
     )
 }
@@ -448,7 +457,7 @@ fun Modifier.calendarSquareBackDrop(
         effects = {
             vibrancy()
             // 统一调配
-            blur(20f * customBackgroundBlur)
+            blur(10f.dp.toPx() * customBackgroundBlur)
             when(source) {
                 CalendarSquareBackDropSource.CONTAINER -> {
                     lens(15.dp.toPx(), 24.dp.toPx())

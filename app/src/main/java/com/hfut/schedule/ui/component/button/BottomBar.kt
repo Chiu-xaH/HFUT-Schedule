@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.component.button
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -257,7 +259,16 @@ fun HazeBottomBarV2(
         }
         Box(
             modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0.0f to color.copy(alpha = 0f),
+                            1.0f to color.copy(alpha = 0.95f),
+                        )
+                    )
+                )
         ) {
+            /*
             Spacer(
                 modifier = Modifier
                     .newBottomBarBlur(hazeState,color)
@@ -266,6 +277,7 @@ fun HazeBottomBarV2(
                     .navigationBarsPadding()
                     .height(APP_HORIZONTAL_DP * if(paddingSafely) 1.75f else 1f)
             )
+             */
             @OptIn(ExperimentalNavigationBarApi::class)
             (com.hfut.schedule.ui.model.NavigationBar(
                 enabled = enabled,
@@ -284,7 +296,7 @@ fun HazeBottomBarV2(
 //                    ).copy(.8f),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 hazeModifier = Modifier
-                    .bottomBarBackDrop(backdrop, shape = shape)
+                    .bottomBarBackDrop(backdrop, color ,shape)
 //                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(.25f))
                     .let {
                         if (enabled) {
