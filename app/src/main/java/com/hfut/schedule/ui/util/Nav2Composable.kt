@@ -33,7 +33,7 @@ private fun SharedNavBackHandler() {
     val navController = LocalNavControllerSafely.current
 
     if(
-        navController?.current?.keepPreviousAlive == true || navController?.isTransitioning == true
+        navController?.previousIsAlive == true || navController?.isTransitioning == true
     ) {
         NavigationBackHandler()
     }

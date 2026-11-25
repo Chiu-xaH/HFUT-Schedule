@@ -224,7 +224,7 @@ fun AiScreen(
     }
 
     Scaffold (
-        containerColor = if(navController.current.keepPreviousAlive) Color.Transparent else MaterialTheme.colorScheme.surface,
+        containerColor = if(navController.previousIsAlive) Color.Transparent else MaterialTheme.colorScheme.surface,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(

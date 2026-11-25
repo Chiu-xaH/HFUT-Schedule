@@ -81,7 +81,7 @@ fun enableEffect() : Boolean {
     val navController = LocalNavControllerSafely.current
     val floatingController = LocalFloatingControllerSafely.current
     val registry = LocalSharedRegistrySafely.current
-    if(navController?.current?.keepPreviousAlive == true) {
+    if(navController?.previousIsAlive == true) {
         return false
     }
     if(navController?.isTransitioning == true) {
