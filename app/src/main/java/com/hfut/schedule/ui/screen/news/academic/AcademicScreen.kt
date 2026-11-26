@@ -23,7 +23,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.network.api.model.response.html.news.AcademicNewsType
@@ -56,6 +58,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pager
         vm.getAcademicNews(AcademicNewsType.entries[pagerState.currentPage],page, totalPage = totalPage)
     }
     val context = LocalContext.current
+    val enableNewBottomBar by DataStoreManager.enableNewBottomBar.collectAsState(initial = false)
 
     LaunchedEffect(page) {
         // 如果pagerState.currentPage动，则执行某操作
@@ -124,7 +127,9 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pager
                     page,
                     onNextPage = { page = it },
                     onPreviousPage = { page = it },
-                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
+                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-if(enableNewBottomBar) 0.dp else navigationBarHeightPadding),
+                    paddingBottom = false,
+                    paddingSafely = enableNewBottomBar
                 )
             }
         }
