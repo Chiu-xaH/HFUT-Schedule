@@ -5,11 +5,18 @@ import java.io.File
 object CpuFreqUtil {
     private const val CPUINFO_MAX_FREQ = "cpuinfo_max_freq"
     private const val SCALING_CUR_FREQ = "scaling_cur_freq"
+    private val allCores by lazy { allCores() }
 
     // 硬件最大CPU频率 单位kHz
-    fun getCpuMaxFreq() = allCores().mapNotNull { readFreq(it, CPUINFO_MAX_FREQ) }.maxOrNull()
+    fun getCpuMaxFreq() = allCores.mapNotNull { readFreq(it, CPUINFO_MAX_FREQ) }.maxOrNull()
 
-    // 当前最大CPU频率 单位kHz
+    // CPU核心数
+    fun getCpuCoreNum() = allCores.size
+
+    // 粗略的判断：是否是中高端
+    fun isNotLowerPerformance() = getCpuCoreNum() >= 8 && (getCpuMaxFreq() ?: 0) >= 2_800_000L
+
+    // 当前最大CPU频率 单位kHz，可能会返回null
     fun getCurrentCpuMaxFreq() = allCores().mapNotNull { readFreq(it, SCALING_CUR_FREQ) }.maxOrNull()
 
     private fun allCores() = (0 until Runtime.getRuntime().availableProcessors()).toList()

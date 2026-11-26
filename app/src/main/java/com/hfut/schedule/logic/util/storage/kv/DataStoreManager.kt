@@ -32,6 +32,7 @@ import com.hfut.schedule.ui.model.choice.SharedContainerFilledStrategy
 import com.hfut.schedule.ui.model.choice.SharedNavEffect
 import com.hfut.schedule.ui.model.choice.SharedNavTilt
 import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
+import com.xah.common.logic.util.CpuFreqUtil
 import com.xah.common.ui.model.BaseChoice
 import com.xah.common.ui.model.text.UiText
 import com.xah.common.ui.util.res
@@ -329,7 +330,7 @@ object DataStoreManager : IDataStore {
     val defaultTransitionEffect = getFlow(DEFAULT_TRANSITION_EFFECT, SharedNavEffect.DEFAULT.code)
     val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, true)
-    val transitionLevel = getFlow(TRANSITION, EffectLevel.LOW.levelNum)
+    val transitionLevel = getFlow(TRANSITION, if(CpuFreqUtil.isNotLowerPerformance()) EffectLevel.MEDIUM.levelNum else EffectLevel.LOW.levelNum)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,false)
