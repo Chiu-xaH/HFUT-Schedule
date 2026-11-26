@@ -37,7 +37,7 @@ fun Modifier.drawLineTimeTable(
         val h = size.height
         // 虚线在列边界
         for (i in 0..columnCount.toInt()) {
-            val x = w * i / columnCount.toFloat()
+            val x = w * i / columnCount
             drawLine(
                 color = color,
                 strokeWidth = width.toPx(),

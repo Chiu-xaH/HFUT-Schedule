@@ -127,11 +127,12 @@ fun TimetableCommonSquare(
                     .fillMaxWidth()
                     .let {
                         if(showLine) {
-                            it.drawLineTimeTable(columnCount)
+                            it
+                                .drawLineTimeTable(columnCount)
+                                .drawCurrentTimeLine(hourPx, startTime, endTime, zipTime, zipTimeFactor, todayColumnIndex, columnWidthPx)
                         } else
                             it
                     }
-                    .drawCurrentTimeLine(hourPx, startTime, endTime, zipTime, zipTimeFactor, todayColumnIndex, columnWidthPx)
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = onDoubleTapBlankRegion,
