@@ -1181,11 +1181,13 @@ fun CalendarUISettings(
                         .matchParentSize()
                         .backDropSource(backdrop)
                         .mask(MaterialTheme.colorScheme.surface.copy(customSquareAlpha))
+                        /*
                         .blur(
                             with(density) {
                                 (customSquareBlur*20f).toDp()
                             }
                         )
+                         */
                     ,
                     contentScale = ContentScale.Crop
                 )
@@ -1278,6 +1280,7 @@ fun CalendarUISettings(
                 },
                 valueRange = 0f..1f,
             )
+            /*
             if(!isTiny) {
                 PaddingHorizontalDivider()
             }
@@ -1304,6 +1307,7 @@ fun CalendarUISettings(
                 },
                 valueRange = 0f..1f,
             )
+             */
             /*
             if(!isTiny) {
                 PaddingHorizontalDivider()

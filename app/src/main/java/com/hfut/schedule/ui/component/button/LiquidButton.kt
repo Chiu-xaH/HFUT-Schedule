@@ -444,7 +444,7 @@ fun Modifier.calendarSquareBackDrop(
     overlayColor : Color = MaterialTheme.colorScheme.surface,
 ) : Modifier {
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-    val customBackgroundBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
+//    val customBackgroundBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
     val color = overlayColor.copy(customBackgroundAlpha)
     val isTransiting = enableEffect()
 
@@ -457,7 +457,8 @@ fun Modifier.calendarSquareBackDrop(
         effects = {
             vibrancy()
             // 统一调配
-            blur(10f.dp.toPx() * customBackgroundBlur)
+//            blur(10f.dp.toPx() * customBackgroundBlur)
+            blur(1.5.dp.toPx())
             when(source) {
                 CalendarSquareBackDropSource.CONTAINER -> {
                     lens(15.dp.toPx(), 24.dp.toPx())

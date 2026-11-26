@@ -985,10 +985,10 @@ fun MainScreen(
                     )
                      */
                     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
-                    val maxValue = remember { .8f }
+//                    val maxValue = remember { .8f }
                     val finalColor = if(useBackground) {
-                        val backgroundAlpha = customBackgroundAlpha.coerceIn(maxValue/2f,maxValue)
-                        MaterialTheme.colorScheme.secondaryContainer.copy(backgroundAlpha)
+//                        val backgroundAlpha = customBackgroundAlpha.coerceIn(maxValue/2f,maxValue)
+                        MaterialTheme.colorScheme.onSurface.copy(.1f)
                     } else {
                         MaterialTheme.colorScheme.primary.copy(.1f)
 //                        (
