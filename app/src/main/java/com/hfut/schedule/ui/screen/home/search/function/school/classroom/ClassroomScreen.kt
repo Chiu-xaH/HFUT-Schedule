@@ -58,6 +58,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -125,10 +127,10 @@ import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.ui.theme.warnColor
+import com.hfut.schedule.ui.util.isThemeDark
 import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
-import com.hfut.schedule.ui.util.state.GlobalEventHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -140,7 +142,6 @@ import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.floating.util.LocalFloatingController
 import com.xah.navigation.util.LocalNavController
 import com.xah.common.logic.util.LogUtil
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -151,8 +152,8 @@ import java.time.LocalDate
 import java.util.Calendar
 import kotlin.math.min
 
-private enum class ClassroomBarItems(val page : Int) {
-    EMPTY_CLASSROOM(0),CLASSROOM_LESSONS(1)
+private enum class ClassroomBarItems {
+    EMPTY_CLASSROOM,CLASSROOM_LESSONS
 }
 
 private val items = listOf(
@@ -201,10 +202,11 @@ fun ClassroomScreen(
         vm.searchClassrooms(input,jwt,1)
     }
 
-    var showFilterBox by rememberSaveable() { mutableStateOf(true) }
+    var showFilterBox by rememberSaveable { mutableStateOf(true) }
     var showSelectDateDialog by remember { mutableStateOf(false) }
-    if(showSelectDateDialog)
+    if(showSelectDateDialog) {
         DatePickerDialog(onConfirm = { date = it }) { showSelectDateDialog = false }
+    }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -294,7 +296,7 @@ fun ClassroomScreen(
                                         getUinAppCampusId(it1) == it.campusAssoc
                                     } ?: true
                                 }
-                                LazyRow() {
+                                LazyRow {
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     items(buildingList.size) { index ->
                                         val item = buildingList[index]
@@ -378,7 +380,7 @@ fun ClassroomScreen(
                 .hazeSource(state = hazeState)
         ) {
             nav2Composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
-                EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors,hazeState)
+                EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors)
             }
             nav2Composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
                 SearchClassroomScreen(vm,innerPadding) {
@@ -397,12 +399,10 @@ fun ClassroomScreen(
 private fun EmptyClassroomScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
-//    navTopController : NavHostController,
     date : String,
     campus : Campus?,
     selectedBuildings: SnapshotStateList<UniAppBuilding>,
     selectedFloors: SnapshotStateList<Int>,
-    hazeState: HazeState
 ) {
     val navTopController = LocalNavController.current
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
@@ -413,7 +413,7 @@ private fun EmptyClassroomScreen(
         var jwt = DataStoreManager.uniAppJwt.first()
         if(jwt.isEmpty() || jwt.isEmpty()) {
             val loginResult = UniAppRepository.login()
-            if(loginResult == false) {
+            if(!loginResult) {
                 return@m
             }
             jwt = DataStoreManager.uniAppJwt.first()
@@ -432,7 +432,7 @@ private fun EmptyClassroomScreen(
         var jwt = DataStoreManager.uniAppJwt.first()
         if(jwt.isEmpty() || jwt.isEmpty()) {
             val loginResult = UniAppRepository.login()
-            if(loginResult == false) {
+            if(!loginResult) {
                 return@m
             }
             jwt = DataStoreManager.uniAppJwt.first()
@@ -510,6 +510,7 @@ private fun EmptyClassroomScreen(
                                         // 是否正在占用
                                         if(isOccupied) {
                                             val timeState = remember(square,currentTime) { DateTimeManager.getTimeStateReal(square.startTimeString,square.endTimeString) }
+                                            val containerColor = getClassroomSquareContainerColor(square)
                                             CircleProgressIcon(timeState.second, animate = false)
                                         } else {
                                             Icon(painterResource(R.drawable.lasso_select),null)
@@ -555,7 +556,13 @@ private fun EmptyClassroomScreen(
                             )
                             // 横向时间轴
                             if(!isAllDayFree) {
-                                ClassroomSchedule(activities, item.nameZh, modifier = scheduleModifier,currentTime,isForeverFree) {
+                                ClassroomSchedule(
+                                    activities,
+                                    item.nameZh,
+                                    modifier = scheduleModifier,
+                                    currentTime,
+                                    !isForeverFree && isToday,
+                                ) {
                                     floatingController.push(ClassroomSquareWindow(it,item.nameZh))
                                 }
                             }
@@ -584,7 +591,7 @@ private fun ClassroomSchedule(
     room : String,
     modifier: Modifier = Modifier,
     currentTime : Float,
-    foreverFree : Boolean,
+    display : Boolean,
     rangeMinutes :  Pair<Int,Int> = Pair(8 * 60,22 * 60),
     onClick : (UniAppEmptyClassroomLesson) -> Unit
 ) {
@@ -597,7 +604,7 @@ private fun ClassroomSchedule(
             startTimeInMinutes.toFloat(),
             endTimeInMinutes.toFloat(),
             currentTime,
-            foreverFree
+            display
         )
     ) {
         val timelineWidth = maxWidth
@@ -708,28 +715,47 @@ private fun Modifier.drawTimeLine(
     startMinutes: Float,
     endMinutes: Float,
     currentTime : Float,
-    foreverFree : Boolean,
+    display : Boolean,
 ): Modifier {
     val color = remember { Color.Red }
+    val shadowColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f)
     val lineWidth = remember { 1.5.dp }
     val dotRadius = lineWidth * 2
 
-    return if (currentTime !in startMinutes..endMinutes || foreverFree) {
-        this
-    } else {
-        this.drawWithContent {
-            // 先画内容，再画线 → 线在内容上面
+    if (display && currentTime in startMinutes..endMinutes) {
+        return this.drawWithContent {
             drawContent()
-
-            // 横向时间轴：分钟 → x 坐标（与 dpPerMinute 同比例线性换算）
             val x = (currentTime - startMinutes) / (endMinutes - startMinutes) * size.width
+
+            // 阴影
+            val shadowHeight = APP_HORIZONTAL_DP.toPx()
+            val shadowLeft = x - shadowHeight / 2f
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(Color.Transparent, shadowColor, Color.Transparent),
+                    startX = shadowLeft,
+                    endX = shadowLeft + shadowHeight
+                ),
+                topLeft = Offset(shadowLeft, 0f),
+                size = Size(shadowHeight, size.height)
+            )
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(shadowColor, Color.Transparent),
+                    center = Offset(x, 0f),
+                    radius = shadowHeight
+                ),
+                radius = shadowHeight,
+                center = Offset(x, 0f)
+            )
+
             drawLine(
                 color = color,
                 strokeWidth = lineWidth.toPx(),
                 start = Offset(x, 0f),
                 end = Offset(x, size.height)
             )
-            // 圆点画在线顶端（对应参考里 dot 画在线起点）
+            // 圆点
             drawCircle(
                 color = color,
                 radius = dotRadius.toPx(),
@@ -737,6 +763,8 @@ private fun Modifier.drawTimeLine(
             )
         }
     }
+
+    return this
 }
 
 private fun currentTimeInMinutes(): Float {
@@ -802,7 +830,6 @@ private fun nextBusyStartTime(
 @Composable
 private fun SearchClassroomScreen(
     vm : NetWorkViewModel,
-//    navTopController : NavHostController,
     innerPadding : PaddingValues,
     refreshNetwork : () -> Unit
 ) {
@@ -867,7 +894,6 @@ private fun SearchClassroomScreen(
 @Composable
 fun ClassroomLessonsScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
     roomId : Int,
     name: String
 ) {
@@ -886,7 +912,7 @@ fun ClassroomLessonsScreen(
         var jwt = DataStoreManager.uniAppJwt.first()
         if(jwt.isEmpty() || jwt.isEmpty()) {
             val loginResult = UniAppRepository.login()
-            if(loginResult == false) {
+            if(!loginResult) {
                 return@m
             }
             jwt = DataStoreManager.uniAppJwt.first()
@@ -931,7 +957,7 @@ fun ClassroomLessonsScreen(
             .backDropSource(backdrop)
             .fillMaxSize()
             .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
+                detectTransformGestures { _, _, zoom, _ ->
                     scaleFactor.floatValue *= zoom
                 }
             }
@@ -1129,6 +1155,8 @@ private fun uniAppToTimeTableData(targetPlace : String, list: List<UniAppClassro
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
-        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+        return List(MyApplication.MAX_WEEK) {
+            emptyList()
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.logic
 
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,11 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.delay
 import java.util.Calendar
 
@@ -65,6 +70,7 @@ fun Modifier.drawCurrentTimeLine(
     }
 
     val color = remember { Color.Red }
+    val shadowColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f)
     val lineWidth = remember { 1.5.dp }
     val dotRadius = lineWidth*2
 
@@ -81,36 +87,61 @@ fun Modifier.drawCurrentTimeLine(
         }
     }
 
-    return if (currentTime < startTime || currentTime > endTime) {
+    return if (currentTime !in startTime..endTime) {
         this
     } else {
         this.drawWithContent {
             val y = timeToY(currentTime, hourPx, startTime, zipTime, zipTimeFactor)
             val w = size.width
 
+            /*
             drawLine(
                 color = color,
                 strokeWidth = lineWidth.toPx(),
                 start = Offset(0f, y),
                 end = Offset(w, y)
             )
+             */
 
             drawContent()
 
             if (columnWidthPx > 0f) {
                 val left = todayColumnIndex * columnWidthPx
                 val right = left + columnWidthPx
+
+                // 阴影
+                val shadowHeight = APP_HORIZONTAL_DP.toPx()
+                val shadowTop = y - shadowHeight / 2f
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, shadowColor, Color.Transparent),
+                        startY = shadowTop,
+                        endY = shadowTop + shadowHeight
+                    ),
+                    topLeft = Offset(left, shadowTop),
+                    size = Size(right - left, shadowHeight)
+                )
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(shadowColor, Color.Transparent),
+                        center = Offset(left, y),
+                        radius = shadowHeight
+                    ),
+                    radius = shadowHeight,
+                    center = Offset(left, y)
+                )
+
                 drawLine(
                     color = color,
                     strokeWidth = lineWidth.toPx(),
                     start = Offset(left, y),
                     end = Offset(right, y)
                 )
-//                drawCircle(
-//                    color = color,
-//                    radius = dotRadius.toPx(),
-//                    center = Offset(left, y)
-//                )
+                drawCircle(
+                    color = color,
+                    radius = dotRadius.toPx(),
+                    center = Offset(left, y)
+                )
             }
         }
     }
