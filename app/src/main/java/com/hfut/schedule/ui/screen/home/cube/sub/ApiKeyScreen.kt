@@ -1,10 +1,11 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledTonalButton
@@ -16,29 +17,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.xah.common.logic.util.EMPTY_STRING
-
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
+import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
@@ -64,7 +62,7 @@ fun ApiKeyScreen(
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("配置ApiKey") {
+        DividerTextExpandedWith("DeepSeek") {
             CustomCard(
                 color = MaterialTheme.colorScheme.surface
             ) {
@@ -107,6 +105,19 @@ fun ApiKeyScreen(
                     inputApiKey = it
                 }
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
+            }
+        }
+        DividerTextExpandedWith("更多模型") {
+            CustomCard(
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                RowHorizontal(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = CARD_NORMAL_DP*2)
+                ) {
+                    DevelopingIcon()
+                }
             }
         }
         InnerPaddingHeight(innerPadding,false)

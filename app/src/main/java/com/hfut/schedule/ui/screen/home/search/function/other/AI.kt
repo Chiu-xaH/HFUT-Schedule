@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,12 +38,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.enumeration.ChatRole
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -52,11 +58,13 @@ import com.hfut.schedule.network.api.model.response.json.ai.AiChatMsg
 import com.hfut.schedule.ui.component.button.BUTTON_END_PADDING
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.StatusIcon
@@ -71,6 +79,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.logic.state.NetworkUiState
+import com.xah.common.logic.state.UiStateHolder
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.logic.util.LogUtil
 import com.xah.common.logic.util.isNotNullAndEmptyAndBlank
@@ -85,6 +94,8 @@ import com.xah.navigation.util.LocalNavController
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.Locale
+import java.util.Locale.getDefault
 
 /*
 TODO
@@ -205,22 +216,40 @@ fun AiScreen(
                 return@LaunchedEffect
             } else {
                 // 注入到system
-                val newMsg = AiChatMsg(
-                    role = ChatRole.SYSTEM.name.lowercase(),
-                    content = keyword!!
-                )
-                vm.aiChatResp.emitData(
-                    listOf(AiChatChoice(newMsg,EMPTY_STRING))
-                )
+                vm.aiChatResp.inject(keyword!!)
                 input = EMPTY_STRING
                 return@LaunchedEffect
             }
         }
         // 非注入对话
         if(uiState is NetworkUiState.Success) {
+            if(uiState.existInjected()) {
+                vm.aiChatResp.emitPrepare()
+            }
             return@LaunchedEffect
         }
         vm.aiChatResp.emitPrepare()
+    }
+
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    if(showDeleteDialog) {
+        LittleDialog(
+            onConfirmation = {
+                input = EMPTY_STRING
+                if(uiState.existInjected()) {
+                    // 注入到system
+                    vm.aiChatResp.inject(keyword!!)
+                } else {
+                    vm.aiChatResp.emitPrepare()
+                }
+                showDeleteDialog = false
+            },
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            dialogText = "是否清除本对话?",
+            hazeState = hazeState
+        )
     }
 
     Scaffold (
@@ -236,7 +265,12 @@ fun AiScreen(
                     TopBarNavigationIcon()
                 },
                 actions = {
-                    if(uiState is NetworkUiState.Success) {
+                    val display = if(uiState is NetworkUiState.Success) {
+                        !uiState.isInjected()
+                    } else {
+                        false
+                    }
+                    if(display) {
                         LiquidButton(
                             onClick = {
                                 // TODO TOken、上下文情况
@@ -267,9 +301,7 @@ fun AiScreen(
                         }
                         LiquidButton(
                             onClick = {
-                                // TODO Dialog
-                                input = EMPTY_STRING
-                                vm.aiChatResp.emitPrepare()
+                                showDeleteDialog = true
                             },
                             isCircle = true,
                             backdrop = backdrop,
@@ -303,16 +335,37 @@ fun AiScreen(
                     input = input,
                     singleLine = false,
                     leadingIcon = {
-                        IconButton(
-                            onClick = {
-                                // TODO 切换模型
-                                showDevelopingToast()
+                        if(false) {
+                            IconButton(
+                                modifier = Modifier.padding(start = CARD_NORMAL_DP*2),
+                                onClick = {
+                                    // TODO 切换模型
+                                    showToast("更多模型支持开发中")
+                                }
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.swap_vert),
+                                    null
+                                )
                             }
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.swap_vert),
-                                null
-                            )
+                        } else {
+                            NoPadding {
+                                IconButton(
+                                    modifier = Modifier.padding(start = CARD_NORMAL_DP*2),
+                                    onClick = {
+                                        // TODO 切换模型
+                                        showToast("更多模型支持开发中")
+                                    }
+                                ) {
+                                    Image(
+                                        painterResource(R.drawable.deepseek_icon),
+                                        null,
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .size(24.dp+4.dp)
+                                    )
+                                }
+                            }
                         }
                     },
                     trailingIcon = {
@@ -470,4 +523,25 @@ private fun ChatMsgUI(
             }
         }
     }
+}
+
+private fun NetworkUiState<List<AiChatChoice>>.existInjected() =
+    this is NetworkUiState.Success &&
+    this.data.isNotEmpty() &&
+    this.data[0].message.role.uppercase(getDefault()) == ChatRole.SYSTEM.name
+
+private fun NetworkUiState<List<AiChatChoice>>.isInjected() =
+    this is NetworkUiState.Success &&
+    this.data.size == 1 &&
+    this.data[0].message.role.uppercase(getDefault()) == ChatRole.SYSTEM.name
+
+// 注入到system
+private fun UiStateHolder<List<AiChatChoice>>.inject(keyword : String) {
+    val newMsg = AiChatMsg(
+        role = ChatRole.SYSTEM.name.lowercase(),
+        content = keyword
+    )
+    this.emitData(
+        listOf(AiChatChoice(newMsg,EMPTY_STRING))
+    )
 }
