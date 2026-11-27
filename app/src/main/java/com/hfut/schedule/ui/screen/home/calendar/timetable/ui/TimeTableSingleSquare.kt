@@ -33,6 +33,8 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawCurrentTime
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
+import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.common.ui.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
 
@@ -188,6 +190,7 @@ fun TimetableSingleSquare(
                     }
                 }
             }
+            Spacer(Modifier.height(GlobalUiStateHolder.dragWeekButtonHeight + APP_HORIZONTAL_DP))
             InnerPaddingHeight(innerPadding,false)
         }
     }

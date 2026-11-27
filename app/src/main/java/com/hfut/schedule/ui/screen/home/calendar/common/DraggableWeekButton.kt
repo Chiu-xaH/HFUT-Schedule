@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,8 @@ import com.hfut.schedule.ui.component.button.calendarSquareBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.nav.window.TimeTablePreviewWindow
+import com.hfut.schedule.ui.util.layout.measureDpSize
+import com.hfut.schedule.ui.util.state.GlobalUiStateHolder
 import com.sharednav.common.helper.NoneRoundShape
 import com.kyant.backdrop.Backdrop
 import com.xah.container.component.base.sharedContainer
@@ -114,6 +117,9 @@ fun DraggableWeekButton(
 
     Box(
         modifier = modifier
+            .measureDpSize { _,h ->
+                GlobalUiStateHolder.dragWeekButtonHeight = h
+            }
             .pointerInput(key) {
                 detectDragGestures(
                     onDragEnd = {

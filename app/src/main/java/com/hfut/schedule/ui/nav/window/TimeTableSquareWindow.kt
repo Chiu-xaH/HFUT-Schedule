@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.sys.JumpTransitionEffectWallpaper
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -43,12 +44,14 @@ import com.hfut.schedule.ui.component.text.AutoSizeText
 import com.hfut.schedule.ui.nav.destination.AddEventDestination
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.nav.destination.ExamDestination
+import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.window.base.FloatingWindow
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeBarItems
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.common.ui.component.text.ScrollText
@@ -164,12 +167,16 @@ data class TimeTableSquareWindow(
                                             },
                                             trailingContent = {
                                                 if(it.contains("新安") || it.contains("敬亭")) {
-                                                    cardNormalColor()
                                                     val containerColorForButton = containerColor.copy(.6f).compositeOver(MaterialTheme.colorScheme.surface)
                                                     FilledTonalIconButton(
                                                         colors = IconButtonDefaults.iconButtonColors(containerColorForButton,contentColorFor(containerColor)),
                                                         onClick = {
-                                                            showDevelopingToast()
+                                                            windowToDestination(
+                                                                floatingController,
+                                                                navController,
+                                                                LifeDestination(LifeBarItems.CAMPUS),
+                                                                effect = JumpTransitionEffectWallpaper()
+                                                            )
                                                         }
                                                     ) {
                                                         Icon(painterResource(R.drawable.directions_alt),null)

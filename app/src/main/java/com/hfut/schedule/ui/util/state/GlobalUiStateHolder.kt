@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.dto.HuiXinCardInfoDto
@@ -56,6 +57,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 object GlobalUiStateHolder {
     var postedUse = false
+    var dragWeekButtonHeight by mutableStateOf(0.dp)
     var excludeJxglstu by mutableStateOf(false)
 
     var shaderState by mutableStateOf<ShaderState?>(null)
