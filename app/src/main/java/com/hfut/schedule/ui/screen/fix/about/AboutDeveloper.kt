@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -61,7 +61,6 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.nav.destination.GradeDetailDestination
 import com.hfut.schedule.ui.screen.welcome.arguments
 import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -511,17 +510,14 @@ fun OverlappingAvatars(
     if (imageUrls.isEmpty()) return
 
     BoxWithConstraints(modifier = modifier) {
-        val maxWidth = constraints.maxWidth.toFloat().dp
         val totalAvatars = imageUrls.size
-        val defaultSpacing = avatarSize * (1f - overlapFraction)
+        val spacingRatio = (1f - overlapFraction).coerceIn(.15f, 1f)
+        val widthFactor = spacingRatio * (totalAvatars - 1) + 1f
+        val actualSize = (maxWidth / widthFactor).coerceAtMost(avatarSize)
+        val spacing = actualSize * spacingRatio
+        val contentWidth = (spacing * (totalAvatars - 1) + actualSize).coerceAtMost(maxWidth)
 
-        // 动态计算每个头像间距，保证全部头像在屏幕内显示
-        val spacing = if (totalAvatars > 1) {
-            val neededWidth = defaultSpacing * (totalAvatars - 1) + avatarSize
-            if (neededWidth > maxWidth) {
-                ((maxWidth - avatarSize) / (totalAvatars - 1)).coerceAtLeast(0.dp)
-            } else defaultSpacing
-        } else 0.dp
+        Spacer(Modifier.size(contentWidth, actualSize))
 
         imageUrls.forEachIndexed { index, url ->
             UrlImage(
@@ -530,7 +526,7 @@ fun OverlappingAvatars(
                 shape = CircleShape,
                 modifier = Modifier
                     .offset(x = spacing * index)
-                    .size(avatarSize)
+                    .size(actualSize)
                     .shadow(elevation = APP_HORIZONTAL_DP, shape = CircleShape, clip = false)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surface)
