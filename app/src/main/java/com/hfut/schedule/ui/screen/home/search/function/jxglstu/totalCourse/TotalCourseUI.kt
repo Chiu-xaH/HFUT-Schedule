@@ -19,13 +19,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -55,6 +58,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -78,8 +82,10 @@ import com.hfut.schedule.ui.nav.destination.CourseSearchApiDestination
 import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.nav.destination.FailRateApiDestination
 import com.hfut.schedule.ui.nav.destination.FailRateDestination
+import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.TeacherSearchApiDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeBarItems
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -640,6 +646,7 @@ fun DetailItems(
 
                 classroom?.let {
                     val dest = ClassroomDestination("CourseDetail")
+                    val floorDest = LifeDestination(LifeBarItems.CAMPUS)
                     SharedContainer(
                         key = dest.key,
                         shape = NoneRoundShape,
@@ -656,6 +663,27 @@ fun DetailItems(
                                     painterResource(R.drawable.meeting_room),
                                     contentDescription = "Localized description",
                                 )
+                            },
+                            trailingContent = {
+                                NoPadding {
+                                    SharedContainer(
+                                        key = floorDest.key,
+                                        shape = CircleShape,
+                                        containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
+                                    ) {
+                                        FilledTonalIconButton(
+                                            onClick = {
+                                                navController.push(floorDest)
+                                            },
+                                            shape = NoneRoundShape,
+                                        ) {
+                                            Icon(
+                                                painterResource(R.drawable.directions_alt),
+                                                null,
+                                            )
+                                        }
+                                    }
+                                }
                             },
                             modifier = Modifier
                                 .clickable {

@@ -363,8 +363,9 @@ fun FocusCard(
                             enter = AppAnimationManager.fadeAnimation.enter
                         ) {
                             with(list[0]) {
+                                val lifeDest = LifeDestination()
                                 SharedContainer(
-                                    key = LifeDestination.key,
+                                    key = lifeDest.key,
                                     shape = MaterialTheme.shapes.medium.copy(
                                         topStart = CornerSize(0.dp),
                                         topEnd = CornerSize(0.dp),
@@ -377,7 +378,7 @@ fun FocusCard(
                                         overlineContent = { Text(typeName)},
                                         leadingContent = { Icon(painterResource(R.drawable.temp_preferences_eco),null)},
                                         modifier = Modifier.clickable {
-                                            navController.push(LifeDestination)
+                                            navController.push(lifeDest)
                                         },
                                     )
                                 }

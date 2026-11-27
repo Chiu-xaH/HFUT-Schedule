@@ -65,9 +65,9 @@ fun Life() {
     val navController = LocalNavController.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = LifeDestination.title.asString()) },
+        headlineContent = { ScrollText(text = LifeDestination.TITLE.asString()) },
         leadingContent = {
-            Icon(painterResource(LifeDestination.icon), contentDescription = null)
+            Icon(painterResource(LifeDestination.ICON), contentDescription = null)
         },
         trailingContent = {
             SharedContainer(
@@ -111,7 +111,7 @@ fun Life() {
             }
         },
         modifier = Modifier.clickable {
-            navController.push(LifeDestination)
+            navController.push(LifeDestination())
         }
     )
 }
@@ -148,6 +148,7 @@ private val items = listOf(
 @Composable
 fun LifeScreen(
     vm : NetWorkViewModel,
+    subStartDestination : LifeBarItems = LifeBarItems.WEATHER,
 ) {
     val hazeState = rememberHazeBlur()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -158,7 +159,7 @@ fun LifeScreen(
             LifeBarItems.valueOf(targetRoute!!)
         } catch (e : Exception) {
             LogUtil.error(e)
-            LifeBarItems.CAMPUS
+            subStartDestination
         }
     }
 
@@ -194,7 +195,7 @@ fun LifeScreen(
     ) { innerPadding ->
         NavHost(
             navController = lifeNavController,
-            startDestination = LifeBarItems.WEATHER.name,
+            startDestination = subStartDestination.name,
             enterTransition = {
                 AppAnimationManager.centerAnimation.enter
             },

@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeBarItems
 import com.xah.navigation.model.dest.DeepLink
 
 
@@ -109,7 +110,6 @@ val deepLinks = listOf(
      */
     createDeepLinkByKey(HaiLeWashingDestination),
     createDeepLinkByKey(HolidayDestination),
-    createDeepLinkByKey(LifeDestination),
     createDeepLinkByKey(NotificationsDestination),
     createDeepLinkByKey(OfficeHallDestination),
     createDeepLinkByKey(PersonInfoDestination),
@@ -200,6 +200,15 @@ val deepLinks = listOf(
         try {
             val arg = BottomBarItems.valueOf(subPage.uppercase())
             HomeDestination(arg)
+        } catch (e : Exception) {
+            ExceptionDestination(e)
+        }
+    },
+    DeepLink(LifeDestination.KEY) { uri ->
+        val subPage = uri.getQueryParameter("page") ?: return@DeepLink LifeDestination()
+        try {
+            val arg = LifeBarItems.valueOf(subPage.uppercase())
+            LifeDestination(arg)
         } catch (e : Exception) {
             ExceptionDestination(e)
         }
