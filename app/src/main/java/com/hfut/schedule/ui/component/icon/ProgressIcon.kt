@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.common.ui.style.align.CenterScreen
 
@@ -63,7 +64,7 @@ fun CircleProgressIcon(
         CircularProgressIndicator(
             gapSize = 0.dp,
             modifier = Modifier
-                .size(24.dp-CARD_NORMAL_DP-0.5.dp)
+                .size(ICON_DEFAULT_SIZE-CARD_NORMAL_DP-0.5.dp)
                 .padding(start = 1.5.dp)
                 .padding(top = 0.5.dp)
             ,

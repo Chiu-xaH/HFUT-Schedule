@@ -92,6 +92,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.LibraryBorrowedDestination
 import com.hfut.schedule.ui.nav.destination.LibraryDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -180,7 +181,7 @@ fun LibraryScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(LibraryDestination.title.asString()) },
+                    title = { Text(LibraryDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

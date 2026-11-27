@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -47,6 +48,7 @@ import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
 import com.hfut.schedule.ui.nav.destination.ControlCenterDestination
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.nav.effect.ControlCenterTransitionEffect
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.kyant.backdrop.Backdrop
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.navigation.model.action.LaunchMode
@@ -238,7 +240,14 @@ fun TopBarNavigationIcon(
                     }
                 ),
                 contentDescription = null,
-                tint =  tint
+                tint =  tint,
+                modifier = Modifier
+                    .shadow(
+                        elevation = ICON_DEFAULT_SIZE/2,
+                        shape = CircleShape,
+                        ambientColor = surfaceColor,
+                        spotColor = surfaceColor
+                    )
             )
         }
     }

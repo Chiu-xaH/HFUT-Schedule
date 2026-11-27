@@ -83,6 +83,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HuoZaiFeiXuan
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.getPureUrl
@@ -213,10 +214,11 @@ fun WebNavigationScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(WebFolderDestination.title.asString()) },
+                title = { Text(WebFolderDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
+                /*
                 actions = {
                     SharedContainer(
                         key = DepartmentsDestination.key,
@@ -235,6 +237,7 @@ fun WebNavigationScreen(
                         }
                     }
                 }
+                 */
             )
         },
         floatingActionButton = {
@@ -375,7 +378,7 @@ fun NotificationBoxScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(NotificationBoxDestination.title.asString()) },
+                title = { Text(NotificationBoxDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

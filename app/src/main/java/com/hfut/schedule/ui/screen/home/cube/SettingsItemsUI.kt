@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.ui.PatchUpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.ui.ReleaseUpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.logic.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.logic.getUpdates
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -343,7 +344,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(UpdateHistoryDestination.title.asString()) },
+                title = { Text(UpdateHistoryDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

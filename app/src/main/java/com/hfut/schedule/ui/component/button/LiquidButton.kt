@@ -126,6 +126,7 @@ fun LiquidButton(
         }
     }
     val isTransiting = enableEffect()
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
 
     Row(
         modifier
@@ -137,7 +138,9 @@ fun LiquidButton(
                 shape = { CircleShape },
                 effects =  {
                     vibrancy()
-                    blur(1.5f.dp.toPx())
+                    if(blur) {
+                        blur(1.5f.dp.toPx())
+                    }
                     lens(12f.dp.toPx(), 24.dp.toPx())
                 },
                 shadow = null,
@@ -293,6 +296,7 @@ fun Modifier.containerBackDrop(
     enabled : Boolean = true,
     surfaceColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(if(enabled).3f else .7f),
 ) : Modifier {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val isTransiting = enableEffect()
 
     return this.drawBackdrop(
@@ -303,7 +307,9 @@ fun Modifier.containerBackDrop(
         shape = { shape },
         effects = {
             vibrancy()
-            blur(4f.dp.toPx())
+            if(blur) {
+                blur(4f.dp.toPx())
+            }
             lens(15.dp.toPx(), 24.dp.toPx())
         },
         shadow = null,
@@ -404,6 +410,7 @@ fun Modifier.bottomBarBackDrop(
     color : Color = MaterialTheme.colorScheme.surface,
     shape : RoundedCornerShape = CircleShape,
 ) : Modifier {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val finalColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(.6f)
 //   .275f
     val isTransiting = enableEffect()
@@ -421,7 +428,9 @@ fun Modifier.bottomBarBackDrop(
         shape = { shape },
         effects = {
             vibrancy()
-            blur(1.75f.dp.toPx())
+            if(blur) {
+                blur(1.75f.dp.toPx())
+            }
             lens(17.5.dp.toPx(), 24.dp.toPx())
         },
         shadow = null,
@@ -447,6 +456,7 @@ fun Modifier.calendarSquareBackDrop(
 //    val customBackgroundBlur by DataStoreManager.customCalendarSquareBlur.collectAsState(initial = MyApplication.CALENDAR_SQUARE_BLUR)
     val color = overlayColor.copy(customBackgroundAlpha)
     val isTransiting = enableEffect()
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
 
     return this.drawBackdrop(
         highlight = {
@@ -457,8 +467,10 @@ fun Modifier.calendarSquareBackDrop(
         effects = {
             vibrancy()
             // 统一调配
+            if(blur) {
 //            blur(10f.dp.toPx() * customBackgroundBlur)
-            blur(1.5.dp.toPx())
+              blur(1.5.dp.toPx())
+            }
             when(source) {
                 CalendarSquareBackDropSource.CONTAINER -> {
                     lens(15.dp.toPx(), 24.dp.toPx())

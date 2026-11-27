@@ -16,6 +16,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -44,7 +45,7 @@ object CalendarConfigDestination : NavDestination() {
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer),
                     scrollBehavior = scrollBehavior,
-                    title = { Text(title.asString()) },
+                    title = { Text(title.asString(), style = topBarTitleStyle()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

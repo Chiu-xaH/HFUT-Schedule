@@ -68,6 +68,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.LOW
 import com.hfut.schedule.ui.screen.home.search.function.other.life.HumidityLevel.MID
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -489,7 +490,7 @@ fun WeatherScreen(vm: NetWorkViewModel) {
                                     Icon(
                                          painterResource(R.drawable.keyboard_arrow_left),
                                         contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(ICON_DEFAULT_SIZE)
                                     )
                                     Text(
                                         text = cityName,
@@ -498,7 +499,7 @@ fun WeatherScreen(vm: NetWorkViewModel) {
                                     Icon(
                                          painterResource(R.drawable.keyboard_arrow_right),
                                         contentDescription = null,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(ICON_DEFAULT_SIZE)
                                     )
                                 }
                             }
@@ -604,7 +605,7 @@ private fun QWeatherIcon(code: Int?) {
             Icon(
                 painter = painterResource(id = it),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(ICON_DEFAULT_SIZE)
             )
         }
     }

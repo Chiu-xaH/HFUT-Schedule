@@ -58,6 +58,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingLoginDestination
 import com.hfut.schedule.ui.nav.window.ImagePreviewWindow
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -121,7 +122,7 @@ fun XwxMainScreen(vm: NetWorkViewModel) {
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text("校务行") },
+                    title = { Text("校务行", style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

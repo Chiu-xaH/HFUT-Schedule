@@ -121,6 +121,7 @@ import com.hfut.schedule.ui.nav.destination.SettingsScreenCornerDestination
 import com.hfut.schedule.ui.nav.effect.CONTROL_CENTER_ALPHA
 import com.hfut.schedule.ui.style.shader.scaleMirror
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.hfut.schedule.ui.util.extractColor
 import com.hfut.schedule.ui.util.hsvToLong
 import com.hfut.schedule.ui.util.isThemeDark
@@ -1561,7 +1562,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
 private fun MotionBlurIcon(motionBlur : Boolean) {
     //MaterialTheme.colorScheme.surfaceContainer
     Box(modifier = Modifier
-        .size(24.dp)
+        .size(ICON_DEFAULT_SIZE)
         .background(Color.Transparent, shape = CircleShape)){
         val infiniteTransition = rememberInfiniteTransition()
         val scale by infiniteTransition.animateFloat(
@@ -1639,7 +1640,7 @@ private fun ShaderIcon(shader : Boolean) {
     val color = MaterialTheme.colorScheme.onSurface
 
     Box(modifier = Modifier
-        .size(24.dp)
+        .size(ICON_DEFAULT_SIZE)
         .background(Color.Transparent, shape = CircleShape)){
         Icon(
             painter = painterResource(R.drawable.filter_vintage),
@@ -1660,7 +1661,7 @@ private fun ShaderIcon(shader : Boolean) {
 
 @Composable
 private fun HazeBlurIcon(blur : Boolean) {
-    val size = 24.dp
+    val size = ICON_DEFAULT_SIZE
     Box(modifier = Modifier.size(size)) {
         Icon(
             painter = painterResource(R.drawable.filter_vintage),

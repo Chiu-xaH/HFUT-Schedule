@@ -71,10 +71,12 @@ import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.nav.destination.AiDestination
 import com.hfut.schedule.ui.nav.destination.SettingsAiApiKeyDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -260,7 +262,7 @@ fun AiScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AiDestination.TITLE.asString()) },
+                title = { Text(AiDestination.TITLE.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -362,7 +364,7 @@ fun AiScreen(
                                         null,
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .size(24.dp+4.dp)
+                                            .size(ICON_DEFAULT_SIZE+4.dp)
                                     )
                                 }
                             }

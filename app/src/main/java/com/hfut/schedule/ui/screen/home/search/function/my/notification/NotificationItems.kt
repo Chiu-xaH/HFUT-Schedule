@@ -37,6 +37,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.NotificationsDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.logic.util.EMPTY_STRING
@@ -168,7 +169,7 @@ fun NotificationsScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(NotificationsDestination.title.asString()) },
+                title = { Text(NotificationsDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.SecondClassDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -118,7 +119,7 @@ fun SecondClassScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(SecondClassDestination.title.asString()) },
+                title = { Text(SecondClassDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

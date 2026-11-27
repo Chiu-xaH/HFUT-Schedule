@@ -14,6 +14,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -40,7 +41,7 @@ object DepartmentsDestination : NavDestination() {
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
-                    title = { Text(title.asString()) },
+                    title = { Text(title.asString(), style = topBarTitleStyle()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

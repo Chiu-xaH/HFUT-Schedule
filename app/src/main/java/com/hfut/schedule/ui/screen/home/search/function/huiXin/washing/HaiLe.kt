@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.nav.destination.HaiLeWashingDetailDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -136,7 +137,7 @@ fun HaiLeWashingScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(HaiLeWashingDestination.title.asString()) },
+                    title = { Text(HaiLeWashingDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }
@@ -282,7 +283,7 @@ fun HaiLeDetailScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(description) },
+                    title = { Text(description, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

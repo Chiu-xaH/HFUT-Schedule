@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.nav.destination.WorkDestination
 import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -141,7 +142,7 @@ fun WorkScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(WorkDestination.title.asString()) },
+                    title = { Text(WorkDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.nav.destination.TeacherSearchDestination
 
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
@@ -114,7 +115,7 @@ fun TeacherSearchScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(TeacherSearchDestination.title.asString()) },
+                    title = { Text(TeacherSearchDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

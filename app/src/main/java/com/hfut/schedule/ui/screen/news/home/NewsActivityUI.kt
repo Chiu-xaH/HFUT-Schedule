@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -138,7 +139,7 @@ fun NewsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(NewsDestination.title.asString()) },
+                    title = { Text(NewsDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

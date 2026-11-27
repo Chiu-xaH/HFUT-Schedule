@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeBarItems
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -119,7 +120,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = {
-                        Text("账单搜索")
+                        Text("账单搜索", style = topBarTitleStyle())
                     },
                     navigationIcon = {
                         TopBarNavigationIcon()

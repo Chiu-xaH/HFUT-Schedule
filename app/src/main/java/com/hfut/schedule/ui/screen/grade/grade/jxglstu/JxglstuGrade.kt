@@ -90,6 +90,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.GradeDetailDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -863,7 +864,7 @@ fun GradeDetailScreen(
                     MediumTopAppBar(
                         scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
-                        title = { Text(bean.courseName) },
+                        title = { Text(bean.courseName, style = topBarTitleStyle()) },
                         navigationIcon = {
                             TopBarNavigationIcon()
                         }

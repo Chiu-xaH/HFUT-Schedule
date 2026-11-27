@@ -37,6 +37,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.nav.destination.TermCoursesDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -100,7 +101,7 @@ fun TotalCourseScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(TermCoursesDestination.TITLE.asString()) },
+                    title = { Text(TermCoursesDestination.TITLE.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

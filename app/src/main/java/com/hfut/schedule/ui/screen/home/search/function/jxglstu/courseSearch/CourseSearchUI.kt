@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -149,7 +150,7 @@ fun CourseSearchScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(CourseSearchDestination.title.asString()) },
+                    title = { Text(CourseSearchDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

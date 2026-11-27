@@ -72,6 +72,7 @@ import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.SettingsShortcutEditDestination
 import com.hfut.schedule.ui.screen.home.swap
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.xah.common.ui.component.text.BottomTip
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
@@ -141,7 +142,7 @@ fun ShortcutSortScreen() {
         MediumTopAppBar(
             scrollBehavior = scrollBehavior,
             colors = topBarTransplantColor(),
-            title = { Text(SettingsShortcutEditDestination.title.asString()) },
+            title = { Text(SettingsShortcutEditDestination.title.asString(), style = topBarTitleStyle()) },
             navigationIcon = {
                 TopBarNavigationIcon()
             },

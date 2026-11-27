@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.DormitoryDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -124,7 +125,7 @@ fun DormitoryScoreScreen(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(DormitoryDestination.title.asString()) },
+                    title = { Text(DormitoryDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

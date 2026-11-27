@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.HolidayDestination
 import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.util.layout.currentUiWidthSizeColumnsForCard
@@ -99,7 +100,7 @@ fun HolidayScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text("${DateTimeManager.Date_yyyy}年 ${HolidayDestination.title.asString()}") },
+                title = { Text("${DateTimeManager.Date_yyyy}年 ${HolidayDestination.title.asString()}", style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -186,7 +187,7 @@ fun NewsApiScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(keyword) },
+                    title = { Text(keyword, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

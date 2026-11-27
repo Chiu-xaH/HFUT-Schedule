@@ -181,6 +181,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculatedReadNotificationCount
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.navigationBarSupplementPadding
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -468,7 +469,8 @@ fun MainScreen(
                         title = {
                             ScrollText(
                                 topBarText(targetPage,context),
-                                modifier = Modifier.controlCenterDrag()
+                                modifier = Modifier.controlCenterDrag(),
+                                style = topBarTitleStyle()
                             )
                         },
                         actions = {
@@ -774,7 +776,8 @@ fun MainScreen(
                             title = {
                                 ScrollText(
                                     topBarText(CALENDAR,context),
-                                    modifier = Modifier.controlCenterDrag()
+                                    modifier = Modifier.controlCenterDrag(),
+                                    style = topBarTitleStyle()
                                 )
                             },
                             actions = {
@@ -1382,7 +1385,7 @@ fun SearchEditScreen() {
             },
             scrollBehavior = scrollBehavior,
             colors = topBarTransplantColor(),
-            title = { Text(FunctionsSortDestination.title.asString()) },
+            title = { Text(FunctionsSortDestination.title.asString(), style = topBarTitleStyle()) },
             navigationIcon = {
                 TopBarNavigationIcon()
             },

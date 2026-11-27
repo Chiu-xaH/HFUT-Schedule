@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -206,7 +207,7 @@ fun TimeTableScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(WorkAndRestDestination.TITLE.asString()) },
+                title = { Text(WorkAndRestDestination.TITLE.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

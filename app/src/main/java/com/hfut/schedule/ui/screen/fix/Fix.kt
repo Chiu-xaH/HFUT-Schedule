@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -44,9 +45,9 @@ fun Fix(vm : NetWorkViewModel) {
             Column {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
+                    modifier = Modifier.topBarBlur(hazeState,MaterialTheme.colorScheme.surfaceContainer),
                     colors = topBarTransplantColor(),
-                    title = { Text("修复") },
+                    title = { Text("修复", style = topBarTitleStyle(MaterialTheme.colorScheme.surfaceContainer)) },
                     navigationIcon = {
                         IconButton(onClick = {
                             context?.finish()

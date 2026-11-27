@@ -21,6 +21,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.nav.deepLinks
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.model.text.UiText
@@ -48,7 +49,7 @@ object SettingsDeepLinkDestination : NavDestination() {
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
-                    title = { Text(title.asString()) },
+                    title = { Text(title.asString(), style = topBarTitleStyle()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

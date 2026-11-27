@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.FeeDestination
 import com.hfut.schedule.ui.screen.home.cube.screen.QR_CODE_PADDING
 import com.hfut.schedule.ui.screen.home.cube.screen.rememberCreateQrCode
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -99,7 +100,7 @@ fun FeeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(FeeDestination.title.asString()) },
+                title = { Text(FeeDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

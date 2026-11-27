@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.nav.destination.ProgramCompetitionDetailDestination
 import com.hfut.schedule.ui.nav.window.ProgramRemarkWindow
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -112,7 +113,7 @@ fun ProgramCompetitionScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(ProgramCompetitionDestination.TITLE.asString()) },
+                title = { Text(ProgramCompetitionDestination.TITLE.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 }
@@ -390,7 +391,8 @@ fun ProgramCompetitionDetailScreen(
                             is JxglstuProgramCompetitionDetail.Outer -> {
                                 "培养方案外课程"
                             }
-                        }
+                        },
+                        style = topBarTitleStyle()
                     ) },
                     navigationIcon = {
                         TopBarNavigationIcon()

@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.GradeDetailDestination
 import com.hfut.schedule.ui.screen.welcome.arguments
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.theme.greenColor
@@ -141,7 +142,7 @@ fun About(vm : NetWorkViewModel) {
             MediumTopAppBar(
                 modifier = Modifier.topBarBlur(hazeState),
                 scrollBehavior = scrollBehavior,
-                title = { Text("关于") },
+                title = { Text("关于", style = topBarTitleStyle()) },
                 colors = topBarTransplantColor(),
                 navigationIcon = {
                     TopBarNavigationIcon()

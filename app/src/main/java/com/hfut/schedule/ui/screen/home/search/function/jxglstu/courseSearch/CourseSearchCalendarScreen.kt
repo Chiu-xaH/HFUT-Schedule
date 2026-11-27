@@ -33,6 +33,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.nav.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -68,33 +69,33 @@ fun CourseSearchCalendarScreen(
                     scrollBehavior = scrollBehavior,
                     title = {
                         Column {
-                            Text(CourseSearchTableDestination.TITLE.asString())
+                            Text(CourseSearchTableDestination.TITLE.asString(), style = topBarTitleStyle())
                             classes?.let {
                                 Text(
                                     "班级: $it",
                                     modifier = Modifier.padding(start = 2.dp),
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = topBarTitleStyle(textStyle = MaterialTheme.typography.labelMedium),
                                 )
                             }
                             courseName?.let {
                                 Text(
                                     "课程名: $it",
                                     modifier = Modifier.padding(start = 2.dp),
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = topBarTitleStyle(textStyle = MaterialTheme.typography.labelMedium),
                                 )
                             }
                             courseCode?.let {
                                 Text(
                                     "课程代码: $it",
                                     modifier = Modifier.padding(start = 2.dp),
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = topBarTitleStyle(textStyle = MaterialTheme.typography.labelMedium),
                                 )
                             }
                             term?.let {
                                 Text(
                                     "学期: ${SemesterParser.parseSemester(it)}",
                                     modifier = Modifier.padding(start = 2.dp),
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = topBarTitleStyle(textStyle = MaterialTheme.typography.labelMedium),
                                 )
                             }
                         }

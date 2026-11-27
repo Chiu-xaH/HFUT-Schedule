@@ -28,6 +28,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.nav.destination.ProgramConfirmationDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -68,7 +69,7 @@ fun ProgramConfirmationScreen(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = {
-                        Text(ProgramConfirmationDestination.title.asString())
+                        Text(ProgramConfirmationDestination.title.asString(), style = topBarTitleStyle())
                     },
                     navigationIcon = {
                         TopBarNavigationIcon()

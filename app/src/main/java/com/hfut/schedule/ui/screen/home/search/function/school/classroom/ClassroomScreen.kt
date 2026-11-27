@@ -122,6 +122,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuInt
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.smoothToOne
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -217,7 +218,7 @@ fun ClassroomScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(ClassroomDestination.TITLE.asString()) },
+                    title = { Text(ClassroomDestination.TITLE.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -935,7 +936,7 @@ fun ClassroomLessonsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(name) },
+                    title = { Text(name, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

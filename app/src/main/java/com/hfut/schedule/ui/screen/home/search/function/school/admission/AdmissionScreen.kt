@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.nav.destination.AdmissionDetailDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -88,7 +89,7 @@ fun AdmissionScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text("本科招生") },
+                    title = { Text("本科招生", style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -209,7 +210,7 @@ fun AdmissionRegionScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(typeStr + " : "+ data.key) },
+                    title = { Text(typeStr + " : "+ data.key, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

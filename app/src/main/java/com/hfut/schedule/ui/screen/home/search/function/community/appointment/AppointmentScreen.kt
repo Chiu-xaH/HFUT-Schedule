@@ -76,6 +76,7 @@ import com.hfut.schedule.ui.nav.destination.AppointmentDestination
 import com.hfut.schedule.ui.nav.destination.AppointmentPlaceDestination
 import com.hfut.schedule.ui.nav.destination.AppointmentSeatDestination
 import com.hfut.schedule.ui.nav.window.PlaceAppointmentOccupiedDetailWindow
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -158,7 +159,7 @@ fun AppointmentScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppointmentDestination.title.asString()) },
+                    title = { Text(AppointmentDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

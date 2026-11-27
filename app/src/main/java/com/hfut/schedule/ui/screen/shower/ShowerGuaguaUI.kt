@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
 import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -66,7 +67,7 @@ fun ShowerGuaGua(vm : NetWorkViewModel) {
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text("呱呱物联（洗浴）") },
+                    title = { Text("呱呱物联（洗浴）", style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

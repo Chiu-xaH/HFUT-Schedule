@@ -21,6 +21,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.nav.destination.UpdateHistoryDestination
 import com.hfut.schedule.ui.nav.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.home.cube.sub.VersionInfo
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -45,7 +46,7 @@ fun VersionInfoScreen() {
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(VersionInfoDestination.title.asString()) },
+                title = { Text(VersionInfoDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

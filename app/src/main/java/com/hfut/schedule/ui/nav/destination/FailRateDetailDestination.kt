@@ -16,6 +16,7 @@ import com.hfut.schedule.network.api.model.response.json.community.CommunityCour
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateDetailScreen
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -50,7 +51,7 @@ data class FailRateDetailDestination(
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
-                    title = { Text("${title.asString()}: $courseName") },
+                    title = { Text("${title.asString()}: $courseName", style = topBarTitleStyle()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

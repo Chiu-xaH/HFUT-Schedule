@@ -18,6 +18,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.network.api.model.Constant
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.common.logic.util.EMPTY_STRING
+import com.xah.common.ui.component.text.ScrollText
 import com.xah.common.ui.util.res
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,7 @@ fun Alumni() {
     val scope = rememberCoroutineScope()
     val title = res(R.string.navigation_label_alumni).asString()
     TransplantListItem(
-        headlineContent = { Text(text = title) },
+        headlineContent = { ScrollText(text = title) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.person_book), contentDescription = EMPTY_STRING) },
         modifier = Modifier.clickable {
             scope.launch {

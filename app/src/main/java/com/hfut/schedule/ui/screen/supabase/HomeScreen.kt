@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -109,7 +110,7 @@ fun SupabaseHome(vm : NetWorkViewModel) {
                     MediumTopAppBar(
                         scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
-                        title = { Text("信息共建") },
+                        title = { Text("信息共建", style = topBarTitleStyle()) },
                         navigationIcon = {
                             TopBarNavigationIcon()
                         },

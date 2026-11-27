@@ -267,7 +267,7 @@ fun ScanScreen(
         topBar = {
             TopAppBar(
                 colors = topBarTransplantColor(),
-                title = { Text("") },
+                title = { },
                 navigationIcon = {
                     LiquidTopBarNavigateIcon(backdrop)
                 },

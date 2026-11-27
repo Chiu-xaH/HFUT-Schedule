@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.nav.destination.CourseDetailApiDestination
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.align.CenterScreen
@@ -181,7 +182,7 @@ fun CourseDetailApiScreen(
             MediumTopAppBar(
                 modifier = Modifier.topBarBlur(hazeState),
                 scrollBehavior = scrollBehavior,
-                title = { Text(courseName) },
+                title = { Text(courseName, style = topBarTitleStyle()) },
                 colors = topBarTransplantColor(),
                 navigationIcon = {
                     TopBarNavigationIcon()

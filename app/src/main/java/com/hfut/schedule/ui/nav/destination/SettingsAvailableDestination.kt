@@ -17,6 +17,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.fix.about.Support
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.model.text.UiText
@@ -42,7 +43,7 @@ object SettingsAvailableDestination : NavDestination() {
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
-                    title = { Text(stringResource(R.string.about_settings_different_supported_title)) },
+                    title = { Text(stringResource(R.string.about_settings_different_supported_title), style = topBarTitleStyle()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

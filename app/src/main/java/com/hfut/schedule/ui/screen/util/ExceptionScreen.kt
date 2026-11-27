@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.util.dev.ExceptionHelper.getKeyStackTraceDesc
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.ExceptionDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -45,7 +46,7 @@ fun ExceptionScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(ExceptionDestination.TITLE.asString()) },
+                title = { Text(ExceptionDestination.TITLE.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 }

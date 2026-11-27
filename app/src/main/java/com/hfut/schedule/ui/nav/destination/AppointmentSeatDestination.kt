@@ -14,6 +14,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -50,7 +51,7 @@ data class AppointmentSeatDestination(
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
-                    title = { Text(desc) },
+                    title = { Text(desc, style = topBarTitleStyle()) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigationIcon()

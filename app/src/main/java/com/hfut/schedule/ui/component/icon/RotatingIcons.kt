@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.xah.common.logic.util.EMPTY_STRING
 import com.xah.common.ui.style.align.CenterScreen
 import kotlinx.coroutines.delay
@@ -87,7 +88,7 @@ fun LoadingIconNew() {
 
     LoadingIndicator(
         modifier = Modifier
-            .size(24.dp)
+            .size(ICON_DEFAULT_SIZE)
             .scale(scale),
         color = MaterialTheme.colorScheme.outline,
         polygons = newList,

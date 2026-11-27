@@ -94,6 +94,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.style.special.canLayerBlur
 import com.hfut.schedule.ui.style.special.containerBlur
+import com.hfut.schedule.ui.util.ICON_DEFAULT_SIZE
 import com.sharednav.common.helper.ScreenCornerHelper
 import com.xah.common.ui.style.APP_HORIZONTAL_DP
 import com.xah.shader.state.ShaderState
@@ -159,7 +160,7 @@ fun NavigationBarItemDynamicIconModern(
         Icon(
             painter = painter,
             contentDescription = null,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(ICON_DEFAULT_SIZE)
         )
     }
 }
@@ -364,9 +365,9 @@ fun NavigationBar(
         density,
     ) {
         with(density) {
-            val iconWidth = 24.dp.toPx()
+            val iconWidth = ICON_DEFAULT_SIZE.toPx()
             val iconTextSpacing = 8.dp.toPx()
-            val minimumItemWidth = 48.dp.toPx()
+            val minimumItemWidth = (ICON_DEFAULT_SIZE*2).toPx()
             val manualPadding = itemHorizontalPadding.toPx()
             val visualInset = indicatorPadding.toPx()
             items.sumOf { item ->
@@ -397,7 +398,7 @@ fun NavigationBar(
             .height(trackHeight),
         contentAlignment = Alignment.Center,
     ) {
-        val trackWidth = if (fillTrack) maxWidth else minOf(maxWidth - 24.dp, compactWidth)
+        val trackWidth = if (fillTrack) maxWidth else minOf(maxWidth - ICON_DEFAULT_SIZE, compactWidth)
 
         Surface(
             modifier = Modifier
@@ -1061,7 +1062,7 @@ private fun NavigationItemMeasurementContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(Modifier.size(24.dp))
+            Box(Modifier.size(ICON_DEFAULT_SIZE))
             item.text?.let {
                 Text(it, maxLines = 1, overflow = TextOverflow.Visible)
             }
@@ -1072,7 +1073,7 @@ private fun NavigationItemMeasurementContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
-            Box(Modifier.size(24.dp))
+            Box(Modifier.size(ICON_DEFAULT_SIZE))
             item.text?.let {
                 Text(
                     text = it,
@@ -1094,12 +1095,12 @@ private fun NavigationItemContent(
     active: Boolean,
 ) {
     val icon: @Composable () -> Unit = {
-        Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(ICON_DEFAULT_SIZE), contentAlignment = Alignment.Center) {
             NavigationIconContent(item, active)
             val iconContent: @Composable () -> Unit = {
                 Box(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(ICON_DEFAULT_SIZE)
                         .then(
                             if (item.text != null) {
                                 Modifier.clearAndSetSemantics { }

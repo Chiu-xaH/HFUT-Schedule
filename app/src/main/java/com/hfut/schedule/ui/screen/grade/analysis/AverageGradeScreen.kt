@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalCredits
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalGpa
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -90,7 +91,7 @@ fun AverageGradeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AverageGradeDestination.TITLE.asString()) },
+                title = { Text(AverageGradeDestination.TITLE.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

@@ -72,6 +72,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getHuiXinPsk
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getSchoolNetPsk
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -132,7 +133,7 @@ fun PersonScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(PersonInfoDestination.title.asString()) },
+                title = { Text(PersonInfoDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },

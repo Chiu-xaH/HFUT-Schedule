@@ -16,6 +16,7 @@ import com.hfut.schedule.network.api.model.response.json.jxglstu.lesson.JxglstuT
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.nav.destination.base.NavDestination
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.common.ui.style.color.topBarTransplantColor
@@ -51,7 +52,7 @@ data class CourseDetailDestination(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(description) },
+                    title = { Text(description, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

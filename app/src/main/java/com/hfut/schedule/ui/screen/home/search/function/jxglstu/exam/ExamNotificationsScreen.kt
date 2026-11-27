@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.nav.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -91,7 +92,7 @@ fun ExamNotificationsScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AllExamDestination.title.asString()) },
+                    title = { Text(AllExamDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }

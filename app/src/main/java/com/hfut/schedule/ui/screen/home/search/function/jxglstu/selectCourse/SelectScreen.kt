@@ -105,6 +105,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Api
 import com.hfut.schedule.ui.screen.home.updateCourses
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -176,7 +177,7 @@ fun SelectCourseScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(SelectCoursesDestination.title.asString()) },
+                title = { Text(SelectCoursesDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = {
                     TopBarNavigationIcon()
                 },
@@ -276,7 +277,7 @@ fun SelectCourseDetailScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(title) },
+                    title = { Text(title, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
@@ -402,7 +403,7 @@ fun DropCourseScreen(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = {
-                        Text("$title : 退课")
+                        Text("$title : 退课", style = topBarTitleStyle())
                     },
                     navigationIcon = {
                         TopBarNavigationIcon()

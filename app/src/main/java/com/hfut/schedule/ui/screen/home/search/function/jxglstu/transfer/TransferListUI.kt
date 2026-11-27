@@ -91,6 +91,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -159,7 +160,7 @@ fun TransferScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(TransferMajorDestination.title.asString()) },
+                title = { Text(TransferMajorDestination.title.asString(), style = topBarTitleStyle()) },
                 actions = {
                     val dest = NewsApiDestination.create(NewsApiDestination.Keyword.TRANSFER_MAJOR)
                     SharedContainer(
@@ -356,7 +357,7 @@ fun TransferDetailScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(title) },
+                    title = { Text(title, style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

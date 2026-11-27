@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.nav.destination.XiaoWuXingDestination
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getXwxPsk
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -148,7 +149,9 @@ fun XwxLoginScreen(
                 colors = topBarTransplantColor(),
                 title = {
                     Text(
-                        text = "校务行-登录", modifier = Modifier.padding(start = 10.dp)
+                        text = "校务行-登录",
+                        modifier = Modifier.padding(start = 10.dp),
+                        style = topBarTitleStyle()
                     )
                 },
                 navigationIcon  = {

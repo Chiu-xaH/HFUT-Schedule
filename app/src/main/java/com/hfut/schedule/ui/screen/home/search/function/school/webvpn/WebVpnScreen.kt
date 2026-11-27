@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.nav.destination.WebVpnDestination
 
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -105,7 +106,7 @@ fun WebVpnScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(WebVpnDestination.title.asString()) },
+                    title = { Text(WebVpnDestination.title.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

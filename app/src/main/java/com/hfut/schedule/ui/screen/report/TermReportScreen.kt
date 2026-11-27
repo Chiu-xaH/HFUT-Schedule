@@ -86,6 +86,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -918,7 +919,7 @@ fun TermReportScreen(vm: NetWorkViewModel) {
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(TermReportDestination.title.asString()) },
+                title = { Text(TermReportDestination.title.asString(), style = topBarTitleStyle()) },
                 navigationIcon = { TopBarNavigationIcon() },
                 actions = {
                     if (!showWelcome && !showPreparation) {

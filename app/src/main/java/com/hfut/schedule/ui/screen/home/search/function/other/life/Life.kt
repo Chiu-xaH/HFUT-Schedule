@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.icon.BrushIcon
 import com.hfut.schedule.ui.nav.destination.LifeDestination
 import com.hfut.schedule.ui.nav.destination.TermReportDestination
 import com.hfut.schedule.ui.screen.home.search.QuickButtonForSearchScreen
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -177,7 +178,8 @@ fun LifeScreen(
                         LifeBarItems.CAMPUS -> "楼层导向"
                         LifeBarItems.STARTER -> "第三方应用"
                         LifeBarItems.WEATHER -> "生活服务"
-                    }
+                    },
+                    style = topBarTitleStyle()
                 ) },
                 navigationIcon = {
                     TopBarNavigationIcon()

@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemJxglstuUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIUniApp
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.goToXwx
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
@@ -116,7 +117,7 @@ fun GradeScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(GradeDestination.TITLE.asString()) },
+                    title = { Text(GradeDestination.TITLE.asString(), style = topBarTitleStyle()) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

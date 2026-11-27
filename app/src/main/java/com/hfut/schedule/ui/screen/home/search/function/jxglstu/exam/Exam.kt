@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.nav.destination.ExamDestination
 import com.hfut.schedule.ui.nav.destination.AllExamDestination
 
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -98,7 +99,7 @@ fun ExamScreen() {
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(ExamDestination.TITLE.asString()) },
+                title = { Text(ExamDestination.TITLE.asString(), style = topBarTitleStyle()) },
                 actions = {
                     SharedContainer(
                         key = AllExamDestination.key,

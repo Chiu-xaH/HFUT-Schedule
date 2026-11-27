@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.screen.card.bill.main.BillScreen
 import com.hfut.schedule.ui.screen.card.count.BillAnalysisScreen
 import com.hfut.schedule.ui.screen.card.function.main.CardHomeScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
+import com.hfut.schedule.ui.style.color.topBarTitleStyle
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.rememberHazeBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -130,7 +131,7 @@ fun CardUI(vm : NetWorkViewModel) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text("一卡通") },
+                    title = { Text("一卡通", style = topBarTitleStyle(MaterialTheme.colorScheme.surfaceContainer)) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },
