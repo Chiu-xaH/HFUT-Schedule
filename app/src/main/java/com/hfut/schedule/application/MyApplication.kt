@@ -40,7 +40,7 @@ class MyApplication : Application() {
         // 初始化日志工具
         LogUtil.init(APP_NAME)
         // 控制SharedNav库的日志
-        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})", BuildConfig.DEBUG)
+        com.sharednav.common.util.LogUtil.init("SharedNav(${APP_NAME})", false)
         // 注册DeepLink
         DeepLinkRegistry.init(deepLinks)
         GlobalScope.launch {

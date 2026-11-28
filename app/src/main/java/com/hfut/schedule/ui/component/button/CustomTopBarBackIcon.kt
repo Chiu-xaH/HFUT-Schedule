@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -231,23 +233,35 @@ fun TopBarNavigationIcon(
         Box(
             modifier = Modifier.padding(DIVIDER_TEXT_VERTICAL_PADDING-1.dp)
         ) {
+            val icon = remember(canPop) {
+                if(canPop) {
+                    R.drawable.arrow_back
+                } else {
+                    R.drawable.close
+                }
+            }
             Icon(
-                painterResource(
-                    if(canPop) {
-                        R.drawable.arrow_back
-                    } else {
-                        R.drawable.close
+                painterResource(icon),
+                contentDescription = null,
+                tint =  surfaceColor,
+                modifier = Modifier
+                    .let {
+                        if(AppVersion.CAN_MOTION_BLUR) {
+                            it.blur(CARD_NORMAL_DP)
+                        } else {
+                            it.shadow(
+                                elevation = APP_HORIZONTAL_DP,
+                                shape = CircleShape,
+                                ambientColor = surfaceColor,
+                                spotColor = surfaceColor
+                            )
+                        }
                     }
-                ),
+            )
+            Icon(
+                painterResource(icon),
                 contentDescription = null,
                 tint =  tint,
-                modifier = Modifier
-                    .shadow(
-                        elevation = ICON_DEFAULT_SIZE/2,
-                        shape = CircleShape,
-                        ambientColor = surfaceColor,
-                        spotColor = surfaceColor
-                    )
             )
         }
     }

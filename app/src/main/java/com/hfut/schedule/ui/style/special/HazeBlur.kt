@@ -55,6 +55,7 @@ import com.xah.common.ui.style.align.RowHorizontal
 import com.xah.container.util.LocalSharedRegistrySafely
 import com.xah.floating.util.LocalFloatingControllerSafely
 import com.xah.navigation.util.LocalNavControllerSafely
+import com.xah.navigation.util.LocalNavStackEntry
 import com.xah.shader.state.shaderSource
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -81,7 +82,8 @@ fun enableEffect() : Boolean {
     val navController = LocalNavControllerSafely.current
     val floatingController = LocalFloatingControllerSafely.current
     val registry = LocalSharedRegistrySafely.current
-    if(navController?.previousIsAlive == true) {
+    val destination = LocalNavStackEntry.current
+    if(navController?.previousIsAlive == true && navController.current != destination) {
         return false
     }
     if(navController?.isTransitioning == true) {

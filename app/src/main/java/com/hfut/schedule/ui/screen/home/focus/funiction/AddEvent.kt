@@ -330,6 +330,8 @@ fun AddEventScreen(
                     if(eventId <= 0) {
                         LiquidButton(
                             onClick = {
+                                showDevelopingToast()
+                                /*
                                 navController.push(
                                     AiDestination(
                                         """
@@ -369,6 +371,7 @@ fun AddEventScreen(
 //                                    launchMode = LaunchMode.Push(keepPreviousAlive = true),
 //                                    effect = ControlCenterTransitionEffect()
                                 )
+                                 */
                             },
                             isCircle = true,
                             backdrop = backDrop
